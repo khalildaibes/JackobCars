@@ -50,7 +50,7 @@ const SearchManifacturer = ({
             leaveTo="opacity-0"
             afterLeave={() => setQuery("")}
           >
-            <Combobox.Options>
+            <Combobox.Options className="bg-white py-1 text-base shadow-lg absolute z-20 w-full">
               {filteredManufacturers.length === 0 && query !== "" ? (
                 <Combobox.Option
                   value={query}
