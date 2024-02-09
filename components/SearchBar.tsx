@@ -38,7 +38,7 @@ const SearchBar = () => {
     const searchParms = new URLSearchParams(window.location.search);
 
     model ? searchParms.set("model", model) : searchParms.delete("model");
-    model
+    manufacturer
       ? searchParms.set("manufacturer", manufacturer)
       : searchParms.delete("manufacturer");
 
