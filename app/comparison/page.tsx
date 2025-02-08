@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { generateCarImageUrl } from "@/utils";
 import { allCars } from "@/app/src/data";
-import { IoFilter } from "react-icons/io5";
 import React from "react";
 
 export default function Comparison() {
@@ -13,7 +12,7 @@ export default function Comparison() {
   const [filters, setFilters] = useState<{ [key: string]: boolean }>({});
   const [collapsedSections, setCollapsedSections] = useState<{ [key: string]: boolean }>({});
   const router = useRouter();
-  
+
   useEffect(() => {
     const storedCars = localStorage.getItem("selectedCars");
     if (storedCars) {
