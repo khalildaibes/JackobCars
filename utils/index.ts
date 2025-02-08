@@ -2,21 +2,29 @@ import { CarProps, FilterProps } from "@/types";
 
 export async function fetchCars(filters: FilterProps) {
   const { manufacturer, year, model, limit, fuel } = filters;
-  const headers = {
-    "X-RapidAPI-Key": process.env.NEXT_PUBLIC_RAPID_API_KEY || "",
-    "X-RapidAPI-Host": "cars-by-api-ninjas.p.rapidapi.com",
-  };
-
-  const response = await fetch(
-    `https://cars-by-api-ninjas.p.rapidapi.com/v1/cars?make=${manufacturer}&year=${year}&model=${model}&limit=${limit}&fuel_type=${fuel}`,
-    {
-      headers: headers,
+ 
+    try {
+  const url = `https://cars-by-api-ninjas.p.rapidapi.com/v1/cars?make=${manufacturer}&year=${year}&model=${model}&fuel_type=${fuel}`;
+  const options = {
+    method: 'GET',
+    headers: {
+      'x-rapidapi-key': '9e3e82b628msh0bc3661f2c463f5p128b1ajsn0ffd661be4b8',
+      'x-rapidapi-host': 'cars-by-api-ninjas.p.rapidapi.com'
     }
-  );
+  };
+  
 
-  const result = await response.json();
+    const response = await fetch(url, options);
+    const result = await response.json();
+    console.log(result);
+      return result;
+    
+  } catch (error) {
+    console.error(error);
+      return ;
+    
+  }
 
-  return result;
 }
 
 export function generateCarImageUrl(car: CarProps, angle?: string) {
@@ -32,6 +40,7 @@ export function generateCarImageUrl(car: CarProps, angle?: string) {
   url.searchParams.append("zoomType", "fullscreen");
   url.searchParams.append("modelYear", `${year}`);
   url.searchParams.append("angle", `${angle}`);
+  console.log(url)
 
   return `${url}`;
 }
@@ -58,3 +67,4 @@ export const updateSearchParams = (type: string, value: string) => {
 
   return newPathname;
 };
+

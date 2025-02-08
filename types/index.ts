@@ -16,18 +16,18 @@ export interface SearchManufacturerProps {
 }
 
 export interface CarProps {
-  city_mpg: number;
-  class: string;
-  combination_mpg: number;
-  cylinders: number;
-  displacement: number;
-  drive: string;
-  fuel_type: string;
-  highway_mpg: number;
+  id: number;
   make: string;
   model: string;
-  transmission: string;
   year: number;
+  fuel: string;
+  city_mpg: number;
+  transmission: string;
+  drive: string;
+  class?: string; // Make properties optional if not necessary
+  combination_mpg?: number;
+  cylinders?: number;
+  displacement?: number;
 }
 
 export interface FilterProps {
@@ -43,12 +43,18 @@ export interface OptionProps {
   value: string;
 }
 
-export interface CustomFilterProps {
+
+interface CustomFilterProps {
   title: string;
-  options: OptionProps[];
+  options: { title: string; value: string }[];
+  selected: string;
+  onChange: (value: string) => void; // Ensure onChange is defined
 }
+
 
 export interface ShowMoreProps {
   pageNumber: number;
   isNext: boolean;
 }
+
+

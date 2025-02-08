@@ -1,29 +1,85 @@
-import React from "react";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
-import { CustomButton } from ".";
+import Image from "next/image"; // Import Image
+import SearchBar from "./SearchBar";
+import CustomFilter from "./CustomFilter";
+import { fuels, yearsOfProduction } from "@/constants";
+import { Menu, X } from "lucide-react"; // For mobile menu toggle
 
-const Navbar = () => {
+export default function Navbar() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [selectedFuel, setSelectedFuel] = useState(searchParams.get("fuel") || "");
+  const [selectedYear, setSelectedYear] = useState(searchParams.get("year") || "");
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // Toggle for mobile menu
+
+  const handleFilterChange = (title: string, value: string) => {
+    const params = new URLSearchParams(window.location.search);
+    if (value) {
+      params.set(title, value);
+    } else {
+      params.delete(title);
+    }
+    router.push(`/carsearch?${params.toString()}`);
+  };
+
   return (
-    <header className="w-full absolute z-10">
-      <nav className="max-w-[1440px] mx-auto flex justify-between items-center sm:px-16 px-6 py-4">
-        <Link href="/" className="flex justfity-center items-center">
-          <Image
-            src="/logo.svg"
-            alt="Car Hub Logo"
-            width={118}
-            height={18}
-            className="object-contain"
-          ></Image>
+    <nav className="fixed top-0 left-0 w-full bg-white shadow-md p-4 flex items-center justify-between z-50">
+      {/* Logo */}
+      <Link href="/" className="flex items-center gap-2">
+        <Image src="/logo.svg" alt="JackobCar's Logo" width={100} height={20} className="object-contain" />
+      </Link>
+
+      {/* Mobile Menu Button */}
+      <button className="md:hidden text-gray-700" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+        {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+      </button>
+
+      {/* Nav Links (Hidden on mobile, shown when menu is open) */}
+      <div
+        className={`${
+          isMenuOpen ? "flex top-16 " : "hidden "
+        } md:flex flex-col md:flex-row gap-4 absolute md:relative left-0 w-full md:w-auto bg-white md:bg-transparent shadow-md md:shadow-none p-4 md:p-0 transition-all`}
+      >
+        <Link href="/sell">
+          <button className="bg-blue-500 text-white px-4 py-2 rounded-full w-full md:w-auto">Sell Cars</button>
         </Link>
+        <Link href="/news">
+          <button className="bg-red-500 text-white px-4 py-2 rounded-full w-full md:w-auto">News</button>
+        </Link>
+        <Link href="/accessories">
+          <button className="bg-yellow-500 text-white px-4 py-2 rounded-full w-full md:w-auto">Car Accessories</button>
+        </Link>
+        <Link href="/comparison">
+          <button className="bg-green-500 text-white px-4 py-2 rounded-full w-full md:w-auto">Compare Cars</button>
+        </Link>
+      </div>
 
-        <CustomButton
-          title="Sign In"
-          containerStyles="text-primary-blue rounded-full bg-white min-w-[130px]"
+      {/* Search & Filters (Hidden in mobile menu for now) */}
+      <div className="hidden md:flex items-center space-x-4">
+        <SearchBar />
+        <CustomFilter
+          title="fuel"
+          options={fuels}
+          onChange={(value) => {
+            setSelectedFuel(value);
+            handleFilterChange("fuel", value);
+          }}
+          selected={selectedFuel}
         />
-      </nav>
-    </header>
+        <CustomFilter
+          title="year"
+          options={yearsOfProduction}
+          onChange={(value) => {
+            setSelectedYear(value);
+            handleFilterChange("year", value);
+          }}
+          selected={selectedYear}
+        />
+      </div>
+    </nav>
   );
-};
-
-export default Navbar;
+}

@@ -4,7 +4,7 @@ import "./globals.css";
 import { Footer, Navbar } from "@/components";
 
 export const metadata: Metadata = {
-  title: "Car Hub",
+  title: "JackobCar's",
   description: "Discover best cars!",
 };
 
