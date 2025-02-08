@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { generateCarImageUrl } from "@/utils";
@@ -70,6 +70,7 @@ export default function Comparison() {
   };
 
   return (
+    <Suspense fallback={<div>Loading...</div>}>
     <main className="max-w-5xl mx-auto py-40">
       <h1 className="text-4xl font-bold mb-5 text-center">Compare Cars</h1>
       {selectedCars.length < 2 ? (
@@ -142,5 +143,6 @@ export default function Comparison() {
         </button>
       </div>
     </main>
+    </Suspense>
   );
 }
