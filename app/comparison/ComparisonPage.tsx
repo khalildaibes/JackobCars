@@ -70,13 +70,45 @@ export default function Comparison() {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <main className="max-w-5xl mx-auto py-40">
+        <style>{`
+        @media (max-width: 768px) {
+  .table-auto {
+    font-size: 0.8em;
+  }
+
+  .table-auto th, .table-auto td {
+    padding: 0.5em;
+  }
+
+  .table-auto img {
+    width: 100px;
+    height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .table-auto {
+    font-size: 0.7em;
+  }
+
+  .table-auto th, .table-auto td {
+    padding: 0.5em;
+  }
+
+  .table-auto img {
+    width: 60px;
+    height: auto;
+  } 
+   `}
+
+        </style>
+      <main className="max-w-5xl mx-auto py-40 px-3">
         <h1 className="text-4xl font-bold mb-5 text-center">Compare Cars</h1>
         {selectedCars.length < 2 ? (
           <p className="text-red-500 text-center">Please select at least 2 cars to compare.</p>
         ) : (
-          <div className="overflow-x-auto ">
-            <table className="min-w-full overflow-x-auto">
+          <div className="overflow-x-auto">
+            <table className="w-full table-auto">
               <thead>
                 <tr>
                   <th className="p-2 text-left"></th>
@@ -91,7 +123,7 @@ export default function Comparison() {
                           priority
                           className="object-contain"
                         />
-                        <div className="mt-2 text-sm">{car.brand} {car.model}</div>
+                        <div className="mt-2 text-sm"> {car.model}</div>
                       </div>
                     </th>
                   ))}
@@ -107,7 +139,7 @@ export default function Comparison() {
 
                     return (
                       <React.Fragment key={sectionHeader}>
-                        <tr className="bg-blue-500 text-white cursor-pointer max-w-[200px]" onClick={() => toggleSection(sectionHeader)}>
+                        <tr className="bg-blue-500 text-white cursor-pointer" onClick={() => toggleSection(sectionHeader)}>
                           <td colSpan={selectedCars.length + 1} className="border p-2 font-semibold">
                             {sectionHeader} {collapsedSections[sectionHeader] ? "▼" : "▲"}
                           </td>
@@ -117,7 +149,7 @@ export default function Comparison() {
                             .filter(k => k.startsWith(sectionHeader))
                             .map((subKey) => (
                               <tr key={subKey}>
-                                <td className="border p-2 font-semibold max-w-[200px] break-words whitespace-normal">
+                                <td className="border p-2 font-semibold break-words whitespace-normal">
                                   {subKey}</td>
                                 {selectedCars.map((_, index) => (
                                   <td key={index} className="border p-2 font-semibold max-w-[200px] break-words whitespace-normal">
