@@ -11,6 +11,10 @@ import {  SearchBar } from "@/components";
 import MobileFilters from "@/components/SearchCar";
 
 export default function Home() {
+  if (typeof window === 'undefined') {
+    return null; // Ensure nothing runs during SSR
+  }
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const [selectedFuel, setSelectedFuel] = useState(searchParams.get("fuel") || "");
