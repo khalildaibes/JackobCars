@@ -71,78 +71,78 @@ export default function Comparison() {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-    <main className="max-w-5xl mx-auto py-40">
-      <h1 className="text-4xl font-bold mb-5 text-center">Compare Cars</h1>
-      {selectedCars.length < 2 ? (
-        <p className="text-red-500 text-center">Please select at least 2 cars to compare.</p>
-      ) : (
-        <div className="overflow-x-auto ">
-          <table className="min-w-full overflow-x-auto">
-          <thead>
-  <tr>
-    <th className="p-2 text-left"></th>
-    {selectedCars.map((car, index) => (
-      <th key={index} className="text-center align-middle">
-        <div className="flex flex-col items-center justify-center">
-          <Image
-            src={generateCarImageUrl(car)}
-            alt={`${car.brand} ${car.model}`}
-            width={200}
-            height={100}
-            priority
-            className="object-contain"
-          />
-          <div className="mt-2 text-sm">{car.brand} {car.model}</div>
-        </div>
-      </th>
-    ))}
-  </tr>
-</thead>
+      <main className="max-w-5xl mx-auto py-40">
+        <h1 className="text-4xl font-bold mb-5 text-center">Compare Cars</h1>
+        {selectedCars.length < 2 ? (
+          <p className="text-red-500 text-center">Please select at least 2 cars to compare.</p>
+        ) : (
+          <div className="overflow-x-auto ">
+            <table className="min-w-full overflow-x-auto">
+              <thead>
+                <tr>
+                  <th className="p-2 text-left"></th>
+                  {selectedCars.map((car, index) => (
+                    <th key={index} className="text-center align-middle">
+                      <div className="flex flex-col items-center justify-center">
+                        <Image
+                          src={generateCarImageUrl(car)}
+                          alt={`${car.brand} ${car.model}`}
+                          width={200}
+                          height={100}
+                          priority
+                          className="object-contain"
+                        />
+                        <div className="mt-2 text-sm">{car.brand} {car.model}</div>
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
 
-            <tbody>
-              {allFlattenedSpecs.length > 0 &&
-                Object.keys(allFlattenedSpecs[0]).map((key) => {
-                  const sectionHeader = key.split(" ")[0];
-                  if (!filters[key] || uniqueSections.has(sectionHeader)) return null;
-                  uniqueSections.add(sectionHeader);
+              <tbody>
+                {allFlattenedSpecs.length > 0 &&
+                  Object.keys(allFlattenedSpecs[0]).map((key) => {
+                    const sectionHeader = key.split(" ")[0];
+                    if (!filters[key] || uniqueSections.has(sectionHeader)) return null;
+                    uniqueSections.add(sectionHeader);
 
-                  return (
-                    <React.Fragment key={sectionHeader}>
-                      <tr className="bg-blue-500 text-white cursor-pointer  max-w-[200px]" onClick={() => toggleSection(sectionHeader)}>
-                        <td colSpan={selectedCars.length + 1} className="border p-2 font-semibold">
-                          {sectionHeader} {collapsedSections[sectionHeader] ? "▼" : "▲"}
-                        </td>
-                      </tr>
-                      {!collapsedSections[sectionHeader] &&
-                        Object.keys(allFlattenedSpecs[0])
-                          .filter(k => k.startsWith(sectionHeader))
-                          .map((subKey) => (
-                            <tr key={subKey}>
-                              <td className="border p-2 font-semibold max-w-[200px] break-words whitespace-normal">
+                    return (
+                      <React.Fragment key={sectionHeader}>
+                        <tr className="bg-blue-500 text-white cursor-pointer max-w-[200px]" onClick={() => toggleSection(sectionHeader)}>
+                          <td colSpan={selectedCars.length + 1} className="border p-2 font-semibold">
+                            {sectionHeader} {collapsedSections[sectionHeader] ? "▼" : "▲"}
+                          </td>
+                        </tr>
+                        {!collapsedSections[sectionHeader] &&
+                          Object.keys(allFlattenedSpecs[0])
+                            .filter(k => k.startsWith(sectionHeader))
+                            .map((subKey) => (
+                              <tr key={subKey}>
+                                <td className="border p-2 font-semibold max-w-[200px] break-words whitespace-normal">
                                   {subKey}</td>
-                              {selectedCars.map((_, index) => (
-                                <td key={index} className="border p-2 font-semibold max-w-[200px] break-words whitespace-normal">
-                                  {allFlattenedSpecs[index][subKey]}
-                                </td>
-                              ))}
-                            </tr>
-                          ))}
-                    </React.Fragment>
-                  );
-                })}
-            </tbody>
-          </table>
+                                {selectedCars.map((_, index) => (
+                                  <td key={index} className="border p-2 font-semibold max-w-[200px] break-words whitespace-normal">
+                                    {allFlattenedSpecs[index][subKey]}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                      </React.Fragment>
+                    );
+                  })}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <div className="flex justify-center mt-5">
+          <button
+            className="bg-red-500 text-white px-4 py-2 rounded"
+            onClick={clearComparison}
+          >
+            Clear Comparison
+          </button>
         </div>
-      )}
-      <div className="flex justify-center mt-5">
-        <button
-          className="bg-red-500 text-white px-4 py-2 rounded"
-          onClick={clearComparison}
-        >
-          Clear Comparison
-        </button>
-      </div>
-    </main>
+      </main>
     </Suspense>
   );
 }

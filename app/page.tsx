@@ -7,9 +7,7 @@ import ShowMore from "@/components/ShowMore";
 import Hero from "@/components/Hero";
 import { fetchCars } from "@/utils";
 import { CarProps } from "@/types";
-import router from "next/router";
-import { CustomFilter, SearchBar } from "@/components";
-import { fuels, yearsOfProduction } from "@/constants";
+import {  SearchBar } from "@/components";
 import MobileFilters from "@/components/SearchCar";
 
 export default function Home() {
