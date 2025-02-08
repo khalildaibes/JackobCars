@@ -1,6 +1,6 @@
 "use client"; // This marks the component as a Client Component
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import CarCard from "@/components/CarCard";
 import ShowMore from "@/components/ShowMore";
@@ -58,6 +58,7 @@ export default function Home() {
   };
 
   return (
+    <Suspense fallback={<div>Loading...</div>}>
     <main className="mt-16 p-4 py-16">
       <h1 className="text-4xl font-extrabold">Car Catalogue</h1>
       <p>Explore the cars you might like</p>
@@ -100,5 +101,6 @@ export default function Home() {
 
       <Hero />
     </main>
+    </Suspense>
   );
 }
