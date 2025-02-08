@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import { Footer, Navbar } from "@/components";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "JackobCar's",
@@ -14,6 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+        <Suspense fallback={<div>Loading...</div>}>
+    
     <html lang="en">
       <body >
       <Navbar />
@@ -25,5 +28,7 @@ export default function RootLayout({
         <Footer />
       </body>
     </html>
+        </Suspense >
+    
   );
 }
