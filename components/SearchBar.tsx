@@ -1,14 +1,31 @@
 "use client";
 
 import React, { useState } from "react";
-import { SearchManifacturer } from ".";
+import { CustomFilter, SearchManifacturer } from ".";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { fuels, yearsOfProduction } from "@/constants";
 
 const SearchBar = () => {
   const [manufacturer, setManufacturer] = useState("");
   const [model, setModel] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [selectedFuel, setSelectedFuel] = useState(searchParams.get("fuel") || "");
+  const [selectedYear, setSelectedYear] = useState(searchParams.get("year") || "");
+  const selectedManufacturer = searchParams.get("manufacturer");
+  const selectedLimit = searchParams.get("limit");
+  const selectedModel = searchParams.get("model");
+
+  const handleFilterChange = (title: string, value: string) => {
+    const params = new URLSearchParams(window.location.search);
+    if (value) {
+      params.set(title, value);
+    } else {
+      params.delete(title);
+    }
+    router.push(`/carsearch?${params.toString()}`);
+  };
 
   const SearchButton = ({ otherClasses }: { otherClasses: string }) => {
     return (
@@ -75,6 +92,26 @@ const SearchBar = () => {
         <SearchButton otherClasses="sm:hidden" />
       </div>
       <SearchButton otherClasses="max-sm:hidden" />
+      <div className="flex space-x-4">
+          <CustomFilter
+            title="fuel"
+            options={fuels}
+            onChange={(value) => {
+              setSelectedFuel(value);
+              handleFilterChange("fuel", value);
+            }}
+            selected={selectedFuel}
+          />
+          <CustomFilter
+            title="year"
+            options={yearsOfProduction}
+            onChange={(value) => {
+              setSelectedYear(value);
+              handleFilterChange("year", value);
+            }}
+            selected={selectedYear}
+          />
+        </div>
     </form>
   );
 };

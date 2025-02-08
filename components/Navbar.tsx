@@ -27,16 +27,20 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-white shadow-md p-4 flex items-center justify-between z-50">
+    <nav className="fixed top-0 left-0 w-full bg-white shadow-md p-4 flex items-center justify-between z-50 ">
       {/* Logo */}
       <Link href="/" className="flex items-center gap-2">
-        <Image src="/logo.svg" alt="JackobCar's Logo" width={100} height={20} className="object-contain" />
-      </Link>
+  <div className="w-40 h-20 flex items-center justify-center rounded-full shadow-lg md:shadow-xl  bg-white p-2 md:p-3">
+    <Image src="/logo.svg" alt="JackobCar's Logo" width={200} height={200} className="object-fill" />
+  </div>
+</Link>
 
-      {/* Mobile Menu Button */}
-      <button className="md:hidden text-gray-700" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-        {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-      </button>
+{/* Mobile Menu Button */}
+<button className="md:hidden text-gray-700 absolute right-4 top-1/2 transform -translate-y-1/2 z-50" 
+  onClick={() => setIsMenuOpen(!isMenuOpen)}>
+  {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+</button>
+
 
       {/* Nav Links (Hidden on mobile, shown when menu is open) */}
       <div
@@ -45,16 +49,16 @@ export default function Navbar() {
         } md:flex flex-col md:flex-row gap-4 absolute md:relative left-0 w-full md:w-auto bg-white md:bg-transparent shadow-md md:shadow-none p-4 md:p-0 transition-all`}
       >
         <Link href="/sell">
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-full w-full md:w-auto">Sell Cars</button>
+          <button className="bg-blue-500 text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">Sell Cars</button>
         </Link>
         <Link href="/news">
-          <button className="bg-red-500 text-white px-4 py-2 rounded-full w-full md:w-auto">News</button>
+          <button className="bg-red-500 text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">News</button>
         </Link>
         <Link href="/accessories">
-          <button className="bg-yellow-500 text-white px-4 py-2 rounded-full w-full md:w-auto">Car Accessories</button>
+          <button className="bg-yellow-500 text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">Car Accessories</button>
         </Link>
         <Link href="/comparison">
-          <button className="bg-green-500 text-white px-4 py-2 rounded-full w-full md:w-auto">Compare Cars</button>
+          <button className="bg-green-500 text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">Compare Cars</button>
         </Link>
       </div>
 
