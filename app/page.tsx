@@ -9,6 +9,8 @@ import { fetchCars } from "@/utils";
 import { CarProps } from "@/types";
 import {  SearchBar } from "@/components";
 import MobileFilters from "@/components/SearchCar";
+import dynamic from "next/dynamic";
+const FindCarByPlate = dynamic(() => import('./findcarbyplate/FindCarByPlate'), { ssr: false });
 
 export default function Home() {
   if (typeof window === 'undefined') {
@@ -30,13 +32,15 @@ export default function Home() {
     async function getCars() {
       setIsLoading(true);
       try {
-        const allCars = await fetchCars({
-          manufacturer: selectedManufacturer || "",
-          year: selectedYear ? parseInt(selectedYear, 10) : 2022,
-          fuel: selectedFuel || "",
-          limit: selectedLimit ? parseInt(selectedLimit, 10) : 12,
-          model: selectedModel || "",
-        });
+        var allCars = [];
+        if(selectedManufacturer || selectedModel)
+           allCars = await fetchCars({
+            manufacturer: selectedManufacturer || "",
+            year: selectedYear ? parseInt(selectedYear, 10) : 2022,
+            fuel: selectedFuel || "",
+            limit: selectedLimit ? parseInt(selectedLimit, 10) : 12,
+            model: selectedModel || "",
+          });
 
         setFilteredCars(allCars);
       } catch (error) {
@@ -61,7 +65,7 @@ export default function Home() {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-    <main className="mt-16 p-4 py-16">
+    <main className="mt-16 p-4 pt-16 pb-0">
       <h1 className="text-4xl font-extrabold">Car Catalogue</h1>
       <p>Explore the cars you might like</p>
 
@@ -81,14 +85,20 @@ export default function Home() {
       </div>
 
       {isLoading ? (
-        <div className="text-center text-xl">Loading cars...</div>
+        <div className="text-center text-xl py-10">Loading cars...</div>
       ) : !filteredCars.length ? (
+        selectedManufacturer || selectedModel ?
         <div className="home__error-container">
           <h2 className="text-black text-xl font-bold">Oops, no results</h2>
         </div>
+        :
+        <div className="home__error-container">
+          <h2 className="text-black text-xl font-bold">Select model Or Brand</h2>
+        </div>
+
       ) : (
         <section>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 relative">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 relative py-20">
             {filteredCars.map((car: CarProps) => (
               <CarCard key={car.id} car={car} />
             ))}
@@ -100,6 +110,13 @@ export default function Home() {
           />
         </section>
       )}
+
+<h1 className="text-4xl font-extrabold pt-10">Find your car by plate number</h1>
+<p>Explore the cars specs</p>
+      <FindCarByPlate>
+
+
+      </FindCarByPlate>
 
       <Hero />
     </main>

@@ -17,7 +17,7 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({
   setSelectedYear,
   handleFilterChange,
 }) => {
-  const [isMobileFiltersVisible, setIsMobileFiltersVisible] = useState(false);
+  const [isMobileFiltersVisible, setIsMobileFiltersVisible] = useState(true);
 
   return (
     <div>
