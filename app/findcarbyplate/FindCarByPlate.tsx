@@ -85,7 +85,7 @@ const CarSearch = () => {
   };
 
   return (
-    <div dir="rtl" className="p-4 text-center">
+    <div dir="rtl" className="p-4 text-center ">
       <input
         type="number"
         value={plateNumber}
@@ -95,7 +95,7 @@ const CarSearch = () => {
       />
       <button
         onClick={fetchCarData}
-        className="ml-2 p-2 bg-blue-500 text-white rounded-md"
+        className="ml-2 p-2 bg-blue-500 text-white rounded-md my-10 "
       >
         חפש רכב
       </button>

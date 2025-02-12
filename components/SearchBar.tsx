@@ -65,15 +65,16 @@ const SearchBar = () => {
   };
 
   return (
-    <form className="searchbar" onSubmit={handleSearch}>
-      <div className="searchbar__item">
+    <form className="searchbar items-center justify-center" onSubmit={handleSearch}>
+      <div className="searchbar__item  px-2 z-50">
         <SearchManifacturer
           manufacturer={manufacturer}
           setManufacturer={setManufacturer}
         />
         <SearchButton otherClasses="sm:hidden" />
+        
       </div>
-      <div className="searchbar__item">
+      <div className="searchbar__item px-2">
         <Image
           src="/model-icon.png"
           width={25}

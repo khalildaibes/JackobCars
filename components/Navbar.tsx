@@ -27,7 +27,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-white shadow-md p-4 flex items-center justify-between z-50 ">
+    <nav className="fixed top-0 left-0 w-full bg-white shadow-md p-3 flex items-center justify-between z-50 ">
       {/* Logo */}
       <Link href="/" className="flex items-center gap-2">
   <div className="w-40 h-20 flex items-center justify-center rounded-full shadow-lg md:shadow-xl  bg-white p-2 md:p-3">
@@ -68,24 +68,6 @@ export default function Navbar() {
       {/* Search & Filters (Hidden in mobile menu for now) */}
       <div className="hidden md:flex items-center space-x-4">
         <SearchBar />
-        <CustomFilter
-          title="fuel"
-          options={fuels}
-          onChange={(value) => {
-            setSelectedFuel(value);
-            handleFilterChange("fuel", value);
-          }}
-          selected={selectedFuel}
-        />
-        <CustomFilter
-          title="year"
-          options={yearsOfProduction}
-          onChange={(value) => {
-            setSelectedYear(value);
-            handleFilterChange("year", value);
-          }}
-          selected={selectedYear}
-        />
       </div>
     </nav>
   );

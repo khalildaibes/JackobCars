@@ -33,7 +33,7 @@
 }
 
 .custom-btn {
-  @apply flex flex-row relative justify-center items-center py-3 px-6 outline-none;
+  @apply flex flex-row relative justify-center items-center py-3 px-6 outline-none  hidden sm:block;
 }
 /* END: General styles */
 
@@ -43,23 +43,24 @@
 }
 
 .hero__title {
-  @apply 2xl:text-[72px] sm:text-[64px] text-[50px] font-extrabold;
+  @apply 2xl:text-[30px] sm:text-[30px] text-[30px] font-extrabold leading-[1];
 }
 
 .hero__subtitle {
-  @apply text-[27px] text-black-100 font-light mt-5;
+  @apply text-[24px] text-black-100 font-light mt-5;
 }
 
 .hero__image-container {
-  @apply xl:flex-[1.5] flex justify-end items-end w-full xl:h-screen;
+  @apply xl:flex-[1.5] flex justify-end items-end w-full xl:h-screen overflow-hidden;
 }
 
 .hero__image {
-  @apply relative xl:w-full w-[90%] xl:h-full h-[590px] z-0;
+  @apply xl:w-full w-[90%] xl:h-full h-[350px] object-cover;
 }
 
+
 .hero__image-overlay {
-  @apply absolute xl:-top-24 xl:-right-1/2 -right-1/4 bg-hero-bg bg-repeat-round -z-10 w-full xl:h-screen h-[590px] overflow-hidden;
+  @apply absolute xl:-top-24 xl:-right-1/2 -right-1/4  -top-1/4 bg-hero-bg bg-repeat-round -z-10 w-full xl:h-screen h-[590px] overflow-hidden;
 }
 /* END: Hero styles */
 
@@ -192,28 +193,97 @@
 }
 
 .searchbar__item {
-  @apply flex-1 max-sm:w-full flex justify-start items-center relative;
+  @apply flex-1 max-sm:w-full flex justify-start items-center rounded-full relative overflow-hidden  min-w-[127px] max-w-[250px] ;
 }
 
+
 .searchbar__input {
-  @apply w-full h-[48px] pl-12 p-4 bg-light-white rounded-r-full max-sm:rounded-full outline-none cursor-pointer text-sm;
+  @apply w-full h-[48px] pl-12 p-4 bg-light-white rounded-r-full max-sm:rounded-full outline-none cursor-pointer text-sm  rounded-full;
 }
 /* END: searchbar styles */
 
 /* START: search manufacturer styles */
 .search-manufacturer {
-  @apply flex-1 max-sm:w-full flex justify-start items-center;
+  @apply flex-1 max-sm:w-full flex justify-start items-center rounded-full;
 }
 
+
 .search-manufacturer__input {
-  @apply w-full h-[48px] pl-12 p-4 rounded-l-full max-sm:rounded-full bg-light-white outline-none cursor-pointer text-sm;
+  @apply w-full h-[48px] pl-12 p-4 rounded-full bg-light-white outline-none cursor-pointer text-sm;
 }
 
 .search-manufacturer__options {
-  @apply absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm;
+  @apply absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-[9999];
 }
+
 
 .search-manufacturer__option {
   @apply cursor-default select-none py-2 pl-10 pr-4;
 }
 /* END: search manufacturer styles */
+.hide_on_mobile {
+  @apply hidden sm:block ;
+}
+
+.parent-container {
+  @apply max-h-60;
+  display: flex;
+  justify-content: center; /* توسيط أفقي */
+  align-items: center; /* توسيط عمودي */
+  flex-direction: column; /* ضمان ترتيب العناصر عموديًا */
+  width: 100%; /* تأكد من أن الحاوية تأخذ العرض بالكامل */
+  height: 100%; /* يمكن ضبطه حسب الحاجة */
+}
+
+.plate_background {
+  @apply relative overflow-hidden rounded-2xl shadow-md;
+}
+
+.plate_background::before {
+  @apply content-[''] absolute inset-0 bg-[url('/pattern.png')] bg-cover bg-center bg-no-repeat opacity-60 z-[-1];
+}
+
+.titleChild {
+  @apply absolute top-[21.5px] left-1/2 w-[465px] h-px border-t border-gray-300 transform -translate-x-[232.5px];
+}
+
+.featured {
+  @apply relative leading-[180%] capitalize;
+}
+
+.featuredWrapper {
+  @apply absolute top-1/2 left-1/2 bg-white flex flex-row items-center justify-center px-2 transform -translate-x-1/2 -translate-y-1/2;
+}
+
+.title {
+  @apply relative w-full max-w-lg h-[43px];
+}
+
+.frameChild {
+  @apply w-full h-auto rounded-lg object-cover;
+}
+
+.findYourPlace {
+  @apply w-full text-lg leading-[180%] capitalize;
+}
+
+.findYourPlaceWithWrapper {
+  @apply shadow-2xl rounded-lg bg-white flex flex-col items-start justify-center p-5 mt-[-39px];
+}
+
+.rectangleParent {
+  @apply flex flex-col items-center justify-start w-full;
+}
+
+.blog {
+  @apply relative w-full md:w-auto max-w-[400px] h-auto;
+}
+
+.blogParent {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-left text-xl w-full;
+}
+
+.titleParent {
+  @apply relative  w-full flex flex-col items-center justify-start px-6 md:px-12 lg:px-24 py-5 gap-16 text-center text-2xl;
+}
+

@@ -13,13 +13,14 @@ const Hero = () => {
 
   return (
     <>
-      <div className="hero z-[-1] relative">
-        <div className="flex-1 pt-36 px-4"> {/* Ensure padding-x is defined */}
-          <h1 className="hero__title">
+     
+    <div className="hero fixed  z-[999] max-h-[720px] ">
+    <div className="flex-1 pt-8 px-4"> {/* Ensure padding-x is defined */}
+          <h1 className="hero__title text-white">
             Find, or Buy a car — quickly and easily!
           </h1>
 
-          <p className="hero__subtitle">
+          <p className="hero__subtitle ">
             Streamline your car rental experience with our effortless booking
             process.
           </p>
@@ -32,7 +33,7 @@ const Hero = () => {
           />
         </div>
 
-        <div className="hero__image-container z-[-1] relative overflow-x-hidden sm:overflow-x-visible">
+        <div className="hero__image-container z-[-1] relative overflow-x-hidden sm:overflow-x-hidden max-h-[420px] ">
           <div className="hero__image">
             <Image src="/hero.png" alt="hero" fill className="object-contain" />
           </div>

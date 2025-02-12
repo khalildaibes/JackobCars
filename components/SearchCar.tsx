@@ -23,7 +23,7 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({
     <div>
       {/* Mobile Filters Button */}
       <button
-        className="md:hidden bg-blue-500 text-white p-2 rounded-full mt-4"
+        className="md:hidden bg-blue-500 text-white p-2 rounded-full mt-4 hide_on_mobile "
         onClick={() => setIsMobileFiltersVisible(!isMobileFiltersVisible)}
       >
         {isMobileFiltersVisible ? "Hide Filters" : "Show Filters"}
@@ -31,10 +31,10 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({
 
       {/* Mobile Filters */}
       {isMobileFiltersVisible && (
-        <div className="md:hidden mt-4">
+        <div className=" mt-4">
           <SearchBar />
 
-        </div>
+        </div> 
       )}
     </div>
   );
