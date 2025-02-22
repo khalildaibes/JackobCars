@@ -4,7 +4,10 @@ import Image from "next/image";
 
 const BASE_URL = process.env.BASE_PATH || "/images/";
 
-type ImgProps = React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement> &
+type ImgProps = React.DetailedHTMLProps<
+  React.ImgHTMLAttributes<HTMLImageElement>,
+  HTMLImageElement
+> &
   Partial<{
     className: string;
     src: string;
@@ -29,6 +32,9 @@ const Img: React.FC<React.PropsWithChildren<ImgProps>> = ({
     setImgSrc(src);
   }, [src]);
 
+  // Destructure out the ref to avoid passing it further
+  const { ref, ...otherProps } = restProps as any;
+
   return (
     <Image
       className={className}
@@ -36,11 +42,12 @@ const Img: React.FC<React.PropsWithChildren<ImgProps>> = ({
       alt={alt}
       width={width}
       height={height}
-      {...restProps}
+      {...otherProps}
       onError={() => {
         setImgSrc(isStatic ? `${BASE_URL}defaultNoData.png` : "defaultNoData.png");
       }}
     />
   );
 };
+
 export { Img };
