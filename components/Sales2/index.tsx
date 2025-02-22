@@ -117,14 +117,14 @@ export default function Sales2({ ...props }: Props) {
               className="flex flex-wrap items-center gap-1 self-stretch"
             >
               <BreadcrumbItem>
-                <BreadcrumbLink href="#" as={Link}>
+                <BreadcrumbLink href="#" >
                   <Text as="p" className="text-[15px] font-normal !text-indigo-a400">
                     Home
                   </Text>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbItem isCurrentPage>
-                <BreadcrumbLink href="#" as={Link}>
+                <BreadcrumbLink href="#">
                   <Text as="p" className="text-[15px] font-normal !text-black-900">
                     Shop
                   </Text>
