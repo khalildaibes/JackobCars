@@ -1,4 +1,4 @@
-import { Text } from "../../components";
+import { Text } from "../../components/Text";
 import Link from "next/link";
 import React from "react";
 

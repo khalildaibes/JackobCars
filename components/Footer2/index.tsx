@@ -1,8 +1,12 @@
 "use client";
 
-import { Text, Img, Heading, Button, Input } from "./..";
-import Link from "next/link";
+import { Heading } from "../Heading";
 import React from "react";
+import { Button } from "../Button";
+import { Img } from "../Img";
+import { Text } from "../Text";
+import Link from "next/link";
+import { Input } from "../Input";
 
 interface Props {
   className?: string;

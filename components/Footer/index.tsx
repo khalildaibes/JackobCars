@@ -1,6 +1,9 @@
-import { Text, Img, Heading, Button } from "./..";
-import Link from "next/link";
+import { Heading } from "../Heading";
 import React from "react";
+import { Button } from "../Button";
+import { Img } from "../Img";
+import { Text } from "../Text";
+import Link from "next/link";
 
 interface Props {
   className?: string;

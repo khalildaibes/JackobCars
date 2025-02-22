@@ -1,4 +1,5 @@
-import { Heading, Img } from "./..";
+import { Heading } from "../Heading";
+import { Img } from "../Img";
 import React from "react";
 
 interface Props {

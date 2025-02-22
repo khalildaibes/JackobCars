@@ -76,11 +76,11 @@ const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInput
       }
 
       fixOffset();
-      input.addEventListener("focus", fixOffset);
+      input!.addEventListener("focus", fixOffset);
       window.addEventListener("resize", fixOffset);
 
       return () => {
-        input.removeEventListener("focus", fixOffset);
+        input!.removeEventListener("focus", fixOffset);
         window.removeEventListener("resize", fixOffset);
       };
     }, []);

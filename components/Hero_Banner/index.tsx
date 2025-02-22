@@ -11,6 +11,7 @@ import { Tabs, TabList, Tab, TabPanel } from "react-tabs";
 import { SeekBar } from "../SeekBar";
 import { SelectBox } from "../SelectBox";
 import { Heading } from "../Heading";
+import { useTranslations } from "next-intl";
 
 interface Props {
   className?: string;
@@ -73,7 +74,7 @@ export default function Header({ ...props }: Props) {
                 }
                 name="Q7"
                 placeholder={t("select_models")}
-                options={dropDownOptions}
+                // options={dropDownOptions}
                 className="mt-5 gap-4 self-stretch rounded-lg border px-4"
               />
               <Heading size="text2xl" as="h2" className="mt-3.5 text-[18px] font-medium capitalize lg:text-[15px]">
