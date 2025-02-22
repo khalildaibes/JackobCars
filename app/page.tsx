@@ -22,7 +22,7 @@ import ResponsiveNewsLayout from "@/components/Responsivenews";
 const listings = [
   {
     id: 1,
-    image: "/images/car1.jpg",
+    image: "img_h92_jpg.png",
     alt: "Car 1",
     title: "Toyota Camry 2020",
     miles: "20,000 miles",
@@ -33,7 +33,7 @@ const listings = [
   },
   {
     id: 2,
-    image: "/images/car2.jpg",
+    image: "img_h92_jpg.png",
     alt: "Car 2",
     title: "Honda Accord 2019",
     miles: "30,000 miles",
@@ -44,7 +44,7 @@ const listings = [
   },
   {
     id: 3,
-    image: "/images/car3.jpg",
+    image: "img_h92_jpg.png",
     alt: "Car 3",
     condition: "used",
     title: "Ford Focus 2018",
@@ -55,7 +55,7 @@ const listings = [
   },
   {
     id: 4,
-    image: "/images/car4.jpg",
+    image: "img_h46_jpg.png",
     alt: "Car 4",
     condition: "used",
     title: "Chevrolet Malibu 2021",
@@ -66,7 +66,7 @@ const listings = [
   },
   {
     id: 5,
-    image: "/images/car5.jpg",
+    image: "img_car9_660x440_jpg_218x328.png",
     alt: "Car 5",
     condition: "used",
     title: "Nissan Altima 2020",
@@ -77,7 +77,7 @@ const listings = [
   },
   {
     id: 6,
-    image: "/images/car6.jpg",
+    image: "img_car12_660x440_jpg_1.png",
     alt: "Car 6",
     condition: "new",
     title: "BMW 3 Series 2019",
@@ -88,7 +88,7 @@ const listings = [
   },
   {
     id: 7,
-    image: "/images/car7.jpg",
+    image: "img_h21_jpg.png",
     alt: "Car 7",
     condition: "new",
     title: "Audi A4 2018",
@@ -99,7 +99,7 @@ const listings = [
   },
   {
     id: 8,
-    image: "/images/car8.jpg",
+    image: "img_car20_660x440_jpg.png",
     alt: "Car 8",
     condition: "new",
     title: "Mercedes C-Class 2020",
@@ -110,7 +110,7 @@ const listings = [
   },
   {
     id: 9,
-    image: "/images/car9.jpg",
+    image: "img_car12_660x440_jpg_1.png",
     alt: "Car 9",
     condition: "new",
     title: "Hyundai Sonata 2021",
@@ -121,7 +121,7 @@ const listings = [
   },
   {
     id: 10,
-    image: "/images/car10.jpg",
+    image: "img_car9_660x440_jpg_218x328.png",
     alt: "Car 10",
     condition: "new",
     title: "Kia Optima 2019",

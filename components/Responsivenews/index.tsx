@@ -16,11 +16,11 @@ const newsItems = [
       previewTitle: "Revolutionary design sparks excitement in the auto industry",
       previewDescription:
         "Tesla's latest Roadster promises incredible performance with cutting-edge design and sustainable electric power, set to redefine electric vehicles.",
-      previewThumbnail: "img_car_news1.png",
+      previewThumbnail: "img_h74_jpg.png",
       rightText:
         "Industry experts believe this new Roadster will set the benchmark for future electric cars, blending speed and efficiency.",
-      rightImage: "img_car_news1_detail.png",
-      rightHeading: "Tesla's Roadster Raises the Bar for Electric Cars",
+        rightImage: "img_h74_jpg.png",
+        rightHeading: "Tesla's Roadster Raises the Bar for Electric Cars",
     },
     {
       id: 2,
@@ -31,11 +31,11 @@ const newsItems = [
       previewTitle: "A new era for American muscle cars",
       previewDescription:
         "Ford's updated Mustang incorporates state-of-the-art technology and design enhancements that promise an exhilarating driving experience while honoring its classic roots.",
-      previewThumbnail: "img_car_news2.png",
+      previewThumbnail: "img_car5_660x440_jpg_1.png",
       rightText:
         "The new Mustang is set to compete fiercely in the sports car market with its improved performance and sleek aesthetics.",
-      rightImage: "img_car_news2_detail.png",
-      rightHeading: "Ford Mustang Reinvents Classic Muscle Car Experience",
+        rightImage: "img_car5_660x440_jpg_1.png",
+        rightHeading: "Ford Mustang Reinvents Classic Muscle Car Experience",
     },
     {
       id: 3,
@@ -46,10 +46,10 @@ const newsItems = [
       previewTitle: "Luxury meets sustainability in BMW's latest release",
       previewDescription:
         "BMW introduces the new iX electric SUV, combining modern luxury with cutting-edge electric technology for a premium driving experience.",
-      previewThumbnail: "img_car_news3.png",
+      previewThumbnail: "img_h92_jpg.png",
       rightText:
         "With advanced features and an eco-friendly design, the BMW iX is poised to become a strong contender in the luxury EV market.",
-      rightImage: "img_car_news3_detail.png",
+      rightImage: "img_h92_jpg.png",
       rightHeading: "BMW iX Sets New Standards in Electric Luxury",
     },
   ];
@@ -67,9 +67,9 @@ const ResponsiveNewsLayout = () => {
           <div key={news.id} className="bg-white mb-8">
             <div className="mb-6 flex flex-col md:flex-row gap-6">
               {/* Left Column */}
-              <div className="flex-1 flex flex-col gap-6">
+              <div className="flex-1 flex flex-col gap-6 ">
                 {/* Highlight Section */}
-                <div className="flex flex-col gap-2 bg-gradient-to-r from-purple-500 to-blue-500 bg-cover bg-no-repeat p-6 sm:p-4">
+                <div className="flex flex-col gap-2 bg-gradient-to-r from-purple-500 to-blue-500 bg-cover bg-no-repeat p-6 sm:p-4 rounded-[16px]">
                   <Heading
                     size="headinglg"
                     as="h1"
@@ -96,7 +96,7 @@ const ResponsiveNewsLayout = () => {
                 </div>
                 {/* Progress Indicator */}
                 {/* Article Preview */}
-                <div className="flex flex-col md:flex-row gap-6">
+                <div className="flex flex-col md:flex-row gap-6 rounded-[16px]">
                   <div className="flex-1 flex flex-col items-start gap-2">
                     <Heading
                       size="headingxs"
@@ -119,14 +119,14 @@ const ResponsiveNewsLayout = () => {
                       width={106}
                       height={60}
                       alt="Article Thumbnail"
-                      className="object-contain w-full"
+                      className="object-contain w-full rounded-[16px]"
                     />
                   </div>
                 </div>
               </div>
               {/* Right Column */}
               <div className="flex-1 flex flex-col gap-6">
-                <div className="flex flex-col sm:flex-row items-start gap-6 bg-gray-900 px-6 sm:px-4 py-4">
+                <div className="flex flex-col sm:flex-row items-start gap-6 bg-gray-900 px-6 sm:px-4 py-4 rounded-[16px]">
                   <Text
                     size="textlg"
                     as="p"
@@ -140,7 +140,7 @@ const ResponsiveNewsLayout = () => {
                       width={326}
                       height={240}
                       alt="News Image"
-                      className="object-cover w-full h-60"
+                      className="object-cover w-full h-60 rounded-[16px]"
                     />
                     <Heading
                       as="h3"
