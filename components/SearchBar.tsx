@@ -13,9 +13,9 @@ const SearchBar = () => {
   const searchParams = useSearchParams();
   const [selectedFuel, setSelectedFuel] = useState(searchParams.get("fuel") || "");
   const [selectedYear, setSelectedYear] = useState(searchParams.get("year") || "");
-  const selectedManufacturer = searchParams.get("manufacturer");
-  const selectedLimit = searchParams.get("limit");
-  const selectedModel = searchParams.get("model");
+  // const selectedManufacturer = searchParams.get("manufacturer");
+  // const selectedLimit = searchParams.get("limit");
+  // const selectedModel = searchParams.get("model");
 
   const handleFilterChange = (title: string, value: string) => {
     const params = new URLSearchParams(window.location.search);

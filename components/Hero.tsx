@@ -14,7 +14,7 @@ const Hero = () => {
   return (
     <>
      
-    <div className="hero fixed  z-[999] max-h-[720px] ">
+    <div className="hero absolute  z-[999] max-h-[380px]  overflow-y-hidden overflow-x-hidden">
     <div className="flex-1 pt-8 px-4"> {/* Ensure padding-x is defined */}
           <h1 className="hero__title text-white">
             Find, or Buy a car — quickly and easily!
@@ -35,10 +35,10 @@ const Hero = () => {
 
         <div className="hero__image-container z-[-1] relative overflow-x-hidden sm:overflow-x-hidden max-h-[420px] ">
           <div className="hero__image">
-            <Image src="/hero.png" alt="hero" fill className="object-contain" />
+            <Image src="/hero.png" alt="hero" fill className="object-contain " />
           </div>
 
-          <div className="hero__image-overlay"></div>
+          <div className="hero__image-overlay z-[-999]"></div>
         </div>
       </div>
       <div className="scroll-to" ref={bottomEl}></div>

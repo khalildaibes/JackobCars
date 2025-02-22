@@ -1,0 +1,39 @@
+{
+  "HomePage": {
+    "find_car_plate_heading": "Find your car by plate number",
+    "explore_car_specs": "Explore the car specs",
+    "car_catalogue_heading": "Car Catalogue",
+    "explore_cars_like": "Explore the cars you might like",
+    "loading_cars": "Loading cars...",
+    "oops_no_results": "Oops, no results",
+    "select_car_spec": "Select car spec",
+    "tab_search_by_plate": "Search by plate number",
+    "tab_recommended_for_you": "Recommended for you",
+    "select_models": "Select Models",
+    "select_price": "Select Price",
+    "advanced_filters": "Advanced Filters",
+    "search": "Search",
+    "blogs_heading": "Blogs",
+    "blog1_title": "Is the 2024 Porsche Cayenne S a Good SUV? 4 Pros and 3 Cons",
+    "blog2_title": "Compact Steamroller: 2024 Toyota RAV4 Starts at $29,825",
+    "blog3_title": "2024 Kia Niro EV Costs $50 More, Nearly Unchanged Otherwise",
+    "porsche_alt": "Porsche Cayenne SUV",
+    "toyota_alt": "Toyota RAV4",
+    "kia_alt": "Kia Niro EV",
+    "featured_listings": "Featured Listings",
+    "in_stock": "In Stock",
+    "new_cars": "New Cars",
+    "used_cars": "Used Cars",
+    "great_price": "Great Price",
+    "view_details": "View Details",
+    "sale": "تخفيض",
+    "view_all": "View All",
+    "CARS_FOR_SALE": "CARS FOR SALE",
+    "DEALER_REVIEWS": "DEALER REVIEWS",
+    "VISITORS_PER_DAY": "VISITORS PER DAY" ,
+    "VERIFIED_DEALERS":"VERIFIED DEALERS" 
+
+    
+
+  }
+}

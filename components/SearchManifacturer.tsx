@@ -50,11 +50,11 @@ const SearchManifacturer = ({
             leaveTo="opacity-0"
             afterLeave={() => setQuery("")}
           >
-            <Combobox.Options className="y-1 text-base shadow-lg absolute z-50 w-full border border-gray-300 rounded-md">
+            <Combobox.Options className="y-1 text-base shadow-lg absolute z-50 w-full border border-gray-300 rounded-md bg-white h-[250px] overflow-auto">
                 {filteredManufacturers.length === 0 && query !== "" ? (
                 <Combobox.Option
                   value={query}
-                  className="search-manufacturer__option"
+                  className="search-manufacturer__option "
                 >
                   Nothing found.
                 </Combobox.Option>

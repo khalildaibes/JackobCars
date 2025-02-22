@@ -1,0 +1,33 @@
+{
+  "HomePage": {
+    "find_car_plate_heading": "מצא את הרכב שלך לפי מספר לוחית",
+    "explore_car_specs": "גלה את מפרט הרכב",
+    "car_catalogue_heading": "קטלוג רכב",
+    "explore_cars_like": "גלה רכבים שעשויים לעניין אותך",
+    "loading_cars": "טוען רכבים...",
+    "oops_no_results": "אופס, אין תוצאות",
+    "select_car_spec": "בחר מפרט רכב",
+    "tab_search_by_plate": "חיפוש לפי מספר לוחית",
+    "tab_recommended_for_you": "מומלץ עבורך",
+    "select_models": "בחר דגמים",
+    "select_price": "בחר מחיר",
+    "advanced_filters": "מסננים מתקדמים",
+    "search": "חפש",
+    "blogs_heading": "בלוגים",
+    "blog1_title": "האם ה-2024 Porsche Cayenne S הוא SUV טוב? 4 יתרונות ו-3 חסרונות",
+    "blog2_title": "קומפקט סטימרולר: 2024 Toyota RAV4 מתחילה ב-29,825$",
+    "blog3_title": "2024 Kia Niro EV עולה 50$ יותר, כמעט ללא שינוי בשאר המפרט",
+    "porsche_alt": "Porsche Cayenne SUV",
+    "toyota_alt": "Toyota RAV4",
+    "featured_listings": "Featured Listings",
+    "in_stock": "In Stock",
+    "new_cars": "New Cars",
+    "used_cars": "Used Cars",
+    "great_price": "Great Price",
+    "view_details": "View Details",
+    "view_all": "View All",
+    "great_deal": "עסקה מצוינת",
+    "sale": "מכירה",
+    "kia_alt": "Kia Niro EV"
+  }
+}

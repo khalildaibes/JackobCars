@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { SearchBar, CustomFilter } from "@/components";
-import { fuels, yearsOfProduction } from "@/constants";
+import { SearchBar } from "@/components";
+// import { fuels, yearsOfProduction } from "@/constants";
 
 interface MobileFiltersProps {
   selectedFuel: string;
@@ -11,11 +11,11 @@ interface MobileFiltersProps {
 }
 
 const MobileFilters: React.FC<MobileFiltersProps> = ({
-  selectedFuel,
-  selectedYear,
-  setSelectedFuel,
-  setSelectedYear,
-  handleFilterChange,
+  // selectedFuel,
+  // selectedYear,
+  // setSelectedFuel,
+  // setSelectedYear,
+  // handleFilterChange,
 }) => {
   const [isMobileFiltersVisible, setIsMobileFiltersVisible] = useState(true);
 

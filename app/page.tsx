@@ -1,29 +1,160 @@
 "use client"; // This marks the component as a Client Component
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import CarCard from "@/components/CarCard";
 import ShowMore from "@/components/ShowMore";
 import Hero from "@/components/Hero";
 import { fetchCars } from "@/utils";
 import { CarProps } from "@/types";
-import { SearchBar } from "@/components";
 import MobileFilters from "@/components/SearchCar";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import React from "react";
+import SalesAndReviewsSection from "./homeeight/SalesAndReviewsSection";
+import CustomerTestimonialsSection from "./homeeight/CustomerTestimonialsSection";
+import FeaturedListingsSection from "./homeeight/FeaturedListingsSection";
+import LatestBlogPostsSection from "./homeeight/LatestBlogPostsSection";
+import RecentlyAddedSection from "./homeeight/RecentlyAddedSection";
+import {  useTranslations } from "next-intl";
+import ResponsiveNewsLayout from "@/components/Responsivenews";
+const listings = [
+  {
+    id: 1,
+    image: "/images/car1.jpg",
+    alt: "Car 1",
+    title: "Toyota Camry 2020",
+    miles: "20,000 miles",
+    fuel: "Gasoline",
+    condition: "used",
+    transmission: "Automatic",
+    price: "$20,000",
+  },
+  {
+    id: 2,
+    image: "/images/car2.jpg",
+    alt: "Car 2",
+    title: "Honda Accord 2019",
+    miles: "30,000 miles",
+    fuel: "Gasoline",
+    condition: "used",
+    transmission: "Automatic",
+    price: "$18,000",
+  },
+  {
+    id: 3,
+    image: "/images/car3.jpg",
+    alt: "Car 3",
+    condition: "used",
+    title: "Ford Focus 2018",
+    miles: "25,000 miles",
+    fuel: "Gasoline",
+    transmission: "Manual",
+    price: "$15,000",
+  },
+  {
+    id: 4,
+    image: "/images/car4.jpg",
+    alt: "Car 4",
+    condition: "used",
+    title: "Chevrolet Malibu 2021",
+    miles: "10,000 miles",
+    fuel: "Gasoline",
+    transmission: "Automatic",
+    price: "$22,000",
+  },
+  {
+    id: 5,
+    image: "/images/car5.jpg",
+    alt: "Car 5",
+    condition: "used",
+    title: "Nissan Altima 2020",
+    miles: "15,000 miles",
+    fuel: "Gasoline",
+    transmission: "Automatic",
+    price: "$19,000",
+  },
+  {
+    id: 6,
+    image: "/images/car6.jpg",
+    alt: "Car 6",
+    condition: "new",
+    title: "BMW 3 Series 2019",
+    miles: "18,000 miles",
+    fuel: "Gasoline",
+    transmission: "Automatic",
+    price: "$28,000",
+  },
+  {
+    id: 7,
+    image: "/images/car7.jpg",
+    alt: "Car 7",
+    condition: "new",
+    title: "Audi A4 2018",
+    miles: "22,000 miles",
+    fuel: "Gasoline",
+    transmission: "Automatic",
+    price: "$27,000",
+  },
+  {
+    id: 8,
+    image: "/images/car8.jpg",
+    alt: "Car 8",
+    condition: "new",
+    title: "Mercedes C-Class 2020",
+    miles: "12,000 miles",
+    fuel: "Gasoline",
+    transmission: "Automatic",
+    price: "$35,000",
+  },
+  {
+    id: 9,
+    image: "/images/car9.jpg",
+    alt: "Car 9",
+    condition: "new",
+    title: "Hyundai Sonata 2021",
+    miles: "8,000 miles",
+    fuel: "Gasoline",
+    transmission: "Automatic",
+    price: "$21,000",
+  },
+  {
+    id: 10,
+    image: "/images/car10.jpg",
+    alt: "Car 10",
+    condition: "new",
+    title: "Kia Optima 2019",
+    miles: "16,000 miles",
+    fuel: "Gasoline",
+    transmission: "Automatic",
+    price: "$17,000",
+  },
+];
+const FindCarByPlate = dynamic(
+  () => import("./findcarbyplate/FindCarByPlate"),
+  { ssr: false }
+);
 
-const FindCarByPlate = dynamic(() => import("./findcarbyplate/FindCarByPlate"), { ssr: false });
-
-export default function Home() {
+function HomeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [selectedFuel, setSelectedFuel] = useState(searchParams.get("fuel") || "");
-  const [selectedYear, setSelectedYear] = useState(searchParams.get("year") || "");
+  const [selectedFuel, setSelectedFuel] = useState("");
+  const [selectedYear, setSelectedYear] = useState("");
+  
+  useEffect(() => {
+    setSelectedFuel(searchParams.get("fuel") || "");
+    setSelectedYear(searchParams.get("year") || "");
+  }, [searchParams]);
+  
   const selectedManufacturer = searchParams.get("manufacturer");
   const selectedLimit = searchParams.get("limit");
   const selectedModel = searchParams.get("model");
-
+  // const dropDownOptions = [
+  //   { label: "Option1", value: "option1" },
+  //   { label: "Option2", value: "option2" },
+  //   { label: "Option3", value: "option3" },
+  // ];
   const [filteredCars, setFilteredCars] = useState<CarProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -32,7 +163,7 @@ export default function Home() {
     async function getCars() {
       setIsLoading(true);
       try {
-        let allCars = [];
+        let allCars: CarProps[] = [];
         if (selectedManufacturer || selectedModel) {
           allCars = await fetchCars({
             manufacturer: selectedManufacturer || "",
@@ -42,18 +173,18 @@ export default function Home() {
             model: selectedModel || "",
           });
         }
-        setFilteredCars(allCars);
+        setFilteredCars(allCars || []);
       } catch (error) {
         console.error("Error fetching cars:", error);
         setFilteredCars([]);
       }
       setIsLoading(false);
     }
-
+  
     getCars();
   }, [selectedFuel, selectedYear, selectedManufacturer, selectedLimit, selectedModel]);
-
-  const handleFilterChange = (title: string, value: string) => {
+  
+  const handleFilterChange = useCallback((title: string, value: string) => {
     const params = new URLSearchParams(window.location.search);
     if (value) {
       params.set(title, value);
@@ -61,224 +192,188 @@ export default function Home() {
       params.delete(title);
     }
     router.push(`/carsearch?${params.toString()}`);
-  };
+  }, [router]);
 
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <main className="p-4 pt-32 items-center justify-center">
-        {/* Filters for larger screens */}
-        <div className="flex min-h-full items-center justify-center p-4  pt-0 text-center">
-          <div className="hidden sm:block h-[250px]">
-            
-          </div>
-        </div>
-
-        {/* Loading State */}
-        {isLoading ? (
-          <div className="text-center text-xl">Loading cars...</div>
-        ) : !filteredCars.length ? (
-          selectedManufacturer || selectedModel ? (
-            <div className="home__error-container">
-              <h2 className="text-black text-xl font-bold">Oops, no results</h2>
-            </div>
-          ) : null
-        ) : (
-          <section>
-            <div className="text-center grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 relative">
-              {filteredCars.map((car) => (
-                <CarCard key={car.id} car={car} />
-              ))}
-            </div>
-
-            <ShowMore
-              pageNumber={parseInt(selectedLimit || "12", 10) / 12}
-              isNext={parseInt(selectedLimit || "12", 10) > filteredCars.length}
-            />
-          </section>
-        )}
-
-        {/* 3D Toggle Button Section */}
-        <div className="flex justify-center max-w-[640px] md:max-w-none">
-          <motion.div
-            className="relative w-full flex justify-center items-center sm:hidden"
-            transition={{ duration: 0.5 }}
-          >
-            {activeIndex === 0 && (
-              <motion.div
-                className="h-full flex items-center justify-center rounded-lg shadow-lg text-xl font-bold transition-transform plate_background"
-                transition={{ duration: 0.8 }}
-              >
-                <Hero />
-              </motion.div>
-            )}
-            {activeIndex === 1 && (
-              <motion.div
-                className="w-full flex items-center justify-center rounded-lg shadow-lg text-xl font-bold transition-transform"
-                transition={{ duration: 0.8 }}
-              >
-                <div className="mt-16 pt-16">
-                  <h1 className="text-center text-3xl font-extrabold">Find your car by plate number</h1>
-                  <p className="text-center">Explore the car specs</p>
-                  <FindCarByPlate />
-                </div>
-              </motion.div>
-            )}
-            {activeIndex === 2 && (
-              <div className="mt-16">
-                <h1 className="text-4xl font-extrabold text-center sm:hidden">Car Catalogue</h1>
-                <p className="text-center py-2">Explore the cars you might like</p>
-                <MobileFilters
-                  selectedFuel={selectedFuel}
-                  selectedYear={selectedYear}
-                  setSelectedFuel={setSelectedFuel}
-                  setSelectedYear={setSelectedYear}
-                  handleFilterChange={handleFilterChange}
-                />
-              </div>
-            )}
-          </motion.div>
-        </div>
-
-        {/* Manual Toggle Buttons */}
-        <div className="flex justify-center mt-5 gap-4 md:hidden">
-          <button
-            onClick={() => {
-              setActiveIndex(0);
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-            className="ml-10 px-3 py-3 rounded-xl bg-blue-500 text-white font-semibold shadow-md transition-all duration-300 hover:bg-blue-700 hover:shadow-lg active:scale-95"
-          >
-            Featured Cars
-          </button>
-          <button
-            onClick={() => {
-              setActiveIndex(1);
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-            className="ml-2 mr-2 px-3 py-3 rounded-xl bg-blue-700 text-white font-semibold shadow-md transition-all duration-300 hover:bg-green-700 hover:shadow-lg active:scale-95"
-          >
-            Plate Info
-          </button>
-          <button
-            onClick={() => {
-              setActiveIndex(2);
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-            className="mr-10 px-3 py-3 rounded-xl bg-blue-900 text-white font-semibold shadow-md transition-all duration-300 hover:bg-purple-700 hover:shadow-lg active:scale-95"
-          >
-            Recommended for you
-          </button>
-        </div>
-
-        {/* Desktop Layout for Frames */}
-        <div className="hidden md:grid md:grid-cols-3 gap-4">
-          <motion.div
-            className="flex items-center justify-center rounded-lg shadow-lg text-xl font-bold transition-transform"
-            transition={{ duration: 0.8 }}
-          >
-            <Hero />
-          </motion.div>
-          <motion.div
-            className="w-full flex items-center justify-center rounded-lg shadow-lg text-xl font-bold transition-transform"
-            transition={{ duration: 0.8 }}
-          >
-            <div className="mt-16 pt-16">
-              <h1 className="text-center text-3xl font-extrabold ">Find your car by plate number</h1>
-              <p className="text-center ">Explore the car specs</p>
-              <FindCarByPlate />
-            </div>
-          </motion.div>
-          <div className="mt-16">
-            <h1 className="text-4xl font-extrabold text-center">Car Catalogue</h1>
-            <p className="text-center py-2">Explore the cars you might like</p>
-            <MobileFilters
-              selectedFuel={selectedFuel}
-              selectedYear={selectedYear}
-              setSelectedFuel={setSelectedFuel}
-              setSelectedYear={setSelectedYear}
-              handleFilterChange={handleFilterChange}
-            />
-          </div>
-        </div>
-
-        
-{/* Blogs Section */}
-<div className="titleParent w-full max-w-screen-lg mx-auto overflow-x-hidden px-4">
-{/* Blogs Section */}
-<div className="titleParent w-full max-w-screen-xl mx-auto overflow-x-hidden px-6">
-  {/* Section Title */}
-  <div className="title w-full text-center">
-    <div className="titleChild" />
-    <div className="featuredWrapper">
-      <div className="featured text-2xl font-bold">Blogs</div>
-    </div>
-  </div>
+  // Use the "HomePage" namespace to access your translations
+  const t = useTranslations("HomePage");
   
-  {/* Blog Container */}
-  <div className="blogParent flex flex-wrap justify-center gap-6">
-    {/* Blog 1 */}
-    <div className="blog ">
-      <div className="rectangleParent shadow-md rounded-lg overflow-hidden">
-        <Image
-          className="frameChild w-full h-auto object-cover"
-          width={500}
-          height={350}
-          alt="Porsche Cayenne SUV"
-          src="/hero.png"
-        />
-        <div className="findYourPlaceWithWrapper p-4 text-center">
-          <div className="findYourPlace text-lg font-medium">
-            Is the 2024 Porsche Cayenne S a Good SUV? 4 Pros and 3 Cons
+  return (
+    <main className="p-4 items-center justify-center sm:pt-[5%]">
+      {/* Filters for larger screens */}
+      <div className="flex min-h-full items-center justify-center p-4 pt-0 text-center ">
+        <div className="hidden sm:block">
+          {/* Additional desktop-only filters */}
+        </div>
+      </div>
+
+      {/* 3D Toggle Button Section */}
+      <div className="flex justify-center md:max-w-none ">
+        <motion.div
+          className="relative w-full flex justify-center items-center sm:hidden"
+          transition={{ duration: 0.5 }}
+        >
+          {activeIndex === 0 && (
+            <motion.div
+              className="h-full flex items-center justify-center rounded-lg shadow-lg text-xl font-bold plate_background "
+              transition={{ duration: 0.8 }}
+            >
+              <Hero />
+            </motion.div>
+          )}
+          {activeIndex === 1 && (
+            <motion.div
+              className="w-full flex items-center justify-center rounded-lg shadow-lg text-xl font-bold transition-transform h-[600px] "
+              transition={{ duration: 0.8 }}
+            >
+              <div className="">
+                <h1 className="text-center text-3xl font-extrabold">
+                  {t("tab_search_by_plate")}
+                </h1>
+                <p className="text-center">
+                  {t("explore_car_specs")}
+                </p>
+                <FindCarByPlate />
+              </div>
+            </motion.div>
+          )}
+          {activeIndex === 2 && (
+            <div className=" ">
+              <h1 className="text-4xl font-extrabold text-center sm:hidden">
+                {t("car_catalogue_heading")}
+              </h1>
+              <p className="text-center py-2">
+                {t("explore_cars_like")}
+              </p>
+              <MobileFilters
+                selectedFuel={selectedFuel}
+                selectedYear={selectedYear}
+                setSelectedFuel={setSelectedFuel}
+                setSelectedYear={setSelectedYear}
+                handleFilterChange={handleFilterChange}
+              />
+            </div>
+          )}
+        </motion.div>
+      </div>
+      {/* Loading State */}
+      {isLoading && activeIndex === 2 ? (
+        <div className="text-center text-xl ">{t("loading_cars")}</div>
+      ) : !filteredCars.length ? (
+        selectedManufacturer || selectedModel ? (
+          <div className="home__error-container">
+            <h2 className="text-black text-xl font-bold">
+              {t("oops_no_results")}
+            </h2>
+          </div>
+        ) : null
+      ) : activeIndex !== 2 ? (
+        <section>{/* Other sections can be added here */}</section>
+      ) : (
+        <section>
+          <div className="text-center grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 relative">
+            {filteredCars.map((car) => (
+              <CarCard key={car.id} car={car} />
+            ))}
+          </div>
+
+          <ShowMore
+            pageNumber={parseInt(selectedLimit || "12", 10) / 12}
+            isNext={parseInt(selectedLimit || "12", 10) > filteredCars.length}
+          />
+        </section>
+      )}
+
+
+<ResponsiveNewsLayout />
+
+
+      {/* featured listings section */}
+      <FeaturedListingsSection listings={listings} />
+
+      {/* sales and reviews section */}
+      <SalesAndReviewsSection />
+
+      {/* recently added section */}
+      <RecentlyAddedSection />
+
+      {/* customer testimonials section */}
+      <CustomerTestimonialsSection />
+
+      {/* latest blog posts section */}
+      <LatestBlogPostsSection />
+
+      {/* Blogs Section */}
+      <div className="titleParent w-full max-w-screen-lg mx-auto overflow-x-hidden px-4">
+        <div className="titleParent w-full max-w-screen-xl mx-auto overflow-x-hidden px-6">
+          <div className="title w-full text-center">
+            <div className="titleChild" />
+            <div className="featuredWrapper">
+              <div className="featured text-2xl font-bold">
+                {t("blogs_heading")}
+              </div>
+            </div>
+          </div>
+
+          <div className="blogParent flex flex-wrap justify-center gap-6">
+            <div className="blog">
+              <div className="rectangleParent shadow-md rounded-lg overflow-hidden">
+                <Image
+                  className="frameChild w-full h-auto object-cover"
+                  width={300}
+                  height={250}
+                  alt={t("porsche_alt")}
+                  src="/hero.png"
+                />
+                <div className="findYourPlaceWithWrapper text-center">
+                  <div className="findYourPlace text-lg font-medium">
+                    {t("blog1_title")}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="blog">
+              <div className="rectangleParent shadow-md rounded-lg overflow-hidden">
+                <Image
+                  className="frameChild w-full h-auto object-cover"
+                  width={500}
+                  height={350}
+                  alt={t("toyota_alt")}
+                  src="/hero.png"
+                />
+                <div className="findYourPlaceWithWrapper p-4 text-center">
+                  <div className="findYourPlace text-lg font-medium">
+                    {t("blog2_title")}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="blog">
+              <div className="rectangleParent shadow-md rounded-lg overflow-hidden">
+                <Image
+                  className="frameChild w-full h-auto object-cover"
+                  width={500}
+                  height={350}
+                  alt={t("kia_alt")}
+                  src="/hero.png"
+                />
+                <div className="findYourPlaceWithWrapper p-4 text-center">
+                  <div className="findYourPlace text-lg font-medium">
+                    {t("blog3_title")}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </main>
+  );
+}
 
-    {/* Blog 2 */}
-    <div className="blog ">
-      <div className="rectangleParent shadow-md rounded-lg overflow-hidden">
-        <Image
-          className="frameChild w-full h-auto object-cover"
-          width={500}
-          height={350}
-          alt="Toyota RAV4"
-          src="/hero.png"
-        />
-        <div className="findYourPlaceWithWrapper p-4 text-center">
-          <div className="findYourPlace text-lg font-medium">
-            Compact Steamroller: 2024 Toyota RAV4 Starts at $29,825
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* Blog 3 */}
-    <div className="blog ">
-      <div className="rectangleParent shadow-md rounded-lg overflow-hidden">
-        <Image
-          className="frameChild w-full h-auto object-cover"
-          width={500}
-          height={350}
-          alt="Kia Niro EV"
-          src="/hero.png"
-        />
-        <div className="findYourPlaceWithWrapper p-4 text-center">
-          <div className="findYourPlace text-lg font-medium">
-            2024 Kia Niro EV Costs $50 More, Nearly Unchanged Otherwise
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-</div>
-
-
-
-
-      </main>
-    </Suspense>
+export default function HomePage() {
+  return (
+      <HomeContent />
   );
 }

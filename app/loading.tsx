@@ -1,7 +1,4 @@
 'use client'; // Ensures this code is client-side only
-
-import { useSearchParams } from 'next/navigation';
-
 export default function Custom404() {
 
   // Handle searchParams or fallback logic here
