@@ -1,6 +1,6 @@
-import { Heading } from "../../components/Heading";
-import { SelectBox } from "../../components/SelectBox";
-import { Img } from "../../components/Img/index";
+import { Heading } from "../Heading";
+import { SelectBox } from "../SelectBox";
+import { Img } from "../Img/index";
 import React, { useState } from 'react';
 
 const YearSelectBox = () => {

@@ -5,7 +5,7 @@ import { Button } from "../Button/index";
 import { Img } from "../Img/index";
 import { Text } from "../Text/index";
 import FindCarByPlate from "@/app/findcarbyplate/FindCarByPlate";
-import YearSelectBox from "@/app/homeeight/yearselectbox";
+import YearSelectBox from "@/components/homeeight/yearselectbox";
 import { motion } from "framer-motion";
 import { Tabs, TabList, Tab, TabPanel } from "react-tabs";
 import { SeekBar } from "../SeekBar";

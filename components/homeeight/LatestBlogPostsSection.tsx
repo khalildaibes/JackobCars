@@ -1,7 +1,7 @@
-import { Text } from "../../components/Text";
-import { Heading } from "../../components/Heading";
-import { Img } from "../../components/Img/index";
-import HomeEightArticle from "../../components/HomeEightArticle";
+import { Text } from "../Text";
+import { Heading } from "../Heading";
+import { Img } from "../Img/index";
+import HomeEightArticle from "../HomeEightArticle";
 import Link from "next/link";
 import React, { Suspense } from "react";
 import { useTranslations } from "next-intl";

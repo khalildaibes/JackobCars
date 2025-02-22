@@ -1,4 +1,4 @@
-import CarSalesHeader from "../../components/CarSalesHeader";
+import CarSalesHeader from "../CarSalesHeader";
 import React, { Suspense } from "react";
 
 const carCategories = [

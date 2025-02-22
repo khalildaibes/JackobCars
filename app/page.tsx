@@ -12,11 +12,11 @@ import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import React from "react";
-import SalesAndReviewsSection from "./homeeight/SalesAndReviewsSection";
-import CustomerTestimonialsSection from "./homeeight/CustomerTestimonialsSection";
-import FeaturedListingsSection from "./homeeight/FeaturedListingsSection";
-import LatestBlogPostsSection from "./homeeight/LatestBlogPostsSection";
-import RecentlyAddedSection from "./homeeight/RecentlyAddedSection";
+import SalesAndReviewsSection from "../components/homeeight/SalesAndReviewsSection";
+import CustomerTestimonialsSection from "../components/homeeight/CustomerTestimonialsSection";
+import FeaturedListingsSection from "../components/homeeight/FeaturedListingsSection";
+import LatestBlogPostsSection from "../components/homeeight/LatestBlogPostsSection";
+import RecentlyAddedSection from "../components/homeeight/RecentlyAddedSection";
 import {  useTranslations } from "next-intl";
 import ResponsiveNewsLayout from "@/components/Responsivenews";
 const listings = [

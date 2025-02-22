@@ -1,8 +1,8 @@
-import { Heading } from "../../components/Heading";
-import { Button } from "../../components/Button";
-import { Img } from "../../components/Img/index";
-import { Text } from "../../components/Text";
-import SpecialFinancingOffer from "../../components/SpecialFinancingOffer";
+import { Heading } from "../Heading";
+import { Button } from "../Button";
+import { Img } from "../Img/index";
+import { Text } from "../Text";
+import SpecialFinancingOffer from "../SpecialFinancingOffer";
 import React, { Suspense } from "react";
 
 const financeOptionsGrid = [
