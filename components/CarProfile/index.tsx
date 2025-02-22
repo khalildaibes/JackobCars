@@ -1,5 +1,7 @@
-import { Img, Text, Heading, Button } from "./..";
+import { Heading } from "lucide-react";
 import React from "react";
+import { Button } from "../Button";
+import { Img } from "../Img";
 
 interface Props {
   className?: string;
