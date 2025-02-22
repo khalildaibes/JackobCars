@@ -1,8 +1,8 @@
-import { Heading } from "lucide-react";
+import { Heading } from "../Heading";
 import React from "react";
 import { Button } from "../Button";
 import { Img } from "../Img";
-
+import { Text } from "../Text";
 interface Props {
   className?: string;
   carImage?: string;
