@@ -1,3 +1,0 @@
-#!/usr/bin/env node
-// Redirect any node-waf call to node-gyp
-require('node-gyp/bin/node-gyp.js');
