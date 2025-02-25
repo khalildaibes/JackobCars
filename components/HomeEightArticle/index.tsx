@@ -23,7 +23,7 @@ export default function HomeEightArticle({
   ...props
 }: Props) {
   return (
-    <div {...props} className={`${props.className} flex items-center w-[42%] md:w-full`}>
+    <div {...props} className={`${props.className} flex items-center md:w-full`}>
       <div className="flex w-full flex-col items-center justify-center">
         <div className="relative h-[298px] content-center self-stretch rounded-[16px]">
           <Img

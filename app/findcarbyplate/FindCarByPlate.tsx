@@ -85,7 +85,8 @@ const CarSearch = () => {
   };
 
   return (
-    <div dir="rtl" className="p-4 text-center ">
+    <div className="items-center justify-center w-full">
+    <div dir="rtl" className="p-4 text-center  ">
       <input
         type="number"
         value={plateNumber}
@@ -118,6 +119,7 @@ const CarSearch = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

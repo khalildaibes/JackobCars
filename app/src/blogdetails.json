@@ -1,0 +1,139 @@
+{
+    "breadcrumb": [
+      {
+        "text": "Home",
+        "link": "#"
+      },
+      {
+        "text": "Accessories",
+        "link": "#",
+        "isCurrentPage": true
+      }
+    ],
+    "pageTitle": "BMW X6 M50i is designed to exceed your sportiest.",
+    "authorSection": {
+      "admin": "admin",
+      "categories": ["Accessories", "Exterior"],
+      "date": "November 22, 2023",
+      "adminImage": "img_test1_150x150_jpg_40x40.png"
+    },
+    "mainImage": {
+      "src": "img_blog9_jpg.png",
+      "width": 1400,
+      "height": 494,
+      "alt": "Blog9 Jpg"
+    },
+    "content": {
+      "paragraphs": [
+        "Aliquam hendrerit sollicitudin purus, quis rutrum mi accumsan nec. Quisque bibendum orci ac nibh facilisis, at malesuada orci congue. Nullam tempus sollicitudin cursus. Ut et adipiscing erat. Curabitur this is a text link libero tempus congue.",
+        "Duis mattis laoreet neque, et ornare neque sollicitudin at. Proin sagittis dolor sed mi elementum pretium. Donec et justo ante. Vivamus egestas sodales est, eu rhoncus urna semper eu. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer tristique elit lobortis purus bibendum, quis dictum metus mattis. Phasellus posuere felis sed eros porttitor mattis. Curabitur massa magna, tempor in blandit id, porta in ligula. Aliquam laoreet nisl massa, at interdum mauris sollicitudin et."
+      ]
+    },
+    "quote": {
+      "text": "Aliquam hendrerit sollicitudin purus, quis rutrum mi accumsan nec. Quisque bibendum orci ac nibh facilisis, at malesuada orci congue.",
+      "author": "Luis Pickford"
+    },
+    "courseBenefits": [
+      {
+        "benefittext1": "",
+        "benefittext2": "",
+        "benefittext3": "",
+        "benefittext4": "",
+        "benefittext5": ""
+      },
+      {
+        "benefittext1": "Build & test a complete mobile app.",
+        "benefittext2": "Learn to design mobile apps & websites.",
+        "benefittext3": "Design 3 different logos.",
+        "benefittext4": "Create low-fidelity wireframe.",
+        "benefittext5": "Downloadable exercise files."
+      }
+    ],
+    "detailImage": {
+      "src": "img_detail_post_jpg.png",
+      "width": 924,
+      "height": 450,
+      "alt": "Detail Post Jpg"
+    },
+    "requirements": [
+      "We do not require any previous experience or pre-defined skills to take this course. A great orientation would be enough to master UI/UX design.",
+      "A computer with a good internet connection.",
+      "Adobe Photoshop (OPTIONAL)"
+    ],
+    "socialShare": {
+      "shareText": "lbl_share_this_post2",
+      "icons": [
+        "img_facebook.svg",
+        "img_facebook.svg",
+        "img_facebook.svg",
+        "img_facebook.svg"
+      ],
+      "tags": [
+        {
+          "text": "Exterior",
+          "type": "div"
+        },
+        {
+          "text": "Fuel System",
+          "type": "button"
+        },
+        {
+          "text": "Sound",
+          "type": "div"
+        }
+      ]
+    },
+    "authorComment": {
+      "adminImage": "img_test1_150x150_jpg_70x70.png",
+      "admin": "admin",
+      "commentText": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit."
+    },
+    "postNavigation": {
+      "previous": {
+        "icon": "img_icon_black_900_40x60.svg",
+        "text": "BMW X5 Gold 2024 Sport Review: Light on Sport"
+      },
+      "next": {
+        "icon": "img_arrow_right_black_900_1.svg",
+        "text": "2024 BMW ALPINA XB7 with exclusive details,"
+      }
+    },
+    "comments": [
+      {
+        "adminImage": "img_test1_150x150_jpg_40x40.png",
+        "admin": "admin",
+        "date": "November 22, 2023",
+        "reply": "Reply",
+        "comment": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam."
+      },
+      {
+        "adminImage": "img_test1_150x150_jpg_40x40.png",
+        "admin": "admin",
+        "date": "November 22, 2023",
+        "reply": "Reply",
+        "comment": "Duis mattis laoreet neque, et ornare neque sollicitudin at. Proin sagittis dolor sed mi elementum pretium. Donec et justo ante. Vivamus egestas sodales est, eu rhoncus urna semper eu.",
+        "secondaryImage": "img_image_40x40.png"
+      },
+      {
+        "adminImage": "img_test1_150x150_jpg_40x40.png",
+        "admin": "admin",
+        "date": "January 3, 2024",
+        "reply": "Reply",
+        "comment": "سي",
+        "secondaryImage": "img_team2_150x150_jpg.png"
+      }
+    ],
+    "commentCount": 3,
+    "commentForm": {
+      "inputs": {
+        "name": "Your Name",
+        "email": "Your Email",
+        "website": "Your Website",
+        "comment": "Comment"
+      },
+      "checkboxText": "Save my name, email, and website in this browser for the next time I comment.",
+      "submitButtonText": "Submit Comment"
+    },
+    "relatedPosts": []
+  }
+  

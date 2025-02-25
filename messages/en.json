@@ -35,5 +35,62 @@
 
     
 
+  },
+  "BlogDetailsPage": {
+    "breadcrumb": {
+      "home": "Home",
+      "accessories": "Accessories"
+    },
+    "heading": {
+      "title": "BMW X6 M50i is designed to exceed your sportiest."
+    },
+    "postMeta": {
+      "admin": "admin",
+      "date": "November 22, 2023",
+      "category": "Accessories, Exterior"
+    },
+    "blogImageAlt": "Blog Image",
+    "blogContent": {
+      "paragraph1": "Aliquam hendrerit sollicitudin purus, quis rutrum mi accumsan nec. Quisque bibendum orci ac nibh facilisis, at malesuada orci congue. Nullam tempus sollicitudin cursus. Ut et adipiscing erat. Curabitur this is a text link libero tempus congue.",
+      "paragraph2": "Duis mattis laoreet neque, et ornare neque sollicitudin at. Proin sagittis dolor sed mi elementum pretium. Donec et justo ante. Vivamus egestas sodales est, eu rhoncus urna semper eu. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer tristique elit lobortis purus bibendum, quis dictum metus mattis. Phasellus posuere felis sed eros porttitor mattis. Curabitur massa magna, tempor in blandit id, porta in ligula. Aliquam laoreet nisl massa, at interdum mauris sollicitudin et."
+    },
+    "quoteSection": {
+      "text": "Aliquam hendrerit sollicitudin purus, quis rutrum mi accumsan nec. Quisque bibendum orci ac nibh facilisis, at malesuada orci congue.",
+      "author": "Luis Pickford"
+    },
+    "courseBenefits": {
+      "whatYoullLearn": "What you'll learn"
+    },
+    "requirements": {
+      "heading": "Requirements",
+      "item1": "We do not require any previous experience or pre-defined skills to take this course. A great orientation would be enough to master UI/UX design.",
+      "item2": "A computer with a good internet connection.",
+      "item3": "Adobe Photoshop (OPTIONAL)"
+    },
+    "shareSection": {
+      "shareText": "Share this post",
+      "categories": {
+        "exterior": "Exterior",
+        "fuelSystem": "Fuel System",
+        "sound": "Sound"
+      }
+    },
+    "pagination": {
+      "previousPost": "Previous Post",
+      "previousPostTitle": "BMW X5 Gold 2024 Sport Review: Light on Sport",
+      "nextPost": "Next Post",
+      "nextPostTitle": "2024 BMW ALPINA XB7 with exclusive details,"
+    },
+    "comments": {
+      "commentsHeading": "3 Comments",
+      "leaveAComment": "Leave a Comment",
+      "saveInfo": "Save my name, email, and website in this browser for the next time I comment.",
+      "submitComment": "Submit Comment"
+    }
+  },
+  "Common": {
+    "Home": "Home",
+    "Accessories": "Accessories"
   }
+  
 }

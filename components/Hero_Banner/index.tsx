@@ -54,7 +54,7 @@ export default function Header({ ...props }: Props) {
             transition={{ duration: 0.8 }}
           >
             <div className="">
-              <p className="text-center">
+              <p className="text-center ">
                 {t("explore_car_specs")}
               </p>
               <FindCarByPlate />

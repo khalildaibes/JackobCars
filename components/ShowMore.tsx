@@ -2,8 +2,8 @@
 import { ShowMoreProps } from "@/types";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { CustomButton } from ".";
 import { updateSearchParams } from "@/utils";
+import CustomButton from "./CustomButton";
 
 const ShowMore = ({ pageNumber, isNext }: ShowMoreProps) => {
   const router = useRouter();

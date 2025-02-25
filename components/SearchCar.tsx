@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SearchBar } from "@/components";
+import SearchBar from "./SearchBar";
 // import { fuels, yearsOfProduction } from "@/constants";
 
 interface MobileFiltersProps {

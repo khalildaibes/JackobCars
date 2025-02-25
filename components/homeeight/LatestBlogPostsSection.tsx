@@ -62,7 +62,7 @@ export default function LatestBlogPostsSection() {
   return (
     <>
       {/* Latest blog posts section */}
-      <div className="mt-[108px] flex justify-center self-stretch">
+      <div className="mt-[108px] flex justify-center self-stretch ">
         <div className="container-xs flex justify-center lg:px-5 md:px-5">
           <div className="flex w-full flex-col gap-6">
             <div className="flex items-center justify-center sm:flex-col">
@@ -87,13 +87,16 @@ export default function LatestBlogPostsSection() {
                 />
               </div>
             </div>
-            <div className="flex gap-[30px] md:flex-col">
-              <Suspense fallback={<div>{t("loading_cars")}</div>}>
-                {articleList.map((d, index) => (
-                  <HomeEightArticle {...d} key={"group4922" + index} />
-                ))}
-              </Suspense>
-            </div>
+            <div className="flex gap-[30px] overflow-x-auto ">
+  <Suspense fallback={<div>{t("loading_cars")}</div>}>
+    {articleList.map((d, index) => (
+      <div key={"group4922" + index} className=" ">
+        <HomeEightArticle {...d} />
+      </div>
+    ))}
+  </Suspense>
+</div>
+
           </div>
         </div>
       </div>

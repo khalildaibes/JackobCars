@@ -29,5 +29,63 @@
     "great_deal": "עסקה מצוינת",
     "sale": "מכירה",
     "kia_alt": "Kia Niro EV"
-  }
+  },
+  
+    "BlogDetailsPage": {
+      "breadcrumb": {
+        "home": "בית",
+        "accessories": "אביזרים"
+      },
+      "heading": {
+        "title": "BMW X6 M50i מעוצבת כדי לעבור את הגבולות הספורטיביים שלך."
+      },
+      "postMeta": {
+        "admin": "מנהל",
+        "date": "22 בנובמבר 2023",
+        "category": "אביזרים, חיצוני"
+      },
+      "blogImageAlt": "תמונת בלוג",
+      "blogContent": {
+        "paragraph1": "אליאקום האנדריט סוליציטודין פורוס, קוויס רוטורם מי אקומסן נק. זהו טקסט לדוגמה לתרגום מעברית לאנגלית.",
+        "paragraph2": "דויס מטיס לאוריט נקו, ואורנארה נקו סוליציטודין את. זהו טקסט לדוגמה בעברית המציג תוכן מפורט."
+      },
+      "quoteSection": {
+        "text": "ציטוט טקסט המדגים את החשיבות של אלמנטים מעוצבים בתוכן.",
+        "author": "לואיס פיקפורד"
+      },
+      "courseBenefits": {
+        "whatYoullLearn": "מה תלמד"
+      },
+      "requirements": {
+        "heading": "דרישות",
+        "item1": "אין צורך בניסיון קודם או בכישורים מוגדרים מראש כדי לקחת קורס זה. הכוונה טובה תספיק לשלוט בעיצוב UI/UX.",
+        "item2": "מחשב עם חיבור אינטרנט טוב.",
+        "item3": "Adobe Photoshop (אופציונלי)"
+      },
+      "shareSection": {
+        "shareText": "שתף את הפוסט",
+        "categories": {
+          "exterior": "חיצוני",
+          "fuelSystem": "מערכת דלק",
+          "sound": "קול"
+        }
+      },
+      "pagination": {
+        "previousPost": "פוסט קודם",
+        "previousPostTitle": "סקירת BMW X5 Gold 2024 Sport: קל על הספורט",
+        "nextPost": "פוסט הבא",
+        "nextPostTitle": "2024 BMW ALPINA XB7 עם פרטים בלעדיים,"
+      },
+      "comments": {
+        "commentsHeading": "3 תגובות",
+        "leaveAComment": "השאר תגובה",
+        "saveInfo": "שמור את שמי, האימייל והאתר בדפדפן הזה לפעם הבאה שאני מגיב.",
+        "submitComment": "שלח תגובה"
+      }
+    },
+    "Common": {
+      "Home": "בית",
+      "Accessories": "אביזרים"
+    }
+    
 }

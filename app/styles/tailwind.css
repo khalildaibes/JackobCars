@@ -158,6 +158,7 @@ li:hover {
   [type="checkbox"]:focus {
     --tw-ring-color: transparent;
   }
+  
 }
 
 @layer components {

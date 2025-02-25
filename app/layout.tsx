@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
-import { Footer, Navbar } from "@/components";
 // import { Suspense } from "react";
 import "../app/styles/index.css";
 import "../app/styles/tailwind.css";
@@ -14,6 +13,8 @@ export const metadata: Metadata = {
 };
 import {getLocale, getMessages} from 'next-intl/server';
 import TranslateChildren from "@/components/TransltedChildren";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default async function RootLayout({
   children

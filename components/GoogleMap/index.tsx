@@ -1,63 +1,65 @@
-// "use client";
-// import React from "react";
-// import { Wrapper } from "@googlemaps/react-wrapper";
+"use client";
+import React from "react";
+import { Wrapper } from "@googlemaps/react-wrapper";
 
-// type GoogleMapProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> &
-//   Partial<{ showMarker: boolean }>;
-// type MapProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> &
-//   Partial<{
-//     center: google.maps.LatLngLiteral;
-//     zoom: number;
-//     markers: google.maps.LatLngLiteral[];
-//   }>;
+type GoogleMapProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> &
+  Partial<{ showMarker: boolean }>;
 
-// const Map = ({ center, zoom, markers, ...props }: MapProps) => {
-//   const ref = React.useRef<HTMLDivElement>(null);
-//   const [map, setMap] = React.useState<google.maps.Map>();
+type MapProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> &
+  Partial<{
+    center: google.maps.LatLngLiteral;
+    zoom: number;
+    markers: google.maps.LatLngLiteral[];
+  }>;
 
-//   React.useEffect(() => {
-//     if (ref.current && !map) {
-//       setMap(new window.google.maps.Map(ref.current, { center, zoom }));
-//     }
-//   }, [ref, map, center, zoom]);
+const Map = ({ center, zoom, markers, ...props }: MapProps) => {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const [map, setMap] = React.useState<google.maps.Map>();
 
-//   React.useEffect(() => {
-//     markers?.forEach((markerData) => {
-//       const newMarker = new window.google.maps.Marker();
-//       newMarker.setOptions({
-//         position: markerData,
-//         map: map,
-//         title: "Hello World!",
-//       });
-//     });
-//   }, [map, markers]);
+  React.useEffect(() => {
+    if (ref.current && !map) {
+      setMap(new window.google.maps.Map(ref.current, { center, zoom }));
+      // Alternatively, if needed:
+      // setMap(new (window as any).google.maps.Map(ref.current, { center, zoom }));
+    }
+  }, [ref, map, center, zoom]);
 
-//   return <div ref={ref} id="map" {...props} />;
-// };
+  React.useEffect(() => {
+    markers?.forEach((markerData) => {
+      const newMarker = new window.google.maps.Marker();
+      newMarker.setOptions({
+        position: markerData,
+        map: map,
+        title: "Hello World!",
+      });
+    });
+  }, [map, markers]);
 
-// const GoogleMap = ({ children, showMarker = false, className, ...restProps }: GoogleMapProps) => {
-//   const [currentLocation, setLocation] = React.useState({ lat: 0, lng: 0 });
+  return <div ref={ref} id="map" {...props} />;
+};
 
-//   React.useEffect(() => {
-//     navigator?.geolocation.getCurrentPosition(({ coords: { latitude: lat, longitude: lng } }) => {
-//       const pos = { lat, lng };
-//       setLocation(pos);
-//     });
-//   }, []);
+const GoogleMap = ({ children, showMarker = false, className, ...restProps }: GoogleMapProps) => {
+  const [currentLocation, setLocation] = React.useState<google.maps.LatLngLiteral>({ lat: 0, lng: 0 });
 
-//   const apiKey = (process && process.env?.NEXT_PUBLIC_GOOGLE_MAP_ID) || "";
+  React.useEffect(() => {
+    navigator?.geolocation.getCurrentPosition(({ coords: { latitude: lat, longitude: lng } }) => {
+      setLocation({ lat, lng });
+    });
+  }, []);
 
-//   return (
-//     <Wrapper apiKey={apiKey}>
-//       <Map
-//         center={currentLocation}
-//         zoom={3}
-//         className={className}
-//         markers={showMarker ? [currentLocation] : []}
-//         {...restProps}
-//       />
-//     </Wrapper>
-//   );
-// };
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_ID || "";
 
-// export { GoogleMap };
+  return (
+    <Wrapper apiKey={apiKey}>
+      <Map
+        center={currentLocation}
+        zoom={3}
+        className={className}
+        markers={showMarker ? [currentLocation] : []}
+        {...restProps}
+      />
+    </Wrapper>
+  );
+};
+
+export { GoogleMap };

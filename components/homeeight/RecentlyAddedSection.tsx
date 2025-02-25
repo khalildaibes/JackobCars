@@ -141,21 +141,31 @@ export default function RecentlyAddedSection() {
       {/* recently added section */}
       <div className="mt-[108px] flex justify-end self-stretch">
         <div className="flex w-[100%] flex-col gap-6 lg:w-full lg:px-5 md:w-full md:px-5">
-          <div className="container-xs">
-            <div className="flex items-center justify-center sm:flex-col">
-              <Heading as="h1" className="text-[40px] font-bold lg:text-[34px] md:text-[34px] sm:text-[32px]">
-                Recently Added
-              </Heading>
-              <div className="mb-4 flex flex-1 items-center justify-end gap-[11px] self-end sm:self-stretch">
-                <Link href="#">
-                  <Text as="p" className="text-[15px] font-medium">
-                    View All
-                  </Text>
-                </Link>
-                <Img src="img_arrow_left.svg" width={14} height={14} alt="Arrow Left" className="h-[14px]" />
-              </div>
-            </div>
-          </div>
+        <div className="container mx-auto px-4">
+  <div className="w-[90%] flex flex-col items-center justify-center gap-4 sm:flex-row sm:justify-between">
+    <Heading
+      as="h1"
+      className="text-2xl font-bold text-center sm:text-[40px] sm:font-bold sm:text-left md:text-[34px] lg:text-[34px]"
+    >
+      Recently Added
+    </Heading>
+    <div className="flex items-center gap-2">
+      <Link href="#">
+        <Text as="p" className="text-base font-medium">
+          View All
+        </Text>
+      </Link>
+      <Img
+        src="img_arrow_left.svg"
+        width={14}
+        height={14}
+        alt="Arrow Left"
+        className="h-4"
+      />
+    </div>
+  </div>
+</div>
+
           <div>
             <div className="flex flex-col items-start">
               <div className="container-xs flex flex-col gap-[50px] lg:px-5 md:px-5 rounded-[16px]">
@@ -172,7 +182,7 @@ export default function RecentlyAddedSection() {
                     ref={sliderRef}
                     items={carListings.map((car) => (
                       <React.Fragment key={car.id}>
-                        <Link href={`cartdetails?car=${car.id}`}>
+                        <Link href={`cardetails?car=${car.id}`}>
                           <div className="px-[15px] rounded-[16px]">
                             <div className="flex flex-col rounded-[16px] bg-white-a700 bg-[url(/images/img_background_820x1860.png)] bg-no-repeat bg-cover">
                               <div className="relative h-[218px] content-center lg:h-auto md:h-auto">

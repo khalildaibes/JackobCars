@@ -130,6 +130,144 @@ label[floating-label="contained"] {
 
 
 
+* {
+  box-sizing: border-box;
+  line-height: normal;
+  font-family: inherit;
+  margin: unset;
+}
+
+a {
+  text-decoration: none;
+  display: block;
+}
+
+ul {
+  margin: 0;
+  margin-inline: unset !important;
+  padding: 0;
+  list-style: none;
+}
+
+.tab-panel--selected {
+  animation-name: tabPanel;
+  animation-duration: 300ms;
+  animation-timing-function: linear;
+}
+
+input {
+  background-color: transparent;
+  width: 100%;
+}
+
+input:focus {
+  outline: none;
+}
+
+label[floating-label] {
+  position: relative;
+
+  & > input[floating-input] {
+    transition: all;
+    transition-duration: 0.25s;
+    outline: none !important;
+    border: none !important;
+    background: transparent !important;
+    max-height: 1.25em;
+    line-height: 1em;
+
+    &:focus,
+    &:not(:placeholder-shown) {
+      outline: none !important;
+
+      &::placeholder {
+        color: transparent;
+      }
+
+      & ~ div[floating-text] {
+        opacity: unset;
+      }
+    }
+  }
+
+  & > div[floating-text] {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    transform-origin: top left;
+    transition: all;
+    transition-duration: 0.25s;
+    opacity: 0;
+    line-height: 1em;
+    pointer-events: none;
+  }
+}
+
+label[floating-label="normal"] {
+  & > input[floating-input] {
+    &:focus,
+    &:not(:placeholder-shown) {
+      & ~ div[floating-text] {
+        top: 0em;
+        transform: translateY(-50%) scale(85%);
+        margin-right: -0.15em;
+        margin-left: -0.15em;
+        padding-right: 0.15em;
+        padding-left: 0.15em;
+        backdrop-filter: blur(3em);
+      }
+    }
+  }
+}
+
+label[floating-label="contained"] {
+  & > input[floating-input] {
+    &:focus,
+    &:not(:placeholder-shown) {
+      transform: translateY(0.5em);
+
+      & ~ div[floating-text] {
+        top: calc(50% - 1.25em);
+        transform: scale(85%);
+      }
+    }
+  }
+}
+
+.react-datepicker-wrapper,
+.react-datepicker-wrapper input {
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  padding: 0px;
+}
+
+.react-datepicker-popper {
+  z-index: 100000 !important;
+}
+
+.white_A700_black_900_00_border {
+  border-image: linear-gradient(90deg, #ffffff, #00000000) 1;
+}
+
+.black_900_black_900_00_border {
+  border-image: linear-gradient(90deg, #050b20, #00000000) 1;
+}
+
+@keyframes tabPanel {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+table {
+  table-layout: fixed;
+}
+.alice-carousel__dots-item {
+  cursor: pointer;
+}
 
 /* Show on larger screens (medium and up) */
 @media (min-width: 769px) {

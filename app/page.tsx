@@ -297,13 +297,13 @@ function HomeContent() {
       <RecentlyAddedSection />
 
       {/* customer testimonials section */}
-      <CustomerTestimonialsSection />
+      {/* <CustomerTestimonialsSection /> */}
 
       {/* latest blog posts section */}
       <LatestBlogPostsSection />
 
       {/* Blogs Section */}
-      <div className="titleParent w-full max-w-screen-lg mx-auto overflow-x-hidden px-4">
+      {/* <div className="titleParent w-full max-w-screen-lg mx-auto overflow-x-hidden px-4">
         <div className="titleParent w-full max-w-screen-xl mx-auto overflow-x-hidden px-6">
           <div className="title w-full text-center">
             <div className="titleChild" />
@@ -367,7 +367,7 @@ function HomeContent() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </main>
   );
 }

@@ -106,7 +106,8 @@ export default function FeaturedListingsSection({ listings }: FeaturedListingsSe
                         ref={sliderRef}
                         items={listings.filter((listing) => tabs[index] === "all" || listing.condition === tabs[index]).map((listing) => (
                           <React.Fragment key={listing.id}>
-                            <div className="px-[15px]">
+                          <Link href={`/detailsvone?car=${listing.id}`}>
+                            <div className="px-[15px] cursor-pointer">
                               <div className="flex flex-col rounded-[16px] bg-white-a700 bg-[url(/images/img_background_820x1860.png)] bg-no-repeat bg-cover">
                                 <div className="relative h-[218px] content-center lg:h-auto md:h-auto text-white">
                                   <Img
@@ -129,7 +130,8 @@ export default function FeaturedListingsSection({ listings }: FeaturedListingsSe
                                         src="img_bookmark.svg"
                                         width={8}
                                         height={12}
-                                        color="white"
+                                        alt="Bookmark"
+                                        className="rounded-[16px]"
                                       />
                                     </Button>
                                   </div>
@@ -183,7 +185,9 @@ export default function FeaturedListingsSection({ listings }: FeaturedListingsSe
                                 </div>
                               </div>
                             </div>
-                          </React.Fragment>
+                          </Link>
+                        </React.Fragment>
+                        
                         ))}
                       />
                     </div>
