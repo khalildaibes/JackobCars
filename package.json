@@ -34,7 +34,7 @@
     "react-rating-stars-component": "^2.2.0",
     "react-select": "^5.10.0",
     "react-tabs": "^6.1.0",
-    "table": "github:tanstack/react-table",
+    "table": "github:tanstack/react-table"
   },
   "devDependencies": {
     "@types/google.maps": "^3.58.1",
