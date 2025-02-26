@@ -1,6 +1,11 @@
 "use client";
 
-import { Button, Img, Text, Heading, Slider } from "../../components";
+
+import { Button } from "@/components/Button";
+import { Heading } from "@/components/Heading";
+import { Img } from "@/components/Img";
+import { Slider } from "@/components/Slider";
+import { Text } from "@/components/Text";
 import React from "react";
 import AliceCarousel, { EventObject } from "react-alice-carousel";
 
@@ -80,7 +85,7 @@ export default function CustomerTestimonialsSection() {
                               <Heading size="text3xl" as="p" className="text-[16px] font-medium lg:text-[13px]">
                                 Leslie Alexander
                               </Heading>
-                              <Text size="textxl" as="p" className="text-[14px] font-normal">
+                              <Text as="p" className="text-[14px] font-normal">
                                 Facebook
                               </Text>
                             </div>

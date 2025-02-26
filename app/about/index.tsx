@@ -1,6 +1,9 @@
 "use client";
 
-import { Text, Img, Heading, BreadcrumbLink, Breadcrumb, BreadcrumbItem } from "../../components";
+
+import { Heading } from "@/components/Heading";
+import { Img } from "@/components/Img";
+import { Text } from "@/components/Text";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import UserProfile from "../../components/UserProfile";
@@ -19,6 +22,7 @@ import {
   Accordion,
   AccordionItem,
 } from "react-accessible-accordion";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/Breadcrumb";
 
 const teamProfiles = [
   { userImage: "img_team1_jpg.png", userName: "Courtney Henry", userPosition: "Development Manager" },

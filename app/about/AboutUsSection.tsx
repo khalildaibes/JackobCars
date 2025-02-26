@@ -1,4 +1,8 @@
-import { Button, Img, Text, Heading } from "../../components";
+
+import { Button } from "@/components/Button";
+import { Heading } from "@/components/Heading";
+import { Img } from "@/components/Img";
+import { Text } from "@/components/Text";
 import React from "react";
 
 export default function AboutUsSection() {
@@ -60,7 +64,6 @@ export default function AboutUsSection() {
             </div>
           </div>
           <Button
-            size="15xl"
             shape="round"
             rightIcon={
               <div className="flex h-[14px] w-[14px] items-center justify-center">

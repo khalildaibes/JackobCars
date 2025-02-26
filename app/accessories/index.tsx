@@ -1,7 +1,4 @@
 import Sales from "@/components/Sales";
-import Footer from "../../components/Footer";
-import Header from "../../components/Header";
-import Sales2 from "../../components/Sales2";
 import React from "react";
 
 export default function ShoppagePage() {
