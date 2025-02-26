@@ -34,13 +34,13 @@
     "react-rating-stars-component": "^2.2.0",
     "react-select": "^5.10.0",
     "react-tabs": "^6.1.0",
-    "table": "github:tanstack/react-table",
+    "table": "github:tanstack/react-table"
   },
   "devDependencies": {
     "@types/google.maps": "^3.58.1",
     "@types/node": "^20",
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.5",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",

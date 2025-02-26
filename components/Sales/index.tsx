@@ -8,7 +8,6 @@ import { SeekBar } from "../SeekBar";
 import { Text } from "../Text";
 import { SelectBox } from "../SelectBox";
 import ShopPageBackgroundBorder from "../ShopPageBackgroundBorder";
-import Link from "next/link";
 import React, { Suspense, useState } from "react";
 
 // Define a clear product type.
