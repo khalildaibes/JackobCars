@@ -2,7 +2,6 @@ import { Heading } from "../Heading";
 import React from "react";
 import { Img } from "../Img";
 import { Text } from "../Text";
-import { Button } from "../Button";
 
 
 interface Props {

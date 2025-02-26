@@ -2,11 +2,7 @@
 
 import React, { Suspense } from "react";
 
-import DetailsVOne1 from "../../components/DetailsVOne1";
 import DetailsVOneItem from "../../components/DetailsVOneItem";
-import Footer from "../../components/Footer";
-import Header from "../../components/Header";
-import UserProfile6 from "../../components/UserProfile6";
 import DetailsSection from "./DetailsSection";
 import DetailsSection1 from "./DetailsSection1";
 import FinancingCalculatorSection from "./FinancingCalculatorSection";

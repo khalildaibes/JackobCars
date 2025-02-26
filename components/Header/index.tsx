@@ -1,12 +1,11 @@
 "use client";
+import React from "react";
 
 import MegaMenu1 from "../MegaMenu1";
 import Link from "next/link";
-import React from "react";
 import { Button } from "../Button/index";
 import { Img } from "../Img/index";
 import { Text } from "../Text/index";
-import LanguageSwitcher from "../LanguageSwitcher/LanguageSwitcher";
 
 interface Props {
   className?: string;

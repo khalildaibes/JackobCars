@@ -1,4 +1,6 @@
-import { Img, Button } from "../../components";
+
+import { Button } from "../../components/Button";
+import { Img } from "../../components/Img";
 import ListVOneArticle from "../../components/ListVOneArticle";
 import React, { Suspense } from "react";
 

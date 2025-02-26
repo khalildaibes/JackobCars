@@ -1,4 +1,8 @@
-import { SelectBox, Text, Heading, BreadcrumbLink, Breadcrumb, BreadcrumbItem } from "../../components";
+
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/Breadcrumb";
+import { SelectBox } from "@/components/SelectBox";
+import { Heading } from "../../components/Heading";
+import { Text } from "../../components/Text";
 import Link from "next/link";
 import React from "react";
 
@@ -49,7 +53,6 @@ export default function ListingSection() {
                   Sort by
                 </Text>
                 <SelectBox
-                  size="md"
                   shape="round"
                   name="Combobox menu"
                   placeholder={`Default`}

@@ -4,10 +4,8 @@ import { useRouter } from 'next/navigation';
 import { Heading } from "../../components/Heading";
 import { Text } from "../../components/Text";
 import { Img } from "../../components/Img";
-import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { Slider } from "../Slider2";
-import { Link } from "lucide-react";
 
 const newsItems = [
   {

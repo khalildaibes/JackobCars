@@ -1,8 +1,13 @@
 "use client";
 
-import { Text, Heading, Button, DatePicker, FloatingLabelInput, SelectBox } from "../../components";
+import { Heading } from "@/components/Heading";
+import {Text} from "../../components/Text";
+import { Button } from "@/components/Button";
 import metadata from "libphonenumber-js/metadata.full.json";
 import React from "react";
+import { FloatingLabelInput } from "@/components/FloatingLabelInput";
+import { SelectBox } from "@/components/SelectBox";
+import { DatePicker } from "@/components/DatePicker";
 
 export default function ServicesSection2() {
   const countryOptions = React.useMemo(() => {

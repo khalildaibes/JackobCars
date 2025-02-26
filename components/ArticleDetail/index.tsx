@@ -1,4 +1,7 @@
-import { Img, Text, Heading, Button } from "./..";
+import { Heading } from "@/components/Heading";
+import {Text} from "../../components/Text";
+import { Button } from "@/components/Button";
+import { Img } from "@/components/Img";
 import Link from "next/link";
 import React from "react";
 
@@ -51,7 +54,7 @@ export default function ArticleDetail({
             {publishDate}
           </Text>
         </div>
-        <Heading size="text9xl" as="p" className="mt-2 text-[30px] font-medium sm:text-[25px]">
+        <Heading as="p" className="mt-2 text-[30px] font-medium sm:text-[25px]">
           {articleTitle}
         </Heading>
         <Text as="p" className="mt-3.5 text-[15px] font-normal leading-[27px]">

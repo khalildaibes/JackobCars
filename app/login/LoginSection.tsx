@@ -1,8 +1,13 @@
 "use client";
 
-import { Input, Button, Img, Text, CheckBox, FloatingLabelInput } from "../../components";
+import { FloatingLabelInput } from "@/components/FloatingLabelInput";
+import { Button } from "../../components/Button";
+import { Img } from "../../components/Img";
+import { Text } from "../../components/Text";
 import React from "react";
 import { TabPanel, TabList, Tab, Tabs } from "react-tabs";
+import { CheckBox } from "@/components/CheckBox";
+import { Input } from "@/components/Input";
 
 export default function LoginSection() {
   return (
@@ -85,7 +90,7 @@ export default function LoginSection() {
                         Login
                       </Button>
                       <div className="mx-1 my-[18px] flex flex-col items-center gap-[30px] md:mx-0">
-                        <Button size="sm" shape="square" className="min-w-[40px] px-2 uppercase">
+                        <Button size="sm"className="min-w-[40px] px-2 uppercase">
                           or
                         </Button>
                         <div className="flex gap-[30px] self-stretch">
@@ -131,7 +136,6 @@ export default function LoginSection() {
                       </div>
                     </div>
                     <Input
-                      size="xl"
                       variant="fill"
                       shape="round"
                       type="password"

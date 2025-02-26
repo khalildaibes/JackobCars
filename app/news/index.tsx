@@ -1,6 +1,4 @@
 import ResponsiveNewsLayout from "@/components/Responsivenews";
-import Footer from "../../components/Footer";
-import Header from "../../components/Header";
 import BlogMainSection from "./BlogMainSection";
 import React from "react";
 

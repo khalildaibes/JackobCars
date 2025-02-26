@@ -1,5 +1,10 @@
-import { Img, Button, Text, Heading } from "../../components";
+
+import { Heading } from "@/components/Heading";
+import {Text} from "../../components/Text";
+import { Button } from "@/components/Button";
+import { Img } from "@/components/Img";
 import React from "react";
+
 
 export default function ServicesSection() {
   return (

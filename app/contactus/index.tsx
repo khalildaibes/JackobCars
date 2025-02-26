@@ -1,15 +1,9 @@
 "use client";
 
-import {
-  Img,
-  Text,
-  Heading,
-  Button,
-  FloatingLabelInput,
-  BreadcrumbLink,
-  Breadcrumb,
-  BreadcrumbItem,
-} from "../../components";
+import { Heading } from "../../components/Heading";
+import { Button } from "../../components/Button";
+import { Img } from "../../components/Img";
+import { Text } from "../../components/Text";
 import AddressCard from "../../components/AddressCard";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
@@ -17,6 +11,9 @@ import ContactUsSection from "./ContactUsSection";
 import ContactUsSection1 from "./ContactUsSection1";
 import Link from "next/link";
 import React, { Suspense } from "react";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/Breadcrumb";
+import { FloatingLabelInput } from "@/components/FloatingLabelInput";
+
 
 const contactDetails = [
   {

@@ -1,4 +1,4 @@
-import { Heading } from "../../components";
+import { Heading } from "@/components/Heading";
 import SpecialFinancingOffers from "../../components/SpecialFinancingOffers";
 import React, { Suspense } from "react";
 

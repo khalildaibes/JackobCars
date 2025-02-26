@@ -1,7 +1,12 @@
 "use client";
 
-import { Heading, Button, Img, FloatingLabelInput, Text } from "../../components";
+
+import { Heading } from "../../components/Heading";
+import { Button } from "../../components/Button";
+import { Img } from "../../components/Img";
+import { Text } from "../../components/Text";
 import React from "react";
+import { FloatingLabelInput } from "@/components/FloatingLabelInput";
 
 export default function LoanCalculatorSection() {
   return (

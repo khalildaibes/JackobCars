@@ -1,5 +1,8 @@
-import { Text, RatingBar, Heading, Img } from "./..";
+import { Heading } from "../Heading";
+import { Text } from "../Text";
+import { Img } from "../Img";
 import React from "react";
+import { RatingBar } from "../RatingBar";
 
 interface Props {
   className?: string;
@@ -30,7 +33,7 @@ export default function UserProfile6({
           <Heading size="text5xl" as="p" className="ml-3 text-[18px] font-medium capitalize sm:text-[15px]">
             {userName}
           </Heading>
-          <Text size="textxl" as="p" className="ml-3.5 text-[14px] font-normal">
+          <Text  as="p" className="ml-3.5 text-[14px] font-normal">
             {userJoinDate}
           </Text>
         </div>

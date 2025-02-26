@@ -1,5 +1,3 @@
-import { Button } from "@/components/Button";
-import { Img } from "@/components/Img";
 import { Heading } from "@/components/Heading";
 import { Text } from "@/components/Text";
 import DetailsVOneList from "../../components/DetailsVOneList";

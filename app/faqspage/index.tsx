@@ -1,6 +1,10 @@
 "use client";
 
-import { Button, Img, Text, Heading } from "../../components";
+
+import { Heading } from "../../components/Heading";
+import { Button } from "../../components/Button";
+import { Img } from "../../components/Img";
+import { Text } from "../../components/Text";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import FAQsSection from "./FAQsSection";
@@ -102,7 +106,7 @@ export default function FaqspagePage() {
           </div>
         </div>
         <div className="relative h-[760px] content-center lg:h-auto md:h-auto">
-          <Footer className="flex-1" />
+          <Footer  />
           <Button
             size="3xl"
             shape="circle"

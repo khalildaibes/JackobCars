@@ -7,22 +7,22 @@ import { Text } from "../Text";
 interface Props {
   className?: string;
   s1300x300jpg?: string;
-  sSSSS?: React.ReactNode;
-  sssss1?: React.ReactNode;
+  productName?: React.ReactNode;
+  price?: React.ReactNode;
   p2?: React.ReactNode;
   frontAndRearBrake?: React.ReactNode;
   p120?: React.ReactNode;
-  link?: string;
+  buttonText?: string;
 }
 
 export default function ShopPageBackgroundBorder({
   s1300x300jpg = "img_s1_300x300_jpg.png",
-  sSSSS = "SSSSS",
-  sssss1 = "SSSSS",
+  productName = "SSSSS",
+  p120 = "SSSSS",
   p2 = "(2)",
   frontAndRearBrake = "Front and Rear Brake Kit",
-  p120 = "$120",
-  link = "Add to cart",
+  price = "$120",
+  buttonText = "Add to cart",
   ...props
 }: Props) {
   return (
@@ -34,11 +34,11 @@ export default function ShopPageBackgroundBorder({
       <div className="mt-5 flex items-center gap-[7px] self-stretch">
         <div className="flex w-[30%] flex-col items-start">
           <Text size="texts" as="p" className="!font-star text-[11px] font-normal tracking-[5.00px] !text-gray-300_01">
-            {sSSSS}
+            {p2}
           </Text>
           <div className="relative mt-[-8px] flex self-stretch">
             <Text size="texts" as="p" className="!font-star text-[11px] font-normal tracking-[5.00px] !text-yellow-700">
-              {sssss1}
+              {p120}
             </Text>
           </div>
         </div>
@@ -67,7 +67,7 @@ export default function ShopPageBackgroundBorder({
         }
         className="mt-5 gap-2.5 self-stretch rounded-lg border border-solid border-indigo-a400 px-[33px] capitalize !text-indigo-a400 sm:px-5"
       >
-        {link}
+        {buttonText}
       </Button>
     </div>
   );

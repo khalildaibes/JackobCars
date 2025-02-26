@@ -3,7 +3,6 @@
 import { Button } from "@/components/Button";
 import { Img } from "@/components/Img";
 import { Heading } from "@/components/Heading";
-import { Text } from "@/components/Text";
 import React from "react";
 import { FloatingLabelInput } from "@/components/FloatingLabelInput";
 

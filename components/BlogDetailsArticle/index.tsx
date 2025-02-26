@@ -1,5 +1,6 @@
-import { Heading } from "../Heading";
 import React from "react";
+
+import { Heading } from "../Heading";
 import { Button } from "../Button";
 import { Img } from "../Img";
 import { Text } from "../Text";

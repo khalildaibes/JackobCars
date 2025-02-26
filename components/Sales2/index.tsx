@@ -3,8 +3,6 @@
 import React, { Suspense } from "react";
 import Link from "next/link";
 
-import ShopPageBackgroundBorder from "../../components/ShopPageBackgroundBorder";
-import ShopPageBackgroundBorder1 from "../../components/ShopPageBackgroundBorder1";
 import { useTranslations } from "next-intl";
 import { Heading } from "../Heading";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "../Breadcrumb";

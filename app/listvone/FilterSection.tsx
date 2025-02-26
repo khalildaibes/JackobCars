@@ -1,4 +1,7 @@
-import { Text, Img, SelectBox } from "../../components";
+
+import { SelectBox } from "@/components/SelectBox";
+import { Img } from "../../components/Img";
+import { Text } from "../../components/Text";
 import React from "react";
 
 const dropDownOptions = [
