@@ -9,7 +9,6 @@ import { Heading } from "./Heading";
 import { Img } from "./Img";
 import { Input } from "./Input";
 import { RatingBar } from "./RatingBar";
-import { ReactTable } from "./ReactTable";
 import { SeekBar } from "./SeekBar";
 import { SelectBox } from "./SelectBox";
 import { Slider } from "./Slider";
@@ -30,7 +29,6 @@ export {
   Img,
   Input,
   RatingBar,
-  ReactTable,
   SeekBar,
   SelectBox,
   Slider,
