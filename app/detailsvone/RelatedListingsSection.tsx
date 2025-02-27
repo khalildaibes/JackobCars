@@ -9,6 +9,7 @@ import Link from "next/link";
 import React from "react";
 import AliceCarousel, { EventObject } from "react-alice-carousel";
 import { useTranslations } from "next-intl";
+import { Slider } from "@/components/Slider2";
 
 const relatedListings = [
   {
@@ -156,140 +157,135 @@ export default function RelatedListingsSection() {
 
       {/* Slider Container */}
       <div className="w-full container mx-auto px-4 lg:px-5 md:px-5">
-      <AliceCarousel
-  autoPlay
-  autoPlayInterval={2000}
-  responsive={{
-    "0": { items: 1 },       // Mobile: one item per slide (stage)
-    "768": { items: 3 }      // Desktop: three items per slide (row)
-  }}
-  disableDotsControls
-  activeIndex={sliderState}
-  onSlideChanged={(e: EventObject) => setSliderState(e?.item)}
-  ref={sliderRef}
-  items={relatedListings.map((listing) => (
-    <React.Fragment key={listing.id}>
-      <Link href={`/detailsvone?car=${listing.id}`}>
-        <div className="px-4 cursor-pointer flex-shrink-0 w-80">
-          <div className="flex flex-col rounded-lg bg-white shadow-md">
-            {/* Image Section */}
-            <div className="relative h-56">
-              <Img
-                src={listing.image}
-                width={328}
-                height={218}
-                alt={listing.alt}
-                className="h-full w-full object-cover rounded-t-lg"
-              />
-              <div className="absolute inset-x-0 top-4 flex items-center justify-between px-4">
-                <Button
-                  size="sm"
-                  shape="round"
-                  className="min-w-[110px] rounded-lg px-3 font-medium capitalize bg-indigo-400 text-white shadow-md"
-                >
-                  {t("great_price") || "Great Price"}
-                </Button>
-                <Button shape="circle" className="w-9 rounded-full px-3">
-                  <Img
-                    src="img_bookmark_black_900.svg"
-                    width={8}
-                    height={12}
-                    alt="Bookmark"
-                  />
-                </Button>
-              </div>
-            </div>
-            {/* Content Section */}
-            <div className="flex flex-col gap-2 rounded-b-lg border-t border-gray-200 p-4">
-              <Heading
-                size="text5xl"
-                as="p"
-                className="text-sm font-medium text-gray-800"
-              >
-                {listing.title}
-              </Heading>
-              <Text
-                as="p"
-                className="text-xs font-normal text-gray-600 leading-tight"
-              >
-                {listing.description}
-              </Text>
-              <div className="flex items-end justify-between gap-4 border-t border-gray-200 py-2">
-                <div className="flex flex-col items-center gap-1">
-                  <Img
-                    src="img_icon_black_900.svg"
-                    width={18}
-                    height={18}
-                    alt="Mileage Icon"
-                    className="h-4"
-                  />
-                  <Text
-                    as="p"
-                    className="text-xs font-normal text-gray-700"
-                  >
-                    {listing.miles}
-                  </Text>
-                </div>
-                <div className="flex flex-col items-center gap-1">
-                  <Img
-                    src="img_icon_black_900_18x18.svg"
-                    width={18}
-                    height={18}
-                    alt="Fuel Icon"
-                    className="h-4"
-                  />
-                  <Text
-                    as="p"
-                    className="text-xs font-normal text-gray-700"
-                  >
-                    {listing.fuel}
-                  </Text>
-                </div>
-                <div className="flex flex-col items-center gap-1">
-                  <Img
-                    src="img_icon_18x18.svg"
-                    width={18}
-                    height={18}
-                    alt="Transmission Icon"
-                    className="h-4"
-                  />
-                  <Text
-                    as="p"
-                    className="text-xs font-normal text-gray-700"
-                  >
-                    {listing.transmission}
-                  </Text>
-                </div>
-              </div>
-              <div className="flex flex-col items-center justify-center border-t border-gray-200 py-2">
-                <Heading
-                  size="headings"
-                  as="h5"
-                  className="text-base font-bold text-gray-800"
-                >
-                  {listing.price}
-                </Heading>
-                <div className="mt-1 flex w-full items-center justify-end gap-2">
-                  <Text
-                    as="p"
-                    className="text-sm font-medium text-indigo-400"
-                  >
-                    {t("view_details") || "View Details"}
-                  </Text>
-                  <Img
-                    src="img_arrow_left_indigo_a400_1.svg"
-                    width={14}
-                    height={14}
-                    alt="Arrow Left"
-                    className="h-4"
-                  />
+      <Slider
+                        autoPlay
+                        autoPlayInterval={2000}
+                        responsive={{
+                          "0": { items: 1 },
+                          "551": { items: 1 },
+                          "1051": { items: 2 },
+                          "1441": { items: 4 },
+                        }}
+                        disableDotsControls
+                        activeIndex={sliderState}
+                        onSlideChanged={(e: EventObject) => {
+                          setSliderState(e?.item);
+                        }}
+                        ref={sliderRef}
+                        items={relatedListings.map((listing) => (
+                          <React.Fragment key={listing.id}>
+            <Link href={`/detailsvone?car=${listing.id}`}>
+              <div className="px-4 cursor-pointer flex-shrink-0 w-full sm:w-80">
+                <div className="flex flex-col rounded-lg bg-white shadow-md">
+                  {/* Image Section */}
+                  <div className="relative h-56">
+                    <Img
+                      src={listing.image}
+                      width={328}
+                      height={218}
+                      alt={listing.alt}
+                      className="h-full w-full object-cover rounded-t-lg"
+                    />
+                    <div className="absolute inset-x-0 top-4 flex items-center justify-between px-4">
+                      <Button
+                        size="sm"
+                        shape="round"
+                        className="min-w-[110px] rounded-lg px-3 font-medium capitalize bg-indigo-400 text-white shadow-md"
+                      >
+                        Great Price
+                      </Button>
+                      <Button shape="circle" className="w-9 rounded-full px-3">
+                        <Img
+                          src="/images/img_bookmark_black_900.svg"
+                          width={8}
+                          height={12}
+                          alt="Bookmark"
+                        />
+                      </Button>
+                    </div>
+                  </div>
+                  {/* Content Section */}
+                  <div className="flex flex-col gap-2 rounded-b-lg border-t border-gray-200 p-4">
+                    <Heading
+                      size="text5xl"
+                      as="p"
+                      className="text-sm font-medium text-gray-800"
+                    >
+                      {listing.title}
+                    </Heading>
+                    <Text
+                      as="p"
+                      className="text-xs font-normal text-gray-600 leading-tight"
+                    >
+                      {listing.description}
+                    </Text>
+                    <div className="flex items-end justify-between gap-4 border-t border-gray-200 py-2">
+                      <div className="flex flex-col items-center gap-1">
+                        <Img
+                          src="/images/img_icon_black_900.svg"
+                          width={18}
+                          height={18}
+                          alt="Mileage Icon"
+                          className="h-4"
+                        />
+                        <Text as="p" className="text-xs font-normal text-gray-700">
+                          {listing.miles}
+                        </Text>
+                      </div>
+                      <div className="flex flex-col items-center gap-1">
+                        <Img
+                          src="/images/img_icon_black_900_18x18.svg"
+                          width={18}
+                          height={18}
+                          alt="Fuel Icon"
+                          className="h-4"
+                        />
+                        <Text as="p" className="text-xs font-normal text-gray-700">
+                          {listing.fuel}
+                        </Text>
+                      </div>
+                      <div className="flex flex-col items-center gap-1">
+                        <Img
+                          src="/images/img_icon_18x18.svg"
+                          width={18}
+                          height={18}
+                          alt="Transmission Icon"
+                          className="h-4"
+                        />
+                        <Text as="p" className="text-xs font-normal text-gray-700">
+                          {listing.transmission}
+                        </Text>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center justify-center border-t border-gray-200 py-2">
+                      <Heading
+                        size="headings"
+                        as="h5"
+                        className="text-base font-bold text-gray-800"
+                      >
+                        {listing.price}
+                      </Heading>
+                      <div className="mt-1 flex w-full items-center justify-end gap-2">
+                        <Text
+                          as="p"
+                          className="text-sm font-medium text-indigo-400"
+                        >
+                          View Details
+                        </Text>
+                        <Img
+                          src="/images/img_arrow_left_indigo_a400_1.svg"
+                          width={14}
+                          height={14}
+                          alt="Arrow Left"
+                          className="h-4"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </Link>
-    </React.Fragment>
+            </Link>
+                          </React.Fragment>
   ))}
 />
 

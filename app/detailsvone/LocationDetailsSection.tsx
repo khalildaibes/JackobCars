@@ -91,6 +91,8 @@ export default function LocationDetailsSection() {
               </Heading>
             </div>
           </div>
+          <div className="w-full h-px bg-gray-300 my-8" />
+
         </div>
       </div>
     </div>

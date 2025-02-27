@@ -165,49 +165,7 @@ export default function Sales2({ ...props }: Props) {
         <div className="flex flex-col sm:flex-row items-start gap-6">
           {/* Sidebar Filters */}
           <div className="flex-1 flex flex-col gap-4">
-            <div className="flex flex-col items-start gap-4 rounded-lg border border-gray-200 p-4">
-              <Heading
-                size="text5xl"
-                className="text-base font-medium capitalize sm:text-sm"
-              >
-                Categories
-              </Heading>
-              <div className="space-y-2">
-                {dynamicCategoryOptions.map((option, idx) => (
-                  <div
-                    key={idx}
-                    className={`flex items-center justify-between cursor-pointer p-1 rounded ${
-                      categoryFilter === option.value ? "bg-gray-200" : ""
-                    }`}
-                    onClick={() => setCategoryFilter(option.value)}
-                  >
-                    <Text as="p" className="text-sm font-normal text-black-900">
-                      {option.label}
-                    </Text>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="rounded-lg border border-gray-200 p-4">
-              <div className="mb-8 flex flex-col items-start gap-4">
-                <Heading
-                  size="text5xl"
-                  className="text-base font-medium capitalize sm:text-sm"
-                >
-                  Prices
-                </Heading>
-                <SeekBar
-                  inputValue={[5000, 50000]}
-                  trackColors={["#050b2033", "#050b2033"]}
-                  className="flex h-8 w-full"
-                  trackClassName="h-1 w-full"
-                />
-                <div className="flex flex-wrap justify-between gap-2 w-full">
-                  <Heading className="text-xs font-medium">$20</Heading>
-                  <Heading className="text-xs font-medium">$360</Heading>
-                </div>
-              </div>
-            </div>
+            
           </div>
           {/* Dropdown Filters */}
           <div className="flex-1 flex flex-col sm:flex-row items-center gap-2 justify-end">

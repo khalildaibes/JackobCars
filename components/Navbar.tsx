@@ -5,9 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image"; // Import Image
 
-import { Menu, X } from "lucide-react"; // For mobile menu toggle
 import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
-
+import { Menu, X } from "../node_modules/lucide-react";
 export default function Navbar() {
   // const router = useRouter();
   // const searchParams = useSearchParams();

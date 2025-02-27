@@ -7,10 +7,10 @@ import DetailsSection from "./DetailsSection";
 import DetailsSection1 from "./DetailsSection1";
 import FinancingCalculatorSection from "./FinancingCalculatorSection";
 import LocationDetailsSection from "./LocationDetailsSection";
-import RelatedListingsSection from "./RelatedListingsSection";
 import { Img } from "@/components/Img";
 import { Heading } from "@/components/Heading";
 import { Text } from "@/components/Text";
+import RelatedListingsSection from "./RelatedListingsSection";
 
 
 const featureList = [
@@ -30,16 +30,16 @@ export default function DetailsvOnePage() {
         <DetailsSection />
 
         {/* Car Overview Section */}
-        <section className="container mx-auto mt-10 px-4">
+        <section className="container mx-auto mt-10 px-4 items-start justify-start">
           <Heading
             size="text8xl"
             as="h3"
-            className="text-[26px] font-medium text-gray-800 sm:text-[22px] text-center mb-6"
+            className="text-[26px] font-medium text-gray-800 sm:text-[22px] text-start mb-6"
           >
             Car Overview
           </Heading>
 
-          <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex flex-col md:flex-row gap-6 ">
             {/* Left Column */}
             <div className="flex-1 flex flex-col gap-6">
               <div className="flex flex-col gap-4">
@@ -172,24 +172,23 @@ export default function DetailsvOnePage() {
           </div>
         </section>
 
-        {/* Divider */}
-        <div className="my-8 h-px w-full bg-gray-300" />
+        <div className="w-[80%] h-px bg-gray-300 my-8 mx-auto" />
 
         {/* Details Section */}
         <DetailsSection1 />
 
         {/* Location Details Section */}
         <LocationDetailsSection />
+        <div className="w-[80%] h-px bg-gray-300 my-8 mx-auto" />
 
         {/* Financing Calculator Section */}
         <FinancingCalculatorSection />
+        <div className="w-[80%] h-px bg-gray-300 my-8 mx-auto" />
 
         {/* Related Listings Section */}
-        <div className="max-w-screen flex-row">
 
         <RelatedListingsSection />
 
-        </div>
 
       </div>
     </div>
