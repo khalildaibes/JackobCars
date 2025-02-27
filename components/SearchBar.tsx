@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { CustomFilter, SearchManifacturer } from ".";
+import {  SearchManifacturer } from ".";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { fuels, yearsOfProduction } from "@/constants";
+import  CustomFilter  from "@/components/CustomFilter";
 
 const SearchBar = () => {
   const [manufacturer, setManufacturer] = useState("");
