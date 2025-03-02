@@ -21,6 +21,7 @@ import {  useTranslations } from "next-intl";
 import ResponsiveNewsLayout from "@/components/Responsivenews";
 import HeroSection from "@/components/NewHero";
 import LookingForCar from "@/components/comp";
+import SearchBar from "@/components/SearchBar";
 const listings = [
   {
     id: 1,
@@ -169,7 +170,7 @@ async function HomeContent() {
         if (selectedManufacturer || selectedModel) {
           allCars = await fetchCars({
             manufacturer: selectedManufacturer || "",
-            year: selectedYear ? parseInt(selectedYear, 10) : 2022,
+            year: selectedYear ? parseInt(selectedYear, 10) : 0,
             fuel: selectedFuel || "",
             limit: selectedLimit ? parseInt(selectedLimit, 10) : 12,
             model: selectedModel || "",
@@ -328,8 +329,12 @@ async function HomeContent() {
   )}
 </div> */}
 
-        <HeroSection />
 
+
+
+
+        <HeroSection />
+       
         <div className="justify-center mt-8 gap-6 flex-col flex md:flex-row">
           <LookingForCar
             text="Are You Looking<br />For a Car ?"

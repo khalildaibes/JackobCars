@@ -6,7 +6,7 @@ import Image from "next/image";
 import { manufacturers } from "@/constants";
 import { Combobox, Transition } from "@headlessui/react";
 
-const SearchManifacturer = ({
+const SearchManufacturer = ({
   manufacturer,
   setManufacturer,
 }: SearchManufacturerProps) => {
@@ -16,33 +16,31 @@ const SearchManifacturer = ({
     query === ""
       ? manufacturers
       : manufacturers.filter((item) =>
-          item
-            .toLowerCase()
-            .replace(/\s+/g, "")
-            .includes(query.toLowerCase().replace(/\s+/g, ""))
+          item.toLowerCase().replace(/\s+/g, "").includes(query.toLowerCase().replace(/\s+/g, ""))
         );
 
   return (
-    <div className=" search-manufacturer ">
-      <Combobox value={manufacturer} onChange={setManufacturer}>
-        <div className="relative w-full">
-          <Combobox.Button className="absolute top-[14px]">
-            <Image
-              src="car-logo.svg"
-              width={20}
-              height={20}
-              className="ml-4"
-              alt="car-logo"
-            />
-          </Combobox.Button>
+    <div className="relative flex-1">
+      {/* Car Logo Icon */}
+      <Image
+        src="/car-logo.svg" // Ensure the correct path
+        width={20}
+        height={20}
+        alt="Car logo"
+        className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+      />
 
+      {/* Search Input Field */}
+      <Combobox value={manufacturer} onChange={setManufacturer}>
+        <div className="relative">
           <Combobox.Input
-            className="search-manufacturer__input "
-            placeholder="Volkswagen"
+            className="pl-10 pr-4 py-3 border border-gray-300 rounded-lg w-full focus:ring focus:ring-blue-300 transition-all ease-in-out"
+            placeholder="Enter manufacturer (e.g., Volkswagen)"
             displayValue={(manufacturer: string) => manufacturer}
             onChange={(e) => setQuery(e.target.value)}
           />
 
+          {/* Dropdown Options */}
           <Transition
             as={Fragment}
             leave="transition ease-in duration-100"
@@ -50,45 +48,26 @@ const SearchManifacturer = ({
             leaveTo="opacity-0"
             afterLeave={() => setQuery("")}
           >
-            <Combobox.Options className="y-1 text-base shadow-lg absolute z-50 w-full border border-gray-300 rounded-md bg-white h-[250px] overflow-auto">
-                {filteredManufacturers.length === 0 && query !== "" ? (
+            <Combobox.Options className="absolute z-50 w-full border border-gray-300 rounded-lg bg-white shadow-lg mt-1 max-h-56 overflow-auto">
+              {filteredManufacturers.length === 0 && query !== "" ? (
                 <Combobox.Option
                   value={query}
-                  className="search-manufacturer__option "
+                  className="px-4 py-2 text-gray-500"
                 >
-                  Nothing found.
+                  No results found.
                 </Combobox.Option>
               ) : (
                 filteredManufacturers.map((item) => (
                   <Combobox.Option
                     key={item}
                     className={({ active }) =>
-                      `relative search-manufacturer__option ${
-                        active ? "bg-primary-blue text-white" : "text-gray-900"
-                      } `
+                      `px-4 py-2 cursor-pointer ${
+                        active ? "bg-blue-500 text-white" : "text-gray-900"
+                      }`
                     }
                     value={item}
                   >
-                    {({ selected, active }) => (
-                      <>
-                        <span
-                          className={`block truncate ${
-                            selected ? "font-medium" : "font-normal"
-                          }`}
-                        >
-                          {item}
-                        </span>
-                        {selected ? (
-                          <span
-                            className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                              active
-                                ? "text-white"
-                                : "text-pribg-primary-purple"
-                            }`}
-                          ></span>
-                        ) : null}
-                      </>
-                    )}
+                    {item}
                   </Combobox.Option>
                 ))
               )}
@@ -100,4 +79,4 @@ const SearchManifacturer = ({
   );
 };
 
-export default SearchManifacturer;
+export default SearchManufacturer;

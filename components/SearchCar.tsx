@@ -31,10 +31,8 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({
 
       {/* Mobile Filters */}
       {isMobileFiltersVisible && (
-        <div className=" mt-4">
           <SearchBar />
 
-        </div> 
       )}
     </div>
   );

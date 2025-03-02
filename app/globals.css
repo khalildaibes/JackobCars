@@ -193,7 +193,7 @@
 }
 
 .searchbar__item {
-  @apply flex-1 max-sm:w-full flex justify-start items-center rounded-full relative   min-w-[127px] max-w-[250px] ;
+  @apply flex-1 max-sm:w-full flex justify-start items-center rounded-full relative   min-w-[127px] max-w-[550px] ;
 }
 
 

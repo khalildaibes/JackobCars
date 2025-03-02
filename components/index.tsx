@@ -13,6 +13,7 @@ import { SeekBar } from "./SeekBar";
 import { SelectBox } from "./SelectBox";
 import { Slider } from "./Slider";
 import { Text } from "./Text";
+import SearchBar, {  } from "./SearchBar";
 
 export {
   Breadcrumb,
@@ -22,6 +23,7 @@ export {
   Button,
   CheckBox,
   ChipView,
+  SearchBar,
   DatePicker,
   FloatingLabelInput,
   GoogleMap,
