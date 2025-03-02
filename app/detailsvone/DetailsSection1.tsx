@@ -41,7 +41,7 @@ export default function DetailsSection1() {
   ];
 
   const detailsArray = [
-    { label: "Widthaaaa", value: "2100mm" },
+    { label: "Width", value: "2100mm" },
     { label: "Width (including mirrors)", value: "2140mm" },
     { label: "Gross Vehicle Weight (kg)", value: "1550" },
     { label: "Max. Loading Weight (kg)", value: "1200" },
