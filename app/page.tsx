@@ -19,6 +19,8 @@ import LatestBlogPostsSection from "../components/homeeight/LatestBlogPostsSecti
 import RecentlyAddedSection from "../components/homeeight/RecentlyAddedSection";
 import {  useTranslations } from "next-intl";
 import ResponsiveNewsLayout from "@/components/Responsivenews";
+import HeroSection from "@/components/NewHero";
+import LookingForCar from "@/components/comp";
 const listings = [
   {
     id: 1,
@@ -136,7 +138,7 @@ const FindCarByPlate = dynamic(
   { ssr: false }
 );
 
-function HomeContent() {
+async function HomeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [selectedFuel, setSelectedFuel] = useState("");
@@ -197,6 +199,33 @@ function HomeContent() {
   // Use the "HomePage" namespace to access your translations
   const t = useTranslations("HomePage");
   
+
+  const [products, setProducts] = useState([]);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch("/api/cars?populate=*");
+      if (!response.ok) throw new Error("Failed to fetch products");
+  
+      const data = await response.json();
+      // Set state to the actual products array
+      setProducts(data.data);
+      console.log("Fetched Products:", data);
+      return data.data;
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      return [];
+    }
+  };
+  
+  
+  
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+
   return (
     <main className="p-4 items-center justify-center sm:pt-[5%]">
       {/* Filters for larger screens */}
@@ -282,11 +311,45 @@ function HomeContent() {
           />
         </section>
       )}
+          {/* print fetched products */}
+{/* 
+  <div className="container mx-auto px-4 py-8">
+  <h1 className="text-2xl font-bold mb-4">Products</h1>
+  {products.length ? (
+    <ul>
+      {products.map((product: any) => (
+        <li key={product.id} className="mb-2">
+          <span>{product.name || product.documentId}</span>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p>No products found</p>
+  )}
+</div> */}
 
+        <HeroSection />
 
-<ResponsiveNewsLayout />
-
-
+        <div className="justify-center mt-8 gap-6 flex-col flex md:flex-row">
+          <LookingForCar
+            text="Are You Looking<br />For a Car ?"
+            title="We are committed to providing our customers with exceptional service."
+            backgroundColor="#E9F2FF"
+            textColor="#050B20"
+            buttonColor="#405FF2"
+            buttonTextColor="#FFFFFF"
+            icon={"/icons/car-icon.svg"}
+          />
+          <LookingForCar
+            text="Are You Looking<br />For a Car ?"
+            title="We are committed to providing our customers with exceptional service."
+            backgroundColor="#FFE9FFFF"
+            textColor="#050B20"
+            buttonColor="#F240E3FF"
+            buttonTextColor="#FFFFFF"
+            icon={"/icons/car-icon.svg"}
+          />
+    </div>
       {/* featured listings section */}
       <FeaturedListingsSection listings={listings} />
 
