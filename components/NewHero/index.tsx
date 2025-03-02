@@ -1,7 +1,9 @@
+"use client";
+
+
 import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
-import { fetchCars } from "@/utils";
+import { useRouter, useSearchParams,  } from "next/navigation";
 import MobileFilters from "../SearchCar";
 
 const HeroSection: React.FC = () => {
