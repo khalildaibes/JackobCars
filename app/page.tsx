@@ -226,7 +226,28 @@ async function HomeContent() {
     fetchProducts();
   }, []);
 
-
+  const data = [
+    {
+      text: t("looking_for_car_text"),
+      title: t("looking_for_car_title"),
+      backgroundColor: "#E9F2FF",
+      textColor: "#050B20",
+      buttonColor: "#405FF2",
+      buttonTextColor: "#FFFFFF",
+      icon: "/icons/car-icon.svg"
+    },
+    {
+      text: t("sell_your_car_text"),
+      title: t("sell_your_car_title"),
+      backgroundColor: "#FFE9FFFF",
+      textColor: "#050B20",
+      buttonColor: "#F240E3FF",
+      buttonTextColor: "#FFFFFF",
+      icon: "/icons/car-icon.svg"
+    }
+  ];
+  
+  
   return (
     <main className="p-4 items-center justify-center sm:pt-[5%]">
       {/* Filters for larger screens */}
@@ -336,24 +357,21 @@ async function HomeContent() {
         <HeroSection />
        
         <div className="justify-center mt-8 gap-6 flex-col flex md:flex-row">
-          <LookingForCar
-            text="Are You Looking<br />For a Car ?"
-            title="We are committed to providing our customers with exceptional service."
-            backgroundColor="#E9F2FF"
-            textColor="#050B20"
-            buttonColor="#405FF2"
-            buttonTextColor="#FFFFFF"
-            icon={"/icons/car-icon.svg"}
-          />
-          <LookingForCar
-            text="Are You Looking<br />For a Car ?"
-            title="We are committed to providing our customers with exceptional service."
-            backgroundColor="#FFE9FFFF"
-            textColor="#050B20"
-            buttonColor="#F240E3FF"
-            buttonTextColor="#FFFFFF"
-            icon={"/icons/car-icon.svg"}
-          />
+        <div className="justify-center mt-8 gap-6 flex-col flex md:flex-row">
+  {data.map(({ title, text, buttonColor, backgroundColor,icon, buttonTextColor, textColor }, index) => (
+    <LookingForCar
+      key={index} // Always provide a unique key when mapping over an array
+      text={text} // Use the dynamic text
+      title={title} // Use the dynamic title
+      backgroundColor={backgroundColor}
+      textColor={textColor}
+      buttonColor={buttonColor}
+      buttonTextColor={buttonTextColor}
+      icon={icon}
+    />
+  ))}
+</div>
+
     </div>
       {/* featured listings section */}
       <FeaturedListingsSection listings={listings} />

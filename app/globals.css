@@ -117,7 +117,7 @@
 }
 
 .car-card__icon-container {
-  @apply flex group-hover:invisible w-full justify-between text-grey;
+  @apply flex  w-full justify-between text-grey;
 }
 
 .car-card__icon {

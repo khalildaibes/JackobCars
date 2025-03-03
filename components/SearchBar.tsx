@@ -6,8 +6,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { fuels, yearsOfProduction } from "@/constants";
 import CustomFilter from "@/components/CustomFilter";
 import SearchManifacturer from "@/components/SearchManifacturer";
+import { useTranslations } from "next-intl";
 
 const SearchBar: React.FC = () => {
+  const t = useTranslations("HomePage");
   const [manufacturer, setManufacturer] = useState<string>("");
   const [model, setModel] = useState<string>("");
   const [selectedFuel, setSelectedFuel] = useState<string>("");
@@ -25,7 +27,7 @@ const SearchBar: React.FC = () => {
     e.preventDefault();
 
     if (!manufacturer && !model) {
-      alert("Please enter a car manufacturer or model.");
+      alert(t("search_alert"));
       return;
     }
 
@@ -58,7 +60,6 @@ const SearchBar: React.FC = () => {
           setManufacturer={setManufacturer}
         />
       </div>
-        
 
       {/* Model Input */}
       <div className="relative flex-1">
@@ -66,7 +67,7 @@ const SearchBar: React.FC = () => {
           src="/model-icon.png"
           width={20}
           height={20}
-          alt="Car Model"
+          alt={t("search_model_alt")}
           className="absolute left-3 top-1/2 transform -translate-y-1/2"
         />
         <input
@@ -74,7 +75,7 @@ const SearchBar: React.FC = () => {
           name="model"
           value={model}
           onChange={(e) => setModel(e.target.value)}
-          placeholder="Enter Model (e.g., Tiguan)"
+          placeholder={t("search_model_placeholder")}
           className="pl-10 pr-4 py-3 border border-gray-300 rounded-lg w-full focus:ring focus:ring-blue-300"
         />
       </div>
@@ -82,7 +83,7 @@ const SearchBar: React.FC = () => {
       {/* Filters */}
       <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-4">
         <CustomFilter
-          title="Fuel Type"
+          title={t("search_fuel_type")}
           options={fuels}
           selected={selectedFuel}
           onChange={(value) => {
@@ -91,7 +92,7 @@ const SearchBar: React.FC = () => {
           }}
         />
         <CustomFilter
-          title="Year"
+          title={t("search_year")}
           options={yearsOfProduction}
           selected={selectedYear}
           onChange={(value) => {
@@ -108,12 +109,12 @@ const SearchBar: React.FC = () => {
       >
         <Image
           src="/magnifying-glass.svg"
-          alt="Search"
+          alt={t("search_button_alt")}
           width={20}
           height={20}
           className="mr-2"
         />
-        Search
+        {t("search")}
       </button>
     </form>
   );

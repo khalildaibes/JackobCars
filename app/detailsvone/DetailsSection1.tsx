@@ -1,10 +1,8 @@
 "use client";
 
 import { Heading } from "@/components/Heading";
-import { Text } from "@/components/Text";
 import DetailsVOneList from "../../components/DetailsVOneList";
-import { Button } from "@/components/Button";
-import React, { useState } from "react";
+import React from "react";
 import EngineTransmissionDetails from "./transmissionandengien";
 import ProsConsComparison from "./ProsConsComparison";
 

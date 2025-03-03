@@ -7,168 +7,35 @@ import BlogVOneArticle from "../../components/BlogVOneArticle";
 import Link from "next/link";
 import React, { Suspense } from "react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/Breadcrumb";
+import { useTranslations } from "next-intl";
 
 const articleGrid = [
   {
     detailPostQgc: "img_detail_post_qgc_266x414.png",
-    link: "Sound",
-    admin: "admin",
-    november222023: "November 22, 2023",
-    p2024BMWALPINA: (
-      <>
-        2024 BMW ALPINA XB7 with exclusive
-        <br />
-        details, extraordinary
-      </>
-    ),
+    link: "sound",
+    admin: "author",
+    publishDate: "publish_date",
+    articleTitle: "blog_title_1",
   },
   {
     detailPostQgc: "img_blog9_qgcqjcnb6.png",
-    link: "Accessories",
-    admin: "admin",
-    november222023: "November 22, 2023",
-    p2024BMWALPINA: (
-      <>
-        2024 BMW ALPINA XB7 with exclusive
-        <br />
-        details, extraordinary
-      </>
-    ),
-    p2024bmwalpina: (
-      <>
-        BMW X6 M50i is designed to exceed your
-        <br />
-        sportiest.
-      </>
-    ),
-  },
-  {
-    detailPostQgc: "img_detail_post_qgc_266x414.png",
-    link: "Sound",
-    admin: "admin",
-    november222023: "November 22, 2023",
-    p2024BMWALPINA: (
-      <>
-        2024 BMW ALPINA XB7 with exclusive
-        <br />
-        details, extraordinary
-      </>
-    ),
+    link: "accessories",
+    admin: "author",
+    publishDate: "publish_date",
+    articleTitle: "blog_title_2",
   },
   {
     detailPostQgc: "img_blog8_qgcqjcnb6.png",
-    link: "Body Kit",
-    admin: "admin",
-    november222023: "November 22, 2023",
-    p2024BMWALPINA: (
-      <>
-        2024 BMW ALPINA XB7 with exclusive
-        <br />
-        details, extraordinary
-      </>
-    ),
-    p2024bmwalpina: (
-      <>
-        2024 Kia Sorento Hybrid Review: Big Vehicle
-        <br />
-        With Small-Vehicle
-      </>
-    ),
-  },
-  {
-    detailPostQgc: "img_detail_post_qgc_266x414.png",
-    link: "Sound",
-    admin: "admin",
-    november222023: "November 22, 2023",
-    p2024BMWALPINA: (
-      <>
-        2024 BMW ALPINA XB7 with exclusive
-        <br />
-        details, extraordinary
-      </>
-    ),
-  },
-  {
-    detailPostQgc: "img_blog4_qgcqjcnb6.png",
-    link: "Exterior",
-    admin: "admin",
-    november222023: "November 22, 2023",
-    p2024BMWALPINA: (
-      <>
-        2024 BMW ALPINA XB7 with exclusive
-        <br />
-        details, extraordinary
-      </>
-    ),
-    p2024bmwalpina: (
-      <>
-        2024 BMW X3 M Sport Seats – available as
-        <br />a standalone option
-      </>
-    ),
-  },
-  {
-    detailPostQgc: "img_blog5_qgcqjcnb6.png",
-    link: "Body Kit",
-    admin: "admin",
-    november222023: "November 22, 2023",
-    p2024BMWALPINA: (
-      <>
-        2024 BMW ALPINA XB7 with exclusive
-        <br />
-        details, extraordinary
-      </>
-    ),
-    p2024bmwalpina: (
-      <>
-        2023 Carnival Standard blind-spot &<br />
-        forward collision avoidance
-      </>
-    ),
-  },
-  {
-    detailPostQgc: "img_blog1_qgcqjcnb6.png",
-    link: "Sound",
-    admin: "admin",
-    november222023: "September 19, 2023",
-    p2024BMWALPINA: (
-      <>
-        2024 BMW ALPINA XB7 with exclusive
-        <br />
-        details, extraordinary
-      </>
-    ),
-    p2024bmwalpina: (
-      <>
-        Golf vs Polo: A Comparison of Two
-        <br />
-        Volkswagen Classics
-      </>
-    ),
-  },
-  {
-    detailPostQgc: "img_blog3_qgcqjcnb6.png",
-    link: "Oil & Filters",
-    admin: "admin",
-    november222023: "September 19, 2023",
-    p2024BMWALPINA: (
-      <>
-        2024 BMW ALPINA XB7 with exclusive
-        <br />
-        details, extraordinary
-      </>
-    ),
-    p2024bmwalpina: (
-      <>
-        Battle of the SUVs – Kia Sportage vs
-        <br />
-        Hyundai Tucson
-      </>
-    ),
-  },
+    link: "body_kit",
+    admin: "author",
+    publishDate: "publish_date",
+    articleTitle: "blog_title_3",
+  }
 ];
 
 export default function BlogMainSection() {
+  const t = useTranslations("BlogDetailsPage");
+
   return (
     <>
       {/* Blog main section */}
@@ -186,13 +53,13 @@ export default function BlogMainSection() {
                 <BreadcrumbItem>
                   <BreadcrumbLink href="#" as={Link}>
                     <Text as="p" className="text-sm font-normal text-indigo-a400">
-                      Home
+                      {t("home")}
                     </Text>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbItem isCurrentPage>
                   <BreadcrumbLink href="#" as={Link}>
-                    <Text as="p" className="text-sm font-normal">Blog</Text>
+                    <Text as="p" className="text-sm font-normal">{t("blog_page")}</Text>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
               </Breadcrumb>
@@ -200,7 +67,7 @@ export default function BlogMainSection() {
                 as="h1"
                 className="text-3xl font-bold capitalize sm:text-2xl"
               >
-                Blog
+                {t("blog_page")}
               </Heading>
             </div>
           </div>
@@ -210,8 +77,13 @@ export default function BlogMainSection() {
             <div className="flex flex-col gap-12">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <Suspense fallback={<div>Loading feed...</div>}>
-                  {articleGrid.map((d, index) => (
-                    <BlogVOneArticle {...d} key={"group8977" + index} />
+                  {articleGrid.map((article, index) => (
+                    <BlogVOneArticle
+                      {...article}
+                      key={"group8977" + index}
+                      admin={t(article.admin)}
+                      link={t(article.link)}
+                    />
                   ))}
                 </Suspense>
               </div>
@@ -236,7 +108,7 @@ export default function BlogMainSection() {
                     src="img_arrow_right_black_900_1.svg"
                     width={10}
                     height={12}
-                    alt="Arrow Right"
+                    alt={t("arrow_right")}
                     className="h-3"
                   />
                 </div>

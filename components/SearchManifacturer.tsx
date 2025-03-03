@@ -5,11 +5,13 @@ import { useState, Fragment } from "react";
 import Image from "next/image";
 import { manufacturers } from "@/constants";
 import { Combobox, Transition } from "@headlessui/react";
+import { useTranslations } from "next-intl";
 
 const SearchManufacturer = ({
   manufacturer,
   setManufacturer,
 }: SearchManufacturerProps) => {
+  const t = useTranslations("HomePage");
   const [query, setQuery] = useState("");
 
   const filteredManufacturers =
@@ -26,7 +28,7 @@ const SearchManufacturer = ({
         src="/car-logo.svg" // Ensure the correct path
         width={20}
         height={20}
-        alt="Car logo"
+        alt={t("search_car_logo_alt")}
         className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
       />
 
@@ -35,7 +37,7 @@ const SearchManufacturer = ({
         <div className="relative">
           <Combobox.Input
             className="pl-10 pr-4 py-3 border border-gray-300 rounded-lg w-full focus:ring focus:ring-blue-300 transition-all ease-in-out"
-            placeholder="Enter manufacturer (e.g., Volkswagen)"
+            placeholder={t("search_manufacturer_placeholder")}
             displayValue={(manufacturer: string) => manufacturer}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -54,7 +56,7 @@ const SearchManufacturer = ({
                   value={query}
                   className="px-4 py-2 text-gray-500"
                 >
-                  No results found.
+                  {t("search_no_results")}
                 </Combobox.Option>
               ) : (
                 filteredManufacturers.map((item) => (

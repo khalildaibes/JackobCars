@@ -1,12 +1,13 @@
 "use client";
 
-
 import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
-import { useRouter, useSearchParams,  } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import MobileFilters from "../SearchCar";
+import { useTranslations } from "next-intl";
 
 const HeroSection: React.FC = () => {
+  const t = useTranslations("HomePage");
   const searchParams = useSearchParams();
   const router = useRouter();
   const [selectedFuel, setSelectedFuel] = useState("");
@@ -41,16 +42,15 @@ const HeroSection: React.FC = () => {
       {/* Left Content - Text */}
       <div className="text-center md:text-left mt-20 md:mt-40 max-w-lg">
         <h1 className="text-white text-[30px] sm:text-[50px] md:text-[70px] font-bold leading-[40px] sm:leading-[70px]">
-          Fast, Simple and Easy
+          {t("hero_title")}
         </h1>
         <p className="text-white text-[14px] sm:text-[16px] font-normal leading-[20px] sm:leading-[29.6px]">
-          Shop Online. Pickup Today. It’s Fast, Simple and Easy. Learn More.
+          {t("hero_subtitle")}
         </p>
       </div>
 
       {/* Filters - Positioned based on screen size */}
       <div className="w-full mt-10 md:mt-16 flex flex-col md:flex-row items-center md:items-start">
-        {/* Mobile: Centered | Desktop: Left-aligned */}
         <div className="w-full  md:w-2/3">
           <MobileFilters
             selectedFuel={selectedFuel}
@@ -60,39 +60,15 @@ const HeroSection: React.FC = () => {
             handleFilterChange={handleFilterChange}
           />
         </div>
-
-        {/* Search Bar
-        <div className="w-full max-w-lg md:w-2/3 mt-6 md:mt-0 md:ml-10 bg-white p-4 rounded-lg shadow-md flex flex-col gap-4">
-          <div className="flex justify-center md:justify-start gap-4 text-gray-800 text-[14px] sm:text-[16px] font-medium">
-            <span className="border-b-2 border-gray-800">All</span>
-            <span>New</span>
-            <span>Used</span>
-          </div>
-
-          <div className="flex flex-col md:flex-row items-center gap-4">
-            <div className="flex items-center border-b md:border-r md:border-b-0 pr-4 w-full md:w-auto">
-              <span className="text-gray-800">Any Makes</span>
-            </div>
-            <div className="flex items-center border-b md:border-r md:border-b-0 px-4 w-full md:w-auto">
-              <span className="text-gray-800">Any Models</span>
-            </div>
-            <span className="text-gray-800 text-center md:text-left">
-              Price: All Prices
-            </span>
-            <button className="w-full md:w-auto bg-blue-600 text-white px-6 py-3 rounded-lg flex items-center justify-center hover:bg-blue-700 transition">
-              Search
-            </button>
-          </div>
-        </div> */}
       </div>
 
       {/* Bottom Content - Category Buttons */}
       <div className="absolute bottom-0 w-full flex flex-wrap justify-center md:justify-start gap-4 sm:gap-8">
         {[
-          { name: "SUV", icon: "/icons/suv.svg" },
-          { name: "Sedan", icon: "/icons/sedan.svg" },
-          { name: "Hatchback", icon: "/icons/hatchback.svg" },
-          { name: "Coupe", icon: "/icons/coupe.svg" },
+          { name: t("category_suv"), icon: "/icons/suv.svg" },
+          { name: t("category_sedan"), icon: "/icons/sedan.svg" },
+          { name: t("category_hatchback"), icon: "/icons/hatchback.svg" },
+          { name: t("category_coupe"), icon: "/icons/coupe.svg" },
         ].map((category, index) => (
           <div
             key={index}

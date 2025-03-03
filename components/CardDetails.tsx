@@ -16,7 +16,7 @@ const CardDetails = ({ isOpen, closeModal, car }: cardDetailsProps) => {
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+        <Dialog as="div" className="relative z-1000000000 " onClose={closeModal}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -40,7 +40,7 @@ const CardDetails = ({ isOpen, closeModal, car }: cardDetailsProps) => {
                 leaveFrom="opactiy-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto transform rounded-2xl bg-white p-6 text-left shadow-xl transition-all flex flex-col gap-5">
+                <Dialog.Panel className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto transform rounded-2xl bg-white p-6 text-left shadow-xl transition-all flex flex-col gap-5 ">
                   <button
                     type="button"
                     onClick={closeModal}
@@ -49,7 +49,7 @@ const CardDetails = ({ isOpen, closeModal, car }: cardDetailsProps) => {
                     <Image
                       src="/close.svg"
                       alt="close"
-                      width={20}
+                      width={20} 
                       height={20}
                       className="object-contain"
                     />

@@ -17,75 +17,150 @@
     "blog1_title": "האם ה-2024 Porsche Cayenne S הוא SUV טוב? 4 יתרונות ו-3 חסרונות",
     "blog2_title": "קומפקט סטימרולר: 2024 Toyota RAV4 מתחילה ב-29,825$",
     "blog3_title": "2024 Kia Niro EV עולה 50$ יותר, כמעט ללא שינוי בשאר המפרט",
-    "porsche_alt": "Porsche Cayenne SUV",
-    "toyota_alt": "Toyota RAV4",
-    "featured_listings": "Featured Listings",
-    "in_stock": "In Stock",
-    "new_cars": "New Cars",
-    "used_cars": "Used Cars",
-    "great_price": "Great Price",
-    "view_details": "View Details",
-    "view_all": "View All",
+    "porsche_alt": "פורשה קאיין SUV",
+    "toyota_alt": "טויוטה RAV4",
+    "kia_alt": "קיה נירו EV",
+    "featured_listings": "רשימות מומלצות",
+    "in_stock": "במלאי",
+    "new_cars": "מכוניות חדשות",
+    "used_cars": "מכוניות משומשות",
+    "great_price": "מחיר מצוין",
+    "view_details": "צפה בפרטים",
+    "view_all": "הצג הכל",
     "great_deal": "עסקה מצוינת",
     "sale": "מכירה",
-    "kia_alt": "Kia Niro EV"
-  },
+    "hero_title": "מהיר, פשוט וקל",
+    "hero_subtitle": "קנה באינטרנט. אסוף היום. זה מהיר, פשוט וקל. למד עוד.",
+    "category_suv": "רכב שטח",
+    "category_sedan": "סדאן",
+    "category_hatchback": "האצ'בק",
+    "category_coupe": "קופה",
+    "search_alert": "נא להזין יצרן רכב או דגם.",
+    "search_model_alt": "דגם רכב",
+    "search_model_placeholder": "הזן דגם (לדוגמה: טיגואן)",
+    "search_fuel_type": "סוג דלק",
+    "search_year": "שנת ייצור",
+    "search_button_alt": "חפש",
+    "search_car_logo_alt": "לוגו רכב",
+    "search_manufacturer_placeholder": "הזן יצרן רכב (לדוגמה: פולקסווגן)",
+    "search_no_results": "לא נמצאו תוצאות.",
+    "looking_for_car_text": "מחפש רכב?",
+    "looking_for_car_title": "אנחנו מחויבים לספק שירות יוצא דופן ללקוחותינו.",
+    "sell_your_car_text": "רוצה למכור את הרכב שלך?",
+    "sell_your_car_title": "יש לנו מעל 200,000 לקוחות יומיים.",
+    "recently_added": "נוסף לאחרונה",
+    "bookmark": "שמירת סימניה",
+    "arrow_left": "חץ שמאלה",
+    "car_title_1": "T-Cross – 2023",
+    "car_title_2": "טויוטה קאמרי – 2020",
+    "car_title_3": "הונדה אקורד – 2019",
+    "car_miles_1": "15 מייל",
+    "car_miles_2": "20,000 מייל",
+    "car_miles_3": "18,000 מייל",
+    "car_fuel_1": "בנזין",
+    "car_fuel_2": "בנזין",
+    "car_fuel_3": "בנזין",
+    "car_transmission_1": "תיבת הילוכים רציפה (CVT)",
+    "car_transmission_2": "אוטומטי",
+    "car_transmission_3": "אוטומטי",
+    "car_price_1": "$15,000",
+    "car_price_2": "$20,000",
+    "car_price_3": "$18,000",
+    "blog_page": "בלוג",
+    "home": "בית",
+    "categories": "קטגוריות",
+    "tags": "תגיות",
+    "read_more": "קרא עוד",
+    "arrow_right": "חץ ימינה",
+    "author": "מנהל",
+    "publish_date": "תאריך פרסום",
+    "accessories": "אביזרים",
+    "body_kit": "ערכת גוף",
+    "exterior": "חיצוני",
+    "fuel_systems": "מערכת דלק",
+    "interior": "פנים",
+    "oil_filters": "שמנים ומסננים",
+    "sound": "מערכת שמע",
+    "wheels": "גלגלים",
+
+    "blog_category_sound": "צליל",
+    "blog_category_accessories": "אביזרים",
+    "admin": "מנהל",
+    "blog_date_1": "22 בנובמבר 2023",
+    "blog_date_2": "22 בנובמבר 2023",
+    "blog_date_3": "22 בנובמבר 2023",
+    "blog_title_1": "2024 BMW ALPINA XB7",
+    "blog_subtitle_1": "עם פרטים בלעדיים, יוצא דופן",
+    "blog_title_2": "2024 BMW ALPINA XB7",
+    "blog_subtitle_2": "עם פרטים בלעדיים, יוצא דופן",
+    "blog_title_3": "BMW X6 M50i",
+    "blog_subtitle_3": "מתוכנן לעבור את הגבולות הספורטיביים שלך",
+    "blog_title_4": "2024 BMW ALPINA XB7",
+    "blog_subtitle_4": "עם פרטים בלעדיים, יוצא דופן"
   
-    "BlogDetailsPage": {
-      "breadcrumb": {
-        "home": "בית",
-        "accessories": "אביזרים"
-      },
-      "heading": {
-        "title": "BMW X6 M50i מעוצבת כדי לעבור את הגבולות הספורטיביים שלך."
-      },
-      "postMeta": {
-        "admin": "מנהל",
-        "date": "22 בנובמבר 2023",
-        "category": "אביזרים, חיצוני"
-      },
-      "blogImageAlt": "תמונת בלוג",
-      "blogContent": {
-        "paragraph1": "אליאקום האנדריט סוליציטודין פורוס, קוויס רוטורם מי אקומסן נק. זהו טקסט לדוגמה לתרגום מעברית לאנגלית.",
-        "paragraph2": "דויס מטיס לאוריט נקו, ואורנארה נקו סוליציטודין את. זהו טקסט לדוגמה בעברית המציג תוכן מפורט."
-      },
-      "quoteSection": {
-        "text": "ציטוט טקסט המדגים את החשיבות של אלמנטים מעוצבים בתוכן.",
-        "author": "לואיס פיקפורד"
-      },
-      "courseBenefits": {
-        "whatYoullLearn": "מה תלמד"
-      },
-      "requirements": {
-        "heading": "דרישות",
-        "item1": "אין צורך בניסיון קודם או בכישורים מוגדרים מראש כדי לקחת קורס זה. הכוונה טובה תספיק לשלוט בעיצוב UI/UX.",
-        "item2": "מחשב עם חיבור אינטרנט טוב.",
-        "item3": "Adobe Photoshop (אופציונלי)"
-      },
-      "shareSection": {
-        "shareText": "שתף את הפוסט",
-        "categories": {
-          "exterior": "חיצוני",
-          "fuelSystem": "מערכת דלק",
-          "sound": "קול"
-        }
-      },
-      "pagination": {
-        "previousPost": "פוסט קודם",
-        "previousPostTitle": "סקירת BMW X5 Gold 2024 Sport: קל על הספורט",
-        "nextPost": "פוסט הבא",
-        "nextPostTitle": "2024 BMW ALPINA XB7 עם פרטים בלעדיים,"
-      },
-      "comments": {
-        "commentsHeading": "3 תגובות",
-        "leaveAComment": "השאר תגובה",
-        "saveInfo": "שמור את שמי, האימייל והאתר בדפדפן הזה לפעם הבאה שאני מגיב.",
-        "submitComment": "שלח תגובה"
+  },
+  "Navbar": {
+    "logo_alt": "לוגו של ג'ייקובקאר",
+    "cars_market": "שוק הרכבים",
+    "find_by_plate": "מצא לפי מספר לוחית",
+    "news": "חדשות",
+    "after_market": "אביזרי רכב",
+    "compare_cars": "השוואת רכבים"
+  },
+  "BlogDetailsPage": {
+    "breadcrumb": {
+      "home": "בית",
+      "accessories": "אביזרים"
+    },
+    "heading": {
+      "title": "BMW X6 M50i מעוצבת כדי לעבור את הגבולות הספורטיביים שלך."
+    },
+    "postMeta": {
+      "admin": "מנהל",
+      "date": "22 בנובמבר 2023",
+      "category": "אביזרים, חיצוני"
+    },
+    "blogImageAlt": "תמונת בלוג",
+    "blogContent": {
+      "paragraph1": "אליאקום האנדריט סוליציטודין פורוס, קוויס רוטורם מי אקומסן נק. זהו טקסט לדוגמה לתרגום מעברית לאנגלית.",
+      "paragraph2": "דויס מטיס לאוריט נקו, ואורנארה נקו סוליציטודין את. זהו טקסט לדוגמה בעברית המציג תוכן מפורט."
+    },
+    "quoteSection": {
+      "text": "ציטוט טקסט המדגים את החשיבות של אלמנטים מעוצבים בתוכן.",
+      "author": "לואיס פיקפורד"
+    },
+    "courseBenefits": {
+      "whatYoullLearn": "מה תלמד"
+    },
+    "requirements": {
+      "heading": "דרישות",
+      "item1": "אין צורך בניסיון קודם או בכישורים מוגדרים מראש כדי לקחת קורס זה. הכוונה טובה תספיק לשלוט בעיצוב UI/UX.",
+      "item2": "מחשב עם חיבור אינטרנט טוב.",
+      "item3": "Adobe Photoshop (אופציונלי)"
+    },
+    "shareSection": {
+      "shareText": "שתף את הפוסט",
+      "categories": {
+        "exterior": "חיצוני",
+        "fuelSystem": "מערכת דלק",
+        "sound": "קול"
       }
     },
-    "Common": {
-      "Home": "בית",
-      "Accessories": "אביזרים"
+    "pagination": {
+      "previousPost": "פוסט קודם",
+      "previousPostTitle": "סקירת BMW X5 Gold 2024 Sport: קל על הספורט",
+      "nextPost": "פוסט הבא",
+      "nextPostTitle": "2024 BMW ALPINA XB7 עם פרטים בלעדיים,"
+    },
+    "comments": {
+      "commentsHeading": "3 תגובות",
+      "leaveAComment": "השאר תגובה",
+      "saveInfo": "שמור את שמי, האימייל והאתר בדפדפן הזה לפעם הבאה שאני מגיב.",
+      "submitComment": "שלח תגובה"
     }
-    
+  },
+  "Common": {
+    "Home": "בית",
+    "Accessories": "אביזרים"
+  }
 }

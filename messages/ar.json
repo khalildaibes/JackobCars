@@ -13,80 +13,168 @@
     "select_price": "حدد السعر",
     "advanced_filters": "فلاتر متقدمة",
     "search": "ابحث",
-    "view_all": "عرض الكل",
     "blogs_heading": "المدونات",
     "blog1_title": "هل بورش كايان S 2024 سيارة SUV جيدة؟ 4 إيجابيات و3 سلبيات",
     "blog2_title": "كمباكت ستيمرولر: تبدأ تويوتا RAV4 2024 من 29,825 دولار",
     "blog3_title": "تكلفة Kia Niro EV 2024 تزيد بـ50 دولارًا، دون تغيير تقريبًا في باقي المواصفات",
-    "porsche_alt": "سيارة بورش كايان SUV",
+    "porsche_alt": "بورش كايان SUV",
     "toyota_alt": "تويوتا RAV4",
+    "kia_alt": "كيا نيرو EV",
     "featured_listings": "قائمة مميزة",
     "in_stock": "متوفر",
     "new_cars": "سيارات جديدة",
     "used_cars": "سيارات مستعملة",
-    "great_deal": "صفقة رائعة",
     "great_price": "سعر ممتاز",
-    "sale": "تخفيض",
     "view_details": "عرض التفاصيل",
-    "kia_alt": "Kia Niro EV",
-    "CARS_FOR_SALE": "سيارات للبيع" 
-  }
-  ,
-    "BlogDetailsPage": {
-      "breadcrumb": {
-        "home": "الرئيسية",
-        "accessories": "اكسسوارات"
-      },
-      "heading": {
-        "title": "بي إم دبليو X6 M50i مصممة لتتجاوز أقوى طموحاتك الرياضية."
-      },
-      "postMeta": {
-        "admin": "المسؤول",
-        "date": "22 نوفمبر 2023",
-        "category": "اكسسوارات، خارجي"
-      },
-      "blogImageAlt": "صورة المدونة",
-      "blogContent": {
-        "paragraph1": "عليك اتباع أسلوب هندسة المواصلات المتقنة، حيث لا تحتاج إلى خبرة سابقة للوصول إلى المستوى المطلوب. هذا مثال على نص مترجم من الإنجليزية إلى العربية.",
-        "paragraph2": "دوي ماتيس لاوريت نيكوي، وأورناري لاوريت نيكوي سوليسيتيودين. مثال على نص عربي طويل يشرح تفاصيل المحتوى في المدونة ويظهر كيفية التنسيق."
-      },
-      "quoteSection": {
-        "text": "اقتباس نصي يُظهر مدى أهمية الفقرات المميزة في المحتوى.",
-        "author": "لويس بيكفورد"
-      },
-      "courseBenefits": {
-        "whatYoullLearn": "ماذا ستتعلم"
-      },
-      "requirements": {
-        "heading": "المتطلبات",
-        "item1": "لا نحتاج إلى خبرة سابقة أو مهارات محددة مسبقًا لأخذ هذه الدورة. التوجيه الجيد سيكون كافيًا لإتقان تصميم واجهة المستخدم وتجربة المستخدم.",
-        "item2": "كمبيوتر مع اتصال إنترنت جيد.",
-        "item3": "أدوبي فوتوشوب (اختياري)"
-      },
-      "shareSection": {
-        "shareText": "شارك هذا المنشور",
-        "categories": {
-          "exterior": "خارجي",
-          "fuelSystem": "نظام الوقود",
-          "sound": "الصوت"
-        }
-      },
-      "pagination": {
-        "previousPost": "المنشور السابق",
-        "previousPostTitle": "مراجعة BMW X5 Gold 2024: خفيفة على الجانب الرياضي",
-        "nextPost": "المنشور التالي",
-        "nextPostTitle": "BMW ALPINA XB7 2024 مع تفاصيل حصرية،"
-      },
-      "comments": {
-        "commentsHeading": "3 تعليقات",
-        "leaveAComment": "اترك تعليق",
-        "saveInfo": "احفظ اسمي وبريدي الإلكتروني وموقعي في هذا المتصفح للمرة القادمة التي أعلق فيها.",
-        "submitComment": "إرسال التعليق"
+    "view_all": "عرض الكل",
+    "great_deal": "صفقة رائعة",
+    "sale": "تخفيض",
+    "hero_title": "سريع، بسيط وسهل",
+    "hero_subtitle": "تسوق عبر الإنترنت. استلم اليوم. إنه سريع، بسيط وسهل. اعرف المزيد.",
+    "category_suv": "دفع رباعي",
+    "category_sedan": "سيدان",
+    "category_hatchback": "هاتشباك",
+    "category_coupe": "كوبيه",
+    "search_alert": "يرجى إدخال اسم الشركة المصنعة أو طراز السيارة.",
+    "search_model_alt": "طراز السيارة",
+    "search_model_placeholder": "أدخل الطراز (مثال: تيجوان)",
+    "search_fuel_type": "نوع الوقود",
+    "search_year": "سنة الصنع",
+    "search_button_alt": "بحث",
+    "search_car_logo_alt": "شعار السيارة",
+    "search_manufacturer_placeholder": "أدخل الشركة المصنعة (مثال: فولكس فاجن)",
+    "search_no_results": "لم يتم العثور على نتائج.",
+    "looking_for_car_text": "هل تبحث عن سيارة؟",
+    "looking_for_car_title": "نحن ملتزمون بتقديم خدمة استثنائية لعملائنا.",
+    "sell_your_car_text": "هل تريد بيع سيارتك؟",
+    "sell_your_car_title": "لدينا أكثر من 200,000 زائر يومي.",
+    "recently_added": "أضيف حديثًا",
+    "bookmark": "إشارة مرجعية",
+    "arrow_left": "سهم لليسار",
+    "car_title_1": "T-Cross – 2023",
+    "car_title_2": "تويوتا كامري – 2020",
+    "car_title_3": "هوندا أكورد – 2019",
+    "car_miles_1": "15 ميل",
+    "car_miles_2": "20,000 ميل",
+    "car_miles_3": "18,000 ميل",
+    "car_fuel_1": "بنزين",
+    "car_fuel_2": "بنزين",
+    "car_fuel_3": "بنزين",
+    "car_transmission_1": "ناقل حركة CVT",
+    "car_transmission_2": "أوتوماتيكي",
+    "car_transmission_3": "أوتوماتيكي",
+    "car_price_1": "$15,000",
+    "car_price_2": "$20,000",
+    "car_price_3": "$18,000",
+    "blog_page": "المدونة",
+    "home": "الرئيسية",
+    "categories": "الفئات",
+    "tags": "الوسوم",
+    "read_more": "اقرأ المزيد",
+    "arrow_right": "سهم لليمين",
+    "author": "المسؤول",
+    "publish_date": "تاريخ النشر",
+    "accessories": "إكسسوارات",
+    "body_kit": "مجموعة هيكل",
+    "exterior": "الخارجية",
+    "fuel_systems": "نظام الوقود",
+    "interior": "الداخلية",
+    "oil_filters": "الزيوت والفلاتر",
+    "sound": "نظام صوتي",
+    "wheels": "العجلات",
+
+    "blog_category_sound": "الصوت",
+    "blog_category_accessories": "الإكسسوارات",
+    "admin": "المشرف",
+    "blog_date_1": "22 نوفمبر 2023",
+    "blog_date_2": "22 نوفمبر 2023",
+    "blog_date_3": "22 نوفمبر 2023",
+    "blog_title_1": "2024 BMW ALPINA XB7",
+    "blog_subtitle_1": "بتفاصيل حصرية، غير عادي",
+    "blog_title_2": "2024 BMW ALPINA XB7",
+    "blog_subtitle_2": "بتفاصيل حصرية، غير عادي",
+    "blog_title_3": "BMW X6 M50i",
+    "blog_subtitle_3": "مصمم لتجاوز حدودك الرياضية",
+    "blog_title_4": "2024 BMW ALPINA XB7",
+    "blog_subtitle_4": "بتفاصيل حصرية، غير عادي"
+  },
+  "BlogDetailsPage": {
+    "blog_page": "المدونة",
+    "home": "الرئيسية",
+    "categories": "الفئات",
+    "tags": "الوسوم",
+    "view_all": "عرض الكل",
+    "read_more": "اقرأ المزيد",
+    "arrow_right": "سهم لليمين",
+    "author": "المسؤول",
+    "publish_date": "22 نوفمبر 2023",
+    "sound": "نظام صوتي",
+    "accessories": "إكسسوارات",
+    "body_kit": "مجموعة هيكل",
+    "blog_title_1": "2024 BMW ALPINA XB7 بتفاصيل حصرية ومميزة",
+    "blog_title_2": "BMW X6 M50i مصممة لتتجاوز أقوى طموحاتك الرياضية",
+    "blog_title_3": "مراجعة 2024 Kia Sorento Hybrid: سيارة كبيرة بمزايا السيارات الصغيرة",
+    "breadcrumb": {
+      "home": "الرئيسية",
+      "accessories": "اكسسوارات"
+    },
+    "heading": {
+      "title": "بي إم دبليو X6 M50i مصممة لتتجاوز أقوى طموحاتك الرياضية."
+    },
+    "postMeta": {
+      "admin": "المسؤول",
+      "date": "22 نوفمبر 2023",
+      "category": "اكسسوارات، خارجي"
+    },
+    "blogImageAlt": "صورة المدونة",
+    "blogContent": {
+      "paragraph1": "عليك اتباع أسلوب هندسة المواصلات المتقنة، حيث لا تحتاج إلى خبرة سابقة للوصول إلى المستوى المطلوب. هذا مثال على نص مترجم من الإنجليزية إلى العربية.",
+      "paragraph2": "دوي ماتيس لاوريت نيكوي، وأورناري لاوريت نيكوي سوليسيتيودين. مثال على نص عربي طويل يشرح تفاصيل المحتوى في المدونة ويظهر كيفية التنسيق."
+    },
+    "quoteSection": {
+      "text": "اقتباس نصي يُظهر مدى أهمية الفقرات المميزة في المحتوى.",
+      "author": "لويس بيكفورد"
+    },
+    "courseBenefits": {
+      "whatYoullLearn": "ماذا ستتعلم"
+    },
+    "requirements": {
+      "heading": "المتطلبات",
+      "item1": "لا نحتاج إلى خبرة سابقة أو مهارات محددة مسبقًا لأخذ هذه الدورة. التوجيه الجيد سيكون كافيًا لإتقان تصميم واجهة المستخدم وتجربة المستخدم.",
+      "item2": "كمبيوتر مع اتصال إنترنت جيد.",
+      "item3": "أدوبي فوتوشوب (اختياري)"
+    },
+    "shareSection": {
+      "shareText": "شارك هذا المنشور",
+      "categories": {
+        "exterior": "خارجي",
+        "fuelSystem": "نظام الوقود",
+        "sound": "الصوت"
       }
     },
-    "Common": {
-      "Home": "الرئيسية",
-      "Accessories": "اكسسوارات"
+    "pagination": {
+      "previousPost": "المنشور السابق",
+      "previousPostTitle": "مراجعة BMW X5 Gold 2024: خفيفة على الجانب الرياضي",
+      "nextPost": "المنشور التالي",
+      "nextPostTitle": "BMW ALPINA XB7 2024 مع تفاصيل حصرية،"
+    },
+    "comments": {
+      "commentsHeading": "3 تعليقات",
+      "leaveAComment": "اترك تعليق",
+      "saveInfo": "احفظ اسمي وبريدي الإلكتروني وموقعي في هذا المتصفح للمرة القادمة التي أعلق فيها.",
+      "submitComment": "إرسال التعليق"
     }
-    
+  },
+  "Navbar": {
+    "logo_alt": "شعار جاكوب كار",
+    "cars_market": "سوق السيارات",
+    "find_by_plate": "ابحث برقم اللوحة",
+    "news": "الأخبار",
+    "after_market": "قطع غيار السيارات",
+    "compare_cars": "مقارنة السيارات"
+  },
+  "Common": {
+    "Home": "الرئيسية",
+    "Accessories": "اكسسوارات"
+  }
 }

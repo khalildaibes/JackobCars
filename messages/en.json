@@ -26,26 +26,97 @@
     "used_cars": "Used Cars",
     "great_price": "Great Price",
     "view_details": "View Details",
-    "sale": "تخفيض",
     "view_all": "View All",
-    "CARS_FOR_SALE": "CARS FOR SALE",
-    "DEALER_REVIEWS": "DEALER REVIEWS",
-    "VISITORS_PER_DAY": "VISITORS PER DAY" ,
-    "VERIFIED_DEALERS":"VERIFIED DEALERS" 
+    "great_deal": "Great Deal",
+    "sale": "Sale",
+    "hero_title": "Fast, Simple and Easy",
+    "hero_subtitle": "Shop Online. Pickup Today. It’s Fast, Simple and Easy. Learn More.",
+    "category_suv": "SUV",
+    "category_sedan": "Sedan",
+    "category_hatchback": "Hatchback",
+    "category_coupe": "Coupe",
+    "search_alert": "Please enter a car manufacturer or model.",
+    "search_model_alt": "Car Model",
+    "search_model_placeholder": "Enter Model (e.g., Tiguan)",
+    "search_fuel_type": "Fuel Type",
+    "search_year": "Year of Production",
+    "search_button_alt": "Search",
+    "search_car_logo_alt": "Car logo",
+    "search_manufacturer_placeholder": "Enter manufacturer (e.g., Volkswagen)",
+    "search_no_results": "No results found.",
+    "looking_for_car_text": "Are You Looking For a Car?",
+    "looking_for_car_title": "We are committed to providing our customers with exceptional service.",
+    "sell_your_car_text": "Want To Sell Your Car?",
+    "sell_your_car_title": "We have over 200,000 daily customers.",
+    "recently_added": "Recently Added",
+    "view_all": "View All",
+    "view_details": "View Details",
+    "bookmark": "Bookmark",
+    "arrow_left": "Arrow Left",
+    "car_title_1": "T-Cross – 2023",
+    "car_title_2": "Toyota Camry – 2020",
+    "car_title_3": "Honda Accord – 2019",
+    "car_miles_1": "15 Miles",
+    "car_miles_2": "20,000 Miles",
+    "car_miles_3": "18,000 Miles",
+    "car_fuel_1": "Petrol",
+    "car_fuel_2": "Petrol",
+    "car_fuel_3": "Petrol",
+    "car_transmission_1": "CVT",
+    "car_transmission_2": "Automatic",
+    "car_transmission_3": "Automatic",
+    "car_price_1": "$15,000",
+    "car_price_2": "$20,000",
+    "car_price_3": "$18,000",
 
-    
-
+    "blog_category_sound": "Sound",
+    "blog_category_accessories": "Accessories",
+    "admin": "admin",
+    "blog_date_1": "November 22, 2023",
+    "blog_date_2": "November 22, 2023",
+    "blog_date_3": "November 22, 2023",
+    "blog_title_1": "2024 BMW ALPINA XB7",
+    "blog_subtitle_1": "With exclusive details, extraordinary",
+    "blog_title_2": "2024 BMW ALPINA XB7",
+    "blog_subtitle_2": "With exclusive details, extraordinary",
+    "blog_title_3": "BMW X6 M50i",
+    "blog_subtitle_3": "Designed to exceed your sportiest",
+    "blog_title_4": "2024 BMW ALPINA XB7",
+    "blog_subtitle_4": "With exclusive details, extraordinary"
+  },
+  "Navbar": {
+    "logo_alt": "JackobCar's Logo",
+    "cars_market": "Cars Market",
+    "find_by_plate": "Find by Plate Number",
+    "news": "News",
+    "after_market": "After Market",
+    "compare_cars": "Compare Cars"
   },
   "BlogDetailsPage": {
+    "blog_page": "Blog",
+    "home": "Home",
+    "categories": "Categories",
+    "tags": "Tags",
+    "view_all": "View All",
+    "read_more": "Read More",
+    "arrow_right": "Arrow Right",
+    "author": "Admin",
+    "publish_date": "November 22, 2023",
+    "sound": "Sound",
+    "accessories": "Accessories",
+    "body_kit": "Body Kit",
+    "blog_title_1": "2024 BMW ALPINA XB7 with exclusive details, extraordinary",
+    "blog_title_2": "BMW X6 M50i is designed to exceed your sportiest.",
+    "blog_title_3": "2024 Kia Sorento Hybrid Review: Big Vehicle With Small-Vehicle",
     "breadcrumb": {
       "home": "Home",
       "accessories": "Accessories"
     },
     "heading": {
-      "title": "BMW X6 M50i is designed to exceed your sportiest."
+      "title": "BMW X6 M50i is designed to exceed your sportiest expectations."
     },
     "postMeta": {
-      "admin": "admin",
+      "admin": "Admin",
       "date": "November 22, 2023",
       "category": "Accessories, Exterior"
     },
@@ -92,5 +163,6 @@
     "Home": "Home",
     "Accessories": "Accessories"
   }
+  
   
 }

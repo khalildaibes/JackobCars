@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function ContactUsPage() {
     return (
-      <div className="pt-[6%] px-4 sm:px-8 md:px-16 lg:px-24 xl:px-32">
+      <div className="px-4 sm:px-8 md:px-16 lg:px-24 xl:px-32">
         {/* Car Search Section Below Nav */}
         <CarSearch1 />
       </div>

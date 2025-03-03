@@ -43,7 +43,7 @@ export default function CarSearch1() {
   }, [selectedModel, selectedManufacturer, selectedFuel, selectedYear, selectedLimit]);
 
   return (
-    <div className="relative w-full content-center lg:h-auto md:h-auto">
+    <div className="relative w-full content-center lg:h-auto md:h-auto md:mt-[15%] mt-[5%]">
       {isLoading ? (
         <div className="text-center text-xl">Loading cars...</div>
       ) : filteredCars.length === 0 ? (
