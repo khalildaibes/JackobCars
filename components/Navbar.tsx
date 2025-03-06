@@ -32,27 +32,27 @@ export default function Navbar() {
         } md:flex flex-col md:flex-row gap-4 left-0 w-full md:w-auto bg-white md:bg-transparent shadow-md md:shadow-none p-4 md:w-[40%] sm:w-[40%] md:p-0 transition-all`}
       >
         <Link href="/sell" onClick={() => setIsMenuOpen(false)}>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">
+          <button className="bg-blue text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">
             {t("cars_market")}
           </button>
         </Link>
         <Link href="/findcarbyplate" onClick={() => setIsMenuOpen(false)}>
-          <button className="bg-blue-700 text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">
+          <button className="bg-dark-blue text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">
             {t("find_by_plate")}
           </button>
         </Link>
         <Link href="/news" onClick={() => setIsMenuOpen(false)}>
-          <button className="bg-red-500 text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">
+          <button className="bg-navy-blue text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">
             {t("news")}
           </button>
         </Link>
         <Link href="/after_market" onClick={() => setIsMenuOpen(false)}>
-          <button className="bg-yellow-500 text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">
+          <button className="bg-grotto-blue text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">
             {t("after_market")}
           </button>
         </Link>
         <Link href="/comparison" onClick={() => setIsMenuOpen(false)}>
-          <button className="bg-green-500 text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">
+          <button className="bg-royal-blue text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">
             {t("compare_cars")}
           </button>
         </Link>
