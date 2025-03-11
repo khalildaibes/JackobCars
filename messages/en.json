@@ -68,7 +68,10 @@
     "car_price_1": "$15,000",
     "car_price_2": "$20,000",
     "car_price_3": "$18,000",
-
+    "car_alt_1":"",  
+    "car_alt_2":"",
+    "car_alt_3":"",
+    
     "blog_category_sound": "Sound",
     "blog_category_accessories": "Accessories",
     "admin": "admin",

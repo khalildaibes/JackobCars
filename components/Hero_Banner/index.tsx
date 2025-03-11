@@ -22,7 +22,7 @@ export default function Header({ ...props }: Props) {
 
   return (
    
-    <div className="flex flex-col h-full !w-full rounded-[32px] bg-[url(/images/img_background_820x1860.png)] bg-cover bg-no-repeat lg:h-auto lg:p-5 mt-20 !justify-center !items-center">
+    <div className="flex flex-col h-full !w-full rounded-[32px] bg-navy-blue bg-cover bg-no-repeat lg:h-auto lg:p-5 mt-20 !justify-center !items-center">
     <Heading
       size="text2xl"
       as="h2"

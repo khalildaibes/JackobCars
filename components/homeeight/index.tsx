@@ -42,7 +42,7 @@
 //     <div className="relative w-full content-center lg:h-auto md:h-auto md:pt-[15%] lg:pt-[5%]">
 //     <div className="flex w-full flex-col gap-[114px] overflow-x-scroll bg-white-a700 lg:gap-[114px] md:gap-[85px] sm:gap-[57px]">
 //       <div className="mt-[25%] flex flex-col items-center lg:mt-[30px]">
-//         <div className=" flex h-[60%] w-[96%] flex-row items-center  justify-center lg:items-start lg:justify-start rounded-[32px] bg-[url(/images/img_background_820x1860.png)] bg-cover bg-no-repeat py-7 lg:h-auto lg:w-full lg:px-5 md:h-auto md:w-full md:px-5 sm:py-4">
+//         <div className=" flex h-[60%] w-[96%] flex-row items-center  justify-center lg:items-start lg:justify-start rounded-[32px] bg-navy-blue bg-cover bg-no-repeat py-7 lg:h-auto lg:w-full lg:px-5 md:h-auto md:w-full md:px-5 sm:py-4">
 
               
                   

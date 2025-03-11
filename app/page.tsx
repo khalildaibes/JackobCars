@@ -177,6 +177,7 @@ async function HomeContent() {
           });
         }
         setFilteredCars(allCars || []);
+        
       } catch (error) {
         console.error("Error fetching cars:", error);
         setFilteredCars([]);
@@ -201,24 +202,44 @@ async function HomeContent() {
   const t = useTranslations("HomePage");
   
 
-  const [products, setProducts] = useState([]);
+  const [listings, setListings] = useState([]);
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("/api/cars?populate=*");
-      if (!response.ok) throw new Error("Failed to fetch products");
+      const response = await fetch("/api/deals");
+      if (!response.ok) throw new Error(`Failed to fetch products: ${response.statusText}`);
   
       const data = await response.json();
-      // Set state to the actual products array
-      setProducts(data.data);
-      console.log("Fetched Products:", data);
-      return data.data;
+      if (!data || !data.data) throw new Error("Invalid API response structure");
+  
+      console.log("Fetched Products:", data.data);
+  
+      // Transform the fetched data into the required listings format
+      const formattedListings = data.data.map((product: any) => ({
+        id: product.id,
+        image: product.details?.image ? `http://68.183.215.202/${product.details.image}` : "/default-car.png",
+        alt: product.name || "Car Image",
+        title: product.name,
+        miles: product.details?.miles || "N/A",
+        fuel: product.details?.fuel || "Unknown",
+        condition: product.details?.condition || "Used", // Default to "Used"
+        transmission: product.details?.transmission || "Unknown",
+        details: product.details?.transmission || "Unknown",
+        price: `$${product.price.toLocaleString()}`,
+      }));
+  
+      // Update state with formatted listings
+      setListings(formattedListings);
     } catch (error) {
       console.error("Error fetching products:", error);
-      return [];
+      setListings([]); // Ensure listings are reset if there's an error
     }
   };
   
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchProducts();
+  }, []);
   
   
 
@@ -230,28 +251,28 @@ async function HomeContent() {
     {
       text: t("looking_for_car_text"),
       title: t("looking_for_car_title"),
-      backgroundColor: "#E9F2FF",
-      textColor: "#050B20",
-      buttonColor: "#405FF2",
+      backgroundColor: "#050A30",
+      textColor: "#E9F2FF",
+      buttonColor: "#003060",
       buttonTextColor: "#FFFFFF",
       icon: "/icons/car-icon.svg"
     },
     {
       text: t("sell_your_car_text"),
       title: t("sell_your_car_title"),
-      backgroundColor: "#FFE9FFFF",
-      textColor: "#050B20",
-      buttonColor: "#F240E3FF",
-      buttonTextColor: "#FFFFFF",
+      backgroundColor: "#000C66",
+      textColor: "#FFFFFF",
+      buttonColor: "#FFFFFF",
+      buttonTextColor: "#050B20",
       icon: "/icons/car-icon.svg"
     }
   ];
   
   
   return (
-    <main className="p-4 items-center justify-center sm:pt-[5%]">
+    <main className="items-center justify-center w-full overflow-hidden">
       {/* Filters for larger screens */}
-      <div className="flex min-h-full items-center justify-center p-4 pt-0 text-center ">
+      <div className="flex min-h-full items-center justify-center p-4 pt-0 text-center w-full overflow-hidden">
         <div className="hidden sm:block">
           {/* Additional desktop-only filters */}
         </div>
@@ -356,8 +377,8 @@ async function HomeContent() {
 
         <HeroSection />
        
-        <div className="justify-center mt-8 gap-6 flex-col flex md:flex-row">
-        <div className="justify-center mt-8 gap-6 flex-col flex md:flex-row">
+        <div className="justify-center pt-8 gap-6 flex-col flex md:flex-row bg-white">
+        <div className="justify-center pt-8 gap-6 flex-col flex md:flex-row">
   {data.map(({ title, text, buttonColor, backgroundColor,icon, buttonTextColor, textColor }, index) => (
     <LookingForCar
       key={index} // Always provide a unique key when mapping over an array

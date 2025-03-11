@@ -33,11 +33,8 @@ const HeroSection: React.FC = () => {
 
   return (
     <div
-      className="relative w-full h-[849.94px] bg-cover bg-center px-4 sm:px-8 md:px-16 lg:px-32 xl:px-40 flex flex-col items-center md:items-start"
-      style={{
-        backgroundImage:
-          "url(https://s3-alpha-sig.figma.com/img/f333/523b/ec121d452f167e1f8b71256e4e01b459?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=od-2SYXOmdRZcTLJCp8f9y9~X5LhGFGY0ZxkNn5JM83ZZqwL9~qoYZggvDOhvN5cc7nT6DgyA1IKO07yjzic0run2sUi7D4s1ysO9zHhvMiKvX1yDO2xBy3RUtlgWpAQNX1yu3YSL6rebHpZ~VC82QrhjuNUQuESPAwHawLaBDg7scQ26Wx~NUA4BgvsmLh-S3S6UJ1UqZFtCPjqIiPtKQk7e9mYnI6IH9MtbGlFfqfiyusGPi~QIZIJesx4y9Q13qG9Apjpc1x3sjJhA8L3KaWfv4o-nlw6QVpMBcrBOByTQYP2mauagHP-kW4pxbWOyQhVjvYsO8WJ4QLy1WUgLA__)",
-      }}
+      className="relative w-full h-[849.94px] bg-cover bg-center px-4 sm:px-8 md:px-16 lg:px-32 xl:px-40 flex flex-col items-center md:items-start bg-[url(/images/img_background_820x1860.png)]"
+    
     >
       {/* Left Content - Text */}
       <div className="text-center md:text-left mt-20 md:mt-40 max-w-lg">
@@ -72,13 +69,14 @@ const HeroSection: React.FC = () => {
         ].map((category, index) => (
           <div
             key={index}
-            className="flex items-center justify-center px-4 sm:px-[41px] py-[16px] rounded-t-lg inline-flex bg-blue-500 hover:bg-blue-600 transition"
+            className=" flex items-center justify-center px-4 sm:px-[41px] py-[16px] rounded-t-lg inline-flex bg-blue hover:bg-blue transition"
           >
             <Image
               src={category.icon}
               width={26}
               height={35}
               alt={category.name}
+              className="invert"
             />
             <span className="ml-2 text-white text-[14px] sm:text-[15px] font-medium">
               {category.name}

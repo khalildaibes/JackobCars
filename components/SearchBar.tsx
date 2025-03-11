@@ -105,14 +105,14 @@ const SearchBar: React.FC = () => {
       {/* Search Button */}
       <button
         type="submit"
-        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg"
+        className="bg-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg"
       >
         <Image
           src="/magnifying-glass.svg"
           alt={t("search_button_alt")}
           width={20}
           height={20}
-          className="mr-2"
+          className="m-2 "
         />
         {t("search")}
       </button>

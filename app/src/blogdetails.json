@@ -11,15 +11,18 @@
         "isCurrentPage": true
       }
     ],
-    "pageTitle": "BMW X6 M50i is designed to exceed your sportiest.",
+    "pageTitle": "BMW X6 M50i is designed to exceed your sportiest expectations.",
     "authorSection": {
       "admin": "Admin",
       "categories": ["Accessories", "Exterior"],
       "date": "November 22, 2023",
-      "adminImage": "img_test1_150x150_jpg_40x40.png"
+      "adminImage": "img_author_40x40.png"
     },
     "mainImage": {
-      "alt": "Blog9 Jpg"
+      "src": "img_blog_main.jpg",
+      "width": 800,
+      "height": 450,
+      "alt": "BMW X6 M50i Blog Image"
     },
     "content": {
       "paragraphs": [
@@ -32,133 +35,284 @@
       "author": "Luis Pickford"
     },
     "courseBenefits": [
-      "Build & test a complete mobile app.",
-      "Learn to design mobile apps & websites.",
-      "Design 3 different logos.",
-      "Create low-fidelity wireframe.",
-      "Downloadable exercise files."
+      { "benefit": "Build & test a complete mobile app." },
+      { "benefit": "Learn to design mobile apps & websites." },
+      { "benefit": "Design 3 different logos." },
+      { "benefit": "Create low-fidelity wireframe." },
+      { "benefit": "Downloadable exercise files." }
     ],
+    "detailImage": {
+      "src": "img_detail_image.jpg",
+      "width": 800,
+      "height": 450,
+      "alt": "BMW X6 M50i Interior"
+    },
     "requirements": [
       "No prior experience required.",
       "A computer with a good internet connection.",
-      "Adobe Photoshop (OPTIONAL)"
+      "Adobe Photoshop (OPTIONAL)."
     ],
     "socialShare": {
       "shareText": "Share this post",
-      "tags": ["Exterior", "Fuel System", "Sound"]
+      "icons": ["img_facebook_icon.png", "img_twitter_icon.png"],
+      "tags": [
+        { "text": "Exterior", "type": "category" },
+        { "text": "Fuel System", "type": "category" },
+        { "text": "Sound", "type": "category" }
+      ]
     },
-    "comments": {
-      "commentCount": 3,
-      "reply": "Reply",
+    "authorComment": {
+      "adminImage": "img_author_40x40.png",
+      "admin": "Admin",
+      "commentText": "Thank you for reading! Feel free to leave your comments below."
+    },
+    "postNavigation": {
+      "previous": { "icon": "img_prev_post_icon.png", "text": "How to upgrade your car exterior" },
+      "next": { "icon": "img_next_post_icon.png", "text": "Top 5 Accessories for your BMW" }
+    },
+    "comments": [
+      {
+        "adminImage": "img_commenter_40x40.png",
+        "comment": "This was a fantastic read! Thanks for sharing."
+      },
+      {
+        "adminImage": "img_commenter_2_40x40.png",
+        "comment": "Loved this blog post. Would love to see more content like this!"
+      }
+    ],
+    "commentCount": 2,
+    "commentForm": {
+      "inputs": {
+        "name": "Your Name",
+        "email": "Your Email",
+        "website": "Your Website",
+        "comment": "Write your comment here..."
+      },
+      "checkboxText": "Save my name, email, and website in this browser for the next time I comment.",
       "submitButtonText": "Submit Comment"
-    }
-  },
-  "he": {
-    "breadcrumb": [
+    },
+    "relatedPosts": [
       {
-        "text": "בית",
+        "title": "How to Maintain Your Car's Exterior",
+        "image": "img_related_1.jpg",
         "link": "#"
       },
       {
-        "text": "אביזרים",
-        "link": "#",
-        "isCurrentPage": true
-      }
-    ],
-    "pageTitle": "BMW X6 M50i מעוצבת כדי לעבור את הגבולות הספורטיביים שלך.",
-    "authorSection": {
-      "admin": "מנהל",
-      "categories": ["אביזרים", "חיצוני"],
-      "date": "22 בנובמבר 2023",
-      "adminImage": "img_test1_150x150_jpg_40x40.png"
-    },
-    "mainImage": {
-      "alt": "תמונת בלוג9"
-    },
-    "content": {
-      "paragraphs": [
-        "אליאקום האנדריט סוליציטודין פורוס, קוויס רוטורם מי...",
-        "דויס מטיס לאוריט נקו, ואורנארה נקו סוליציטודין את..."
-      ]
-    },
-    "quote": {
-      "text": "אליאקום האנדריט סוליציטודין פורוס...",
-      "author": "לואיס פיקפורד"
-    },
-    "courseBenefits": [
-      "בניית ובדיקת אפליקציה ניידת שלמה.",
-      "לימוד עיצוב אפליקציות ואתרים.",
-      "עיצוב 3 לוגואים שונים.",
-      "יצירת סקיצה ברמת פירוט נמוכה.",
-      "הורדת קבצי תרגול."
-    ],
-    "requirements": [
-      "אין צורך בניסיון קודם.",
-      "מחשב עם חיבור אינטרנט טוב.",
-      "Adobe Photoshop (אופציונלי)"
-    ],
-    "socialShare": {
-      "shareText": "שתף פוסט זה",
-      "tags": ["חיצוני", "מערכת דלק", "קול"]
-    },
-    "comments": {
-      "commentCount": 3,
-      "reply": "השב",
-      "submitButtonText": "שלח תגובה"
-    }
-  },
-  "ar": {
-    "breadcrumb": [
-      {
-        "text": "الرئيسية",
+        "title": "Best Accessories for BMW in 2023",
+        "image": "img_related_2.jpg",
         "link": "#"
-      },
-      {
-        "text": "الإكسسوارات",
-        "link": "#",
-        "isCurrentPage": true
       }
-    ],
-    "pageTitle": "BMW X6 M50i مصممة لتتجاوز أقوى طموحاتك الرياضية.",
-    "authorSection": {
-      "admin": "المسؤول",
-      "categories": ["إكسسوارات", "الخارجية"],
-      "date": "22 نوفمبر 2023",
-      "adminImage": "img_test1_150x150_jpg_40x40.png"
-    },
-    "mainImage": {
-      "alt": "صورة المدونة 9"
-    },
-    "content": {
-      "paragraphs": [
-        "عليك اتباع أسلوب هندسة المواصلات المتقنة...",
-        "دوي ماتيس لاوريت نيكوي، وأورناري لاوريت نيكوي..."
-      ]
-    },
-    "quote": {
-      "text": "عليك اتباع أسلوب هندسة المواصلات المتقنة...",
-      "author": "لويس بيكفورد"
-    },
-    "courseBenefits": [
-      "بناء واختبار تطبيق جوال متكامل.",
-      "تعلم تصميم تطبيقات الجوال والمواقع.",
-      "تصميم 3 شعارات مختلفة.",
-      "إنشاء مخطط سلكي منخفض الدقة.",
-      "تحميل ملفات التمارين."
-    ],
-    "requirements": [
-      "لا حاجة لخبرة سابقة.",
-      "كمبيوتر مع اتصال إنترنت جيد.",
-      "Adobe Photoshop (اختياري)"
-    ],
-    "socialShare": {
-      "shareText": "شارك هذا المنشور",
-      "tags": ["الخارجية", "نظام الوقود", "الصوت"]
-    },
-    "comments": {
-      "commentCount": 3,
-      "reply": "الرد",
-      "submitButtonText": "إرسال التعليق"
-    }
-  }
-}
+    ]
+  },
+      "he": {
+        "breadcrumb": [
+          {
+            "text": "בית",
+            "link": "#"
+          },
+          {
+            "text": "אביזרים",
+            "link": "#",
+            "isCurrentPage": true
+          }
+        ],
+        "pageTitle": "BMW X6 M50i מעוצבת כדי לעבור את הגבולות הספורטיביים שלך.",
+        "authorSection": {
+          "admin": "מנהל",
+          "categories": ["אביזרים", "חיצוני"],
+          "date": "22 בנובמבר 2023",
+          "adminImage": "img_test1_150x150_jpg_40x40.png"
+        },
+        "mainImage": {
+          "src": "img_blog_main_he.jpg",
+          "width": 800,
+          "height": 450,
+          "alt": "תמונת בלוג9"
+        },
+        "content": {
+          "paragraphs": [
+            "אליאקום האנדריט סוליציטודין פורוס, קוויס רוטורם מי...",
+            "דויס מטיס לאוריט נקו, ואורנארה נקו סוליציטודין את..."
+          ]
+        },
+        "quote": {
+          "text": "אליאקום האנדריט סוליציטודין פורוס...",
+          "author": "לואיס פיקפורד"
+        },
+        "courseBenefits": [
+          { "benefit": "בניית ובדיקת אפליקציה ניידת שלמה." },
+          { "benefit": "לימוד עיצוב אפליקציות ואתרים." },
+          { "benefit": "עיצוב 3 לוגואים שונים." },
+          { "benefit": "יצירת סקיצה ברמת פירוט נמוכה." },
+          { "benefit": "הורדת קבצי תרגול." }
+        ],
+        "detailImage": {
+          "src": "img_detail_image_he.jpg",
+          "width": 800,
+          "height": 450,
+          "alt": "BMW X6 M50i פנים הרכב"
+        },
+        "requirements": [
+          "אין צורך בניסיון קודם.",
+          "מחשב עם חיבור אינטרנט טוב.",
+          "Adobe Photoshop (אופציונלי)."
+        ],
+        "socialShare": {
+          "shareText": "שתף פוסט זה",
+          "icons": ["img_facebook_icon.png", "img_twitter_icon.png"],
+          "tags": [
+            { "text": "חיצוני", "type": "category" },
+            { "text": "מערכת דלק", "type": "category" },
+            { "text": "קול", "type": "category" }
+          ]
+        },
+        "authorComment": {
+          "adminImage": "img_test1_150x150_jpg_40x40.png",
+          "admin": "מנהל",
+          "commentText": "תודה שקראת! נשמח לשמוע את דעתך בתגובות למטה."
+        },
+        "postNavigation": {
+          "previous": { "icon": "img_prev_post_icon.png", "text": "איך לשדרג את החלק החיצוני של הרכב שלך" },
+          "next": { "icon": "img_next_post_icon.png", "text": "5 האביזרים המובילים ל-BMW שלך" }
+        },
+        "comments": [
+          {
+            "adminImage": "img_commenter_40x40.png",
+            "comment": "כתבה מעולה! תודה על השיתוף."
+          },
+          {
+            "adminImage": "img_commenter_2_40x40.png",
+            "comment": "מאוד אהבתי את הפוסט הזה. מחכה לתוכן נוסף כזה!"
+          }
+        ],
+        "commentCount": 2,
+        "commentForm": {
+          "inputs": {
+            "name": "השם שלך",
+            "email": "האימייל שלך",
+            "website": "האתר שלך",
+            "comment": "כתוב את התגובה שלך כאן..."
+          },
+          "checkboxText": "שמור את השם, האימייל והאתר שלי בדפדפן זה לפעם הבאה שאגיב.",
+          "submitButtonText": "שלח תגובה"
+        },
+        "relatedPosts": [
+          {
+            "title": "איך לשמור על החלק החיצוני של הרכב שלך",
+            "image": "img_related_1.jpg",
+            "link": "#"
+          },
+          {
+            "title": "האביזרים הכי טובים ל-BMW בשנת 2023",
+            "image": "img_related_2.jpg",
+            "link": "#"
+          }
+        ]
+      },
+     
+        "ar": {
+          "breadcrumb": [
+            {
+              "text": "الرئيسية",
+              "link": "#"
+            },
+            {
+              "text": "الإكسسوارات",
+              "link": "#",
+              "isCurrentPage": true
+            }
+          ],
+          "pageTitle": "BMW X6 M50i مصممة لتتجاوز أقوى طموحاتك الرياضية.",
+          "authorSection": {
+            "admin": "المسؤول",
+            "categories": ["إكسسوارات", "الخارجية"],
+            "date": "22 نوفمبر 2023",
+            "adminImage": "img_test1_150x150_jpg_40x40.png"
+          },
+          "mainImage": {
+            "src": "img_blog_main_ar.jpg",
+            "width": 800,
+            "height": 450,
+            "alt": "صورة المدونة 9"
+          },
+          "content": {
+            "paragraphs": [
+              "عليك اتباع أسلوب هندسة المواصلات المتقنة...",
+              "دوي ماتيس لاوريت نيكوي، وأورناري لاوريت نيكوي..."
+            ]
+          },
+          "quote": {
+            "text": "عليك اتباع أسلوب هندسة المواصلات المتقنة...",
+            "author": "لويس بيكفورد"
+          },
+          "courseBenefits": [
+            { "benefit": "بناء واختبار تطبيق جوال متكامل." },
+            { "benefit": "تعلم تصميم تطبيقات الجوال والمواقع." },
+            { "benefit": "تصميم 3 شعارات مختلفة." },
+            { "benefit": "إنشاء مخطط سلكي منخفض الدقة." },
+            { "benefit": "تحميل ملفات التمارين." }
+          ],
+          "detailImage": {
+            "src": "img_detail_image_ar.jpg",
+            "width": 800,
+            "height": 450,
+            "alt": "تفاصيل داخلية لسيارة BMW X6 M50i"
+          },
+          "requirements": [
+            "لا حاجة لخبرة سابقة.",
+            "كمبيوتر مع اتصال إنترنت جيد.",
+            "Adobe Photoshop (اختياري)."
+          ],
+          "socialShare": {
+            "shareText": "شارك هذا المنشور",
+            "icons": ["img_facebook_icon.png", "img_twitter_icon.png"],
+            "tags": [
+              { "text": "الخارجية", "type": "category" },
+              { "text": "نظام الوقود", "type": "category" },
+              { "text": "الصوت", "type": "category" }
+            ]
+          },
+          "authorComment": {
+            "adminImage": "img_test1_150x150_jpg_40x40.png",
+            "admin": "المسؤول",
+            "commentText": "شكرًا لك على قراءة هذا المقال! لا تتردد في مشاركة رأيك بالتعليقات."
+          },
+          "postNavigation": {
+            "previous": { "icon": "img_prev_post_icon.png", "text": "كيفية تحسين أداء السيارة الخارجية" },
+            "next": { "icon": "img_next_post_icon.png", "text": "أفضل الإكسسوارات لسيارة BMW في 2023" }
+          },
+          "comments": [
+            {
+              "adminImage": "img_commenter_40x40.png",
+              "comment": "مقال رائع! استفدت كثيرًا."
+            },
+            {
+              "adminImage": "img_commenter_2_40x40.png",
+              "comment": "معلومات قيمة جدًا، شكراً للنشر!"
+            }
+          ],
+          "commentCount": 2,
+          "commentForm": {
+            "inputs": {
+              "name": "اسمك",
+              "email": "بريدك الإلكتروني",
+              "website": "موقعك الإلكتروني",
+              "comment": "اكتب تعليقك هنا..."
+            },
+            "checkboxText": "احفظ اسمي وبريدي الإلكتروني وموقعي في هذا المتصفح لاستخدامهم في المرة القادمة.",
+            "submitButtonText": "إرسال التعليق"
+          },
+          "relatedPosts": [
+            {
+              "title": "كيفية الحفاظ على المظهر الخارجي لسيارتك",
+              "image": "img_related_1.jpg",
+              "link": "#"
+            },
+            {
+              "title": "أفضل إكسسوارات BMW لعام 2023",
+              "image": "img_related_2.jpg",
+              "link": "#"
+            }
+          ]
+        }
+      }      

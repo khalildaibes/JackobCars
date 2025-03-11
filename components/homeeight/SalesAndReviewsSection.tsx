@@ -17,8 +17,8 @@ export default function SalesAndReviewsSection() {
   return (
     <>
       {/* Sales and Reviews Section */}
-      <div className="flex justify-center self-stretch sm:px-4 bg-[url(/images/img_background_820x1860.png)] bg-no-repeat bg-cover rounded-[40px]">
-        <div className="flex w-[94%] justify-center items-center rounded-[16px] bg-gray-100_01 py-[104px] lg:w-full lg:py-8 md:w-full md:py-5 sm:py-4">
+      <div className="flex justify-center self-stretch sm:px-4 bg-grotto-blue bg-no-repeat bg-cover ">
+        <div className="flex w-[94%] justify-center items-center rounded-[16px]  pt-[104px] lg:w-full lg:pt-8 md:w-full md:pt-5 sm:pt-4">
           <div className="container-xs mb-1.5 flex justify-center items-center lg:px-5">
             <div className="ml-2 flex w-[92%] gap-[80px] lg:ml-0 items-center md:ml-0 flex-col lg:flex-row lg:gap-[200px] justify-center">
               <Suspense fallback={<div>{t("loading")}</div>}>

@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState, Suspense } from "react";
 import { Heading } from "../../components/Heading";
 import { Button } from "../../components/Button";
@@ -13,26 +12,13 @@ import {
 import BlogDetailsItem from "../../components/BlogDetailsItem";
 import CourseBenefitsList from "../../components/CourseBenefitsList";
 import Footer from "../../components/Footer";
-import Header from "../../components/Header";
 import RelatedPostsSection from "./RelatedPostsSection";
 import Link from "next/link";
 import { FloatingLabelInput } from "@/components/FloatingLabelInput";
-import { useLocale, useTranslations } from "next-intl";
-
-// Define TypeScript interfaces for the JSON data structure.
-interface BreadcrumbItemType {
-  text: string;
-  link: string;
-  isCurrentPage?: boolean;
-}
-
-interface CommentType {
-  adminImage: string;
-  comment: string;
-}
+import { useTranslations, useLocale } from "next-intl";
 
 interface BlogDetailsData {
-  breadcrumb: BreadcrumbItemType[];
+  breadcrumb: { text: string; link: string; isCurrentPage?: boolean }[];
   pageTitle: string;
   authorSection: {
     admin: string;
@@ -40,68 +26,41 @@ interface BlogDetailsData {
     date: string;
     adminImage: string;
   };
-  mainImage: {
-    src: string;
-    width: number;
-    height: number;
-    alt: string;
-  };
-  content: {
-    paragraphs: string[];
-  };
-  quote: {
-    text: string;
-    author: string;
-  };
-  courseBenefits: Record<string, string>[]; // each benefit can be an object with keys like benefittext1, benefittext2, etc.
-  detailImage: {
-    src: string;
-    width: number;
-    height: number;
-    alt: string;
-  };
+  mainImage: { src: string; width: number; height: number; alt: string };
+  content: { paragraphs: string[] };
+  quote: { text: string; author: string };
+  courseBenefits: Record<string, string>[];
+  detailImage: { src: string; width: number; height: number; alt: string };
   requirements: string[];
   socialShare: {
     shareText: string;
     icons: string[];
     tags: { text: string; type: string }[];
   };
-  authorComment: {
-    adminImage: string;
-    admin: string;
-    commentText: string;
-  };
+  authorComment: { adminImage: string; admin: string; commentText: string };
   postNavigation: {
     previous: { icon: string; text: string };
     next: { icon: string; text: string };
   };
-  comments: CommentType[];
+  comments: { adminImage: string; comment: string }[];
   commentCount: number;
   commentForm: {
-    inputs: {
-      name: string;
-      email: string;
-      website: string;
-      comment: string;
-    };
+    inputs: { name: string; email: string; website: string; comment: string };
     checkboxText: string;
     submitButtonText: string;
   };
-  relatedPosts: any[]; // adjust as needed}
-  
+  relatedPosts: any[];
 }
 
-export default function BlogdetailsPage() {
+export default function BlogDetailsPage() {
   const [data, setData] = useState<BlogDetailsData | null>(null);
-  const [loading, setLoading] = useState(true); // Track loading state
-  const t = useTranslations("BlogDetailsPage");
+  const [loading, setLoading] = useState(true);
   const locale = useLocale();
+
   useEffect(() => {
     fetch("/api/blogdata")
       .then((res) => res.json())
-      .then((json: Map<string,any>) => {
-        
-        console.log("Fetched Data:",locale);
+      .then((json: Record<string, any>) => {
         setData(json[locale]);
         setLoading(false);
       })
@@ -111,113 +70,94 @@ export default function BlogdetailsPage() {
       });
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-
-  if (!data) return <div>Error loading data. Please try again later.</div>;
+  if (loading) return <div className="text-center mt-10 text-lg">Loading...</div>;
+  if (!data) return <div className="text-center text-red-500 text-lg">Error loading data.</div>;
 
   return (
-    <div className="relative w-full content-center lg:h-auto md:h-auto">
-      <div className="w-full overflow-x-scroll bg-white-a700">
-        <div>
-          {/* Top Section: Breadcrumb and Page Title */}
-          <div className="flex flex-col items-center rounded-tl-[80px] rounded-tr-[80px] bg-white-a700 py-[38px] sm:py-4">
-            <div className="container-xs mt-1 flex flex-col items-start gap-2 lg:px-5 md:px-5">
-              {/* Ensure breadcrumb is not undefined */}
-              <Breadcrumb
-                separator={<Text className="h-[19px] w-[5.81px] text-[14px] font-normal !text-colors">/</Text>}
-                className="flex flex-wrap items-center gap-1 self-stretch"
-              >
-                {data?.breadcrumb?.map((item, index) => (
-                  <BreadcrumbItem key={index} isCurrentPage={item.isCurrentPage}>
-                    <BreadcrumbLink href={item.link} as={Link}>
-                      <Text as="p" className="text-[15px] font-normal !text-indigo-a400">
-                        {item.text}
-                      </Text>
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                ))}
-              </Breadcrumb>
-              <Heading as="h1" className="text-[40px] font-bold capitalize lg:text-[34px] md:text-[34px] sm:text-[32px]">
-                {data?.pageTitle ?? "Untitled Blog"}
-              </Heading>
-            </div>
-          </div>
-
-          {/* Main Content Section */}
-          <div className="mx-[244px] flex flex-col items-center gap-24 lg:gap-24 md:mx-0 md:gap-[72px] sm:gap-12">
-            <div className="container-xs lg:px-5 md:px-5">
-              <div className="flex flex-col items-center">
-                {/* Ensure authorSection exists */}
-                {data?.authorSection && (
-                  <div className="flex items-center gap-1.5 self-stretch sm:flex-col">
-                    <div className="flex w-[8%] items-start justify-center gap-2.5 sm:w-full">
-                      <Img
-                        src={data.authorSection.adminImage}
-                        width={40}
-                        height={40}
-                        alt="Author Image"
-                        className="h-[40px] self-center rounded-[20px] object-cover"
-                      />
-                      <div className="mt-2 flex flex-1 items-center justify-center gap-2">
-                        <Text as="p" className="text-[15px] font-normal capitalize">
-                          {data.authorSection.admin}
-                        </Text>
-                      </div>
-                    </div>
-                    <div className="flex flex-1 items-center gap-3.5 px-1.5 sm:self-stretch">
-                      <div className="flex w-[12%] items-center">
-                        <Text as="p" className="text-[15px] font-normal capitalize">
-                          {data.authorSection.categories?.join(", ")}
-                        </Text>
-                      </div>
-                      <Text as="p" className="self-end text-[15px] font-normal capitalize">
-                        {data.authorSection.date}
-                      </Text>
-                    </div>
-                  </div>
-                )}
-
-                {/* Ensure mainImage exists */}
-                {data?.mainImage && (
-                  <Img
-                    src={data.mainImage.src}
-                    // width={data.mainImage.width}
-                    // height={data.mainImage.height}
-                    width={40}
-                    height={40}
-                    alt={data.mainImage.alt}
-                    className="mt-[30px] h-[494px] w-full rounded-[16px] object-cover lg:h-auto md:h-auto"
-                  />
-                )}
-
-                {/* Ensure content exists */}
-                <div className="mx-[236px] mt-[38px] flex flex-col items-start self-stretch md:mx-0">
-                  {data?.content?.paragraphs?.map((para, index) => (
-                    <Text key={index} as="p" className="text-[15px] font-normal leading-[27px]">
-                      {para}
-                    </Text>
-                  ))}
-                </div>
-
-                {/* Ensure quote exists */}
-                {data?.quote && (
-                  <div className="mt-[50px] flex flex-col items-start gap-[18px] self-stretch rounded-[16px] border-l-[16px] border-solid border-indigo-a400 bg-blue-50 py-[38px] pl-[50px] pr-14 md:px-5 sm:p-4">
-                    <Text as="p" className="ml-2 text-[15px] font-medium italic leading-[27px] md:ml-0">
-                      {data.quote.text}
-                    </Text>
-                    <Heading as="h2" className="ml-2 text-[17px] font-medium lg:text-[14px] md:ml-0">
-                      {data.quote.author}
-                    </Heading>
-                  </div>
-                )}
-
-                {/* Related Posts Section */}
-                <RelatedPostsSection />
-              </div>
-            </div>
-          </div>
+    <div className="w-full bg-gray-50 pb-20">
+      {/* 🟣 Header Section */}
+      <div className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white py-14 rounded-b-[50px] shadow-lg">
+        <div className="container mx-auto text-center px-6">
+          <Breadcrumb className="flex justify-center text-sm space-x-2">
+            {data.breadcrumb.map((item, index) => (
+              <BreadcrumbItem key={index} isCurrentPage={item.isCurrentPage}>
+                <BreadcrumbLink href={item.link} as={Link}>
+                  <Text className="text-white">{item.text}</Text>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+            ))}
+          </Breadcrumb>
+          <Heading as="h1" className="text-5xl font-extrabold mt-4">{data.pageTitle}</Heading>
         </div>
       </div>
+
+      {/* 🔥 Main Content */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-20 mt-10">
+        {/* 📝 Author Info */}
+        <div className="flex items-center gap-4 border-b pb-4 mb-6">
+          <Img src={data.authorSection.adminImage} width={50} height={50} className="rounded-full shadow-md" />
+          <div>
+            <Text className="font-semibold text-lg">{data.authorSection.admin}</Text>
+            <Text className="text-gray-500">{data.authorSection.date}</Text>
+          </div>
+        </div>
+
+        {/* 🖼 Blog Image */}
+        <Img src={data.mainImage.src} width={data.mainImage.width}  height={data.mainImage.height} className="w-full rounded-lg shadow-lg" />
+
+        {/* 📖 Content */}
+        <div className="mt-8 text-gray-800 space-y-6 text-lg leading-relaxed">
+          {data.content.paragraphs.map((para, index) => (
+            <Text key={index} as="p">{para}</Text>
+          ))}
+        </div>
+
+        {/* 📜 Quote Section */}
+        <div className="mt-10 bg-gray-100 border-l-4 border-indigo-500 p-6 rounded-lg shadow-md">
+          <Text as="p" className="italic text-xl">"{data.quote.text}"</Text>
+          <Heading as="h4" className="mt-2 font-medium">{data.quote.author}</Heading>
+        </div>
+
+        {/* 🔗 Post Navigation */}
+        <div className="mt-12 flex flex-col md:flex-row justify-between items-center bg-gray-100 p-6 rounded-lg shadow-md">
+          <div className="flex items-center gap-3">
+            <Img src={data.postNavigation.previous.icon} width={20} height={20} />
+            <Text className="text-indigo-600 hover:underline">{data.postNavigation.previous.text}</Text>
+          </div>
+          <div className="flex items-center gap-3">
+            <Text className="text-indigo-600 hover:underline">{data.postNavigation.next.text}</Text>
+            <Img src={data.postNavigation.next.icon} width={20} height={20} />
+          </div>
+        </div>
+
+        {/* 💬 Comments Section */}
+        <Heading as="h3" className="text-2xl font-bold mt-12">{data.commentCount} Comments</Heading>
+        <div className="mt-6 space-y-6">
+          {data.comments.map((comment, index) => (
+            <BlogDetailsItem key={index} {...comment} />
+          ))}
+        </div>
+
+        {/* ✍️ Comment Form */}
+        <div className="mt-12 bg-white p-6 rounded-lg shadow-md">
+          <Heading as="h3" className="text-xl font-semibold">Leave a Comment</Heading>
+          <div className="mt-6 grid gap-4">
+            <FloatingLabelInput name="name" placeholder={data.commentForm.inputs.name} className="w-full" />
+            <FloatingLabelInput name="email" placeholder={data.commentForm.inputs.email} className="w-full" />
+            <FloatingLabelInput name="website" placeholder={data.commentForm.inputs.website} className="w-full" />
+            <FloatingLabelInput name="comment" placeholder={data.commentForm.inputs.comment} className="w-full h-32" />
+          </div>
+          <Button className="mt-4 w-full bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-2 rounded-lg">
+            {data.commentForm.submitButtonText}
+          </Button>
+        </div>
+      </div>
+
+      {/* 🔗 Related Posts */}
+      <RelatedPostsSection />
+
+      {/* 🏁 Footer */}
+      <Footer />
     </div>
   );
 }

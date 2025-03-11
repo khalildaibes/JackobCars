@@ -10,7 +10,7 @@ const cookieStore = cookies();
 const cookieLocale = cookieStore.get('NEXT_LOCALE')?.value;
 
 // Fallback to a default locale if no cookie is set
-const locale = cookieLocale ?? 'ar';
+const locale = cookieLocale ?? 'en';
  
   return {
     locale,

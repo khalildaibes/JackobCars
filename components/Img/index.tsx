@@ -2,7 +2,7 @@
 import React from "react";
 import Image from "next/image";
 
-const BASE_URL = process.env.BASE_PATH || "/images/";
+const BASE_URL = "/images/";
 
 type ImgProps = React.DetailedHTMLProps<
   React.ImgHTMLAttributes<HTMLImageElement>,
@@ -12,7 +12,7 @@ type ImgProps = React.DetailedHTMLProps<
     className: string;
     src: string;
     alt: string;
-    isStatic: boolean;
+    external: boolean; // New prop to decide image source
     width: number;
     height: number;
   }>;
@@ -20,8 +20,8 @@ type ImgProps = React.DetailedHTMLProps<
 const Img: React.FC<React.PropsWithChildren<ImgProps>> = ({
   className,
   src = "defaultNoData.png",
-  alt = "testImg",
-  isStatic = false,
+  alt = "Image",
+  external = false, // Default is false (local images)
   width,
   height,
   ...restProps
@@ -32,20 +32,20 @@ const Img: React.FC<React.PropsWithChildren<ImgProps>> = ({
     setImgSrc(src);
   }, [src]);
 
-  // Destructure out the ref to avoid passing it further
-  const { ref, ...otherProps } = restProps as any;
+  // Handle image loading error
+  const handleError = () => {
+    setImgSrc(external ? "https://via.placeholder.com/150" : `${BASE_URL}defaultNoData.png`);
+  };
 
   return (
     <Image
       className={className}
-      src={isStatic ? imgSrc : BASE_URL + imgSrc}
+      src={external ? imgSrc : `${BASE_URL}${imgSrc}`}
       alt={alt}
       width={width}
       height={height}
-      {...otherProps}
-      onError={() => {
-        setImgSrc(isStatic ? `${BASE_URL}defaultNoData.png` : "defaultNoData.png");
-      }}
+      {...restProps}
+      onError={handleError}
     />
   );
 };

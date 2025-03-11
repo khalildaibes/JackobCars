@@ -98,7 +98,7 @@ export default function RecentlyAddedSection() {
                       <React.Fragment key={car.id}>
                         <Link href={`detailsvone?car=${car.id}`}>
                           <div className="px-[15px] rounded-[16px]">
-                            <div className="flex flex-col rounded-[16px] bg-white-a700 bg-[url(/images/img_background_820x1860.png)] bg-no-repeat bg-cover">
+                            <div className="flex flex-col rounded-[16px] bg-grotto-blue">
                               <div className="relative h-[218px] content-center lg:h-auto md:h-auto">
                                 <Img
                                   src={car.image}

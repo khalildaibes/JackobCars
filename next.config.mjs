@@ -15,6 +15,17 @@ const nextConfig = {
         hostname: "cdn.imagin.studio",
         pathname: "**",
       },
+      {
+        protocol: "http",
+        hostname: "68.183.215.202",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "via.placeholder.com",
+        pathname: "**",
+      },
+      
     ],
   },
 

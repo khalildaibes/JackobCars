@@ -1,191 +1,179 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/Breadcrumb";
 import { Button } from "@/components/Button";
 import { Img } from "@/components/Img";
 import { Heading } from "@/components/Heading";
 import { Text } from "@/components/Text";
 import Link from "next/link";
-import React from "react";
 import { TabPanel, TabList, Tab, Tabs } from "react-tabs";
 
 export default function DetailsSection() {
+  const [carDetails, setCarDetails] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchCarDetails = async () => {
+    try {
+      const response = await fetch("/api/deals");
+      if (!response.ok) throw new Error(`Failed to fetch car details: ${response.statusText}`);
+
+      const data = await response.json();
+      if (!data?.data?.length) throw new Error("No car details found");
+
+      console.log("Fetched Car Details:", data.data);
+
+      // Extract the first car's details
+      const product = data.data[0];
+
+      setCarDetails({
+        id: product.id,
+        name: product.name || "Unknown Car",
+        price: `$${product.details.car?.price.toLocaleString() || "N/A"}`,
+        description: product.details.car?.description || "No description available",
+        year: product.details.car?.year || "Unknown Year",
+        miles: product.details.car?.miles || "N/A",
+        mileage: product.details.car?.mileage || "N/A",
+        body_type: product.details.car?.body_type || "N/A",
+        fuel: product.details.car?.fuel || "Unknown",
+        transmission: product.details.car?.transmission || "Unknown",
+        mainImage: product.image
+          ? `http://68.183.215.202${product.image[0].url}`
+          : "/default-car.png",
+        additionalImages: product.details.car?.images?.additional
+        // ? product.details.car.images.additional.map((img: string) => `http://68.183.215.202/${img}`)
+        ? product.details.car.images.additional.map((img: string) => `${img}`)
+        : [],
+        badges: product.details.car?.badges || [],
+        breadcrumb: product.details.car?.breadcrumb || [],
+        video: product.details.car?.video || null,
+        actions: product.details.car?.actions || {},
+        dimensions_capacity:  product.details.car?.dimensions_capacity ||[],
+        // ✅ Added Pros & Cons
+        pros: product.details.car?.pros|| [],
+        cons: product.details.car?.cons|| [],
+        features:product.details.car?.features|| [],
+        // ✅ Added Engine & Transmission Details
+        engineTransmissionDetails: product.details.car?.engine_transmission_details|| [],
+  
+        // ✅ Added Dimensions & Capacity
+        detailsArray:  product.details.car?.detailsArray || [],
+      });
+
+    } catch (error) {
+      console.error("Error fetching car details:", error);
+      setCarDetails(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCarDetails();
+  }, []);
+
+  if (loading) return <p className="text-center">Loading car details...</p>;
+  if (!carDetails) return <p className="text-center text-red-500">Car details not available.</p>;
+
   return (
-      <div className="w-full">
-        <Tabs
-          className="flex flex-col items-center"
-          selectedTabClassName="!text-indigo-a400 font-normal text-sm bg-blue-50 rounded-lg px-3 py-1"
-          selectedTabPanelClassName="mt-5 relative"
-        >
-          {/* Header section */}
-          <div className="w-full bg-black-900">
-            <div className="h-20 rounded-tl-2xl rounded-tr-2xl bg-white-a700" />
-          </div>
-          
-          {/* Breadcrumb & Title */}
-          <div className="container mx-auto px-4 sm:px-2">
-            <Breadcrumb
-              separator={<Text className="text-sm font-normal text-gray-600">/</Text>}
-              className="flex flex-wrap items-center gap-1"
-            >
-              <BreadcrumbItem>
-                <BreadcrumbLink href="#" as={Link}>
-                  <Text as="p" className="text-sm font-normal text-indigo-a400">Home</Text>
+    <div className="self-stretch ">
+      <Tabs
+        className="flex w-full flex-col items-center"
+        selectedTabClassName="!text-indigo-a400 font-normal text-[15px] bg-blue-50 rounded-[18px]"
+        selectedTabPanelClassName="mt-5 !relative tab-panel--selected"
+      >
+        {/* Header Section */}
+        <div className="self-stretch bg-black-900">
+          <div className="h-[80px] rounded-tl-[40px] rounded-tr-[40px] bg-white-a700" />
+        </div>
+
+        {/* Breadcrumb */}
+        <div className="container-xs lg:px-5 md:px-5">
+          <Breadcrumb
+            separator={<Text className="h-[19px] w-[5.81px] text-[14px] font-normal !text-colors">/</Text>}
+            className="flex flex-wrap items-center gap-1"
+          >
+            {carDetails.breadcrumb.map((item: any, index: number) => (
+              <BreadcrumbItem key={index} isCurrentPage={item.current}>
+                <BreadcrumbLink href={item.link} as={Link}>
+                  <Text as="p" className="text-[15px] font-normal !text-indigo-a400">{item.name}</Text>
                 </BreadcrumbLink>
               </BreadcrumbItem>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="#" as={Link}>
-                  <Text as="p" className="text-sm font-normal text-indigo-a400">Listings</Text>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbItem isCurrentPage>
-                <BreadcrumbLink href="#" as={Link}>
-                  <Text as="p" className="text-sm font-normal">Toyota Camry New</Text>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-            </Breadcrumb>
-
-            <div className="mt-4 flex flex-col items-center md:flex-row md:justify-between">
-              <Heading as="h1" className="text-2xl font-bold text-gray-800 md:text-3xl">
-                Toyota Camry New
-              </Heading>
-              <div className="mt-3 flex flex-row items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <Text as="p" className="text-sm font-normal">Share</Text>
-                  <Button variant="outline" shape="circle" className="w-9 rounded-full border px-2">
-                    <Img src="img_twitter.svg" width={12} height={12} alt="Twitter" />
-                  </Button>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Text as="p" className="text-sm font-normal">Save</Text>
-                  <Button className="w-9 rounded-full border border-gray-200 px-3">
-                    <Img src="img_bookmark_black_900.svg" width={8} height={12} alt="Bookmark" />
-                  </Button>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Text as="p" className="text-sm font-normal">Compare</Text>
-                  <Button className="w-9 rounded-full border border-gray-200 px-3">
-                    <Img src="img_user_black_900.svg" width={8} height={12} alt="User" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            <div className="md:w-[70%] mt-4 flex flex-col items-center md:flex-row md:justify-between">
-              <Text as="p" className="text-sm font-normal text-gray-700 text-center md:text-left">
-                3.5 D5 PowerPulse Momentum 5dr AWD Geartronic Estate
-              </Text>
-              <Heading size="headingmd" as="h2" className="mt-3 text-2xl font-bold text-gray-800 md:text-3xl">
-                $40,000
-              </Heading>
-            </div>
-
-            {/* Tabs for car details */}
-            <div className="md:w-[70%] mt-2 flex flex-col items-center md:flex-row justify-between gap-4">
-              <TabList className="flex flex-1 gap-2 sm:flex-col md:flex-row">
-                <Tab className="flex items-center gap-2 p-2">
-                  <Img src="img_calendar_indigo_a400.svg" width={18} height={18} alt="Calendar" className="h-4" />
-                  <Text as="p" className="text-sm font-normal text-indigo-a400">2023</Text>
-                </Tab>
-                <Tab className="flex items-center gap-2 p-2">
-                  <Img src="img_icon_indigo_a400.svg" width={18} height={18} alt="Mileage" className="h-4" />
-                  <Text as="p" className="text-sm font-normal text-indigo-a400">20 miles</Text>
-                </Tab>
-                <Tab className="flex items-center gap-2 p-2">
-                  <Img src="img_icon_indigo_a400_18x18.svg" width={18} height={18} alt="Transmission" className="h-4" />
-                  <Text as="p" className="text-sm font-normal text-indigo-a400">Automatic</Text>
-                </Tab>
-                <Tab className="flex items-center gap-2 p-2">
-                  <Img src="img_icon_4.svg" width={18} height={18} alt="Fuel" className="h-4" />
-                  <Text as="p" className="text-sm font-normal text-indigo-a400">Petrol</Text>
-                </Tab>
-              </TabList>
-              <div className="mt-2 flex items-center gap-2">
-                <Img src="img_icon_5.svg" width={18} height={18} alt="Offer" className="h-4" />
-                <Text as="p" className="text-sm font-medium">Make An Offer Price</Text>
-              </div>
-            </div>
-
-            {/* Tab Panels */}
-            {[...Array(4)].map((_, index) => (
-              <TabPanel key={`tab-panel${index}`} className="mt-5">
-                <div className="w-full">
-                  <div className="flex flex-col md:flex-row gap-6">
-                    {/* Main Image Section */}
-                    <div className="relative w-[70%] md:w-2/3 ">
-                      <Img
-                        src="img_car8_qgcqjcne9d.png"
-                        width={812}
-                        height={550}
-                        alt="Car Image"
-                        className="object-contain rounded-lg "
-                      />
-                      <div className="absolute inset-0 flex flex-col justify-start p-4">
-                        <div className="flex flex-col items-start ">
-                        <div className="flex items-center gap-2 bg-white p-2 rounded-lg ">
-                          <Img
-                            src="img_user_black_900_16x16.svg"
-                            width={16}
-                            height={16}
-                            alt="User"
-                            className="h-4"
-                          />
-                          <Text as="p" className="text-xs font-normal">Video</Text>
-                        </div>
-                          <Button
-                            size="sm"
-                            shape="round"
-                            className="mt-[10px] min-w-[104px] rounded-lg px-3 font-medium capitalize bg-indigo-400 text-white shadow-md "
-                          >
-                            Great Price
-                          </Button>
-                        </div>
-
-                      </div>
-                    </div>
-
-                    {/* Additional Images */}
-                      {/* Additional Images */}
-<div className="w-full md:w-1/3 justify-center items-center h-[30%]">
-  <div className="grid grid-cols-2 gap-2">
-    <Img
-      src="img_car3_qgcqjcn7tt.png"
-      width={282}
-      height={268}
-      alt="Car 3"
-      className="h-[100%] w-full object-fill rounded-[16px]"
-    />
-    <Img
-      src="img_car11_qgcqjcn7t.png"
-      width={282}
-      height={268}
-      alt="Car 11"
-      className="h-[100%] w-full object-fill  rounded-[16px]"
-    />
-    <Img
-      src="img_car10_qgcqjcn7t.png"
-      width={282}
-      height={268}
-      alt="Car 10"
-      className="h-[100%] w-full object-fill  rounded-[16px]"
-    />
-    <Img
-      src="img_car1_qgcqjcn7tt.png"
-      width={282}
-      height={268}
-      alt="Car 1"
-      className="h-[100%] w-full object-fill  rounded-[16px]"
-    />
-  </div>
-</div>
-
-                  </div>
-                </div>
-              </TabPanel>
             ))}
+          </Breadcrumb>
+
+          {/* Title & Price */}
+          <div className="mt-4 flex items-center justify-center md:flex-col">
+            <Heading as="h1" className="text-[40px] font-bold lg:text-[34px] md:text-[34px] sm:text-[32px]">
+              {carDetails.name}
+            </Heading>
+            <Heading
+              size="headingmd"
+              as="h2"
+              className="mt-3 self-end text-[30px] font-bold lg:text-[25px] md:text-[24px] sm:text-[22px]"
+            >
+              {carDetails.price}
+            </Heading>
           </div>
+
+          {/* Car Details Tabs */}
+          <div className="relative mt-[-4px] flex items-center justify-between gap-5 md:flex-col">
+            <TabList className="flex flex-1 gap-2.5 md:self-stretch md:flex-row flex-col">
+              <Tab className="flex items-center gap-2.5 p-2">
+                <Img src="img_calendar_indigo_a400.svg" width={18} height={18} alt="Calendar" className="h-[18px]" />
+                <Text as="p" className="text-[15px] font-normal !text-indigo-a400">{carDetails.year}</Text>
+              </Tab>
+              <Tab className="flex items-center gap-2.5 p-2">
+                <Img src="img_icon_indigo_a400.svg" width={18} height={18} alt="Mileage" className="h-[18px]" />
+                <Text as="p" className="text-[15px] font-normal !text-indigo-a400">{carDetails.miles}</Text>
+              </Tab>
+              <Tab className="flex items-center gap-2.5 p-2">
+                <Img src="img_icon_indigo_a400_18x18.svg" width={18} height={18} alt="Transmission" className="h-[18px]" />
+                <Text as="p" className="text-[15px] font-normal !text-indigo-a400">{carDetails.transmission}</Text>
+              </Tab>
+              <Tab className="flex items-center gap-2.5 p-2">
+                <Img src="img_icon_4.svg" width={18} height={18} alt="Fuel" className="h-[18px]" />
+                <Text as="p" className="text-[15px] font-normal !text-indigo-a400">{carDetails.fuel}</Text>
+              </Tab>
+            </TabList>
+          </div>
+
+          {/* Images Section */}
+          <div className="flex flex-col md:flex-row gap-6 mt-5">
+            <div className="relative w-[70%] md:w-2/3">
+              <Img
+                src={carDetails?.mainImage}
+                width={812}
+                height={550}
+                external={true}
+                alt="Car Image"
+                className="object-contain rounded-lg"
+              />
+            </div>
+
+            {/* Additional Images */}
+            <div className="w-full md:w-1/3 justify-center items-center h-[30%]">
+              <div className="grid grid-cols-2 gap-2">
+                {carDetails.additionalImages.length > 0 ? (
+                  carDetails.additionalImages.map((img: string, index: number) => (
+                    <Img
+                      key={index}
+                      src={img}
+                      width={282}
+                      // external={true}
+                      height={268}
+                      alt={img}
+                      className="h-[100%] w-full object-fill rounded-[16px]"
+                    />
+                  ))
+                ) : (
+                  <p>No additional images available.</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       </Tabs>
-      </div>
-    
+    </div>
   );
 }

@@ -27,23 +27,37 @@ export async function fetchCars(filters: FilterProps) {
 
 }
 
-export function generateCarImageUrl(car: CarProps, angle?: string) {
+export function generateCarImageUrl(car: CarProps, angle: string = "front") {
+  if (!car) {
+    console.error("Error: Car object is missing.");
+    return "";
+  }
+
   const url = new URL("https://cdn.imagin.studio/getimage");
   const { make, year, model } = car;
 
-  url.searchParams.append(
-    "customer",
-    process.env.NEXT_PUBLIC_IMAGIN_API_KEY || ""
-  );
+  if (!make || !model || !year) {
+    console.error("Error: Car object is missing essential details.", car);
+    return "";
+  }
+
+  const apiKey = process.env.NEXT_PUBLIC_IMAGIN_API_KEY || "";
+  if (!apiKey) {
+    console.warn("Warning: Missing NEXT_PUBLIC_IMAGIN_API_KEY");
+  }
+
+  url.searchParams.append("customer", apiKey);
   url.searchParams.append("make", make);
-  url.searchParams.append("modelFamily", model.split(" ")[0]);
+  url.searchParams.append("modelFamily", model?.split(" ")[0] || "");
   url.searchParams.append("zoomType", "fullscreen");
   url.searchParams.append("modelYear", `${year}`);
-  url.searchParams.append("angle", `${angle}`);
-  console.log(url)
+  url.searchParams.append("angle", angle);
 
-  return `${url}`;
+  console.log("Generated Image URL:", url.toString());
+
+  return url.toString();
 }
+
 
 export const calculateCarRent = (city_mpg: number, year: number) => {
   const basePricePerDay = 50;

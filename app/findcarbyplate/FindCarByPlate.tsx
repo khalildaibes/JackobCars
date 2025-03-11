@@ -97,7 +97,7 @@ const CarSearch = () => {
         />
         <button
           onClick={fetchCarData}
-          className="ml-2 p-2 bg-blue-500 text-white rounded-md my-10"
+          className="ml-2 p-2 bg-blue text-white rounded-md my-10"
         >
           {t("search_car")}
         </button>

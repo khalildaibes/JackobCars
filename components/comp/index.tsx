@@ -53,7 +53,6 @@ const LookingForCar: React.FC<LookingForCarProps> = ({
         </svg>
       </button>
       <div className="absolute bottom-4 right-4">
-        <Image src={icon} width={110} height={111} alt="Car Icon" />
       </div>
     </div>
   );

@@ -27,13 +27,13 @@ interface Listing {
 
 
 
-
 // Define the props for the component
 interface FeaturedListingsSectionProps {
   listings: Listing[];
 }
 
 export default function FeaturedListingsSection({ listings }: FeaturedListingsSectionProps) {
+
   const [sliderState, setSliderState] = React.useState(0);
   const sliderRef = React.useRef<AliceCarousel>(null);
   const t = useTranslations("HomePage");
@@ -41,9 +41,9 @@ export default function FeaturedListingsSection({ listings }: FeaturedListingsSe
   return (
     <>
       {/* Featured Listings Section */}
-      <div className="flex justify-center self-stretch sm:px-4 py-[20px] w-full ">
+      <div className="flex justify-center self-stretch sm:px-4 py-[20px] w-full bg-white">
         <Tabs
-          className="flex w-[100%] flex-col items-center justify-center gap-[50px] rounded-[16px] bg-gray-50 py-[20px] lg:w-full lg:py-8 md:w-full md:py-5 sm:py-4"
+          className="flex w-[100%] flex-col items-center justify-center gap-[50px] rounded-[16px]  lg:w-full lg:py-8 md:w-full md:py-5 sm:py-4"
           selectedTabClassName="!text-black-900"
           selectedTabPanelClassName="!relative tab-panel--selected"
         >
@@ -108,7 +108,7 @@ export default function FeaturedListingsSection({ listings }: FeaturedListingsSe
                           <React.Fragment key={listing.id}>
                           <Link href={`/detailsvone?car=${listing.id}`}>
                             <div className="px-[15px] cursor-pointer">
-                              <div className="flex flex-col rounded-[16px] bg-white-a700 bg-[url(/images/img_background_820x1860.png)] bg-no-repeat bg-cover">
+                              <div className="flex flex-col rounded-[16px] bg-white-a700 bg-dark-blue bg-no-repeat bg-cover">
                                 <div className="relative h-[218px] content-center lg:h-auto md:h-auto text-white">
                                   <Img
                                     src={listing.image}
@@ -121,7 +121,7 @@ export default function FeaturedListingsSection({ listings }: FeaturedListingsSe
                                     <Button
                                       size="sm"
                                       shape="round"
-                                      className="min-w-[104px] rounded-[14px] px-3.5 font-medium capitalize bg-[url(/images/img_background_820x1860.png)] bg-no-repeat bg-cover"
+                                      className="min-w-[104px] rounded-[14px] px-3.5 font-medium capitalize bg-dark-blue bg-no-repeat bg-cover"
                                     >
                                       {t("great_price")}
                                     </Button>

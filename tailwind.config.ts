@@ -16,7 +16,7 @@ module.exports = {
         "navy-blue":"#000C66",
         "blue":"#000C66",
         'dark-blue': '#050a30',
-        'grotto-blue': '#0E86D4',
+        'grotto-blue': '#050a30',
         'royal-blue': '#0074B7',
         "primary-blue": {
           DEFAULT: "#2B59FF",
