@@ -16,6 +16,7 @@ import RelatedPostsSection from "./RelatedPostsSection";
 import Link from "next/link";
 import { FloatingLabelInput } from "@/components/FloatingLabelInput";
 import { useTranslations, useLocale } from "next-intl";
+import { cookies } from "next/headers";
 
 interface BlogDetailsData {
   breadcrumb: { text: string; link: string; isCurrentPage?: boolean }[];

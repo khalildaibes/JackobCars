@@ -429,7 +429,7 @@ async function HomeContent() {
 
     </div>
       {/* featured listings section */}
-      <FeaturedListingsSection listings={listings} />
+      <FeaturedListingsSection listings={listings} initialFavorites={[]} />
 
       {/* sales and reviews section */}
       <SalesAndReviewsSection />

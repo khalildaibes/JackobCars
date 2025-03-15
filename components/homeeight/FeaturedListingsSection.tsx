@@ -63,7 +63,7 @@ export default function FeaturedListingsSection({
   };
 
   return (
-    <div className="flex justify-center self-stretch sm:px-4 py-[20px] w-full bg-white">
+    <div className="flex justify-center self-stretch sm:px-4 py-[5px] w-full h-[20%] bg-white">
       <Tabs
         className="flex w-[100%] flex-col items-center justify-center gap-[50px] rounded-[16px] lg:w-full lg:py-8 md:w-full md:py-5 sm:py-4"
         selectedTabClassName="!text-black-900"
@@ -114,49 +114,89 @@ export default function FeaturedListingsSection({
                         .filter((listing) => tab === "all" || listing.condition === tab)
                         .map((listing) => (
                           <React.Fragment key={listing.id}>
-                            <Link href={`/detailsvone?car=${listing.id}`}>
-                              <div className="px-[15px] cursor-pointer">
-                                <div className="flex flex-col rounded-[16px] bg-white-a700 bg-dark-blue bg-no-repeat bg-cover">
-                                  <div className="relative h-[218px] content-center lg:h-auto md:h-auto text-white">
-                                    <Img
-                                      src={listing.mainImage}
-                                      width={328}
-                                      external={true}
-                                      height={218}
-                                      alt={listing.alt}
-                                      className="h-[218px] w-full flex-1 object-cover rounded-t-[16px] !text-white"
-                                    />
-                                    <div className="absolute left-0 right-0 top-5 mx-auto flex flex-1 items-center justify-between gap-5 px-5">
-                                      <Button
-                                        size="sm"
-                                        shape="round"
-                                        className="min-w-[104px] rounded-[14px] px-3.5 font-medium capitalize bg-dark-blue bg-no-repeat bg-cover"
+                          <Link href={`/detailsvone?car=${listing.id}`}>
+                            <div className="px-[15px] cursor-pointer">
+                              <div className="flex flex-col rounded-[16px] bg-white-a700 bg-dark-blue bg-no-repeat bg-cover">
+                                <div className="relative h-[218px] content-center lg:h-auto md:h-auto text-white">
+                                  <Img
+                                    src={listing.mainImage}
+                                    width={328}
+                                    external={true}
+                                    height={218}
+                                    alt={listing.alt}
+                                    className="h-[218px] w-full flex-1 object-cover rounded-t-[16px] !text-white"
+                                  />
+                                  <div className="absolute left-0 right-0 top-5 mx-auto flex flex-1 items-center justify-between gap-5 px-5">
+                                    <Button
+                                      size="sm"
+                                      shape="round"
+                                      className="min-w-[104px] rounded-[14px] px-3.5 font-medium capitalize bg-dark-blue bg-no-repeat bg-cover"
+                                    >
+                                      {t("great_price")}
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      shape="round"
+                                      onClick={() => add_to_favorites(listing.id)}
+
+                                      className="min-w-[104px] rounded-[14px] px-3.5 font-medium capitalize bg-dark-blue bg-no-repeat bg-cover"
+                                    >
+                                      {}
+                                    </Button>
+                                    
+                                  </div>
+                                </div>
+                                <div className="rounded-bl-[16px] rounded-br-[16px] border-b border-l border-r border-solid border-gray-200 p-3.5">
+                                  <div className="mb-2 flex flex-col gap-[18px]">
+                                    <div className="flex flex-col items-start gap-1">
+                                      <Heading
+                                        size="text2xl"
+                                        as="h6"
+                                        className="text-[18px] font-medium lg:text-[15px] !text-white"
                                       >
-                                        {t("great_price")}
-                                      </Button>
-                                      <Button
-                                        shape="circle"
-                                        className="w-[36px] rounded-[18px] px-3 text-white"
-                                        onClick={() => add_to_favorites(listing.id)}
+                                        {listing.title}
+                                      </Heading>
+                                      <div className="flex items-center self-stretch">
+                                        <Text size="textmd" as="p" className="text-[14px] font-normal !text-white">
+                                          {listing.miles}
+                                        </Text>
+                                        <div className="mb-1.5 ml-2 h-[4px] w-[4px] self-end rounded-sm bg-gray-500" />
+                                        <Text size="textmd" as="p" className="ml-2.5 text-[14px] font-normal !text-white">
+                                          {listing.fuel}
+                                        </Text>
+                                        <div className="mb-1.5 ml-2 h-[4px] w-[4px] self-end rounded-sm bg-gray-500" />
+                                        <Text size="textmd" as="p" className="ml-2.5 text-[14px] font-normal !text-white">
+                                          {listing.transmission}
+                                        </Text>
+                                      </div>
+                                    </div>
+                                    <div className="flex flex-col items-start gap-1.5">
+                                      <Heading
+                                        size="headings"
+                                        as="h5"
+                                        className="text-[20px] font-bold lg:text-[17px] !text-white"
                                       >
+                                        {listing.price}
+                                      </Heading>
+                                      <div className="flex items-center gap-2.5 self-stretch">
+                                        <Text as="p" className="text-[15px] font-medium !text-indigo-a400 !text-white">
+                                          {t("view_details")}
+                                        </Text>
                                         <Img
-                                          src={
-                                            favorites.includes(listing.id)
-                                              ? "img_bookmarked.svg"
-                                              : "img_bookmark.svg"
-                                          }
-                                          width={8}
-                                          height={12}
-                                          alt="Bookmark"
-                                          className="rounded-[16px]"
+                                          src="img_arrow_left_indigo_a400.svg"
+                                          width={14}
+                                          height={14}
+                                          alt="Arrow Left"
+                                          className="h-[14px] self-end"
                                         />
-                                      </Button>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                            </Link>
-                          </React.Fragment>
+                            </div>
+                          </Link>
+                        </React.Fragment>
                         ))}
                     />
                   </div>
