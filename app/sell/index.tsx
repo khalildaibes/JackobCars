@@ -1,5 +1,8 @@
+"use client"; // This marks the component as a Client Component
+
+import FeaturedListingsSection from "@/components/homeeight/FeaturedListingsSection";
 import Sales2 from "../../components/Sales2";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 // Example Car Data
 const carData = [
@@ -23,8 +26,51 @@ const breadcrumbLinks = [
 ];
 
 export default function ShoppagePage() {
-  return (
+  
+    const [listings, setListings] = useState([]);
+  
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("/api/deals");
+        if (!response.ok) throw new Error(`Failed to fetch products: ${response.statusText}`);
+    
+        const data = await response.json();
+        if (!data || !data.data) throw new Error("Invalid API response structure");
+    
+        console.log("Fetched Products:", data.data);
+        
+        // Transform the fetched data into the required listings format
+        const formattedListings = data.data.map((product: any) => ({
+          id: product.id,
+          mainImage: product.image
+          ? `http://68.183.215.202${data.data[0].image[0].url}`
+          : "/default-car.png",
+          alt: product.name || "Car Image",
+          title: product.name,
+          miles: product.details?.miles || "N/A",
+          fuel: product.details?.fuel || "Unknown",
+          condition: product.details?.condition || "Used", // Default to "Used"
+          transmission: product.details?.transmission || "Unknown",
+          details: product.details?.transmission || "Unknown",
+          price: `$${product.price.toLocaleString()}`,
+        }));
+        
+        // Update state with formatted listings
+        setListings(formattedListings);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setListings([]); // Ensure listings are reset if there's an error
+      }
+    };
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+    return (
     <div className="relative w-full content-center lg:h-auto md:h-auto">
+      <div className="mt-[5%]">
+              <FeaturedListingsSection listings={listings} initialFavorites={[]} />
+      </div>
       <div className="w-full overflow-x-scroll bg-white-a700">
         <Sales2 carGrid={carData} breadcrumbLinks={breadcrumbLinks} pageTitle="Cars for Sale" />
       </div>

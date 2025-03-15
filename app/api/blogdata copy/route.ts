@@ -1,13 +1,13 @@
-import { getLocale } from "next-intl/server"; // Correct method for locale in async functions
+import { useTranslations } from "next-intl";
 
-export async function GET(req) {
+export async function GET(req: { url: string | URL; }) {
+    const t = useTranslations("HomePage");
+  
     try {
-      const locale = await getLocale();
-      console.log("Detected Locale:", locale);
       const { searchParams } = new URL(req.url);
       const categoryName = searchParams.get("category") || "";
   
-      const apiUrl = `http://68.183.215.202/api/products?populate=*&locale=${encodeURIComponent(locale)}`;
+      const apiUrl = `http://68.183.215.202/api/homepage?populate=*&locale=${t("looking_for_car_text")}`;
       const response = await fetch(apiUrl, {
         headers: {
           "Content-Type": "application/json",
@@ -16,7 +16,7 @@ export async function GET(req) {
       });
   
       if (!response.ok) {
-        return new Response(JSON.stringify({ message: "Failed to fetch products" }), { status: response.status });
+        return new Response(JSON.stringify({ message: "Failed to fetch homepage" }), { status: response.status });
       }
   
       const data = await response.json();

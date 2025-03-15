@@ -213,11 +213,13 @@ async function HomeContent() {
       if (!data || !data.data) throw new Error("Invalid API response structure");
   
       console.log("Fetched Products:", data.data);
-  
+      
       // Transform the fetched data into the required listings format
       const formattedListings = data.data.map((product: any) => ({
         id: product.id,
-        image: product.details?.image ? `http://68.183.215.202/${product.details.image}` : "/default-car.png",
+        mainImage: product.image
+        ? `http://68.183.215.202${data.data[0].image[0].url}`
+        : "/default-car.png",
         alt: product.name || "Car Image",
         title: product.name,
         miles: product.details?.miles || "N/A",
@@ -227,7 +229,7 @@ async function HomeContent() {
         details: product.details?.transmission || "Unknown",
         price: `$${product.price.toLocaleString()}`,
       }));
-  
+      
       // Update state with formatted listings
       setListings(formattedListings);
     } catch (error) {
@@ -240,12 +242,44 @@ async function HomeContent() {
   useEffect(() => {
     fetchProducts();
   }, []);
-  
-  
 
+
+  
+  const [homePageData, setHomePageData] = useState({});
+
+  const fetchHomePageData = async () => {
+    try {
+      const response = await fetch("/api/homepage");
+      if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
+  
+      const data = await response.json();
+      if (!data || !data.data) throw new Error("Invalid API response structure");
+  
+      console.log("Fetched homepage:", data.data);
+      
+      // Transform the fetched data into the required listings format
+      const formattedHomepage ={
+        banner: data.data.banner,
+        featured: data.data.featured,
+        textcards: data.data.textcards,
+        locale: data.data.locale,
+        localizations:data.data.localizations
+      };
+      setHomePageData(formattedHomepage);
+      console.error("formattedHomepage:", formattedHomepage);
+
+      // Update state with formatted listings
+    } catch (error) {
+      console.error("Error fetching homepage:", error);
+      setHomePageData([]); // Ensure listings are reset if there's an error
+    }
+  };
+  
+  // Fetch data on component mount
   useEffect(() => {
-    fetchProducts();
+    fetchHomePageData();
   }, []);
+
 
   const data = [
     {
@@ -401,7 +435,7 @@ async function HomeContent() {
       <SalesAndReviewsSection />
 
       {/* recently added section */}
-      <RecentlyAddedSection />
+      <RecentlyAddedSection listings={listings}/>
 
       {/* customer testimonials section */}
       {/* <CustomerTestimonialsSection /> */}

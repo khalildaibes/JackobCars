@@ -16,6 +16,7 @@ import RelatedPostsSection from "./RelatedPostsSection";
 import Link from "next/link";
 import { FloatingLabelInput } from "@/components/FloatingLabelInput";
 import { useTranslations, useLocale } from "next-intl";
+import { cookies } from "next/headers";
 
 interface BlogDetailsData {
   breadcrumb: { text: string; link: string; isCurrentPage?: boolean }[];
@@ -55,8 +56,13 @@ interface BlogDetailsData {
 export default function BlogDetailsPage() {
   const [data, setData] = useState<BlogDetailsData | null>(null);
   const [loading, setLoading] = useState(true);
-  const locale = useLocale();
+  var locale = useLocale();
+const cookieStore = cookies();
+// Try to read the locale from a cookie named "NEXT_LOCALE"
+const cookieLocale = cookieStore.get('NEXT_LOCALE')?.value;
 
+// Fallback to a default locale if no cookie is set
+locale = cookieLocale ?? 'en';
   useEffect(() => {
     fetch("/api/blogdata")
       .then((res) => res.json())

@@ -10,49 +10,13 @@ import React from "react";
 import AliceCarousel, { EventObject } from "react-alice-carousel";
 import { useTranslations } from "next-intl";
 
-// Example array of car listings
-const carListings = [
-  {
-    id: 1,
-    image: "img_car9_660x440_jpg.png",
-    alt: "car_alt_1",
-    title: "car_title_1",
-    miles: "car_miles_1",
-    fuel: "car_fuel_1",
-    transmission: "car_transmission_1",
-    price: "car_price_1",
-  },
-  {
-    id: 2,
-    image: "img_car1_660x440_jpg.png",
-    alt: "car_alt_2",
-    title: "car_title_2",
-    miles: "car_miles_2",
-    fuel: "car_fuel_2",
-    transmission: "car_transmission_2",
-    price: "car_price_2",
-  },
-  {
-    id: 3,
-    image: "img_car2_660x440_jpg.png",
-    alt: "car_alt_3",
-    title: "car_title_3",
-    miles: "car_miles_3",
-    fuel: "car_fuel_3",
-    transmission: "car_transmission_3",
-    price: "car_price_3",
-  }
-  // Add other cars following the same format
-];
-
-export default function RecentlyAddedSection() {
+export default function RecentlyAddedSection({ listings }) {
   const t = useTranslations("HomePage");
   const [sliderState, setSliderState] = React.useState(0);
   const sliderRef = React.useRef<AliceCarousel>(null);
 
   return (
     <>
-      {/* Recently Added Section */}
       <div className="mt-[108px] flex justify-end self-stretch">
         <div className="flex w-[100%] flex-col gap-6 lg:w-full lg:px-5 md:w-full md:px-5">
           <div className="container mx-auto px-4">
@@ -94,17 +58,18 @@ export default function RecentlyAddedSection() {
                       setSliderState(e?.item);
                     }}
                     ref={sliderRef}
-                    items={carListings.map((car) => (
+                    items={listings.map((car) => (
                       <React.Fragment key={car.id}>
                         <Link href={`detailsvone?car=${car.id}`}>
                           <div className="px-[15px] rounded-[16px]">
                             <div className="flex flex-col rounded-[16px] bg-grotto-blue">
                               <div className="relative h-[218px] content-center lg:h-auto md:h-auto">
                                 <Img
-                                  src={car.image}
+                                  src={car.mainImage}
                                   width={328}
                                   height={218}
-                                  alt={t(car.alt)}
+                                  external={true}
+                                  alt={car.alt}
                                   className="h-[218px] w-full flex-1 object-cover rounded-t-[16px]"
                                 />
                                 <Button
@@ -127,7 +92,7 @@ export default function RecentlyAddedSection() {
                                     as="p"
                                     className="text-[18px] font-medium lg:text-[15px] !text-white"
                                   >
-                                    {t(car.title)}
+                                    {car.title}
                                   </Heading>
                                   <div className="flex items-center self-stretch">
                                     <Text
@@ -135,7 +100,7 @@ export default function RecentlyAddedSection() {
                                       as="p"
                                       className="text-[14px] font-normal !text-white"
                                     >
-                                      {t(car.miles)}
+                                      {car.miles}
                                     </Text>
                                     <div className="mb-1.5 ml-2 h-[4px] w-[4px] self-end rounded-sm bg-gray-500" />
                                     <Text
@@ -143,7 +108,7 @@ export default function RecentlyAddedSection() {
                                       as="p"
                                       className="ml-2.5 text-[14px] font-normal !text-white"
                                     >
-                                      {t(car.fuel)}
+                                      {car.fuel}
                                     </Text>
                                     <div className="mb-1.5 ml-2 h-[4px] w-[4px] self-end rounded-sm bg-gray-500" />
                                     <Text
@@ -151,7 +116,7 @@ export default function RecentlyAddedSection() {
                                       as="p"
                                       className="ml-2.5 text-[14px] font-normal !text-white"
                                     >
-                                      {t(car.transmission)}
+                                      {car.transmission}
                                     </Text>
                                   </div>
                                 </div>
@@ -161,7 +126,7 @@ export default function RecentlyAddedSection() {
                                     as="h5"
                                     className="text-[20px] font-bold lg:text-[17px] !text-white"
                                   >
-                                    {t(car.price)}
+                                    {car.price}
                                   </Heading>
                                   <div className="flex items-center gap-2.5 self-stretch">
                                     <Text as="p" className="text-[15px] font-medium !text-white">
@@ -182,7 +147,6 @@ export default function RecentlyAddedSection() {
                         </Link>
                       </React.Fragment>
                     ))}
-                    
                   />
                 </div>
               </div>
