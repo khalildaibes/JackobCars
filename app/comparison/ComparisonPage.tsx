@@ -3,8 +3,8 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { generateCarImageUrl } from "@/utils";
-import { allCars } from "@/app/src/data";
+import { generateCarImageUrl } from "../../utils";
+import { allCars } from "../../app/src/data";
 import React from "react";
 
 export default function Comparison() {
@@ -139,7 +139,7 @@ export default function Comparison() {
 
                     return (
                       <React.Fragment key={sectionHeader}>
-                        <tr className="bg-blue-500 text-white cursor-pointer" onClick={() => toggleSection(sectionHeader)}>
+                        <tr className="bg-blue-600text-white cursor-pointer" onClick={() => toggleSection(sectionHeader)}>
                           <td colSpan={selectedCars.length + 1} className="border p-2 font-semibold">
                             {sectionHeader} {collapsedSections[sectionHeader] ? "▼" : "▲"}
                           </td>

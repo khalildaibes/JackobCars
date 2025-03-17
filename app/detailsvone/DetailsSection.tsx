@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/Breadcrumb";
-import { Button } from "@/components/Button";
-import { Img } from "@/components/Img";
-import { Heading } from "@/components/Heading";
-import { Text } from "@/components/Text";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "../../components/Breadcrumb";
+import { Button } from "../../components/Button";
+import { Img } from "../../components/Img";
+import { Heading } from "../../components/Heading";
+import { Text } from "../../components/Text";
 import Link from "next/link";
 import { TabPanel, TabList, Tab, Tabs } from "react-tabs";
 
@@ -15,7 +15,7 @@ export default function DetailsSection() {
 
   const fetchCarDetails = async () => {
     try {
-      const response = await fetch("/api/deals");
+      const response = await fetch("/api/deals?populate=*");
       if (!response.ok) throw new Error(`Failed to fetch car details: ${response.statusText}`);
 
       const data = await response.json();
@@ -79,7 +79,7 @@ export default function DetailsSection() {
     <div className="self-stretch ">
       <Tabs
         className="flex w-full flex-col items-center"
-        selectedTabClassName="!text-indigo-a400 font-normal text-[15px] bg-blue-50 rounded-[18px]"
+        selectedTabClassName="!text-indigo-a400 font-normal text-[15px] bg-blue-600-50 rounded-[18px]"
         selectedTabPanelClassName="mt-5 !relative tab-panel--selected"
       >
         {/* Header Section */}

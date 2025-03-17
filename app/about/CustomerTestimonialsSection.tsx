@@ -1,11 +1,11 @@
 "use client";
 
 
-import { Button } from "@/components/Button";
-import { Heading } from "@/components/Heading";
-import { Img } from "@/components/Img";
-import { Slider } from "@/components/Slider";
-import { Text } from "@/components/Text";
+import { Button } from "../../components/Button";
+import { Heading } from "../../components/Heading";
+import { Img } from "../../components/Img";
+import { Slider } from "../../components/Slider";
+import { Text } from "../../components/Text";
 import React from "react";
 import AliceCarousel, { EventObject } from "react-alice-carousel";
 

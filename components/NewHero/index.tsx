@@ -69,7 +69,7 @@ const HeroSection: React.FC = () => {
         ].map((category, index) => (
           <div
             key={index}
-            className=" flex items-center justify-center px-4 sm:px-[41px] py-[16px] rounded-t-lg inline-flex bg-blue hover:bg-blue transition"
+            className=" flex items-center justify-center px-4 sm:px-[41px] py-[16px] rounded-t-lg inline-flex bg-blue-600 hover:bg-blue-600 transition"
           >
             <Image
               src={category.icon}

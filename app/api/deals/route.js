@@ -7,7 +7,7 @@ export async function GET(req) {
       const { searchParams } = new URL(req.url);
       const categoryName = searchParams.get("category") || "";
   
-      const apiUrl = `http://68.183.215.202/api/products?populate=*&locale=${encodeURIComponent(locale)}`;
+      const apiUrl = `http://68.183.215.202/api/products?populate=*`;
       const response = await fetch(apiUrl, {
         headers: {
           "Content-Type": "application/json",

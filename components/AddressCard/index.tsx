@@ -1,5 +1,5 @@
 import {Text} from "../../components/Text";
-import { Img } from "@/components/Img";import React from "react";
+import { Img } from "../../components/Img";import React from "react";
 
 interface Props {
   className?: string;

@@ -1,6 +1,6 @@
 
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/Breadcrumb";
-import { SelectBox } from "@/components/SelectBox";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "../../components/Breadcrumb";
+import { SelectBox } from "../../components/SelectBox";
 import { Heading } from "../../components/Heading";
 import { Text } from "../../components/Text";
 import Link from "next/link";

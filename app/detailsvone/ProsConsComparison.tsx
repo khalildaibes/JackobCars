@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/components/Button";
-import { Heading } from "@/components/Heading";
-import { Text } from "@/components/Text";
+import { Button } from "../../components/Button";
+import { Heading } from "../../components/Heading";
+import { Text } from "../../components/Text";
 import React, { useState } from "react";
 
 

@@ -34,12 +34,12 @@ export default function Navbar() {
           } md:flex flex-col md:flex-row gap-4 items-center absolute md:static top-16 left-0 w-full md:w-auto bg-white md:bg-transparent shadow-md md:shadow-none p-4 md:p-0 transition-all`}
         >
           <Link href="/sell" onClick={() => setIsMenuOpen(false)}>
-            <button className="bg-blue text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">
+            <button className="bg-blue-600 text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">
               {t("cars_market")}
             </button>
           </Link>
           <Link href="/findcarbyplate" onClick={() => setIsMenuOpen(false)}>
-            <button className="bg-dark-blue text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">
+            <button className=" text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">
               {t("find_by_plate")}
             </button>
           </Link>
@@ -49,7 +49,7 @@ export default function Navbar() {
             </button>
           </Link>
           <Link href="/after_market" onClick={() => setIsMenuOpen(false)}>
-            <button className="bg-blue text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">
+            <button className="bg-blue-600 text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">
               {t("after_market")}
             </button>
           </Link>

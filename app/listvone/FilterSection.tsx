@@ -1,5 +1,5 @@
 
-import { SelectBox } from "@/components/SelectBox";
+import { SelectBox } from "../../components/SelectBox";
 import { Img } from "../../components/Img";
 import { Text } from "../../components/Text";
 import React from "react";

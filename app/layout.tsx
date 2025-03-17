@@ -12,9 +12,9 @@ export const metadata: Metadata = {
   description: "Discover best cars!",
 };
 import {getLocale, getMessages} from 'next-intl/server';
-import TranslateChildren from "@/components/TransltedChildren";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import TranslateChildren from "../components/TransltedChildren";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default async function RootLayout({
   children

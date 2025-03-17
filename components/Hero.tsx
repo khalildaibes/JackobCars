@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import Image from "next/image";
-import CustomButton from "@/components/CustomButton";
+import CustomButton from "../components/CustomButton";
 
 const Hero = () => {
   const bottomEl = useRef<null | HTMLDivElement>(null);

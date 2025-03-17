@@ -1,12 +1,12 @@
 "use client";
 
-import { Heading } from "@/components/Heading";
+import { Heading } from "../../components/Heading";
 import {Text} from "../../components/Text";
-import { Button } from "@/components/Button";
-import { Img } from "@/components/Img";
+import { Button } from "../../components/Button";
+import { Img } from "../../components/Img";
 import React from "react";
 import AliceCarousel, { EventObject } from "react-alice-carousel";
-import { Slider } from "@/components/Slider";
+import { Slider } from "../../components/Slider";
 
 export default function ServicesSection1() {
   const [sliderState, setSliderState] = React.useState(0);

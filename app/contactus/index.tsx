@@ -11,8 +11,8 @@ import ContactUsSection from "./ContactUsSection";
 import ContactUsSection1 from "./ContactUsSection1";
 import Link from "next/link";
 import React, { Suspense } from "react";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/Breadcrumb";
-import { FloatingLabelInput } from "@/components/FloatingLabelInput";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "../../components/Breadcrumb";
+import { FloatingLabelInput } from "../../components/FloatingLabelInput";
 
 
 const contactDetails = [

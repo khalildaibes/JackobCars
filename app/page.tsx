@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import CarCard from "@/components/CarCard";
-import ShowMore from "@/components/ShowMore";
-import Hero from "@/components/Hero";
-import { fetchCars } from "@/utils";
-import { CarProps } from "@/types";
-import MobileFilters from "@/components/SearchCar";
+import CarCard from "../components/CarCard";
+import ShowMore from "../components/ShowMore";
+import Hero from "../components/Hero";
+import { fetchCars } from "../utils";
+import { CarProps } from "../types";
+import MobileFilters from "../components/SearchCar";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -18,10 +18,11 @@ import FeaturedListingsSection from "../components/homeeight/FeaturedListingsSec
 import LatestBlogPostsSection from "../components/homeeight/LatestBlogPostsSection";
 import RecentlyAddedSection from "../components/homeeight/RecentlyAddedSection";
 import {  useTranslations } from "next-intl";
-import ResponsiveNewsLayout from "@/components/Responsivenews";
-import HeroSection from "@/components/NewHero";
-import LookingForCar from "@/components/comp";
-import SearchBar from "@/components/SearchBar";
+import ResponsiveNewsLayout from "../components/Responsivenews";
+import HeroSection from "../components/NewHero";
+import LookingForCar from "../components/comp";
+import SearchBar from "../components/SearchBar";
+import { fetchStrapiData } from "./lib/strapiClient";
 const listings = [
   {
     id: 1,
@@ -206,28 +207,30 @@ async function HomeContent() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("/api/deals");
-      if (!response.ok) throw new Error(`Failed to fetch products: ${response.statusText}`);
+     const response = await fetchStrapiData(`/products`, {
+       populate: "*",
+       locale:"he-IL"
+     }); 
   
-      const data = await response.json();
-      if (!data || !data.data) throw new Error("Invalid API response structure");
-  
-      console.log("Fetched Products:", data.data);
-      
+      console.log("Fetched Products:",  response.data);
+      const data =response.data
       // Transform the fetched data into the required listings format
-      const formattedListings = data.data.map((product: any) => ({
+      const formattedListings = data.map((product: any) => ({
         id: product.id,
         mainImage: product.image
-        ? `http://68.183.215.202${data.data[0].image[0].url}`
+        // ? `http://68.183.215.202${data.data[0].image[0].url}`
+        ? `http://68.183.215.202${product.image[0].url}`
         : "/default-car.png",
         alt: product.name || "Car Image",
         title: product.name,
-        miles: product.details?.miles || "N/A",
-        fuel: product.details?.fuel || "Unknown",
-        condition: product.details?.condition || "Used", // Default to "Used"
-        transmission: product.details?.transmission || "Unknown",
-        details: product.details?.transmission || "Unknown",
+        miles: product.details.car?.miles || "N/A",
+        fuel: product.details.car?.fuel || "Unknown",
+        condition: product.details.car?.condition || "Used", // Default to "Used"
+        transmission: product.details.car?.transmission || "Unknown",
+        details: product.details.car?.transmission || "Unknown",
         price: `$${product.price.toLocaleString()}`,
+        category: product.categories ? product.categories.split(",").map((c: string) => c.toLowerCase().trim()) : [], // Convert categories string to an array
+
       }));
       
       // Update state with formatted listings

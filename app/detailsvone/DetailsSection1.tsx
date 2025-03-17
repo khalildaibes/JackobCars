@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Heading } from "@/components/Heading";
+import { Heading } from "../../components/Heading";
 import DetailsVOneList from "../../components/DetailsVOneList";
 import React from "react";
 import EngineTransmissionDetails from "./transmissionandengien";

@@ -5,9 +5,9 @@ import DetailsVOneItem from "../../components/DetailsVOneItem";
 import DetailsSection1 from "./DetailsSection1";
 import FinancingCalculatorSection from "./FinancingCalculatorSection";
 import LocationDetailsSection from "./LocationDetailsSection";
-import { Img } from "@/components/Img";
-import { Heading } from "@/components/Heading";
-import { Text } from "@/components/Text";
+import { Img } from "../../components/Img";
+import { Heading } from "../../components/Heading";
+import { Text } from "../../components/Text";
 import RelatedListingsSection from "./RelatedListingsSection";
 import DetailsSection from "./DetailsSection";
 

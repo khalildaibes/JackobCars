@@ -8,15 +8,13 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
-} from "@/components/Breadcrumb";
+} from "../../components/Breadcrumb";
 import BlogDetailsItem from "../../components/BlogDetailsItem";
 import CourseBenefitsList from "../../components/CourseBenefitsList";
 import Footer from "../../components/Footer";
 import RelatedPostsSection from "./RelatedPostsSection";
 import Link from "next/link";
-import { FloatingLabelInput } from "@/components/FloatingLabelInput";
 import { useTranslations, useLocale } from "next-intl";
-import { cookies } from "next/headers";
 
 interface BlogDetailsData {
   breadcrumb: { text: string; link: string; isCurrentPage?: boolean }[];
@@ -57,12 +55,8 @@ export default function BlogDetailsPage() {
   const [data, setData] = useState<BlogDetailsData | null>(null);
   const [loading, setLoading] = useState(true);
   var locale = useLocale();
-const cookieStore = cookies();
-// Try to read the locale from a cookie named "NEXT_LOCALE"
-const cookieLocale = cookieStore.get('NEXT_LOCALE')?.value;
 
-// Fallback to a default locale if no cookie is set
-locale = cookieLocale ?? 'en';
+
   useEffect(() => {
     fetch("/api/blogdata")
       .then((res) => res.json())
@@ -147,12 +141,12 @@ locale = cookieLocale ?? 'en';
         {/* ✍️ Comment Form */}
         <div className="mt-12 bg-white p-6 rounded-lg shadow-md">
           <Heading as="h3" className="text-xl font-semibold">Leave a Comment</Heading>
-          <div className="mt-6 grid gap-4">
+          {/* <div className="mt-6 grid gap-4">
             <FloatingLabelInput name="name" placeholder={data.commentForm.inputs.name} className="w-full" />
             <FloatingLabelInput name="email" placeholder={data.commentForm.inputs.email} className="w-full" />
             <FloatingLabelInput name="website" placeholder={data.commentForm.inputs.website} className="w-full" />
             <FloatingLabelInput name="comment" placeholder={data.commentForm.inputs.comment} className="w-full h-32" />
-          </div>
+          </div> */}
           <Button className="mt-4 w-full bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-2 rounded-lg">
             {data.commentForm.submitButtonText}
           </Button>

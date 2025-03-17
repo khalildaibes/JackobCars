@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { urlFor } from '../lib/client'; // Import urlFor if using Sanity
 var url= '68.183.215.202' 
 var token = "JWT_TOKEN_HOLDER"
 // Create a Strapi client instance
@@ -19,7 +18,7 @@ export const getImageUrl = (image) => {
     return process.env.NEXT_PUBLIC_STRAPI_API_URL + image.url;
   } else if (image.asset) {
     // For Sanity images
-    return urlFor(image).url();
+    return image;
   }
   return ''; // Return an empty string if no valid image is found
 };
@@ -52,6 +51,7 @@ export const fetchStrapiData = async (endpoint, params = {}) => {
     const response = await strapiClient.get(endpoint, {
       params,
     });
+
     return response.data; // Return the data from the response
   } catch (error) {
     console.error(`Error fetching data from Strapi: ${error}`);

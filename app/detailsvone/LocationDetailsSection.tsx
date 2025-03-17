@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/Button";
-import { GoogleMap } from "@/components/GoogleMap";
-import { Heading } from "@/components/Heading";
-import { Img } from "@/components/Img";
-import { Text } from "@/components/Text";
+import { Button } from "../../components/Button";
+import { GoogleMap } from "../../components/GoogleMap";
+import { Heading } from "../../components/Heading";
+import { Img } from "../../components/Img";
+import { Text } from "../../components/Text";
 import React from "react";
 
 export default function LocationDetailsSection({ carDetails }: { carDetails: any }) {

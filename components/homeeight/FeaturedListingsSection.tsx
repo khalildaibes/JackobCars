@@ -10,13 +10,15 @@ import React, { useEffect, useState } from "react";
 import AliceCarousel, { EventObject } from "react-alice-carousel";
 import { TabPanel, TabList, Tab, Tabs } from "react-tabs";
 import { useTranslations } from "next-intl";
+import { motion } from "framer-motion";
+import { cn } from "../../app/lib/utils";
 
 // Define the interface for a single listing
 interface Listing {
   id: number;
   mainImage: string;
   alt: string;
-  condition: string;
+  category: string[];
   title: string;
   miles: string;
   fuel: string;
@@ -39,7 +41,6 @@ export default function FeaturedListingsSection({
   const [sliderState, setSliderState] = useState(0);
   const sliderRef = React.useRef<AliceCarousel>(null);
   const tabs = ["all", "new", "used"];
-
   // Sync with localStorage on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -62,6 +63,21 @@ export default function FeaturedListingsSection({
     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
   };
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+
   return (
     <div className="flex justify-center self-stretch sm:px-4 py-[5px] w-full h-[20%] bg-white">
       <Tabs
@@ -82,7 +98,8 @@ export default function FeaturedListingsSection({
               </div>
               <TabList className="flex flex-wrap items-start gap-7 border-b border-solid border-gray-200">
                 {tabs.map((tab, index) => (
-                  <Tab key={index} className="mb-3 text-[16px] font-medium text-black-900 lg:text-[13px]">
+                  <Tab key={index} className="mb-3 text-[16px] font-medium text-black-900 lg:text-[13px]
+                  inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background h-10 px-4 py-2 rounded-full text-gray-700 hover:bg-blue-50 hover:text-blue-700">
                     {t(tab)}
                   </Tab>
                 ))}
@@ -111,26 +128,36 @@ export default function FeaturedListingsSection({
                       onSlideChanged={(e: EventObject) => setSliderState(e?.item)}
                       ref={sliderRef}
                       items={listings
-                        .filter((listing) => tab === "all" || listing.condition === tab)
+                        .filter((listing) => tab === "all" 
+                        || listing.category.includes(tab)
+                      )
                         .map((listing) => (
                           <React.Fragment key={listing.id}>
+                                <motion.div 
+                                  variants={container}
+                                  initial="hidden"
+                                  whileInView="show"
+                                  viewport={{ once: true }}
+                                >
+
                           <Link href={`/detailsvone?car=${listing.id}`}>
-                            <div className="px-[15px] cursor-pointer">
-                              <div className="flex flex-col rounded-[16px] bg-white-a700 bg-dark-blue bg-no-repeat bg-cover">
-                                <div className="relative h-[218px] content-center lg:h-auto md:h-auto text-white">
+                            <div className={cn("px-[15px] cursor-pointer text-card-foreground shadow-sm overflow-hidden border-0 card-hover bg-white rounded-xl",
+                                    'overflow-hidden border-0 card-hover bg-white rounded-xl w-full h-full object-cover transition-transform duration-500 hover:scale-105')}>
+                              <div className="flex flex-col rounded-[16px] bg-white-a700  bg-no-repeat bg-cover">
+                                <div className="relative h-[218px] content-center lg:h-auto md:h-auto text-black">
                                   <Img
                                     src={listing.mainImage}
                                     width={328}
                                     external={true}
                                     height={218}
-                                    alt={listing.alt}
-                                    className="h-[218px] w-full flex-1 object-cover rounded-t-[16px] !text-white"
+                                    alt={listing.mainImage}
+                                    className="h-[218px] w-full flex-1 object-cover rounded-t-[16px] !text-black"
                                   />
                                   <div className="absolute left-0 right-0 top-5 mx-auto flex flex-1 items-center justify-between gap-5 px-5">
                                     <Button
                                       size="sm"
                                       shape="round"
-                                      className="min-w-[104px] rounded-[14px] px-3.5 font-medium capitalize bg-dark-blue bg-no-repeat bg-cover"
+                                      className="min-w-[104px] rounded-[14px] px-3.5 font-medium capitalize  bg-no-repeat bg-cover bg-blue-500 text-white"
                                     >
                                       {t("great_price")}
                                     </Button>
@@ -139,7 +166,7 @@ export default function FeaturedListingsSection({
                                       shape="round"
                                       onClick={() => add_to_favorites(listing.id)}
 
-                                      className="min-w-[104px] rounded-[14px] px-3.5 font-medium capitalize bg-dark-blue bg-no-repeat bg-cover"
+                                      className="min-w-[104px] rounded-[14px] px-3.5 font-medium capitalize  bg-no-repeat bg-cover bg-blue-500 text-white"
                                     >
                                       {}
                                     </Button>
@@ -152,20 +179,20 @@ export default function FeaturedListingsSection({
                                       <Heading
                                         size="text2xl"
                                         as="h6"
-                                        className="text-[18px] font-medium lg:text-[15px] !text-white"
+                                        className="text-[18px] font-medium lg:text-[15px] !text-black"
                                       >
                                         {listing.title}
                                       </Heading>
                                       <div className="flex items-center self-stretch">
-                                        <Text size="textmd" as="p" className="text-[14px] font-normal !text-white">
+                                        <Text size="textmd" as="p" className="text-[14px] font-normal !text-black">
                                           {listing.miles}
                                         </Text>
                                         <div className="mb-1.5 ml-2 h-[4px] w-[4px] self-end rounded-sm bg-gray-500" />
-                                        <Text size="textmd" as="p" className="ml-2.5 text-[14px] font-normal !text-white">
+                                        <Text size="textmd" as="p" className="ml-2.5 text-[14px] font-normal !text-black">
                                           {listing.fuel}
                                         </Text>
                                         <div className="mb-1.5 ml-2 h-[4px] w-[4px] self-end rounded-sm bg-gray-500" />
-                                        <Text size="textmd" as="p" className="ml-2.5 text-[14px] font-normal !text-white">
+                                        <Text size="textmd" as="p" className="ml-2.5 text-[14px] font-normal !text-black">
                                           {listing.transmission}
                                         </Text>
                                       </div>
@@ -174,12 +201,12 @@ export default function FeaturedListingsSection({
                                       <Heading
                                         size="headings"
                                         as="h5"
-                                        className="text-[20px] font-bold lg:text-[17px] !text-white"
+                                        className="text-[20px] font-bold lg:text-[17px] !text-black"
                                       >
                                         {listing.price}
                                       </Heading>
                                       <div className="flex items-center gap-2.5 self-stretch">
-                                        <Text as="p" className="text-[15px] font-medium !text-indigo-a400 !text-white">
+                                        <Text as="p" className="text-[15px] font-medium !text-indigo-a400 !text-black">
                                           {t("view_details")}
                                         </Text>
                                         <Img
@@ -196,6 +223,8 @@ export default function FeaturedListingsSection({
                               </div>
                             </div>
                           </Link>
+                          </motion.div>
+
                         </React.Fragment>
                         ))}
                     />

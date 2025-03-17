@@ -1,13 +1,13 @@
 "use client";
 
-import { FloatingLabelInput } from "@/components/FloatingLabelInput";
+import { FloatingLabelInput } from "../../components/FloatingLabelInput";
 import { Button } from "../../components/Button";
 import { Img } from "../../components/Img";
 import { Text } from "../../components/Text";
 import React from "react";
 import { TabPanel, TabList, Tab, Tabs } from "react-tabs";
-import { CheckBox } from "@/components/CheckBox";
-import { Input } from "@/components/Input";
+import { CheckBox } from "../../components/CheckBox";
+import { Input } from "../../components/Input";
 
 export default function LoginSection() {
   return (

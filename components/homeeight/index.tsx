@@ -132,7 +132,7 @@
 //                             width={14}
 //                             height={14}
 //                             alt="Icon"
-//                             className="mb-1.5 h-[14px] w-[14px] object-contain bg-blue-700 rounded-[50%]"
+//                             className="mb-1.5 h-[14px] w-[14px] object-contain bg-blue-600-700 rounded-[50%]"
 //                           />
 //                         }
 //                         className="mt-5 gap-3 self-stretch rounded-[16px] border border-solid border-indigo-a400 px-[33px] font-medium sm:px-4 items-center justify-center"
@@ -151,7 +151,7 @@
 //                             width={14}
 //                             height={14}
 //                             alt="Icon"
-//                             className="mb-1.5 h-[14px] w-[14px] object-contain bg-blue-700 rounded-[50%]"
+//                             className="mb-1.5 h-[14px] w-[14px] object-contain bg-blue-600-700 rounded-[50%]"
 //                           />
 //                         }
 //                         className="mt-5 gap-3 self-stretch rounded-[16px] border border-solid border-indigo-a400 px-[33px] font-medium sm:px-4  items-center justify-center"

@@ -2,7 +2,7 @@ import { Heading } from "../../components/Heading";
 import { Img } from "../../components/Img";
 import { Text } from "../../components/Text";
 import React from "react";
-import { GoogleMap } from "@/components/GoogleMap";
+import { GoogleMap } from "../../components/GoogleMap";
 
 export default function ContactUsSection() {
   return (

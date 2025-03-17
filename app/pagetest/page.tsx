@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { Img } from "@/components/Img";
+import { Img } from "../../components/Img";
 
 // const categories = [
 //   { name: "Apparel and Merchandise", icon: "merch_icon.webp" },

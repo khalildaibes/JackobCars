@@ -8,7 +8,7 @@ const variants = {
   fill: {
     black_900: "bg-black-900 text-white-a700",
     white_A700: "bg-white-a700 text-black-900",
-    light_blue_500: "bg-light_blue-500 text-white-a700",
+    light_blue_500: "bg-light_bluetext-white-a700",
     white_A700_6c: "bg-white-a700_6c",
     gray_50: "bg-gray-50",
     indigo_A400_11: "bg-indigo-a400_11",

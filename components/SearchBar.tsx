@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { fuels, yearsOfProduction } from "@/constants";
-import CustomFilter from "@/components/CustomFilter";
-import SearchManifacturer from "@/components/SearchManifacturer";
+import { fuels, yearsOfProduction } from "../constants";
+import CustomFilter from "../components/CustomFilter";
+import SearchManifacturer from "../components/SearchManifacturer";
 import { useTranslations } from "next-intl";
 
 const SearchBar: React.FC = () => {
@@ -105,7 +105,7 @@ const SearchBar: React.FC = () => {
       {/* Search Button */}
       <button
         type="submit"
-        className="bg-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg"
+        className="bg-blue-600 hover:bg-blue-600-700 text-white px-6 py-3 rounded-lg flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg"
       >
         <Image
           src="/magnifying-glass.svg"

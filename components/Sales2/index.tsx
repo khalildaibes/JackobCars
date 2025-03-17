@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { fetchStrapiData } from "../../app/lib/strapiClient";
+import { Heading } from "../../components/Heading";
+import { Text } from "../../components/Text";
+import { SelectBox } from "../../components/SelectBox";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "../../components/Breadcrumb";
+import { Img } from "../../components/Img";
 import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
-import { Heading } from "../Heading";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "../Breadcrumb";
-import { Button } from "../Button";
-import { Img } from "../Img";
-import { SelectBox } from "../SelectBox";
-import { Text } from "../Text";
 
 interface Car {
   id: number;
@@ -19,44 +19,84 @@ interface Car {
   fuel: string;
   transmission: string;
 }
-
-interface Sales2Props {
-  carGrid: Car[];
-  breadcrumbLinks: { label: string; href: string }[];
-  pageTitle: string;
+interface ProductProps {
+  product: any; // Adjust the type to match the actual structure
 }
-
-export default function Sales2({ carGrid, breadcrumbLinks, pageTitle }: Sales2Props) {
+export default function ProductDetailsPage({ product }: ProductProps) {
+  const { slug } = useParams(); // Get the dynamic category slug
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // State for Filters
+  // ✅ State for fetched products
+  const [carGrid, setCarGrid] = useState<Car[]>([]);
+  const [filteredCars, setFilteredCars] = useState<Car[]>([]);
+  const [carCategories, setCarCategories] = useState<{ label: string; count: number }[]>([]);
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "All");
   const [selectedSort, setSelectedSort] = useState(searchParams.get("sort") || "latest");
-  const [filteredCars, setFilteredCars] = useState(carGrid);
-  const [carCategories, setCarCategories] = useState<{ label: string; count: number }[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Calculate Category Counts Dynamically
+  // ✅ Fetch products from Strapi
+  const fetchProducts = async () => {
+    try {
+      const response = await fetchStrapiData(`/products`, {
+        filters: { categories: { $contains: slug } } , // ✅ Match text
+        populate: "*",
+        locale: "en",
+      });
+
+      // ✅ Transform API data into expected format
+      const formattedCars = response.data.map((product: any) => ({
+        id: product.id,
+        category: product.categories || "Unknown", // ✅ Store categories as a string
+        image: product.image?.length ? `http://68.183.215.202${product.image[0].url}` : "/default-car.png",
+        title: product.name || "Unknown Car",
+        price: product.price || 0,
+        fuel: product.details?.car?.fuel || "Unknown",
+        transmission: product.details?.car?.transmission || "Unknown",
+      }));
+
+      setCarGrid(formattedCars);
+      setFilteredCars(formattedCars);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setCarGrid([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Fetch products on mount
   useEffect(() => {
-    const categoryCounts = carGrid.reduce<{ [key: string]: number }>((acc, car) => {
-      acc[car.category] = (acc[car.category] || 0) + 1;
-      return acc;
-    }, {});
+    fetchProducts();
+  }, []);
 
-    const dynamicCategories = [
-      { label: "All", count: carGrid.length },
-      ...Object.entries(categoryCounts).map(([category, count]) => ({ label: category, count })),
-    ];
+  // ✅ Process and split categories
+  useEffect(() => {
+    const categorySet = new Set<string>(); // ✅ Ensure unique categories
 
-    setCarCategories(dynamicCategories);
+    carGrid.forEach((car) => {
+      if (car.category) {
+        car.category.split(",").forEach((cat) => {
+          categorySet.add(cat.trim()); // ✅ Trim spaces & avoid duplicates
+        });
+      }
+    });
+
+    // ✅ Convert to an array and sort alphabetically
+    const uniqueCategories = Array.from(categorySet).sort().map((category) => ({
+      label: category,
+      count: carGrid.filter((car) => car.category.includes(category)).length,
+    }));
+
+    setCarCategories([{ label: "All", count: carGrid.length }, ...uniqueCategories]);
   }, [carGrid]);
 
-  // Update filtered results when filters change
+  // ✅ Update filtered results when filters change
   useEffect(() => {
-    let filtered = carGrid;
+    let filtered = [...carGrid];
 
     if (selectedCategory !== "All") {
-      filtered = filtered.filter((car) => car.category === selectedCategory);
+      filtered = filtered.filter((car) => car.category.split(",").map((c) => c.trim()).includes(selectedCategory));
     }
 
     if (selectedSort === "price_low") {
@@ -66,9 +106,9 @@ export default function Sales2({ carGrid, breadcrumbLinks, pageTitle }: Sales2Pr
     }
 
     setFilteredCars(filtered);
-  }, [selectedCategory, selectedSort]);
+  }, [selectedCategory, selectedSort, carGrid]);
 
-  // Handle Filter Change
+  // ✅ Handle Filter Change
   const handleFilterChange = (filterType: string, value: string) => {
     const params = new URLSearchParams(window.location.search);
     params.set(filterType, value);
@@ -79,28 +119,16 @@ export default function Sales2({ carGrid, breadcrumbLinks, pageTitle }: Sales2Pr
   };
 
   return (
-    <div className="flex flex-col bg-gray-50 min-h-screen">
-      {/* Breadcrumb & Header */}
+    <div className="min-h-screen bg-gray-50 pt-[5%]">
+      {/* Header */}
       <div className="bg-white py-6 shadow-sm">
         <div className="container mx-auto px-4">
-          <Breadcrumb className="flex flex-wrap items-center gap-1">
-            {breadcrumbLinks.map((link, index) => (
-              <BreadcrumbItem key={index}>
-                <BreadcrumbLink href={link.href}>
-                  <Text as="p" className={`text-sm ${index === breadcrumbLinks.length - 1 ? "text-gray-800" : "text-indigo-400"}`}>
-                    {link.label}
-                  </Text>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-            ))}
-          </Breadcrumb>
           <Heading size="heading2xl" className="mt-2 text-3xl font-bold text-gray-800 capitalize">
-            {pageTitle}
+            After Market Listings
           </Heading>
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="container mx-auto flex flex-col lg:flex-row gap-6 px-4 py-8">
         {/* Filter Sidebar */}
         <aside className="w-full lg:w-1/4">
@@ -112,10 +140,10 @@ export default function Sales2({ carGrid, breadcrumbLinks, pageTitle }: Sales2Pr
                   key={cat.label}
                   onClick={() => handleFilterChange("category", cat.label)}
                   className={`w-full text-left p-2 rounded-lg ${
-                    selectedCategory === cat.label ? "bg-blue-500 text-white" : "text-gray-700 hover:bg-gray-200"
+                    selectedCategory === cat.label ? "bg-blue-600text-blue" : "text-gray-700 hover:bg-gray-200"
                   }`}
                 >
-                  {cat.label} ({cat.count})
+                  {cat.label.replaceAll("_"," ")} ({cat.count})
                 </button>
               ))}
             </div>
@@ -127,7 +155,7 @@ export default function Sales2({ carGrid, breadcrumbLinks, pageTitle }: Sales2Pr
             <SelectBox
               shape="square"
               name="sortOptions"
-              placeholder="Sort Cars"
+              placeholder="Sort Cars "
               options={[
                 { label: "Sort by Latest", value: "latest" },
                 { label: "Sort by Price: Low to High", value: "price_low" },
@@ -142,28 +170,37 @@ export default function Sales2({ carGrid, breadcrumbLinks, pageTitle }: Sales2Pr
 
         {/* Car Listings Grid */}
         <main className="w-full lg:w-3/4">
-          <div className="mb-4">
-            <Text as="p" className="text-sm text-gray-700">Showing {filteredCars.length} results</Text>
-          </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
-            <Suspense fallback={<div>Loading cars...</div>}>
-              {filteredCars.map((car) => (
-                <Link key={car.id} href={`/detailsvone?car=${car.id}`}>
-                  <div className="px-4 cursor-pointer flex-shrink-0 w-80">
-                    <div className="flex flex-col rounded-lg bg-white shadow-md">
-                      <div className="relative h-56">
-                        <Img src={car.image} width={328} height={218} className="h-full w-full object-cover rounded-t-lg" />
-                      </div>
-                      <div className="p-4">
-                        <Heading size="text5xl" as="p" className="text-sm font-medium text-gray-800">{car.title}</Heading>
-                        <Text as="p" className="text-xs text-gray-600">{car.fuel} • {car.transmission}</Text>
-                        <Heading size="headings" as="h5" className="text-base font-bold text-gray-800">${car.price.toLocaleString()}</Heading>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </Suspense>
+          {/* Listings Grid */}
+          <div className="mt-10">
+            {loading ? (
+              <div className="text-center text-lg font-medium mt-10">Loading products...</div>
+            ) : (
+              <>
+                <div className="mb-4">
+                  <Text as="p" className="text-sm text-gray-700">Showing {filteredCars.length} results</Text>
+                </div>
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
+                  <Suspense fallback={<div>Loading cars...</div>}>
+                    {filteredCars.map((car) => (
+                      <Link key={car.id} href={`/detailsvone?car=${car.id}`}>
+                        <div className="px-4 cursor-pointer flex-shrink-0 w-80">
+                          <div className="flex flex-col rounded-lg bg-white shadow-md">
+                            <div className="relative h-56">
+                              <Img src={car.image} width={328} height={218} className="h-full w-full object-cover rounded-t-lg"  external={true}/>
+                            </div>
+                            <div className="p-4">
+                              <Heading size="text5xl" as="p" className="text-sm font-medium text-gray-800">{car.title}</Heading>
+                              <Text as="p" className="text-xs text-gray-600">{car.fuel} • {car.transmission}</Text>
+                              <Heading size="headings" as="h5" className="text-base font-bold text-gray-800">${car.price.toLocaleString()}</Heading>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </Suspense>
+                </div>
+              </>
+            )}
           </div>
         </main>
       </div>

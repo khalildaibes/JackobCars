@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@/components/Button";
-import { FloatingLabelInput } from "@/components/FloatingLabelInput";
-import { Img } from "@/components/Img";
-import { Heading } from "@/components/Heading";
+import { Button } from "../../components/Button";
+import { FloatingLabelInput } from "../../components/FloatingLabelInput";
+import { Img } from "../../components/Img";
+import { Heading } from "../../components/Heading";
 import React from "react";
 
 export default function FinancingCalculatorSection() {

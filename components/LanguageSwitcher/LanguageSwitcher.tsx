@@ -5,13 +5,13 @@ const LanguageSwitcher = () => {
   const languages = [
     { code: "en", label: "English" },
     { code: "ar", label: "العربية" },
-    { code: "he", label: "עברית" },
+    { code: "he-IL", label: "עברית" },
   ];
 
   // Read the current locale from cookie (if available), default to "en"
   const getCurrentLocale = (): string => {
     const match = document.cookie.match(/NEXT_LOCALE=([^;]+)/);
-    return match ? match[1] : "en";
+    return match ? match[1] : "ar";
   };
 
   const [currentLocale, setCurrentLocale] = React.useState(getCurrentLocale());

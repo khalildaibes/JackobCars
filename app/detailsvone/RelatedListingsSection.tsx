@@ -9,7 +9,7 @@ import Link from "next/link";
 import React from "react";
 import AliceCarousel, { EventObject } from "react-alice-carousel";
 import { useTranslations } from "next-intl";
-import { Slider } from "@/components/Slider2";
+import { Slider } from "../../components/Slider2";
 
 const relatedListings = [
   {

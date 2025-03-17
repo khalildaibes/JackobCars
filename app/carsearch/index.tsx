@@ -1,11 +1,11 @@
 "use client";
 
-import CarCard from "@/components/CarCard";
-import ShowMore from "@/components/ShowMore";
-import { CarProps } from "@/types";
+import CarCard from "../../components/CarCard";
+import ShowMore from "../../components/ShowMore";
+import { CarProps } from "../../types";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { fetchCars } from "@/utils"; // Ensure this function exists
+import { fetchCars } from "../../utils"; // Ensure this function exists
 
 export default function CarSearch1() {
   const searchParams = useSearchParams();

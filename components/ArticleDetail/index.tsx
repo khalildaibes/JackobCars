@@ -1,7 +1,7 @@
-import { Heading } from "@/components/Heading";
+import { Heading } from "../../components/Heading";
 import {Text} from "../../components/Text";
-import { Button } from "@/components/Button";
-import { Img } from "@/components/Img";
+import { Button } from "../../components/Button";
+import { Img } from "../../components/Img";
 import Link from "next/link";
 import React from "react";
 

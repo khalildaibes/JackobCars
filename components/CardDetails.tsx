@@ -1,10 +1,10 @@
 "use client";
 
-import { CarProps } from "@/types";
+import { CarProps } from "../types";
 import Image from "next/image";
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { generateCarImageUrl } from "@/utils";
+import { generateCarImageUrl } from "../utils";
 
 interface cardDetailsProps {
   isOpen: boolean;

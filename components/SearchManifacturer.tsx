@@ -1,9 +1,9 @@
 "use client";
 
-import { SearchManufacturerProps } from "@/types";
+import { SearchManufacturerProps } from "../types";
 import { useState, Fragment } from "react";
 import Image from "next/image";
-import { manufacturers } from "@/constants";
+import { manufacturers } from "../constants";
 import { Combobox, Transition } from "@headlessui/react";
 import { useTranslations } from "next-intl";
 
@@ -64,7 +64,7 @@ const SearchManufacturer = ({
                     key={item}
                     className={({ active }) =>
                       `px-4 py-2 cursor-pointer ${
-                        active ? "bg-blue-500 text-white" : "text-gray-900"
+                        active ? "bg-blue-600text-white" : "text-gray-900"
                       }`
                     }
                     value={item}

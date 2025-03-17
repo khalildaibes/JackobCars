@@ -1,4 +1,4 @@
-import ResponsiveNewsLayout from "@/components/Responsivenews";
+import ResponsiveNewsLayout from "../../components/Responsivenews";
 import BlogMainSection from "./BlogMainSection";
 import React from "react";
 

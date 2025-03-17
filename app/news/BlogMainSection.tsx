@@ -6,7 +6,7 @@ import { Text } from "../../components/Text";
 import BlogVOneArticle from "../../components/BlogVOneArticle";
 import Link from "next/link";
 import React, { Suspense } from "react";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/Breadcrumb";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "../../components/Breadcrumb";
 import { useTranslations } from "next-intl";
 
 const articleGrid = [

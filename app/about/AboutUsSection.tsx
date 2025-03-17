@@ -1,8 +1,8 @@
 
-import { Button } from "@/components/Button";
-import { Heading } from "@/components/Heading";
-import { Img } from "@/components/Img";
-import { Text } from "@/components/Text";
+import { Button } from "../../components/Button";
+import { Heading } from "../../components/Heading";
+import { Img } from "../../components/Img";
+import { Text } from "../../components/Text";
 import React from "react";
 
 export default function AboutUsSection() {

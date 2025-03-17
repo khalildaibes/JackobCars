@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import SearchManifacturer from "@/components/SearchManifacturer";
+import SearchManifacturer from "../../components/SearchManifacturer";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { fuels, yearsOfProduction } from "@/constants";
-import CustomFilter from "@/components/CustomFilter";
+import { fuels, yearsOfProduction } from "../../constants";
+import CustomFilter from "../../components/CustomFilter";
 
 const SearchBar = () => {
   const [manufacturer, setManufacturer] = useState("");
@@ -102,7 +102,7 @@ const SearchBar = () => {
       {/* Search Button */}
       <button
         type="submit"
-        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center justify-center transition"
+        className="bg-blue-600-600 hover:bg-blue-600-700 text-white px-6 py-3 rounded-lg flex items-center justify-center transition"
       >
         <Image
           src="/magnifying-glass.svg"

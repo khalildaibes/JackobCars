@@ -2,12 +2,12 @@
 
 import React, { Suspense, useState } from "react";
 import Link from "next/link";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/Breadcrumb";
-import { Button } from "@/components/Button";
-import { Img } from "@/components/Img";
-import { SelectBox } from "@/components/SelectBox";
-import { Heading } from "@/components/Heading";
-import { Text } from "@/components/Text";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "../../components/Breadcrumb";
+import { Button } from "../../components/Button";
+import { Img } from "../../components/Img";
+import { SelectBox } from "../../components/SelectBox";
+import { Heading } from "../../components/Heading";
+import { Text } from "../../components/Text";
 
 
 // ----- Data Types -----

@@ -6,7 +6,7 @@ import { Button } from "../../components/Button";
 import { Img } from "../../components/Img";
 import { Text } from "../../components/Text";
 import React from "react";
-import { FloatingLabelInput } from "@/components/FloatingLabelInput";
+import { FloatingLabelInput } from "../../components/FloatingLabelInput";
 
 export default function LoanCalculatorSection() {
   return (
@@ -87,7 +87,7 @@ export default function LoanCalculatorSection() {
                   </div>
                 </div>
               </div>
-              <div className="flex w-[32%] flex-col items-start justify-center gap-7 bg-blue-50 px-[50px] py-[132px] lg:py-8 md:w-full md:p-5 sm:p-4">
+              <div className="flex w-[32%] flex-col items-start justify-center gap-7 bg-blue-600-50 px-[50px] py-[132px] lg:py-8 md:w-full md:p-5 sm:p-4">
                 <div className="flex flex-col items-start gap-2 self-stretch">
                   <Heading size="text6xl" as="h2" className="text-[20px] font-medium lg:text-[17px]">
                     Monthly Payment

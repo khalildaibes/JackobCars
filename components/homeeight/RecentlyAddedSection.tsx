@@ -9,6 +9,7 @@ import Link from "next/link";
 import React from "react";
 import AliceCarousel, { EventObject } from "react-alice-carousel";
 import { useTranslations } from "next-intl";
+import { cn } from "../../app/lib/utils";
 
 export default function RecentlyAddedSection({ listings }) {
   const t = useTranslations("HomePage");
@@ -62,7 +63,8 @@ export default function RecentlyAddedSection({ listings }) {
                       <React.Fragment key={car.id}>
                         <Link href={`detailsvone?car=${car.id}`}>
                           <div className="px-[15px] rounded-[16px]">
-                            <div className="flex flex-col rounded-[16px] bg-grotto-blue">
+                             <div className={cn("px-[15px] cursor-pointer text-card-foreground shadow-sm overflow-hidden border-0 card-hover bg-white rounded-xl",
+                                                                'overflow-hidden border-0 card-hover bg-white rounded-xl w-full h-full object-cover transition-transform duration-500 hover:scale-105')}>
                               <div className="relative h-[218px] content-center lg:h-auto md:h-auto">
                                 <Img
                                   src={car.mainImage}
@@ -90,7 +92,7 @@ export default function RecentlyAddedSection({ listings }) {
                                   <Heading
                                     size="text2xl"
                                     as="p"
-                                    className="text-[18px] font-medium lg:text-[15px] !text-white"
+                                    className="text-[18px] font-medium lg:text-[15px] !text-black"
                                   >
                                     {car.title}
                                   </Heading>
@@ -98,7 +100,7 @@ export default function RecentlyAddedSection({ listings }) {
                                     <Text
                                       size="textmd"
                                       as="p"
-                                      className="text-[14px] font-normal !text-white"
+                                      className="text-[14px] font-normal !text-black"
                                     >
                                       {car.miles}
                                     </Text>
@@ -106,7 +108,7 @@ export default function RecentlyAddedSection({ listings }) {
                                     <Text
                                       size="textmd"
                                       as="p"
-                                      className="ml-2.5 text-[14px] font-normal !text-white"
+                                      className="ml-2.5 text-[14px] font-normal !text-black"
                                     >
                                       {car.fuel}
                                     </Text>
@@ -114,7 +116,7 @@ export default function RecentlyAddedSection({ listings }) {
                                     <Text
                                       size="textmd"
                                       as="p"
-                                      className="ml-2.5 text-[14px] font-normal !text-white"
+                                      className="ml-2.5 text-[14px] font-normal !text-black"
                                     >
                                       {car.transmission}
                                     </Text>
@@ -124,12 +126,12 @@ export default function RecentlyAddedSection({ listings }) {
                                   <Heading
                                     size="headings"
                                     as="h5"
-                                    className="text-[20px] font-bold lg:text-[17px] !text-white"
+                                    className="text-[20px] font-bold lg:text-[17px] !text-black"
                                   >
                                     {car.price}
                                   </Heading>
                                   <div className="flex items-center gap-2.5 self-stretch">
-                                    <Text as="p" className="text-[15px] font-medium !text-white">
+                                    <Text as="p" className="text-[15px] font-medium !text-black">
                                       {t("view_details")}
                                     </Text>
                                     <Img

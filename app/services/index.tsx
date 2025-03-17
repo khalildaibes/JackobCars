@@ -1,4 +1,4 @@
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/Breadcrumb";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "../../components/Breadcrumb";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import {Text} from "../../components/Text";
@@ -8,7 +8,7 @@ import ServicesSection1 from "./ServicesSection1";
 import ServicesSection2 from "./ServicesSection2";
 import Link from "next/link";
 import React from "react";
-import { Heading } from "@/components/Heading";
+import { Heading } from "../../components/Heading";
 
 export default function ServicesPage() {
   return (

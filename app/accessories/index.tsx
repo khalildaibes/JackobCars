@@ -1,4 +1,4 @@
-import Sales from "@/components/Sales";
+import Sales from "../../components/Sales";
 import React from "react";
 
 export default function ShoppagePage() {
