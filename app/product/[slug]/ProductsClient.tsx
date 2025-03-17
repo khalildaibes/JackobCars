@@ -20,7 +20,7 @@ const featureList = [
   { feature: "HomeLink" },
 ];
 
-export default function ProductDetailsPage() {
+export default function ProductDetailsPage({ product }: { product: { product: string } }) {
   const { slug } = useParams(); // Get dynamic slug from URL
   const [categoryDetails, setcategoryDetails] = useState<any>(null);
   const [loading, setLoading] = useState(true);

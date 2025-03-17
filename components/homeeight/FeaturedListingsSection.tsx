@@ -205,17 +205,21 @@ export default function FeaturedListingsSection({
                                       >
                                         {listing.price}
                                       </Heading>
-                                      <div className="flex items-center gap-2.5 self-stretch">
-                                        <Text as="p" className="text-[15px] font-medium !text-indigo-a400 !text-black">
-                                          {t("view_details")}
-                                        </Text>
-                                        <Img
+                                      <div className="flex items-center gap-2.5 self-stretch ">
+                                       <Button
+                                      size="sm"
+                                      shape="round"
+                                      className="min-w-[104px] rounded-[14px] px-3.5 font-medium capitalize  bg-no-repeat bg-cover bg-blue-500 text-white"
+                                    >
+                                      {t("view_details")}
+                                      </Button>
+                                        {/* <Img
                                           src="img_arrow_left_indigo_a400.svg"
                                           width={14}
                                           height={14}
                                           alt="Arrow Left"
                                           className="h-[14px] self-end"
-                                        />
+                                        /> */}
                                       </div>
                                     </div>
                                   </div>
