@@ -1,5 +1,5 @@
 
-import DetailsVOne1 from "@/components/DetailsVOne1";
+import DetailsVOne1 from "../../components/DetailsVOne1";
 import React from "react";
 
 export default function ShoppagePage() {

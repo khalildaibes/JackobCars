@@ -212,6 +212,13 @@ export default function FeaturedListingsSection({
                                       className="min-w-[104px] rounded-[14px] px-3.5 font-medium capitalize  bg-no-repeat bg-cover bg-blue-500 text-white"
                                     >
                                       {t("view_details")}
+                                      </Button> 
+                                      <Button
+                                      size="sm"
+                                      shape="round"
+                                      className="min-w-[104px] rounded-[14px] px-3.5 font-medium capitalize  bg-no-repeat bg-cover bg-blue-500 text-white"
+                                    >
+                                      {t("view_details")}
                                       </Button>
                                         {/* <Img
                                           src="img_arrow_left_indigo_a400.svg"
