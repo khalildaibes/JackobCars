@@ -9,121 +9,121 @@ import { Slider } from "../../components/ui/slider";
 import { Card, CardContent } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-import { Check, Heart, MessageSquare, Plus, Car, DollarSign, Calendar, Gauge, Fuel } from "lucide-react";
+import { Check, Heart, MessageSquare, Plus, Car,Calendar, Gauge, Fuel } from "lucide-react";
 import { Badge } from "../../components/ui/badge";
 import { fetchStrapiData } from '../lib/strapiClient';
 import { Img } from '../../components/Img';
 
-const MOCK_CARS = [
-  {
-    id: 1,
-    title: "2022 Toyota Camry XSE",
-    price: 32999,
-    mileage: 12500,
-    year: 2022,
-    make: "Toyota",
-    model: "Camry",
-    trim: "XSE",
-    fuelType: "Gasoline",
-    transmission: "Automatic",
-    color: "Pearl White",
-    description: "Excellent condition with low mileage. Features include panoramic sunroof, leather seats, and advanced safety package.",
-    image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&auto=format&fit=crop",
-    location: "Miami, FL",
-    bodyType: "Sedan",
-    features: ["Leather Seats", "Navigation", "Bluetooth", "Backup Camera", "Sunroof"]
-  },
-  {
-    id: 2,
-    title: "2020 Honda Accord Sport",
-    price: 27500,
-    mileage: 28900,
-    year: 2020,
-    make: "Honda",
-    model: "Accord",
-    trim: "Sport",
-    fuelType: "Gasoline",
-    transmission: "Automatic",
-    color: "Modern Steel Metallic",
-    description: "One owner, clean history. Comes with all maintenance records and extended warranty.",
-    image: "https://images.unsplash.com/photo-1582639510494-c80b5de9f148?w=800&auto=format&fit=crop",
-    location: "Atlanta, GA",
-    bodyType: "Sedan",
-    features: ["Apple CarPlay", "Android Auto", "Lane Keep Assist", "Adaptive Cruise Control"]
-  },
-  {
-    id: 3,
-    title: "2021 Tesla Model 3 Long Range",
-    price: 48990,
-    mileage: 18700,
-    year: 2021,
-    make: "Tesla",
-    model: "Model 3",
-    trim: "Long Range",
-    fuelType: "Electric",
-    transmission: "Automatic",
-    color: "Midnight Silver Metallic",
-    description: "Dual motor all-wheel drive with 353 mile range. Premium interior with glass roof.",
-    image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&auto=format&fit=crop",
-    location: "San Francisco, CA",
-    bodyType: "Sedan",
-    features: ["Autopilot", "Premium Interior", "Heated Seats", "Glass Roof"]
-  },
-  {
-    id: 4,
-    title: "2019 BMW X5 xDrive40i",
-    price: 45500,
-    mileage: 37800,
-    year: 2019,
-    make: "BMW",
-    model: "X5",
-    trim: "xDrive40i",
-    fuelType: "Gasoline",
-    transmission: "Automatic",
-    color: "Alpine White",
-    description: "Luxury SUV with M Sport package and premium sound system. Well maintained.",
-    image: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&auto=format&fit=crop",
-    location: "Chicago, IL",
-    bodyType: "SUV",
-    features: ["Heated Steering Wheel", "Premium Sound System", "360 Camera", "Head-up Display"]
-  },
-  {
-    id: 5,
-    title: "2023 Ford Mustang GT",
-    price: 52500,
-    mileage: 5600,
-    year: 2023,
-    make: "Ford",
-    model: "Mustang",
-    trim: "GT",
-    fuelType: "Gasoline",
-    transmission: "Manual",
-    color: "Race Red",
-    description: "5.0L V8 with 460hp. Performance package and digital dash. Like new condition.",
-    image: "https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=800&auto=format&fit=crop",
-    location: "Dallas, TX",
-    bodyType: "Coupe",
-    features: ["Performance Package", "Brembo Brakes", "Digital Dash", "Launch Control"]
-  },
-  {
-    id: 6,
-    title: "2020 Audi Q7 Premium Plus",
-    price: 47990,
-    mileage: 32100,
-    year: 2020,
-    make: "Audi",
-    model: "Q7",
-    trim: "Premium Plus",
-    fuelType: "Gasoline",
-    transmission: "Automatic",
-    color: "Glacier White Metallic",
-    description: "Luxury 7-passenger SUV with Bang & Olufsen sound system and Quattro AWD.",
-    image: "https://images.unsplash.com/photo-1607853554439-0069ec0f29b6?w=800&auto=format&fit=crop",
-    location: "Denver, CO",
-    bodyType: "SUV",
-    features: ["Bang & Olufsen Audio", "Virtual Cockpit", "Panoramic Sunroof", "Heated/Ventilated Seats"]
-  }
-];
+// const MOCK_CARS = [
+//   {
+//     id: 1,
+//     title: "2022 Toyota Camry XSE",
+//     price: 32999,
+//     mileage: 12500,
+//     year: 2022,
+//     make: "Toyota",
+//     model: "Camry",
+//     trim: "XSE",
+//     fuelType: "Gasoline",
+//     transmission: "Automatic",
+//     color: "Pearl White",
+//     description: "Excellent condition with low mileage. Features include panoramic sunroof, leather seats, and advanced safety package.",
+//     image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&auto=format&fit=crop",
+//     location: "Miami, FL",
+//     bodyType: "Sedan",
+//     features: ["Leather Seats", "Navigation", "Bluetooth", "Backup Camera", "Sunroof"]
+//   },
+//   {
+//     id: 2,
+//     title: "2020 Honda Accord Sport",
+//     price: 27500,
+//     mileage: 28900,
+//     year: 2020,
+//     make: "Honda",
+//     model: "Accord",
+//     trim: "Sport",
+//     fuelType: "Gasoline",
+//     transmission: "Automatic",
+//     color: "Modern Steel Metallic",
+//     description: "One owner, clean history. Comes with all maintenance records and extended warranty.",
+//     image: "https://images.unsplash.com/photo-1582639510494-c80b5de9f148?w=800&auto=format&fit=crop",
+//     location: "Atlanta, GA",
+//     bodyType: "Sedan",
+//     features: ["Apple CarPlay", "Android Auto", "Lane Keep Assist", "Adaptive Cruise Control"]
+//   },
+//   {
+//     id: 3,
+//     title: "2021 Tesla Model 3 Long Range",
+//     price: 48990,
+//     mileage: 18700,
+//     year: 2021,
+//     make: "Tesla",
+//     model: "Model 3",
+//     trim: "Long Range",
+//     fuelType: "Electric",
+//     transmission: "Automatic",
+//     color: "Midnight Silver Metallic",
+//     description: "Dual motor all-wheel drive with 353 mile range. Premium interior with glass roof.",
+//     image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&auto=format&fit=crop",
+//     location: "San Francisco, CA",
+//     bodyType: "Sedan",
+//     features: ["Autopilot", "Premium Interior", "Heated Seats", "Glass Roof"]
+//   },
+//   {
+//     id: 4,
+//     title: "2019 BMW X5 xDrive40i",
+//     price: 45500,
+//     mileage: 37800,
+//     year: 2019,
+//     make: "BMW",
+//     model: "X5",
+//     trim: "xDrive40i",
+//     fuelType: "Gasoline",
+//     transmission: "Automatic",
+//     color: "Alpine White",
+//     description: "Luxury SUV with M Sport package and premium sound system. Well maintained.",
+//     image: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&auto=format&fit=crop",
+//     location: "Chicago, IL",
+//     bodyType: "SUV",
+//     features: ["Heated Steering Wheel", "Premium Sound System", "360 Camera", "Head-up Display"]
+//   },
+//   {
+//     id: 5,
+//     title: "2023 Ford Mustang GT",
+//     price: 52500,
+//     mileage: 5600,
+//     year: 2023,
+//     make: "Ford",
+//     model: "Mustang",
+//     trim: "GT",
+//     fuelType: "Gasoline",
+//     transmission: "Manual",
+//     color: "Race Red",
+//     description: "5.0L V8 with 460hp. Performance package and digital dash. Like new condition.",
+//     image: "https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=800&auto=format&fit=crop",
+//     location: "Dallas, TX",
+//     bodyType: "Coupe",
+//     features: ["Performance Package", "Brembo Brakes", "Digital Dash", "Launch Control"]
+//   },
+//   {
+//     id: 6,
+//     title: "2020 Audi Q7 Premium Plus",
+//     price: 47990,
+//     mileage: 32100,
+//     year: 2020,
+//     make: "Audi",
+//     model: "Q7",
+//     trim: "Premium Plus",
+//     fuelType: "Gasoline",
+//     transmission: "Automatic",
+//     color: "Glacier White Metallic",
+//     description: "Luxury 7-passenger SUV with Bang & Olufsen sound system and Quattro AWD.",
+//     image: "https://images.unsplash.com/photo-1607853554439-0069ec0f29b6?w=800&auto=format&fit=crop",
+//     location: "Denver, CO",
+//     bodyType: "SUV",
+//     features: ["Bang & Olufsen Audio", "Virtual Cockpit", "Panoramic Sunroof", "Heated/Ventilated Seats"]
+//   }
+// ];
 
 const YEARS = Array.from({ length: 30 }, (_, i) => 2024 - i);
 const MAKES = ["Any", "Toyota", "Honda", "Ford", "Chevrolet", "BMW", "Mercedes-Benz", "Audi", "Tesla", "Lexus", "Subaru"];
@@ -139,7 +139,30 @@ const CarListings: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [viewType, setViewType] = useState<string>("grid");
     const [listings, setListings] = useState([]);
+  const [favorites, setFavorites] = useState<number[]>([]);
   
+    useEffect(() => {
+      if (typeof window !== "undefined") {
+        const storedFavorites = localStorage.getItem("favorites");
+        if (storedFavorites) {
+          setFavorites(JSON.parse(storedFavorites));
+        }
+      }
+    }, []);
+  
+    const add_to_favorites = (id: number) => {
+      let updatedFavorites;
+      if (favorites.includes(id)) {
+        updatedFavorites = favorites.filter((favId) => favId !== id);
+      } else {
+        updatedFavorites = [...favorites, id];
+      }
+  
+      setFavorites(updatedFavorites);
+      localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+      console.log("added to favorites id ", id ,favorites)
+    };
+    
     const fetchProducts = async () => {
         try {
            const data = await fetchStrapiData(`/products`, {
@@ -156,23 +179,24 @@ const CarListings: React.FC = () => {
             mainImage: product.image ? `http://68.183.215.202${product.image[0]?.url}` : "/default-car.png",
             alt: product.name || "Car Image",
             title: product.name,
-            miles: product.details?.miles || "N/A",
-            fuel: product.details?.fuel || "Unknown",
-            condition: product.details?.condition || "Used", // Default to "Used"
-            transmission: product.details?.transmission || "Unknown",
-            details: product.details?.transmission || "Unknown",
+            miles: product.details?.car.miles || "N/A",
+            fuel: product.details?.car.fuel || "Unknown",
+            condition: product.details?.car.condition || "Used", // Default to "Used"
+            transmission: product.details?.car.transmission || "Unknown",
+            details: product.details?.car.transmission || "Unknown",
             price: `$${product.price.toLocaleString()}`,
 
-            mileage:  product.details?.miles || "N/A",
-            year: product.details.year,
-            fuelType: product.details.fuel,
+            mileage:  product.details?.car.miles || "N/A",
+            year: product.details.car.year,
+            fuelType: product.details.car.fuel,
 
-            description: product.details.description,
-            bodyType: product.details.body_type,
+            description: product.details.car.description,
+            bodyType: product.details.car.body_type,
             features: product.details.car.features.map((feature: any) => feature.value) || [],
             category: product.categories ? product.categories.split(",").map((c: string) => c.toLowerCase().trim()) : [], // Convert categories string to an array
           }));
           
+
           setListings(formattedListings);
         } catch (error) {
           console.error("Error fetching products:", error);
@@ -364,23 +388,24 @@ const CarListings: React.FC = () => {
                     <Card className="overflow-hidden h-full flex flex-col hover:shadow-lg transition-shadow duration-300">
                       <div className="relative">
                         <Img
-                        width={20}
-                        height={40}
+                        width={100}
+                        height={100}
                         external={true}
                           src={car.mainImage}
                           alt={car.title}
-                          className="w-full h-48 object-contain"
+                          className="w-full h-48 object-fit"
                         />
                         <Button 
                           size="icon" 
+                          onClick={() => add_to_favorites(car.id)}
                           variant="ghost" 
                           className="absolute top-2 right-2 bg-white/80 hover:bg-white text-red-500 rounded-full"
                         >
-                          <Heart className="h-5 w-5" />
+                        <Heart className={`h-5 w-5 ${favorites.includes(car.id) ? 'fill-current text-red-500' : ''}`} />
                         </Button>
                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
-                          <Badge className="bg-blue-600">{car.year}</Badge>
-                          <Badge className="bg-gray-700 ml-2">{car.mileage.toLocaleString()} mi</Badge>
+                          <Badge className="bg-blue-500  text-white">{car.year}</Badge>
+                          <Badge className="bg-blue-800 ml-2 text-white">{car.mileage.toLocaleString()}</Badge>
                         </div>
                       </div>
                       <CardContent className="flex-grow flex flex-col pt-4">
@@ -395,14 +420,14 @@ const CarListings: React.FC = () => {
                         </div>
                         <p className="text-gray-600 text-sm line-clamp-2 mb-4">{car.description}</p>
                         <div className="mt-auto flex justify-between items-center">
-                          <span className="text-sm text-gray-500">{car.location}</span>
+                          <span className="text-sm text-gray-700">{car.location}</span>
                           <div className="flex space-x-2">
-                            <Button variant="outline" size="sm">
+                            <Button variant="outline" size="sm" className=" bg-blue-500  text-white">
                               <MessageSquare className="h-4 w-4 mr-1" />
                               Contact
                             </Button>
-                            <Button size="sm">View Details</Button>
-                          </div>
+                            <Button  size="sm" className='bg-blue-500  text-white'>View Details</Button>
+                            </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -423,8 +448,11 @@ const CarListings: React.FC = () => {
                     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
                       <div className="flex flex-col md:flex-row">
                         <div className="relative md:w-1/3">
-                          <img
-                            src={car.image}
+                          <Img
+                            external={true}
+                            width={100}
+                            height={100}
+                            src={car.mainImage}
                             alt={car.title}
                             className="w-full h-48 md:h-full object-cover"
                           />
@@ -448,16 +476,17 @@ const CarListings: React.FC = () => {
                                 <span>{car.year}</span>
                                 <span className="mx-2">•</span>
                                 <Gauge size={16} className="mr-1" />
-                                <span>{car.mileage.toLocaleString()} mi</span>
+                                <span>{car.mileage.toLocaleString()}</span>
                                 <span className="mx-2">•</span>
                                 <Fuel size={16} className="mr-1" />
                                 <span>{car.fuelType}</span>
                               </div>
                             </div>
-                            <p className="text-2xl font-bold text-blue-600">${car.price.toLocaleString()}</p>
+                            <p className="text-2xl font-bold text-blue-600">{car.price.toLocaleString()}</p>
                           </div>
                           <p className="text-gray-600 mb-4">{car.description}</p>
                           <div className="flex flex-wrap gap-2 mb-4">
+                            
                             {car.features.slice(0, 3).map((feature, idx) => (
                               <Badge key={idx} variant="outline" className="flex items-center gap-1">
                                 <Check className="h-3 w-3" />
@@ -470,14 +499,14 @@ const CarListings: React.FC = () => {
                               </Badge>
                             )}
                           </div>
-                          <div className="flex items-center justify-between mt-4">
+                          <div className="flex items-center justify-between mt-4 w-full">
                             <span className="text-sm text-gray-500">{car.location}</span>
                             <div className="flex space-x-3">
-                              <Button variant="outline">
-                                <MessageSquare className="h-4 w-4 mr-2" />
+                              <Button  size="sm" variant="outline" className='bg-blue-500  text-white'>
+                                <MessageSquare className="h-4 w-4 mr-2 " />
                                 Contact Seller
                               </Button>
-                              <Button>View Details</Button>
+                              <Button  size="sm" className='bg-blue-500  text-white'>View Details</Button>
                             </div>
                           </div>
                         </CardContent>

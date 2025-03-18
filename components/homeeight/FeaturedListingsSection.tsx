@@ -36,12 +36,13 @@ export default function FeaturedListingsSection({
   listings,
   initialFavorites,
 }: FeaturedListingsSectionProps) {
-  const [favorites, setFavorites] = useState<number[]>(initialFavorites);
   const t = useTranslations("HomePage");
   const [sliderState, setSliderState] = useState(0);
   const sliderRef = React.useRef<AliceCarousel>(null);
   const tabs = ["all", "new", "used"];
   // Sync with localStorage on mount
+  const [favorites, setFavorites] = useState<number[]>(initialFavorites);
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedFavorites = localStorage.getItem("favorites");

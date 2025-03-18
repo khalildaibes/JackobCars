@@ -46,7 +46,7 @@ export default function LocationDetailsSection({ carDetails }: { carDetails: any
 
         {/* Map Container */}
         <div className="relative mt-6 w-full md:w-2/3 h-64 sm:h-80 md:h-[450px] rounded-xl bg-gray-300_02 overflow-hidden">
-          <GoogleMap showMarker={true} lat={location.lat} lng={location.lng} className="h-full w-full rounded-xl" />
+          <GoogleMap showMarker={true}  className="h-full w-full rounded-xl" />
           
           {/* Overlays on top of the map */}
           <div className="absolute inset-0 flex flex-col justify-between p-4">

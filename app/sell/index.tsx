@@ -118,7 +118,7 @@ export default function ShoppagePage() {
       
       {/* Car Grid */}
       <div className="w-full overflow-x-scroll bg-white-a700">
-        <Sales2 carGrid={filteredListings} breadcrumbLinks={breadcrumbLinks} pageTitle="Cars for Sale" />
+        <Sales2 product={filteredListings[0]}/>
       </div>
     </div>
   );
