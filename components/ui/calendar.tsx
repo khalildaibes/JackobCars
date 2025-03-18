@@ -74,7 +74,6 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        Caption: CustomCaption, // ✅ Override default caption to add navigation buttons
       }}
       {...props}
     />
