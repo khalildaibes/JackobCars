@@ -1,40 +1,12 @@
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { DayPicker, CaptionProps } from "react-day-picker";
+import { DayPicker } from "react-day-picker";
 
-import { cn } from "../../app/lib/utils";
+import { cn } from "../../app/lib/utils"
+;
 import { buttonVariants } from "../../components/ui/button";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
-
-// ✅ Custom Caption Component for Navigation Buttons
-function CustomCaption({ displayMonth, goToMonth, nextMonth, previousMonth }: CaptionProps) {
-  return (
-    <div className="flex justify-between items-center px-2">
-      <button
-        onClick={() => previousMonth && goToMonth(previousMonth)}
-        disabled={!previousMonth}
-        className={cn(
-          buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 disabled:opacity-30"
-        )}
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </button>
-      <span className="text-sm font-medium">{displayMonth.toLocaleString("default", { month: "long", year: "numeric" })}</span>
-      <button
-        onClick={() => nextMonth && goToMonth(nextMonth)}
-        disabled={!nextMonth}
-        className={cn(
-          buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 disabled:opacity-30"
-        )}
-      >
-        <ChevronRight className="h-4 w-4" />
-      </button>
-    </div>
-  );
-}
 
 function Calendar({
   className,
@@ -51,6 +23,13 @@ function Calendar({
         month: "space-y-4",
         caption: "flex justify-center pt-1 relative items-center",
         caption_label: "text-sm font-medium",
+        nav: "space-x-1 flex items-center",
+        nav_button: cn(
+          buttonVariants({ variant: "outline" }),
+          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
+        ),
+        nav_button_previous: "absolute left-1",
+        nav_button_next: "absolute right-1",
         table: "w-full border-collapse space-y-1",
         head_row: "flex",
         head_cell:
@@ -74,12 +53,12 @@ function Calendar({
         ...classNames,
       }}
       components={{
+      
       }}
       {...props}
     />
   );
 }
-
 Calendar.displayName = "Calendar";
 
 export { Calendar };
