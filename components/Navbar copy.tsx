@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { Search, Menu, X } from 'lucide-react';
-import { Button } from "../../components/ui/button";
-import { cn } from '@/lib/utils';
+import { Button } from "../components/ui/button";
+import { cn } from '../app/lib/utils';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
