@@ -412,7 +412,7 @@ const CarListings: React.FC = () => {
                       </div>
                       <CardContent className="flex-grow flex flex-col pt-4">
                         <h3 className="text-lg font-semibold text-gray-900 mb-1">{car.title}</h3>
-                        <p className="text-2xl font-bold text-blue-600 mb-2">${car.price.toLocaleString()}</p>
+                        <p className="text-2xl font-bold text-blue-600 mb-2">{car.price.toLocaleString()}</p>
                         <div className="flex items-center text-gray-600 mb-3 text-sm">
                           <Car size={16} className="mr-1" />
                           <span>{car.bodyType}</span>
