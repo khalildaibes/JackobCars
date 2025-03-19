@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { fetchStrapiData } from "../../lib/strapiClient";
 import ProductClient from "./ProductsClient";
 import React from "react";
 import { Text } from "../../../components/Text";
@@ -46,11 +45,13 @@ export default async function ProductPage({ params }: { params: { slug: string }
   const { slug } = params;
 
   try {
-    const productData = await fetchStrapiData(`/products`, {
-      filters: { categories: { $contains: `${slug}` } }, // ✅ Match text instead of an array
-      populate: "*",
-      locale:"en"
-    });
+
+    const response = await fetch(`/api/deals?category=${slug}`);
+    if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
+
+    const productData = await response.json();
+    if (!productData || !productData.data) throw new Error("Invalid API response structure");
+
 
     if (!productData?.data?.length) return (
     <div className="mt-[10%] items-center justify-center w-full"> 
@@ -68,3 +69,10 @@ export default async function ProductPage({ params }: { params: { slug: string }
     return notFound();
   }
 }
+function fetchStrapiData(arg0: string, arg1: {
+  filters: { categories: { $contains: string; }; }; // ✅ Match text instead of an array
+  populate: string; locale: string;
+}) {
+  throw new Error("Function not implemented.");
+}
+

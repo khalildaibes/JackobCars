@@ -22,7 +22,6 @@ import ResponsiveNewsLayout from "../components/Responsivenews";
 import HeroSection from "../components/NewHero";
 import LookingForCar from "../components/comp";
 import SearchBar from "../components/SearchBar";
-import { fetchStrapiData } from "./lib/strapiClient";
 const listings = [
   {
     id: 1,
@@ -210,15 +209,20 @@ async function HomeContent() {
 
   const fetchProducts = async () => {
     try {
-     const response = await fetchStrapiData(`/products`, {
-       populate: "*",
-       locale:"he-IL"
-     }); 
+    
+
+      const response = await fetch(`/api/deals`);
+      if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
   
-      console.log("Fetched Products:",  response.data);
-      const data =response.data
+      const data = await response.json();
+      if (!data || !data.data) throw new Error("Invalid API response structure");
+  
+  
+
+  
+      console.log("Fetched Products:",  data);
       // Transform the fetched data into the required listings format
-      const formattedListings = data.map((product: any) => ({
+      const formattedListings = data.data.map((product: any) => ({
         id: product.id,
         mainImage: product.image
         // ? `http://68.183.215.202${data.data[0].image[0].url}`

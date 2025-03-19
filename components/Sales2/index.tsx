@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { fetchStrapiData } from "../../app/lib/strapiClient";
 import { Heading } from "../../components/Heading";
 import { Text } from "../../components/Text";
 import { SelectBox } from "../../components/SelectBox";
@@ -38,14 +37,16 @@ export default function ProductDetailsPage({ product }: ProductProps) {
   // ✅ Fetch products from Strapi
   const fetchProducts = async () => {
     try {
-      const response = await fetchStrapiData(`/products`, {
-        filters: { categories: { $contains: slug } } , // ✅ Match text
-        populate: "*",
-        locale: "en",
-      });
 
+      const response = await fetch(`/api/deals?category=${slug}`);
+      if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
+  
+      const data = await response.json();
+      if (!data || !data.data) throw new Error("Invalid API response structure");
+  
+  
       // ✅ Transform API data into expected format
-      const formattedCars = response.data.map((product: any) => ({
+      const formattedCars = data.data.map((product: any) => ({
         id: product.id,
         category: product.categories || "Unknown", // ✅ Store categories as a string
         image: product.image?.length ? `http://68.183.215.202${product.image[0].url}` : "/default-car.png",

@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { fetchStrapiData } from "../../lib/strapiClient";
 import ProductClient from "./ProductsClient";
 import React from "react";
 
@@ -45,15 +44,19 @@ export default async function ProductPage({ params }: { params: { slug: string }
   const { slug } = params;
 
   try {
-    const productData = await fetchStrapiData(`/products`, {
-      filters: { categories: { $includes: "new" } },
-      populate: "*",
-      locale:"en"
-    });
+    const productData = await fetch(`/api/deals?category=${slug}`);
+    if (!productData.ok) throw new Error(`Failed to fetch homepage: ${productData.statusText}`);
 
-    if (!productData?.data?.length) return notFound(); // If no product, return 404
+    const data = await productData.json();
+    if (!data || !data.data) throw new Error("Invalid API response structure");
 
-    const product = productData.data[0];
+
+
+
+
+    if (!data?.data?.length) return notFound(); // If no product, return 404
+
+    const product = data.data[0];
     console.log("product",product)
 
     return <ProductClient product={product} />;

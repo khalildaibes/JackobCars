@@ -11,7 +11,6 @@ import { Button } from "../../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
 import { Check, Heart, MessageSquare, Plus, Car,Calendar, Gauge, Fuel } from "lucide-react";
 import { Badge } from "../../components/ui/badge";
-import { fetchStrapiData } from '../lib/strapiClient';
 import { Img } from '../../components/Img';
 
 // const MOCK_CARS = [
@@ -165,16 +164,19 @@ const CarListings: React.FC = () => {
     
     const fetchProducts = async () => {
         try {
-           const data = await fetchStrapiData(`/products`, {
-              populate: "*",
-              locale:"en"
-            });
+
+          const response = await fetch("/api/deals");
+          if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
+      
+          const data = await response.json();
           if (!data || !data.data) throw new Error("Invalid API response structure");
       
-          console.log("Fetched Products:", data.data);
+    
+      
+          console.log("Fetched Products:",  data);
           
           // Transform the fetched data into the required listings format
-          const formattedListings = data.data.map((product: any) => ({
+          const formattedListings = data.map((product: any) => ({
             id: product.id,
             mainImage: product.image ? `http://68.183.215.202${product.image[0]?.url}` : "/default-car.png",
             alt: product.name || "Car Image",

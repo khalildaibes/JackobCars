@@ -11,7 +11,6 @@ import DetailsSection1 from "../../../app/detailsvone/DetailsSection1";
 import LocationDetailsSection from "../../../app/detailsvone/LocationDetailsSection";
 import FinancingCalculatorSection from "../../../app/detailsvone/FinancingCalculatorSection";
 import RelatedListingsSection from "../../../app/detailsvone/RelatedListingsSection";
-import { fetchStrapiData } from "../../../app/lib/strapiClient";
 
 const featureList = [
   { feature: "Android Auto" },
@@ -27,13 +26,16 @@ export default function ProductDetailsPage({ product }: { product: { product: st
 
   const fetchcategoryDetails = async () => {
     try {
-    const response = await fetchStrapiData(`/products`, {
-      filters: { categories: { $includes: "new" } },
-      populate: "*",
-      locale:"en"
-    });   
+
+      const response = await fetch(`/api/deals?category=${slug}`);
+      if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
+  
+      const data = await response.json();
+      if (!data || !data.data) throw new Error("Invalid API response structure");
+  
+  
       console.log("Fetched Car Details:", response);  
-      const product = response.data[0];
+      const product = data.data[0];
 
       setcategoryDetails({
         id: product.id,

@@ -32,10 +32,14 @@ export default function ShoppagePage() {
 
   const fetchProducts = async () => {
     try {
-       const data = await fetchStrapiData(`/products`, {
-          populate: "*",
-          locale:"en"
-        });
+
+      const response = await fetch(`/api/deals`);
+      if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
+  
+      const data = await response.json();
+      if (!data || !data.data) throw new Error("Invalid API response structure");
+  
+  
       if (!data || !data.data) throw new Error("Invalid API response structure");
   
       console.log("Fetched Products:", data.data);
