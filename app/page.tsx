@@ -23,6 +23,7 @@ import HeroSection from "../components/NewHero";
 import LookingForCar from "../components/comp";
 import SearchBar from "../components/SearchBar";
 import { fetchStrapiData } from "./lib/strapiClient";
+import axios from "axios";
 const listings = [
   {
     id: 1,
@@ -162,6 +163,19 @@ async function HomeContent() {
   const [filteredCars, setFilteredCars] = useState<CarProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
+
+
+
+axios.get("http://68.183.215.202:1337/api/products")
+  .then(response => console.log(response.data))
+  .catch(error => {
+    console.error("Full Error:", JSON.stringify(error, null, 2));
+  });
+  
+
+
+
+
 
   useEffect(() => {
     async function getCars() {

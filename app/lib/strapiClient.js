@@ -11,6 +11,7 @@ export const strapiClient = axios.create({
   },
 });
 
+
 // Utility function to get the image URL from Strapi or Sanity
 export const getImageUrl = (image) => {
   if (image.url) {
