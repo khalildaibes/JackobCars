@@ -176,7 +176,7 @@ const CarListings: React.FC = () => {
           console.log("Fetched Products:",  data);
           
           // Transform the fetched data into the required listings format
-          const formattedListings = data.map((product: any) => ({
+          const formattedListings = data.data.map((product: any) => ({
             id: product.id,
             mainImage: product.image ? `http://68.183.215.202${product.image[0]?.url}` : "/default-car.png",
             alt: product.name || "Car Image",
