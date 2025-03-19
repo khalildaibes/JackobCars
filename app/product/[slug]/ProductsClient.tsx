@@ -27,17 +27,12 @@ export default function ProductDetailsPage({ product }: { product: { product: st
 
   const fetchcategoryDetails = async () => {
     try {
-   const response = await fetch("/api/deals?populate=*&Locale=he-IL");
-      if (!response.ok) throw new Error(`Failed to fetch car details: ${response.statusText}`);
-
-      const data = await response.json();
-      if (!data?.data?.length) throw new Error("No car details found");
-
-      console.log("Fetched Car Details:", data.data);
-
-      // Extract the first car's details
-      const products = data.data[0];
-
+    const response = await fetchStrapiData(`/products`, {
+      filters: { categories: { $includes: "new" } },
+      populate: "*",
+      locale:"en"
+    });   
+      console.log("Fetched Car Details:", response);  
       const product = response.data[0];
 
       setcategoryDetails({
