@@ -25,7 +25,7 @@ import { Badge } from "../../components/ui/badge";
 import { Separator } from "../../components/ui/separator";
 import { Card, CardContent } from "../../components/ui/card";
 import { toast } from "../../components/ui/use-toast";
-import { MOCK_CARS } from '../data/mock-cars';
+import { MOCK_CARS } from '../../app/data/mock-cars';
 
 const CarDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
