@@ -326,6 +326,15 @@
     "description": "Description",
     "clean_title": "Clean Title",
     "clean_title_description": "This vehicle has a clean title history with no reported accidents.",
-    "service_history": "Service History"
+    "service_history": "Service History",
+    "car_reviews": "Car Reviews",
+    "compare_with_similar": "Compare with Similar Models",
+    "watch_review": "Watch Review",
+    "watch_reviews_description": "Watch detailed reviews and comparisons to help you make an informed decision about this vehicle.",
+    "warranty_period": "Warranty Period",
+    "review_highlights": "Review Highlights",
+    "cons": "Cons",
+    "pros": "Pros",
+    "error": "Error loading car details. Please try again later."
   }
 }

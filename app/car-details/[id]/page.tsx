@@ -17,7 +17,8 @@ import {
   Clock, 
   MapPin, 
   ArrowLeft,
-  X
+  X,
+  User
 } from 'lucide-react';
 import { Button } from "../../../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs";
@@ -300,7 +301,7 @@ const CarDetails: React.FC = () => {
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="text-sm font-medium text-gray-500 mb-1">{t('mileage')}</h3>
-                  <p className="text-lg font-semibold text-gray-900">{car.mileage.toLocaleString()} {t('miles')}</p>
+                  <p className="text-lg font-semibold text-gray-900">{car.mileage.toLocaleString()}</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="text-sm font-medium text-gray-500 mb-1">{t('fuel_type')}</h3>
@@ -336,7 +337,7 @@ const CarDetails: React.FC = () => {
                     <Gauge className="h-5 w-5 text-blue-600" />
                     <div>
                       <div className="text-xs text-gray-500">{t('mileage')}</div>
-                      <div className="font-medium">{car.mileage.toLocaleString()} {t('miles')}</div>
+                      <div className="font-medium">{car.mileage.toLocaleString()}</div>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl">
@@ -426,32 +427,101 @@ const CarDetails: React.FC = () => {
           
           {/* Right Column - Contact Information */}
           <div className="space-y-6">
-            <Card className="border-0 shadow-lg">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-6">{t('contact_seller')}</h3>
-                <div className="space-y-4">
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700" size="lg">
-                    <MessageSquare className="mr-2 h-4 w-4" />
-                    {t('contact_seller')}
-                  </Button>
-                  <div className="text-center text-gray-600">{t('or_call')}</div>
-                  <Button variant="outline" className="w-full" size="lg">
-                    (555) 123-4567
-                  </Button>
-                  <Separator />
-                  <div className="flex justify-between">
-                    <Button variant="outline" size="sm" onClick={() => add_to_favorites(car.id)}>
-                      <Heart className="mr-2 h-4 w-4" />
-                      {t('save')}
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Share2 className="mr-2 h-4 w-4" />
-                      {t('share')}
-                    </Button>
+            {/* Pros and Cons Section */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              <div className="bg-white rounded-xl p-6 shadow-lg">
+                <h3 className="text-xl font-semibold mb-6 text-center">{t('review_highlights')}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Pros */}
+                  <div className="flex flex-col items-center text-center">
+                    <div className="p-3 bg-green-100 rounded-full mb-4">
+                      <Check className="h-6 w-6 text-green-600" />
+                    </div>
+                    <h4 className="font-medium text-gray-900 text-lg mb-4">{t('pros')}</h4>
+                    <ul className="space-y-3 text-gray-600">
+                      {car.pros?.map((pro: string, index: number) => (
+                        <li key={index} className="flex items-center justify-center">
+                          <span className="mr-2">•</span>
+                          {pro}
+                        </li>
+                      )) || (
+                        <>
+                          <li className="flex items-center justify-center">
+                            <span className="mr-2">•</span>
+                            {t('excellent_performance')}
+                          </li>
+                          <li className="flex items-center justify-center">
+                            <span className="mr-2">•</span>
+                            {t('comfortable_interior')}
+                          </li>
+                          <li className="flex items-center justify-center">
+                            <span className="mr-2">•</span>
+                            {t('advanced_tech')}
+                          </li>
+                        </>
+                      )}
+                    </ul>
+                  </div>
+
+                  {/* Cons */}
+                  <div className="flex flex-col items-center text-center">
+                    <div className="p-3 bg-red-100 rounded-full mb-4">
+                      <X className="h-6 w-6 text-red-600" />
+                    </div>
+                    <h4 className="font-medium text-gray-900 text-lg mb-4">{t('cons')}</h4>
+                    <ul className="space-y-3 text-gray-600">
+                      {car.cons?.map((con: string, index: number) => (
+                        <li key={index} className="flex items-center justify-center">
+                          <span className="mr-2">•</span>
+                          {con}
+                        </li>
+                      )) || (
+                        <>
+                          <li className="flex items-center justify-center">
+                            <span className="mr-2">•</span>
+                            {t('higher_price')}
+                          </li>
+                          <li className="flex items-center justify-center">
+                            <span className="mr-2">•</span>
+                            {t('firm_ride')}
+                          </li>
+                          <li className="flex items-center justify-center">
+                            <span className="mr-2">•</span>
+                            {t('limited_cargo')}
+                          </li>
+                        </>
+                      )}
+                    </ul>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
+
+            {/* Contact Seller Section */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              <div className="bg-white rounded-xl p-6 shadow-lg">
+                <h3 className="text-xl font-semibold mb-4">{t('contact_seller')}</h3>
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                      <User className="h-6 w-6 text-gray-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">John Doe</p>
+                      <p className="text-sm text-gray-500">{t('or_call')} +1 234 567 890</p>
+                    </div>
+                  </div>
+                  <div className="flex space-x-4">
+                    <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                      {t('contact_seller')}
+                    </button>
+                    <button className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                      {t('save')}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
             
             <Card className="border-0 shadow-lg">
               <CardContent className="p-6">
@@ -538,75 +608,6 @@ const CarDetails: React.FC = () => {
         </div>
       </div>
                   
-            {/* Pros and Cons Section */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              <div className="bg-white rounded-xl p-6 shadow-lg">
-                <h3 className="text-xl font-semibold mb-6 text-center">{t('review_highlights')}</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {/* Pros */}
-                  <div className="flex flex-col items-center text-center">
-                    <div className="p-3 bg-green-100 rounded-full mb-4">
-                      <Check className="h-6 w-6 text-green-600" />
-                    </div>
-                    <h4 className="font-medium text-gray-900 text-lg mb-4">{t('pros')}</h4>
-                    <ul className="space-y-3 text-gray-600">
-                      {car.pros?.map((pro: string, index: number) => (
-                        <li key={index} className="flex items-center justify-center">
-                          <span className="mr-2">•</span>
-                          {pro}
-                        </li>
-                      )) || (
-                        <>
-                          <li className="flex items-center justify-center">
-                            <span className="mr-2">•</span>
-                            {t('excellent_performance')}
-                          </li>
-                          <li className="flex items-center justify-center">
-                            <span className="mr-2">•</span>
-                            {t('comfortable_interior')}
-                          </li>
-                          <li className="flex items-center justify-center">
-                            <span className="mr-2">•</span>
-                            {t('advanced_tech')}
-                          </li>
-                        </>
-                      )}
-                    </ul>
-                  </div>
-
-                  {/* Cons */}
-                  <div className="flex flex-col items-center text-center">
-                    <div className="p-3 bg-red-100 rounded-full mb-4">
-                      <X className="h-6 w-6 text-red-600" />
-                    </div>
-                    <h4 className="font-medium text-gray-900 text-lg mb-4">{t('cons')}</h4>
-                    <ul className="space-y-3 text-gray-600">
-                      {car.cons?.map((con: string, index: number) => (
-                        <li key={index} className="flex items-center justify-center">
-                          <span className="mr-2">•</span>
-                          {con}
-                        </li>
-                      )) || (
-                        <>
-                          <li className="flex items-center justify-center">
-                            <span className="mr-2">•</span>
-                            {t('higher_price')}
-                          </li>
-                          <li className="flex items-center justify-center">
-                            <span className="mr-2">•</span>
-                            {t('firm_ride')}
-                          </li>
-                          <li className="flex items-center justify-center">
-                            <span className="mr-2">•</span>
-                            {t('limited_cargo')}
-                          </li>
-                        </>
-                      )}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
       {/* Video Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">

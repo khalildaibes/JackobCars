@@ -323,6 +323,15 @@
     "description": "תיאור",
     "clean_title": "כותרת נקייה",
     "clean_title_description": "לרכב זה יש היסטוריית כותרת נקייה ללא תאונות מדווחות.",
-    "service_history": "היסטוריית שירות"
+    "service_history": "היסטוריית שירות",
+    "car_reviews": "ביקורות רכב",
+    "compare_with_similar": "השווה עם דגמים דומים",
+    "watch_review": "צפה בביקורת",
+    "watch_reviews_description": "צפה בביקורות והשוואות מפורטות שיעזרו לך לקבל החלטה מושכלת לגבי רכב זה.",
+    "warranty_period": "תקופת אחריות",
+    "review_highlights": "נקודות מפתח בביקורות",
+    "cons": "חסרונות",
+    "pros": "יתרונות",
+    "error": "שגיאה בטעינת פרטי הרכב. אנא נסה שוב מאוחר יותר."
   }
 }
