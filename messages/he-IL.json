@@ -240,5 +240,58 @@
   "Common": {
     "Home": "בית",
     "Accessories": "אביזרים"
+  },
+  "CarListing": {
+    "find_perfect_car": "מצא את הרכב המושלם שלך",
+    "browse_collection": "עיין באוסף הרחב שלנו של רכבים איכותיים ומצא את הרכב המתאים לך.",
+    "search_placeholder": "חיפוש לפי יצרן, דגם או מילות מפתח...",
+    "year": "שנה",
+    "any_year": "כל שנה",
+    "make": "יצרן",
+    "any_make": "כל יצרן",
+    "body_type": "סוג גוף",
+    "any_body_type": "כל סוג גוף",
+    "fuel_type": "סוג דלק",
+    "any_fuel_type": "כל סוג דלק",
+    "price_range": "טווח מחירים",
+    "grid": "תצוגת רשת",
+    "list": "תצוגת רשימה",
+    "contact": "צור קשר",
+    "view_details": "צפה בפרטים",
+    "contact_seller": "צור קשר עם המוכר",
+    "features": "תכונות",
+    "more_features": "תכונות נוספות",
+    "makes": {
+      "any": "כל",
+      "toyota": "טויוטה",
+      "honda": "הונדה",
+      "ford": "פורד",
+      "chevrolet": "שברולט",
+      "bmw": "ב.מ.וו",
+      "mercedes": "מרצדס-בנץ",
+      "audi": "אאודי",
+      "tesla": "טסלה",
+      "lexus": "לקסוס",
+      "subaru": "סובארו"
+    },
+    "body_types": {
+      "any": "כל",
+      "sedan": "סדאן",
+      "suv": "רכב שטח",
+      "truck": "משאית",
+      "coupe": "קופה",
+      "convertible": "קבריולה",
+      "hatchback": "האצ'בק",
+      "wagon": "סטיישן",
+      "van": "ואן"
+    },
+    "fuel_types": {
+      "any": "כל",
+      "gasoline": "בנזין",
+      "diesel": "דיזל",
+      "electric": "חשמלי",
+      "hybrid": "היברידי",
+      "plug_in_hybrid": "היברידי נטען"
+    }
   }
 }

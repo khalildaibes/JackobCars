@@ -30,7 +30,7 @@
     "great_deal": "Great Deal",
     "sale": "Sale",
     "hero_title": "Fast, Simple and Easy",
-    "hero_subtitle": "Shop Online. Pickup Today. It’s Fast, Simple and Easy. Learn More.",
+    "hero_subtitle": "Shop Online. Pickup Today. It's Fast, Simple and Easy. Learn More.",
     "category_suv": "SUV",
     "category_sedan": "Sedan",
     "category_hatchback": "Hatchback",
@@ -243,7 +243,58 @@
   "Common": {
     "Home": "Home",
     "Accessories": "Accessories"
+  },
+  "CarListing": {
+    "find_perfect_car": "Find Your Perfect Car",
+    "browse_collection": "Browse our extensive collection of quality vehicles and find the one that's right for you.",
+    "search_placeholder": "Search by make, model, or keywords...",
+    "year": "Year",
+    "any_year": "Any Year",
+    "make": "Make",
+    "any_make": "Any Make",
+    "body_type": "Body Type",
+    "any_body_type": "Any Body Type",
+    "fuel_type": "Fuel Type",
+    "any_fuel_type": "Any Fuel Type",
+    "price_range": "Price Range",
+    "grid": "Grid",
+    "list": "List",
+    "contact": "Contact",
+    "view_details": "View Details",
+    "contact_seller": "Contact Seller",
+    "features": "Features",
+    "more_features": "more features",
+    "makes": {
+      "any": "Any",
+      "toyota": "Toyota",
+      "honda": "Honda",
+      "ford": "Ford",
+      "chevrolet": "Chevrolet",
+      "bmw": "BMW",
+      "mercedes": "Mercedes-Benz",
+      "audi": "Audi",
+      "tesla": "Tesla",
+      "lexus": "Lexus",
+      "subaru": "Subaru"
+    },
+    "body_types": {
+      "any": "Any",
+      "sedan": "Sedan",
+      "suv": "SUV",
+      "truck": "Truck",
+      "coupe": "Coupe",
+      "convertible": "Convertible",
+      "hatchback": "Hatchback",
+      "wagon": "Wagon",
+      "van": "Van"
+    },
+    "fuel_types": {
+      "any": "Any",
+      "gasoline": "Gasoline",
+      "diesel": "Diesel",
+      "electric": "Electric",
+      "hybrid": "Hybrid",
+      "plug_in_hybrid": "Plug-in Hybrid"
+    }
   }
-  
-  
 }

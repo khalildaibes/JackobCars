@@ -235,8 +235,7 @@
     "enter_plate_number": "أدخل رقم اللوحة",
     "search_car": "ابحث عن سيارة",
     "loading_data": "جارٍ تحميل البيانات..."
-}
-,
+  },
   "Navbar": {
     "logo_alt": "شعار جاكوب كار",
     "cars_market": "سوق السيارات",
@@ -255,5 +254,58 @@
   "Common": {
     "Home": "الرئيسية",
     "Accessories": "اكسسوارات"
+  },
+  "CarListing": {
+    "find_perfect_car": "اعثر على سيارتك المثالية",
+    "browse_collection": "تصفح مجموعتنا الواسعة من السيارات عالية الجودة واعثر على السيارة المناسبة لك.",
+    "search_placeholder": "ابحث حسب الماركة أو الموديل أو الكلمات المفتاحية...",
+    "year": "السنة",
+    "any_year": "أي سنة",
+    "make": "العلامة التجارية",
+    "any_make": "أي علامة تجارية",
+    "body_type": "نوع الهيكل",
+    "any_body_type": "أي نوع هيكل",
+    "fuel_type": "نوع الوقود",
+    "any_fuel_type": "أي نوع وقود",
+    "price_range": "نطاق السعر",
+    "grid": "شبكة",
+    "list": "قائمة",
+    "contact": "اتصال",
+    "view_details": "عرض التفاصيل",
+    "contact_seller": "اتصال بالبائع",
+    "features": "المميزات",
+    "more_features": "مميزات إضافية",
+    "makes": {
+      "any": "أي",
+      "toyota": "تويوتا",
+      "honda": "هوندا",
+      "ford": "فورد",
+      "chevrolet": "شيفروليه",
+      "bmw": "بي إم دبليو",
+      "mercedes": "مرسيدس بنز",
+      "audi": "أودي",
+      "tesla": "تيسلا",
+      "lexus": "لكزس",
+      "subaru": "سوبارو"
+    },
+    "body_types": {
+      "any": "أي",
+      "sedan": "سيدان",
+      "suv": "سيارة رياضية متعددة الاستخدامات",
+      "truck": "شاحنة",
+      "coupe": "كوبيه",
+      "convertible": "كابريوليه",
+      "hatchback": "هاتشباك",
+      "wagon": "ستيشن واجن",
+      "van": "فان"
+    },
+    "fuel_types": {
+      "any": "أي",
+      "gasoline": "بنزين",
+      "diesel": "ديزل",
+      "electric": "كهربائي",
+      "hybrid": "هجين",
+      "plug_in_hybrid": "هجين قابلة للشحن"
+    }
   }
 }

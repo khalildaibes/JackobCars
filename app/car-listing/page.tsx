@@ -11,126 +11,62 @@ import { Button } from "../../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
 import { Check, Heart, MessageSquare, Plus, Car,Calendar, Gauge, Fuel } from "lucide-react";
 import { Badge } from "../../components/ui/badge";
+import { fetchStrapiData } from '../lib/strapiClient';
 import { Img } from '../../components/Img';
+import { useTranslations } from 'next-intl';
 
-// const MOCK_CARS = [
-//   {
-//     id: 1,
-//     title: "2022 Toyota Camry XSE",
-//     price: 32999,
-//     mileage: 12500,
-//     year: 2022,
-//     make: "Toyota",
-//     model: "Camry",
-//     trim: "XSE",
-//     fuelType: "Gasoline",
-//     transmission: "Automatic",
-//     color: "Pearl White",
-//     description: "Excellent condition with low mileage. Features include panoramic sunroof, leather seats, and advanced safety package.",
-//     image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&auto=format&fit=crop",
-//     location: "Miami, FL",
-//     bodyType: "Sedan",
-//     features: ["Leather Seats", "Navigation", "Bluetooth", "Backup Camera", "Sunroof"]
-//   },
-//   {
-//     id: 2,
-//     title: "2020 Honda Accord Sport",
-//     price: 27500,
-//     mileage: 28900,
-//     year: 2020,
-//     make: "Honda",
-//     model: "Accord",
-//     trim: "Sport",
-//     fuelType: "Gasoline",
-//     transmission: "Automatic",
-//     color: "Modern Steel Metallic",
-//     description: "One owner, clean history. Comes with all maintenance records and extended warranty.",
-//     image: "https://images.unsplash.com/photo-1582639510494-c80b5de9f148?w=800&auto=format&fit=crop",
-//     location: "Atlanta, GA",
-//     bodyType: "Sedan",
-//     features: ["Apple CarPlay", "Android Auto", "Lane Keep Assist", "Adaptive Cruise Control"]
-//   },
-//   {
-//     id: 3,
-//     title: "2021 Tesla Model 3 Long Range",
-//     price: 48990,
-//     mileage: 18700,
-//     year: 2021,
-//     make: "Tesla",
-//     model: "Model 3",
-//     trim: "Long Range",
-//     fuelType: "Electric",
-//     transmission: "Automatic",
-//     color: "Midnight Silver Metallic",
-//     description: "Dual motor all-wheel drive with 353 mile range. Premium interior with glass roof.",
-//     image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&auto=format&fit=crop",
-//     location: "San Francisco, CA",
-//     bodyType: "Sedan",
-//     features: ["Autopilot", "Premium Interior", "Heated Seats", "Glass Roof"]
-//   },
-//   {
-//     id: 4,
-//     title: "2019 BMW X5 xDrive40i",
-//     price: 45500,
-//     mileage: 37800,
-//     year: 2019,
-//     make: "BMW",
-//     model: "X5",
-//     trim: "xDrive40i",
-//     fuelType: "Gasoline",
-//     transmission: "Automatic",
-//     color: "Alpine White",
-//     description: "Luxury SUV with M Sport package and premium sound system. Well maintained.",
-//     image: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&auto=format&fit=crop",
-//     location: "Chicago, IL",
-//     bodyType: "SUV",
-//     features: ["Heated Steering Wheel", "Premium Sound System", "360 Camera", "Head-up Display"]
-//   },
-//   {
-//     id: 5,
-//     title: "2023 Ford Mustang GT",
-//     price: 52500,
-//     mileage: 5600,
-//     year: 2023,
-//     make: "Ford",
-//     model: "Mustang",
-//     trim: "GT",
-//     fuelType: "Gasoline",
-//     transmission: "Manual",
-//     color: "Race Red",
-//     description: "5.0L V8 with 460hp. Performance package and digital dash. Like new condition.",
-//     image: "https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=800&auto=format&fit=crop",
-//     location: "Dallas, TX",
-//     bodyType: "Coupe",
-//     features: ["Performance Package", "Brembo Brakes", "Digital Dash", "Launch Control"]
-//   },
-//   {
-//     id: 6,
-//     title: "2020 Audi Q7 Premium Plus",
-//     price: 47990,
-//     mileage: 32100,
-//     year: 2020,
-//     make: "Audi",
-//     model: "Q7",
-//     trim: "Premium Plus",
-//     fuelType: "Gasoline",
-//     transmission: "Automatic",
-//     color: "Glacier White Metallic",
-//     description: "Luxury 7-passenger SUV with Bang & Olufsen sound system and Quattro AWD.",
-//     image: "https://images.unsplash.com/photo-1607853554439-0069ec0f29b6?w=800&auto=format&fit=crop",
-//     location: "Denver, CO",
-//     bodyType: "SUV",
-//     features: ["Bang & Olufsen Audio", "Virtual Cockpit", "Panoramic Sunroof", "Heated/Ventilated Seats"]
-//   }
-// ];
+// First, add this helper function at the top of your file
+const extractPrice = (price: string | number): number => {
+  if (typeof price === 'number') return price;
+  return parseInt(price.replace(/[$,]/g, '')) || 0;
+};
 
 const YEARS = Array.from({ length: 30 }, (_, i) => 2024 - i);
-const MAKES = ["Any", "Toyota", "Honda", "Ford", "Chevrolet", "BMW", "Mercedes-Benz", "Audi", "Tesla", "Lexus", "Subaru"];
-const BODY_TYPES = ["Any", "Sedan", "SUV", "Truck", "Coupe", "Convertible", "Hatchback", "Wagon", "Van"];
-const FUEL_TYPES = ["Any", "Gasoline", "Diesel", "Electric", "Hybrid", "Plug-in Hybrid"];
 
 const CarListings: React.FC = () => {
-  const [priceRange, setPriceRange] = useState<number[]>([0, 100000]);
+  const t = useTranslations('CarListing');
+  
+  // Move the arrays inside the component where useTranslations is available
+  const MAKES = [
+    { value: "Any", label: t('makes.any') },
+    { value: "Toyota", label: t('makes.toyota') },
+    { value: "Honda", label: t('makes.honda') },
+    { value: "Ford", label: t('makes.ford') },
+    { value: "Chevrolet", label: t('makes.chevrolet') },
+    { value: "BMW", label: t('makes.bmw') },
+    { value: "Mercedes-Benz", label: t('makes.mercedes') },
+    { value: "Audi", label: t('makes.audi') },
+    { value: "Tesla", label: t('makes.tesla') },
+    { value: "Lexus", label: t('makes.lexus') },
+    { value: "Subaru", label: t('makes.subaru') }
+  ];
+
+  const BODY_TYPES = [
+    { value: "Any", label: t('body_types.any') },
+    { value: "Sedan", label: t('body_types.sedan') },
+    { value: "SUV", label: t('body_types.suv') },
+    { value: "Truck", label: t('body_types.truck') },
+    { value: "Coupe", label: t('body_types.coupe') },
+    { value: "Convertible", label: t('body_types.convertible') },
+    { value: "Hatchback", label: t('body_types.hatchback') },
+    { value: "Wagon", label: t('body_types.wagon') },
+    { value: "Van", label: t('body_types.van') }
+  ];
+
+  const FUEL_TYPES = [
+    { value: "Any", label: t('fuel_types.any') },
+    { value: "Gasoline", label: t('fuel_types.gasoline') },
+    { value: "Diesel", label: t('fuel_types.diesel') },
+    { value: "Electric", label: t('fuel_types.electric') },
+    { value: "Hybrid", label: t('fuel_types.hybrid') },
+    { value: "Plug-in Hybrid", label: t('fuel_types.plug_in_hybrid') }
+  ];
+
+  // Add new state for min and max price
+  const [minMaxPrices, setMinMaxPrices] = useState<{ min: number; max: number }>({ min: 5000, max: 100000 });
+  
+  // Replace your existing price range state with:
+  const [priceRange, setPriceRange] = useState<number[]>([5000, 100000]);
   const [yearFilter, setYearFilter] = useState<string>("Any");
   const [makeFilter, setMakeFilter] = useState<string>("Any");
   const [bodyTypeFilter, setBodyTypeFilter] = useState<string>("Any");
@@ -164,16 +100,13 @@ const CarListings: React.FC = () => {
     
     const fetchProducts = async () => {
         try {
-
-          const response = await fetch("/api/deals");
+          const response = await fetch(`/api/deals`);
           if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
       
           const data = await response.json();
           if (!data || !data.data) throw new Error("Invalid API response structure");
       
-    
-      
-          console.log("Fetched Products:",  data);
+          console.log("Fetched Products:", data.data);
           
           // Transform the fetched data into the required listings format
           const formattedListings = data.data.map((product: any) => ({
@@ -183,23 +116,29 @@ const CarListings: React.FC = () => {
             title: product.name,
             miles: product.details?.car.miles || "N/A",
             fuel: product.details?.car.fuel || "Unknown",
-            condition: product.details?.car.condition || "Used", // Default to "Used"
+            condition: product.details?.car.condition || "Used",
             transmission: product.details?.car.transmission || "Unknown",
             details: product.details?.car.transmission || "Unknown",
             price: `$${product.price.toLocaleString()}`,
-
-            mileage:  product.details?.car.miles || "N/A",
+            mileage: product.details?.car.miles || "N/A",
             year: product.details.car.year,
-            fuelType: product.details.car.fuel,
-
+            fuelType: product.details.car.fuel || "Unknown",
             description: product.details.car.description,
             bodyType: product.details.car.body_type,
             features: product.details.car.features.map((feature: any) => feature.value) || [],
-            category: product.categories ? product.categories.split(",").map((c: string) => c.toLowerCase().trim()) : [], // Convert categories string to an array
+            category: product.categories ? product.categories.split(",").map((c: string) => c.toLowerCase().trim()) : [],
           }));
           
-
+          console.log("Formatted Listings:", formattedListings);
           setListings(formattedListings);
+
+          // Calculate min and max prices from the listings
+          const prices = formattedListings.map(car => extractPrice(car.price));
+          const minPrice = Math.min(...prices);
+          const maxPrice = Math.max(...prices);
+          
+          setMinMaxPrices({ min: minPrice, max: maxPrice });
+          setPriceRange([minPrice, maxPrice]);
         } catch (error) {
           console.error("Error fetching products:", error);
           setListings([]);
@@ -219,8 +158,9 @@ const CarListings: React.FC = () => {
       return false;
     }
     
-    // Filter by price range
-    if (car.price < priceRange[0] || car.price > priceRange[1]) {
+    // Filter by price range - convert price string to number for comparison
+    const carPrice = extractPrice(car.price);
+    if (carPrice < priceRange[0] || carPrice > priceRange[1]) {
       return false;
     }
     
@@ -230,25 +170,42 @@ const CarListings: React.FC = () => {
     }
     
     // Filter by make
-    if (makeFilter !== "Any" && car.make !== makeFilter) {
-      return false;
+    if (makeFilter !== "Any") {
+      const selectedMake = MAKES.find(make => make.value === makeFilter);
+      if (!selectedMake || car.make !== selectedMake.value) {
+        return false;
+      }
     }
     
     // Filter by body type
-    if (bodyTypeFilter !== "Any" && car.bodyType !== bodyTypeFilter) {
-      return false;
+    if (bodyTypeFilter !== "Any") {
+      const selectedBodyType = BODY_TYPES.find(type => type.value === bodyTypeFilter);
+      if (!selectedBodyType || car.bodyType !== selectedBodyType.value) {
+        return false;
+      }
     }
     
     // Filter by fuel type
-    if (fuelTypeFilter !== "Any" && car.fuelType !== fuelTypeFilter) {
-      return false;
+    if (fuelTypeFilter !== "Any") {
+      const selectedFuelType = FUEL_TYPES.find(type => type.value === fuelTypeFilter);
+      console.log('Selected Fuel Type:', selectedFuelType);
+      console.log('Car Fuel Type:', car.fuelType);
+      console.log('Fuel Type Filter:', fuelTypeFilter);
+      
+      // Normalize the comparison by converting both to lowercase
+      const carFuelType = car.fuelType?.toLowerCase() || '';
+      const filterValue = selectedFuelType?.value.toLowerCase() || '';
+      
+      if (!selectedFuelType || carFuelType !== filterValue) {
+        return false;
+      }
     }
     
     return true;
   });
   
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="container mx-auto px-4 py-8 max-w-7xl mt-[5%]">
       <div className="space-y-6">
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
@@ -256,9 +213,9 @@ const CarListings: React.FC = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Find Your Perfect Car</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">{t('find_perfect_car')}</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Browse our extensive collection of quality vehicles and find the one that's right for you.
+            {t('browse_collection')}
           </p>
         </motion.div>
         
@@ -270,7 +227,7 @@ const CarListings: React.FC = () => {
               <div className="relative">
                 <Input
                   type="text"
-                  placeholder="Search by make, model, or keywords..."
+                  placeholder={t('search_placeholder')}
                   className="pl-10 h-12"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -283,13 +240,13 @@ const CarListings: React.FC = () => {
               {/* Filter Options */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="year-filter">Year</Label>
+                  <Label htmlFor="year-filter">{t('year')}</Label>
                   <Select value={yearFilter} onValueChange={setYearFilter}>
                     <SelectTrigger id="year-filter">
-                      <SelectValue placeholder="Any Year" />
+                      <SelectValue placeholder={t('any_year')} />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Any">Any Year</SelectItem>
+                    <SelectContent className='bg-white'>
+                      <SelectItem value="Any">{t('any_year')}</SelectItem>
                       {YEARS.map(year => (
                         <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
                       ))}
@@ -298,52 +255,53 @@ const CarListings: React.FC = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="make-filter">Make</Label>
+                  <Label htmlFor="make-filter">{t('make')}</Label>
                   <Select value={makeFilter} onValueChange={setMakeFilter}>
                     <SelectTrigger id="make-filter">
-                      <SelectValue placeholder="Any Make" />
+                      <SelectValue placeholder={t('any_make')} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className='bg-white'>
                       {MAKES.map(make => (
-                        <SelectItem key={make} value={make}>{make}</SelectItem>
+                        <SelectItem key={make.value} value={make.value}>{make.label}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="body-type-filter">Body Type</Label>
+                  <Label htmlFor="body-type-filter">{t('body_type')}</Label>
                   <Select value={bodyTypeFilter} onValueChange={setBodyTypeFilter}>
                     <SelectTrigger id="body-type-filter">
-                      <SelectValue placeholder="Any Body Type" />
+                      <SelectValue placeholder={t('any_body_type')} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className='bg-white'>
                       {BODY_TYPES.map(type => (
-                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                        <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="fuel-type-filter">Fuel Type</Label>
+                  <Label htmlFor="fuel-type-filter">{t('fuel_type')}</Label>
                   <Select value={fuelTypeFilter} onValueChange={setFuelTypeFilter}>
                     <SelectTrigger id="fuel-type-filter">
-                      <SelectValue placeholder="Any Fuel Type" />
+                      <SelectValue placeholder={t('any_fuel_type')} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className='bg-white'>
                       {FUEL_TYPES.map(type => (
-                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                        <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Price Range: ${priceRange[0].toLocaleString()} - ${priceRange[1].toLocaleString()}</Label>
+                  <Label>{t('price_range')}: ${priceRange[0].toLocaleString()} - ${priceRange[1].toLocaleString()}</Label>
                   <Slider
-                    defaultValue={[0, 100000]}
-                    max={100000}
+                    defaultValue={[5000, minMaxPrices.max]}
+                    min={5000}
+                    max={minMaxPrices.max}
                     step={1000}
                     value={priceRange}
                     onValueChange={setPriceRange}
@@ -357,7 +315,7 @@ const CarListings: React.FC = () => {
         
         {/* Results Section */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-center">
            
             <div className="flex items-center space-x-2">
               <Tabs value={viewType} onValueChange={setViewType} className="w-auto">
@@ -365,13 +323,13 @@ const CarListings: React.FC = () => {
                   <TabsTrigger value="grid" className="data-[state=active]:bg-white">
                     <div className="flex items-center space-x-1">
                       <Plus className="h-4 w-4 rotate-45" />
-                      <span className="sr-only md:not-sr-only md:inline-block">Grid</span>
+                      <span className="sr-only md:not-sr-only md:inline-block">{t('grid')}</span>
                     </div>
                   </TabsTrigger>
                   <TabsTrigger value="list" className="data-[state=active]:bg-white">
                     <div className="flex items-center space-x-1">
                       <Plus className="h-4 w-4 rotate-90" />
-                      <span className="sr-only md:not-sr-only md:inline-block">List</span>
+                      <span className="sr-only md:not-sr-only md:inline-block">{t('list')}</span>
                     </div>
                   </TabsTrigger>
                 </TabsList>
@@ -412,7 +370,7 @@ const CarListings: React.FC = () => {
                       </div>
                       <CardContent className="flex-grow flex flex-col pt-4">
                         <h3 className="text-lg font-semibold text-gray-900 mb-1">{car.title}</h3>
-                        <p className="text-2xl font-bold text-blue-600 mb-2">{car.price.toLocaleString()}</p>
+                        <p className="text-2xl font-bold text-blue-600 mb-2">${car.price.toLocaleString()}</p>
                         <div className="flex items-center text-gray-600 mb-3 text-sm">
                           <Car size={16} className="mr-1" />
                           <span>{car.bodyType}</span>
@@ -426,9 +384,9 @@ const CarListings: React.FC = () => {
                           <div className="flex space-x-2">
                             <Button variant="outline" size="sm" className=" bg-blue-500  text-white">
                               <MessageSquare className="h-4 w-4 mr-1" />
-                              Contact
+                              {t('contact')}
                             </Button>
-                            <Button  size="sm" className='bg-blue-500  text-white'>View Details</Button>
+                            <Button  size="sm" className='bg-blue-500  text-white'>{t('view_details')}</Button>
                             </div>
                         </div>
                       </CardContent>
@@ -506,9 +464,9 @@ const CarListings: React.FC = () => {
                             <div className="flex space-x-3">
                               <Button  size="sm" variant="outline" className='bg-blue-500  text-white'>
                                 <MessageSquare className="h-4 w-4 mr-2 " />
-                                Contact Seller
+                                {t('contact_seller')}
                               </Button>
-                              <Button  size="sm" className='bg-blue-500  text-white'>View Details</Button>
+                              <Button  size="sm" className='bg-blue-500  text-white'>{t('view_details')}</Button>
                             </div>
                           </div>
                         </CardContent>

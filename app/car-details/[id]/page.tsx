@@ -172,7 +172,7 @@ const CarDetails: React.FC = () => {
       <div className="container mx-auto px-4 py-16 text-center">
         <h1 className="text-3xl font-bold mb-4">Car Not Found</h1>
         <p className="mb-8">The car you're looking for doesn't exist or has been removed.</p>
-        <Link href="/car-listings">
+        <Link href="/car-listing">
           <Button>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Listings
@@ -221,10 +221,10 @@ const CarDetails: React.FC = () => {
   ];
   
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="container mx-auto px-4 py-8 max-w-7xl mt-[5%]">
       {/* Breadcrumb */}
       <div className="mb-6">
-        <Link href="/car-listings" className="text-blue-600 hover:underline flex items-center">
+        <Link href="/car-listing" className="text-blue-600 hover:underline flex items-center">
           <ChevronLeft className="h-4 w-4 mr-1" />
           Back to Listings
         </Link>
