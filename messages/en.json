@@ -296,5 +296,36 @@
       "hybrid": "Hybrid",
       "plug_in_hybrid": "Plug-in Hybrid"
     }
+  },
+  "CarDetails": {
+    "financing_options": "Financing Options",
+    "estimated_monthly_payment": "Estimated Monthly Payment",
+    "for_months": "for {months} months @ {rate}% APR",
+    "interest_rate": "Interest Rate",
+    "loan_term": "Loan Term",
+    "months": "months",
+    "check_your_rate": "Check Your Rate",
+    "no_credit_score_impact": "This won't affect your credit score",
+    "contact_seller": "Contact Seller",
+    "or_call": "or call",
+    "save": "Save",
+    "share": "Share",
+    "similar_vehicles": "Similar Vehicles",
+    "watch_review_videos": "Watch Car Review Videos",
+    "back_to_listings": "Back to Listings",
+    "listed_days_ago": "Listed {days} days ago",
+    "overview": "Overview",
+    "features": "Features",
+    "vehicle_history": "Vehicle History",
+    "year": "Year",
+    "mileage": "Mileage",
+    "fuel_type": "Fuel Type",
+    "body_type": "Body Type",
+    "price": "Price",
+    "warranty": "Warranty",
+    "description": "Description",
+    "clean_title": "Clean Title",
+    "clean_title_description": "This vehicle has a clean title history with no reported accidents.",
+    "service_history": "Service History"
   }
 }

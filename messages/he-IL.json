@@ -293,5 +293,36 @@
       "hybrid": "היברידי",
       "plug_in_hybrid": "היברידי נטען"
     }
+  },
+  "CarDetails": {
+    "financing_options": "אפשרויות מימון",
+    "estimated_monthly_payment": "החזר חודשי משוער",
+    "for_months": "ל-{months} חודשים @ {rate}% ריבית שנתית",
+    "interest_rate": "ריבית",
+    "loan_term": "תקופת ההלוואה",
+    "months": "חודשים",
+    "check_your_rate": "בדוק את הריבית שלך",
+    "no_credit_score_impact": "זה לא ישפיע על דירוג האשראי שלך",
+    "contact_seller": "צור קשר עם המוכר",
+    "or_call": "או התקשר",
+    "save": "שמור",
+    "share": "שתף",
+    "similar_vehicles": "רכבים דומים",
+    "watch_review_videos": "צפה בסרטוני ביקורת",
+    "back_to_listings": "חזרה לרשימה",
+    "listed_days_ago": "פורסם לפני {days} ימים",
+    "overview": "סקירה",
+    "features": "תכונות",
+    "vehicle_history": "היסטוריית הרכב",
+    "year": "שנה",
+    "mileage": "קילומטראז'",
+    "fuel_type": "סוג דלק",
+    "body_type": "סוג שלדה",
+    "price": "מחיר",
+    "warranty": "אחריות",
+    "description": "תיאור",
+    "clean_title": "כותרת נקייה",
+    "clean_title_description": "לרכב זה יש היסטוריית כותרת נקייה ללא תאונות מדווחות.",
+    "service_history": "היסטוריית שירות"
   }
 }

@@ -307,5 +307,36 @@
       "hybrid": "هجين",
       "plug_in_hybrid": "هجين قابلة للشحن"
     }
+  },
+  "CarDetails": {
+    "financing_options": "خيارات التمويل",
+    "estimated_monthly_payment": "الدفعة الشهرية المقدرة",
+    "for_months": "لمدة {months} شهر @ {rate}% معدل الفائدة السنوي",
+    "interest_rate": "معدل الفائدة",
+    "loan_term": "مدة القرض",
+    "months": "شهور",
+    "check_your_rate": "تحقق من معدلك",
+    "no_credit_score_impact": "لن يؤثر هذا على درجة ائتمانك",
+    "contact_seller": "اتصل بالبائع",
+    "or_call": "أو اتصل",
+    "save": "حفظ",
+    "share": "مشاركة",
+    "similar_vehicles": "سيارات مماثلة",
+    "watch_review_videos": "شاهد مقاطع فيديو مراجعة السيارة",
+    "back_to_listings": "العودة إلى القائمة",
+    "listed_days_ago": "تم الإعلان منذ {days} يوم",
+    "overview": "نظرة عامة",
+    "features": "المميزات",
+    "vehicle_history": "تاريخ السيارة",
+    "year": "السنة",
+    "mileage": "المسافة المقطوعة",
+    "fuel_type": "نوع الوقود",
+    "body_type": "نوع الهيكل",
+    "price": "السعر",
+    "warranty": "الضمان",
+    "description": "الوصف",
+    "clean_title": "عنوان نظيف",
+    "clean_title_description": "هذه السيارة لديها سجل عنوان نظيف بدون حوادث مسجلة.",
+    "service_history": "سجل الخدمة"
   }
 }

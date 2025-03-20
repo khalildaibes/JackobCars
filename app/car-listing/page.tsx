@@ -14,6 +14,7 @@ import { Badge } from "../../components/ui/badge";
 import { fetchStrapiData } from '../lib/strapiClient';
 import { Img } from '../../components/Img';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 
 // First, add this helper function at the top of your file
 const extractPrice = (price: string | number): number => {
@@ -25,6 +26,7 @@ const YEARS = Array.from({ length: 30 }, (_, i) => 2024 - i);
 
 const CarListings: React.FC = () => {
   const t = useTranslations('CarListing');
+  const router = useRouter();
   
   // Move the arrays inside the component where useTranslations is available
   const MAKES = [
@@ -109,25 +111,107 @@ const CarListings: React.FC = () => {
           console.log("Fetched Products:", data.data);
           
           // Transform the fetched data into the required listings format
-          const formattedListings = data.data.map((product: any) => ({
-            id: product.id,
-            mainImage: product.image ? `http://68.183.215.202${product.image[0]?.url}` : "/default-car.png",
-            alt: product.name || "Car Image",
-            title: product.name,
-            miles: product.details?.car.miles || "N/A",
-            fuel: product.details?.car.fuel || "Unknown",
-            condition: product.details?.car.condition || "Used",
-            transmission: product.details?.car.transmission || "Unknown",
-            details: product.details?.car.transmission || "Unknown",
-            price: `$${product.price.toLocaleString()}`,
-            mileage: product.details?.car.miles || "N/A",
-            year: product.details.car.year,
-            fuelType: product.details.car.fuel || "Unknown",
-            description: product.details.car.description,
-            bodyType: product.details.car.body_type,
-            features: product.details.car.features.map((feature: any) => feature.value) || [],
-            category: product.categories ? product.categories.split(",").map((c: string) => c.toLowerCase().trim()) : [],
-          }));
+          const formattedListings = data.data.map((product: any) => {
+            // Get the fuel type and normalize it
+            const rawFuelType = product.details?.car.fuel || "Unknown";
+            let normalizedFuelType = rawFuelType;
+            
+            // Normalize fuel type values to English
+            if (rawFuelType.toLowerCase().includes("plug-in") || 
+                rawFuelType.toLowerCase().includes("plug in") || 
+                rawFuelType === "היברידי נטען" ||
+                rawFuelType === "هجين قابل للشحن") {
+              normalizedFuelType = "Plug-in Hybrid";
+            } else if (rawFuelType.toLowerCase().includes("hybrid") || 
+                      rawFuelType === "היברידי" ||
+                      rawFuelType === "هجين") {
+              normalizedFuelType = "Hybrid";
+            } else if (rawFuelType.toLowerCase().includes("electric") || 
+                      rawFuelType === "חשמלי" ||
+                      rawFuelType === "كهربائي") {
+              normalizedFuelType = "Electric";
+            } else if (rawFuelType.toLowerCase().includes("diesel") || 
+                      rawFuelType === "דיזל" ||
+                      rawFuelType === "ديزل") {
+              normalizedFuelType = "Diesel";
+            } else if (rawFuelType.toLowerCase().includes("gasoline") || 
+                      rawFuelType.toLowerCase().includes("petrol") || 
+                      rawFuelType === "בנזין" ||
+                      rawFuelType === "بنزين") {
+              normalizedFuelType = "Gasoline";
+            }
+
+            // Normalize make values to English
+            const rawMake = product.details?.car.make || "Unknown";
+            let normalizedMake = rawMake;
+            
+            // Normalize make values to English
+            if (rawMake.toLowerCase().includes("toyota") || rawMake === "טויוטה" || rawMake === "تويوتا") {
+              normalizedMake = "Toyota";
+            } else if (rawMake.toLowerCase().includes("honda") || rawMake === "הונדה" || rawMake === "هوندا") {
+              normalizedMake = "Honda";
+            } else if (rawMake.toLowerCase().includes("ford") || rawMake === "פורד" || rawMake === "فورد") {
+              normalizedMake = "Ford";
+            } else if (rawMake.toLowerCase().includes("chevrolet") || rawMake === "שברולט" || rawMake === "شيفروليه") {
+              normalizedMake = "Chevrolet";
+            } else if (rawMake.toLowerCase().includes("bmw") || rawMake === "ב.מ.וו" || rawMake === "بي ام دبليو") {
+              normalizedMake = "BMW";
+            } else if (rawMake.toLowerCase().includes("mercedes") || rawMake === "מרצדס" || rawMake === "مرسيدس") {
+              normalizedMake = "Mercedes-Benz";
+            } else if (rawMake.toLowerCase().includes("audi") || rawMake === "אאודי" || rawMake === "أودي") {
+              normalizedMake = "Audi";
+            } else if (rawMake.toLowerCase().includes("tesla") || rawMake === "טסלה" || rawMake === "تيسلا") {
+              normalizedMake = "Tesla";
+            } else if (rawMake.toLowerCase().includes("lexus") || rawMake === "לקסוס" || rawMake === "لكزس") {
+              normalizedMake = "Lexus";
+            } else if (rawMake.toLowerCase().includes("subaru") || rawMake === "סובארו" || rawMake === "سوبارو") {
+              normalizedMake = "Subaru";
+            }
+
+            // Normalize body type values to English
+            const rawBodyType = product.details?.car.body_type || "Unknown";
+            let normalizedBodyType = rawBodyType;
+            
+            // Normalize body type values to English
+            if (rawBodyType.toLowerCase().includes("sedan") || rawBodyType === "סדאן" || rawBodyType === "سيدان") {
+              normalizedBodyType = "Sedan";
+            } else if (rawBodyType.toLowerCase().includes("suv") || rawBodyType === "רכב שטח" || rawBodyType === "سيارة رياضية متعددة الاستخدامات") {
+              normalizedBodyType = "SUV";
+            } else if (rawBodyType.toLowerCase().includes("truck") || rawBodyType === "משאית" || rawBodyType === "شاحنة") {
+              normalizedBodyType = "Truck";
+            } else if (rawBodyType.toLowerCase().includes("coupe") || rawBodyType === "קופה" || rawBodyType === "كوبيه") {
+              normalizedBodyType = "Coupe";
+            } else if (rawBodyType.toLowerCase().includes("convertible") || rawBodyType === "קבריולה" || rawBodyType === "كابريوليه") {
+              normalizedBodyType = "Convertible";
+            } else if (rawBodyType.toLowerCase().includes("hatchback") || rawBodyType === "הצ'בק" || rawBodyType === "هاتشباك") {
+              normalizedBodyType = "Hatchback";
+            } else if (rawBodyType.toLowerCase().includes("wagon") || rawBodyType === "סטיישן" || rawBodyType === "ستيشن") {
+              normalizedBodyType = "Wagon";
+            } else if (rawBodyType.toLowerCase().includes("van") || rawBodyType === "ואן" || rawBodyType === "فان") {
+              normalizedBodyType = "Van";
+            }
+
+            return {
+              id: product.id,
+              mainImage: product.image ? `http://68.183.215.202${product.image[0]?.url}` : "/default-car.png",
+              alt: product.name || "Car Image",
+              title: product.name,
+              miles: product.details?.car.miles || "N/A",
+              fuel: normalizedFuelType,
+              condition: product.details?.car.condition || "Used",
+              transmission: product.details?.car.transmission || "Unknown",
+              details: product.details?.car.transmission || "Unknown",
+              price: `$${product.price.toLocaleString()}`,
+              mileage: product.details?.car.miles || "N/A",
+              year: product.details.car.year,
+              fuelType: normalizedFuelType,
+              make: normalizedMake,
+              bodyType: normalizedBodyType,
+              description: product.details.car.description,
+              features: product.details.car.features.map((feature: any) => feature.value) || [],
+              category: product.categories ? product.categories.split(",").map((c: string) => c.toLowerCase().trim()) : [],
+            };
+          });
           
           console.log("Formatted Listings:", formattedListings);
           setListings(formattedListings);
@@ -153,8 +237,7 @@ const CarListings: React.FC = () => {
   const filteredCars = listings.filter(car => {
     // Filter by search term
     if (searchTerm && !car.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        !car.make.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        !car.model.toLowerCase().includes(searchTerm.toLowerCase())) {
+        !car.make.toLowerCase().includes(searchTerm.toLowerCase())) {
       return false;
     }
     
@@ -188,15 +271,7 @@ const CarListings: React.FC = () => {
     // Filter by fuel type
     if (fuelTypeFilter !== "Any") {
       const selectedFuelType = FUEL_TYPES.find(type => type.value === fuelTypeFilter);
-      console.log('Selected Fuel Type:', selectedFuelType);
-      console.log('Car Fuel Type:', car.fuelType);
-      console.log('Fuel Type Filter:', fuelTypeFilter);
-      
-      // Normalize the comparison by converting both to lowercase
-      const carFuelType = car.fuelType?.toLowerCase() || '';
-      const filterValue = selectedFuelType?.value.toLowerCase() || '';
-      
-      if (!selectedFuelType || carFuelType !== filterValue) {
+      if (!selectedFuelType || car.fuelType !== selectedFuelType.value) {
         return false;
       }
     }
@@ -204,6 +279,10 @@ const CarListings: React.FC = () => {
     return true;
   });
   
+  const handleViewDetails = (carId: number) => {
+    router.push(`/car-details/${carId}`);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl mt-[5%]">
       <div className="space-y-6">
@@ -348,8 +427,8 @@ const CarListings: React.FC = () => {
                     <Card className="overflow-hidden h-full flex flex-col hover:shadow-lg transition-shadow duration-300">
                       <div className="relative">
                         <Img
-                        width={100}
-                        height={100}
+ width={1920}
+ height={1080}
                         external={true}
                           src={car.mainImage}
                           alt={car.title}
@@ -386,8 +465,14 @@ const CarListings: React.FC = () => {
                               <MessageSquare className="h-4 w-4 mr-1" />
                               {t('contact')}
                             </Button>
-                            <Button  size="sm" className='bg-blue-500  text-white'>{t('view_details')}</Button>
-                            </div>
+                            <Button 
+                              size="sm" 
+                              className='bg-blue-500 text-white'
+                              onClick={() => handleViewDetails(car.id)}
+                            >
+                              {t('view_details')}
+                            </Button>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -410,8 +495,8 @@ const CarListings: React.FC = () => {
                         <div className="relative md:w-1/3">
                           <Img
                             external={true}
-                            width={100}
-                            height={100}
+                            width={1920}
+                            height={1080}
                             src={car.mainImage}
                             alt={car.title}
                             className="w-full h-48 md:h-full object-cover"
@@ -462,11 +547,17 @@ const CarListings: React.FC = () => {
                           <div className="flex items-center justify-between mt-4 w-full">
                             <span className="text-sm text-gray-500">{car.location}</span>
                             <div className="flex space-x-3">
-                              <Button  size="sm" variant="outline" className='bg-blue-500  text-white'>
-                                <MessageSquare className="h-4 w-4 mr-2 " />
+                              <Button  size="sm" variant="outline" className='bg-blue-500 text-white'>
+                                <MessageSquare className="h-4 w-4 mr-2" />
                                 {t('contact_seller')}
                               </Button>
-                              <Button  size="sm" className='bg-blue-500  text-white'>{t('view_details')}</Button>
+                              <Button 
+                                size="sm" 
+                                className='bg-blue-500 text-white'
+                                onClick={() => handleViewDetails(car.id)}
+                              >
+                                {t('view_details')}
+                              </Button>
                             </div>
                           </div>
                         </CardContent>

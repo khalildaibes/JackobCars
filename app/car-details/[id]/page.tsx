@@ -1,5 +1,5 @@
 "use client"; // This marks the component as a Client Component make this page work when doing car-details?id=1
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { 
@@ -16,7 +16,8 @@ import {
   Check, 
   Clock, 
   MapPin, 
-  ArrowLeft 
+  ArrowLeft,
+  X
 } from 'lucide-react';
 import { Button } from "../../../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs";
@@ -25,208 +26,208 @@ import { Separator } from "../../../components/ui/separator";
 import { Card, CardContent } from "../../../components/ui/card";
 import { toast } from "../../../components/ui/use-toast";
 import Link from 'next/link';
+import { Img } from '../../../components/Img';
+import { useTranslations } from 'next-intl';
 
 const CarDetails: React.FC = () => {
   const params = useParams();
-  const id = params.id; // Get the id from the URL parameters
+  const t = useTranslations('CarDetails');
+  const [car, setCar] = useState<any>(null);
+  const [listings, setListings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [favorites, setFavorites] = useState<number[]>([]);
+  const [interestRate, setInterestRate] = useState(4.9);
+  const [loanTerm, setLoanTerm] = useState(60);
+  const [monthlyPayment, setMonthlyPayment] = useState(0);
 
-  const MOCK_CARS = [
-    {
-      id: 1,
-      title: "2022 Toyota Camry XSE",
-      price: 32999,
-      mileage: 12500,
-      year: 2022,
-      make: "Toyota",
-      model: "Camry",
-      trim: "XSE",
-      fuelType: "Gasoline",
-      transmission: "Automatic",
-      color: "Pearl White",
-      description: "Excellent condition with low mileage. Features include panoramic sunroof, leather seats, and advanced safety package.",
-      image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&auto=format&fit=crop",
-      location: "Miami, FL",
-      bodyType: "Sedan",
-      features: ["Leather Seats", "Navigation", "Bluetooth", "Backup Camera", "Sunroof"]
-    },
-    {
-      id: 1,
-      title: "2022 Toyota Camry XSE",
-      price: 32999,
-      mileage: 12500,
-      year: 2022,
-      make: "Toyota",
-      model: "Camry",
-      trim: "XSE",
-      fuelType: "Gasoline",
-      transmission: "Automatic",
-      color: "Pearl White",
-      description: "Excellent condition with low mileage. Features include panoramic sunroof, leather seats, and advanced safety package.",
-      image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&auto=format&fit=crop",
-      location: "Miami, FL",
-      bodyType: "Sedan",
-      features: ["Leather Seats", "Navigation", "Bluetooth", "Backup Camera", "Sunroof"]
-    },
-    {
-      id: 2,
-      title: "2020 Honda Accord Sport",
-      price: 27500,
-      mileage: 28900,
-      year: 2020,
-      make: "Honda",
-      model: "Accord",
-      trim: "Sport",
-      fuelType: "Gasoline",
-      transmission: "Automatic",
-      color: "Modern Steel Metallic",
-      description: "One owner, clean history. Comes with all maintenance records and extended warranty.",
-      image: "https://images.unsplash.com/photo-1582639510494-c80b5de9f148?w=800&auto=format&fit=crop",
-      location: "Atlanta, GA",
-      bodyType: "Sedan",
-      features: ["Apple CarPlay", "Android Auto", "Lane Keep Assist", "Adaptive Cruise Control"]
-    },
-    {
-      id: 3,
-      title: "2021 Tesla Model 3 Long Range",
-      price: 48990,
-      mileage: 18700,
-      year: 2021,
-      make: "Tesla",
-      model: "Model 3",
-      trim: "Long Range",
-      fuelType: "Electric",
-      transmission: "Automatic",
-      color: "Midnight Silver Metallic",
-      description: "Dual motor all-wheel drive with 353 mile range. Premium interior with glass roof.",
-      image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&auto=format&fit=crop",
-      location: "San Francisco, CA",
-      bodyType: "Sedan",
-      features: ["Autopilot", "Premium Interior", "Heated Seats", "Glass Roof"]
-    },
-    {
-      id: 4,
-      title: "2019 BMW X5 xDrive40i",
-      price: 45500,
-      mileage: 37800,
-      year: 2019,
-      make: "BMW",
-      model: "X5",
-      trim: "xDrive40i",
-      fuelType: "Gasoline",
-      transmission: "Automatic",
-      color: "Alpine White",
-      description: "Luxury SUV with M Sport package and premium sound system. Well maintained.",
-      image: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&auto=format&fit=crop",
-      location: "Chicago, IL",
-      bodyType: "SUV",
-      features: ["Heated Steering Wheel", "Premium Sound System", "360 Camera", "Head-up Display"]
-    },
-    {
-      id: 5,
-      title: "2023 Ford Mustang GT",
-      price: 52500,
-      mileage: 5600,
-      year: 2023,
-      make: "Ford",
-      model: "Mustang",
-      trim: "GT",
-      fuelType: "Gasoline",
-      transmission: "Manual",
-      color: "Race Red",
-      description: "5.0L V8 with 460hp. Performance package and digital dash. Like new condition.",
-      image: "https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=800&auto=format&fit=crop",
-      location: "Dallas, TX",
-      bodyType: "Coupe",
-      features: ["Performance Package", "Brembo Brakes", "Digital Dash", "Launch Control"]
-    },
-    {
-      id: 6,
-      title: "2020 Audi Q7 Premium Plus",
-      price: 47990,
-      mileage: 32100,
-      year: 2020,
-      make: "Audi",
-      model: "Q7",
-      trim: "Premium Plus",
-      fuelType: "Gasoline",
-      transmission: "Automatic",
-      color: "Glacier White Metallic",
-      description: "Luxury 7-passenger SUV with Bang & Olufsen sound system and Quattro AWD.",
-      image: "https://images.unsplash.com/photo-1607853554439-0069ec0f29b6?w=800&auto=format&fit=crop",
-      location: "Denver, CO",
-      bodyType: "SUV",
-      features: ["Bang & Olufsen Audio", "Virtual Cockpit", "Panoramic Sunroof", "Heated/Ventilated Seats"]
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedFavorites = localStorage.getItem("favorites");
+      if (storedFavorites) {
+        setFavorites(JSON.parse(storedFavorites));
+      }
     }
-  ];
-  
-  console.log("1")
-  const [activeImage, setActiveImage] = useState(0);
-  
-  // Find the car by ID from our mock data
-  // In a real app, this would be a fetch to the backend
-  const car = MOCK_CARS.find(car => car.id.toString() === id);
-  
-  // If no car is found, show a not found message
-  if (!car) {
+  }, []);
+
+  const add_to_favorites = (id: number) => {
+    let updatedFavorites;
+    if (favorites.includes(id)) {
+      updatedFavorites = favorites.filter((favId) => favId !== id);
+    } else {
+      updatedFavorites = [...favorites, id];
+    }
+
+    setFavorites(updatedFavorites);
+    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+  };
+
+  useEffect(() => {
+    const fetchCarDetails = async () => {
+      try {
+        const response = await fetch(`/api/deals`);
+        if (!response.ok) throw new Error(`Failed to fetch car details: ${response.statusText}`);
+        
+        const data = await response.json();
+        if (!data || !data.data) throw new Error("Invalid API response structure");
+
+        // Store all listings
+        const formattedListings = data.data.map((product: any) => {
+          // Get the fuel type and normalize it
+          const rawFuelType = product.details?.car.fuel || "Unknown";
+          let normalizedFuelType = rawFuelType;
+          
+          // Normalize fuel type values to English
+          if (rawFuelType.toLowerCase().includes("plug-in") || 
+              rawFuelType.toLowerCase().includes("plug in") || 
+              rawFuelType === "היברידי נטען" ||
+              rawFuelType === "هجين قابل للشحن") {
+            normalizedFuelType = "Plug-in Hybrid";
+          } else if (rawFuelType.toLowerCase().includes("hybrid") || 
+                    rawFuelType === "היברידי" ||
+                    rawFuelType === "هجين") {
+            normalizedFuelType = "Hybrid";
+          } else if (rawFuelType.toLowerCase().includes("electric") || 
+                    rawFuelType === "חשמלי" ||
+                    rawFuelType === "كهربائي") {
+            normalizedFuelType = "Electric";
+          } else if (rawFuelType.toLowerCase().includes("diesel") || 
+                    rawFuelType === "דיזל" ||
+                    rawFuelType === "ديزل") {
+            normalizedFuelType = "Diesel";
+          } else if (rawFuelType.toLowerCase().includes("gasoline") || 
+                    rawFuelType.toLowerCase().includes("petrol") || 
+                    rawFuelType === "בנזין" ||
+                    rawFuelType === "بنزين") {
+            normalizedFuelType = "Gasoline";
+          }
+
+          // Normalize make
+          const rawMake = product.details?.car.make || "Unknown";
+          let normalizedMake = rawMake;
+          
+          if (rawMake.toLowerCase().includes("toyota") || rawMake === "טויוטה" || rawMake === "تويوتا") {
+            normalizedMake = "Toyota";
+          } else if (rawMake.toLowerCase().includes("honda") || rawMake === "הונדה" || rawMake === "هوندا") {
+            normalizedMake = "Honda";
+          } else if (rawMake.toLowerCase().includes("ford") || rawMake === "פורד" || rawMake === "فورد") {
+            normalizedMake = "Ford";
+          } else if (rawMake.toLowerCase().includes("chevrolet") || rawMake === "שברולט" || rawMake === "شيفروليه") {
+            normalizedMake = "Chevrolet";
+          } else if (rawMake.toLowerCase().includes("bmw") || rawMake === "ב.מ.וו" || rawMake === "بي ام دبليو") {
+            normalizedMake = "BMW";
+          } else if (rawMake.toLowerCase().includes("mercedes") || rawMake === "מרצדס" || rawMake === "مرسيدس") {
+            normalizedMake = "Mercedes-Benz";
+          } else if (rawMake.toLowerCase().includes("audi") || rawMake === "אאודי" || rawMake === "أودي") {
+            normalizedMake = "Audi";
+          } else if (rawMake.toLowerCase().includes("tesla") || rawMake === "טסלה" || rawMake === "تيسلا") {
+            normalizedMake = "Tesla";
+          } else if (rawMake.toLowerCase().includes("lexus") || rawMake === "לקסוס" || rawMake === "لكزس") {
+            normalizedMake = "Lexus";
+          } else if (rawMake.toLowerCase().includes("subaru") || rawMake === "סובארו" || rawMake === "سوبارو") {
+            normalizedMake = "Subaru";
+          }
+
+          // Normalize body type
+          const rawBodyType = product.details?.car.body_type || "Unknown";
+          let normalizedBodyType = rawBodyType;
+          
+          if (rawBodyType.toLowerCase().includes("sedan") || rawBodyType === "סדאן" || rawBodyType === "سيدان") {
+            normalizedBodyType = "Sedan";
+          } else if (rawBodyType.toLowerCase().includes("suv") || rawBodyType === "רכב שטח" || rawBodyType === "سيارة رياضية متعددة الاستخدامات") {
+            normalizedBodyType = "SUV";
+          } else if (rawBodyType.toLowerCase().includes("truck") || rawBodyType === "משאית" || rawBodyType === "شاحنة") {
+            normalizedBodyType = "Truck";
+          } else if (rawBodyType.toLowerCase().includes("coupe") || rawBodyType === "קופה" || rawBodyType === "كوبيه") {
+            normalizedBodyType = "Coupe";
+          } else if (rawBodyType.toLowerCase().includes("convertible") || rawBodyType === "קבריולה" || rawBodyType === "كابريوليه") {
+            normalizedBodyType = "Convertible";
+          } else if (rawBodyType.toLowerCase().includes("hatchback") || rawBodyType === "הצ'בק" || rawBodyType === "هاتشباك") {
+            normalizedBodyType = "Hatchback";
+          } else if (rawBodyType.toLowerCase().includes("wagon") || rawBodyType === "סטיישן" || rawBodyType === "ستيشن") {
+            normalizedBodyType = "Wagon";
+          } else if (rawBodyType.toLowerCase().includes("van") || rawBodyType === "ואן" || rawBodyType === "فان") {
+            normalizedBodyType = "Van";
+          }
+
+          return {
+            id: product.id,
+            mainImage: product.image ? `http://68.183.215.202${product.image[0]?.url}` : "/default-car.png",
+            alt: product.name || "Car Image",
+            title: product.name,
+            miles: product.details?.car.miles || "N/A",
+            fuel: normalizedFuelType,
+            condition: product.details?.car.condition || "Used",
+            transmission: product.details?.car.transmission || "Unknown",
+            details: product.details?.car.transmission || "Unknown",
+            price: `$${product.price.toLocaleString()}`,
+            mileage: product.details?.car.miles || "N/A",
+            year: product.details.car.year,
+            fuelType: normalizedFuelType,
+            make: normalizedMake,
+            bodyType: normalizedBodyType,
+            description: product.details.car.description,
+            features: product.details.car.features.map((feature: any) => feature.value) || [],
+            category: product.categories ? product.categories.split(",").map((c: string) => c.toLowerCase().trim()) : [],
+          };
+        });
+
+        setListings(formattedListings);
+
+        // Find the car with matching ID
+        const carData = formattedListings.find(car => car.id.toString() === params.id);
+        if (!carData) throw new Error("Car not found");
+
+        setCar(carData);
+      } catch (error) {
+        console.error("Error fetching car details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCarDetails();
+  }, [params.id]);
+
+  // Calculate monthly payment when rate or term changes
+  useEffect(() => {
+    if (car) {
+      const price = parseFloat(car.price.replace(/[^0-9.-]+/g, ""));
+      const monthlyRate = interestRate / 12 / 100;
+      const numberOfPayments = loanTerm;
+      const payment = (price * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / 
+                     (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+      setMonthlyPayment(Math.round(payment));
+    }
+  }, [car, interestRate, loanTerm]);
+
+  if (loading) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <h1 className="text-3xl font-bold mb-4">Car Not Found</h1>
-        <p className="mb-8">The car you're looking for doesn't exist or has been removed.</p>
-        <Link href="/car-listing">
-          <Button>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Listings
-          </Button>
-        </Link>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
-  
-  // Function to handle contact seller button
-  const handleContactSeller = () => {
-    toast({
-      title: "Message Sent",
-      description: "The seller has been notified of your interest.",
-    });
-  };
-  
-  // Function to handle save to favorites
-  const handleSaveToFavorites = () => {
-    toast({
-      title: "Saved to Favorites",
-      description: "This car has been added to your favorites.",
-    });
-  };
-  
-  // Additional car details (would come from API in real app)
-  const additionalImages = [
-    car.image,
-    "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&auto=format&fit=crop", // Interior
-    "https://images.unsplash.com/photo-1583527976767-a57cdcbcd34b?w=800&auto=format&fit=crop", // Engine
-    "https://images.unsplash.com/photo-1577493340887-b7bfff550145?w=800&auto=format&fit=crop", // Trunk
-    "https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?w=800&auto=format&fit=crop"  // Side view
-  ];
-  
-  const carSpecs = [
-    { label: "Make", value: car.make },
-    { label: "Model", value: car.model },
-    { label: "Year", value: car.year },
-    { label: "Body Type", value: car.bodyType },
-    { label: "Mileage", value: `${car.mileage.toLocaleString()}` },
-    { label: "Fuel Type", value: car.fuelType },
-    { label: "Transmission", value: car.transmission },
-    { label: "Color", value: car.color },
-    { label: "VIN", value: "1HGBH41JXMN109186" }, // Mock VIN
-    { label: "Stock #", value: `STK${car.id}7892` } // Mock stock number
-  ];
-  
+
+  if (!car) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('error')}</h1>
+          <Link href="/car-listing" className="text-primary hover:text-primary-dark">
+            {t('back_to_listings')}
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl mt-[5%]">
+    <div className="min-h-screen bg-gray-50 mt-[5%]">
       {/* Breadcrumb */}
       <div className="mb-6">
         <Link href="/car-listing" className="text-blue-600 hover:underline flex items-center">
           <ChevronLeft className="h-4 w-4 mr-1" />
-          Back to Listings
+          {t('back_to_listings')}
         </Link>
       </div>
       
@@ -235,282 +236,418 @@ const CarDetails: React.FC = () => {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="mb-8"
+        className="bg-white shadow-sm mb-8"
       >
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{car.title}</h1>
-            <div className="flex items-center text-gray-600 mt-2">
-              <Clock className="h-4 w-4 mr-1" />
-              <span className="text-sm">Listed 3 days ago</span>
-              <span className="mx-2">•</span>
-              <MapPin className="h-4 w-4 mr-1" />
-              <span className="text-sm">{car.location}</span>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{car.title}</h1>
+              <div className="flex items-center text-gray-600 mt-2">
+                <Clock className="h-4 w-4 mr-1" />
+                <span className="text-sm px-1">{t('listed_days_ago', { days: 3 })}</span>
+                <span className="mx-1">•</span>
+                <MapPin className="h-4 w-4 mr-1" />
+                <span className="text-sm px-1">{car.location}</span>
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col items-end">
-            <div className="text-3xl font-bold text-blue-600">${car.price.toLocaleString()}</div>
-            <div className="text-sm text-gray-600">Est. $485/mo</div>
+            <div className="flex flex-col items-end">
+              <div className="text-3xl font-bold text-blue-600 px-1">{car.price}</div>
+              <div className="text-sm text-gray-600 px-1">{t('estimated_monthly_payment')}: ₪{monthlyPayment.toLocaleString()}/mo</div>
+            </div>
           </div>
         </div>
       </motion.div>
       
       {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column - Images and Details */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Car Images */}
-          <Card className="overflow-hidden">
-            <div className="relative h-[300px] md:h-[400px] overflow-hidden">
-              <motion.img
-                key={activeImage}
-                initial={{ opacity: 0.8 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-                src={additionalImages[activeImage]}
-                alt={car.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="p-4 grid grid-cols-5 gap-2">
-              {additionalImages.map((img, idx) => (
-                <div 
-                  key={idx}
-                  className={`h-16 md:h-20 overflow-hidden rounded cursor-pointer border-2 ${activeImage === idx ? 'border-blue-600' : 'border-transparent'}`}
-                  onClick={() => setActiveImage(idx)}
-                >
-                  <img src={img} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column - Images and Details */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Car Images */}
+            <Card className="overflow-hidden border-0 shadow-lg">
+              <CardContent className="p-0">
+                <div className="relative">
+                  <Img
+                    external={true}
+                    width={1920}
+                    height={1080}
+                    src={car.mainImage}
+                    alt={car.title}
+                    className="w-full h-[600px] object-cover"
+                  />
+                  <Button 
+                    size="icon" 
+                    onClick={() => add_to_favorites(car.id)}
+                    variant="ghost" 
+                    className="absolute top-4 right-4 bg-white/90 hover:bg-white text-red-500 rounded-full shadow-md"
+                  >
+                    <Heart className={`h-6 w-6 ${favorites.includes(car.id) ? 'fill-current text-red-500' : ''}`} />
+                  </Button>
                 </div>
-              ))}
-            </div>
-          </Card>
-          
-          {/* Car Tabs */}
-          <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="w-full grid grid-cols-3">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="features">Features</TabsTrigger>
-              <TabsTrigger value="history">Vehicle History</TabsTrigger>
-            </TabsList>
+              </CardContent>
+            </Card>
             
-            <TabsContent value="overview" className="mt-4 space-y-4">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
-                  <Calendar className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <div className="text-xs text-gray-500">Year</div>
-                    <div className="font-medium">{car.year}</div>
-                  </div>
+            {/* Vehicle Information */}
+            <div className="bg-white rounded-xl shadow-sm p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-8">{t('overview')}</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h3 className="text-sm font-medium text-gray-500 mb-1">{t('year')}</h3>
+                  <p className="text-lg font-semibold text-gray-900">{car.year}</p>
                 </div>
-                <div className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
-                  <Gauge className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <div className="text-xs text-gray-500">Mileage</div>
-                    <div className="font-medium">{car.mileage.toLocaleString()} mi</div>
-                  </div>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h3 className="text-sm font-medium text-gray-500 mb-1">{t('mileage')}</h3>
+                  <p className="text-lg font-semibold text-gray-900">{car.mileage.toLocaleString()} {t('miles')}</p>
                 </div>
-                <div className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
-                  <Fuel className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <div className="text-xs text-gray-500">Fuel Type</div>
-                    <div className="font-medium">{car.fuelType}</div>
-                  </div>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h3 className="text-sm font-medium text-gray-500 mb-1">{t('fuel_type')}</h3>
+                  <p className="text-lg font-semibold text-gray-900">{car.fuelType}</p>
                 </div>
-                <div className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
-                  <Car className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <div className="text-xs text-gray-500">Body Type</div>
-                    <div className="font-medium">{car.bodyType}</div>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
-                  <DollarSign className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <div className="text-xs text-gray-500">Price</div>
-                    <div className="font-medium">${car.price.toLocaleString()}</div>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
-                  <Shield className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <div className="text-xs text-gray-500">Warranty</div>
-                    <div className="font-medium">3 Months</div>
-                  </div>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h3 className="text-sm font-medium text-gray-500 mb-1">{t('body_type')}</h3>
+                  <p className="text-lg font-semibold text-gray-900">{car.bodyType}</p>
                 </div>
               </div>
+            </div>
+            
+            {/* Car Tabs */}
+            <Tabs defaultValue="overview" className="w-full">
+              <TabsList className="w-full grid grid-cols-3 bg-gray-50 p-1 rounded-lg">
+                <TabsTrigger value="overview" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">{t('overview')}</TabsTrigger>
+                <TabsTrigger value="features" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">{t('features')}</TabsTrigger>
+                <TabsTrigger value="history" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">{t('vehicle_history')}</TabsTrigger>
+              </TabsList>
               
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Description</h3>
-                <p className="text-gray-700">{car.description}</p>
-              </div>
+              <TabsContent value="overview" className="mt-6 space-y-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl">
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                      <Calendar className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500">{t('year')}</div>
+                      <div className="font-medium">{car.year}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl">
+                    <Gauge className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <div className="text-xs text-gray-500">{t('mileage')}</div>
+                      <div className="font-medium">{car.mileage.toLocaleString()} {t('miles')}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl">
+                    <Fuel className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <div className="text-xs text-gray-500">{t('fuel_type')}</div>
+                      <div className="font-medium">{car.fuelType}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl">
+                    <Car className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <div className="text-xs text-gray-500">{t('body_type')}</div>
+                      <div className="font-medium">{car.bodyType}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl">
+                    <DollarSign className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <div className="text-xs text-gray-500">{t('price')}</div>
+                      <div className="font-medium">{car.price}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl">
+                    <Shield className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <div className="text-xs text-gray-500">{t('warranty')}</div>
+                      <div className="font-medium">{t('warranty_period', { months: 3 })}</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                  <h3 className="text-lg font-semibold mb-4">{t('description')}</h3>
+                  <p className="text-gray-700 leading-relaxed">{car.description}</p>
+                </div>
+              </TabsContent>
               
-              <div>
-                <h3 className="text-lg font-semibold mb-3">Specifications</h3>
-                <div className="grid grid-cols-2 gap-y-2">
-                  {carSpecs.map((spec, idx) => (
-                    <div key={idx} className="flex justify-between pr-4">
-                      <span className="text-gray-600">{spec.label}:</span>
-                      <span className="font-medium">{spec.value}</span>
+              <TabsContent value="features" className="mt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {car.features.map((feature: string, index: number) => (
+                    <div key={index} className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl">
+                      <Check className="h-5 w-5 text-green-500" />
+                      <span className="font-medium">{feature}</span>
                     </div>
                   ))}
                 </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="features" className="mt-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                {car.features.map((feature, idx) => (
-                  <div key={idx} className="flex items-center space-x-2 p-2">
-                    <Check className="h-5 w-5 text-green-500" />
-                    <span>{feature}</span>
-                  </div>
-                ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="history" className="mt-4 space-y-4">
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center space-x-3">
-                <Check className="h-6 w-6 text-green-600" />
-                <div>
-                  <h3 className="font-medium text-green-800">Clean Title</h3>
-                  <p className="text-sm text-green-700">This vehicle has a clean title history with no reported accidents.</p>
-                </div>
-              </div>
+              </TabsContent>
               
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Service History</h3>
-                <div className="space-y-3">
-                  <div className="border-l-2 border-blue-500 pl-4 pb-6 relative">
-                    <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[7px]"></div>
-                    <p className="text-sm text-gray-500">June 2023</p>
-                    <h4 className="font-medium">Regular Maintenance</h4>
-                    <p className="text-sm text-gray-600">Oil change, filters replaced, tire rotation</p>
+              <TabsContent value="history" className="mt-6 space-y-6">
+                <div className="bg-green-50 border border-green-200 rounded-xl p-6 flex items-center space-x-4">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <Check className="h-6 w-6 text-green-600" />
                   </div>
-                  <div className="border-l-2 border-blue-500 pl-4 pb-6 relative">
-                    <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[7px]"></div>
-                    <p className="text-sm text-gray-500">January 2023</p>
-                    <h4 className="font-medium">Winter Check-up</h4>
-                    <p className="text-sm text-gray-600">Battery test, brake inspection, fluid top-up</p>
-                  </div>
-                  <div className="border-l-2 border-blue-500 pl-4 relative">
-                    <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[7px]"></div>
-                    <p className="text-sm text-gray-500">August 2022</p>
-                    <h4 className="font-medium">Full Service</h4>
-                    <p className="text-sm text-gray-600">Comprehensive inspection, all fluids changed</p>
+                  <div>
+                    <h3 className="font-medium text-green-800">{t('clean_title')}</h3>
+                    <p className="text-sm text-green-700">{t('clean_title_description')}</p>
                   </div>
                 </div>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-        
-        {/* Right Column - Contact Information */}
-        <div className="space-y-6">
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-xl font-semibold mb-4">Contact Seller</h3>
-              <div className="space-y-4">
-                <Button onClick={handleContactSeller} className="w-full" size="lg">
-                  <MessageSquare className="mr-2 h-4 w-4" />
-                  Message Seller
-                </Button>
-                <div className="text-center text-gray-600">or call</div>
-                <Button variant="outline" className="w-full" size="lg">
-                  (555) 123-4567
-                </Button>
-                <Separator />
-                <div className="flex justify-between">
-                  <Button variant="outline" size="sm" onClick={handleSaveToFavorites}>
-                    <Heart className="mr-2 h-4 w-4" />
-                    Save
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    <Share2 className="mr-2 h-4 w-4" />
-                    Share
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-xl font-semibold mb-4">Financing Options</h3>
-              <div className="space-y-4">
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <div className="text-sm text-gray-600">Estimated Payment</div>
-                  <div className="text-2xl font-bold">$485/mo</div>
-                  <div className="text-xs text-gray-500">for 60 months @ 4.9% APR</div>
-                </div>
-                <Button className="w-full">
-                  Check Your Rate
-                </Button>
-                <p className="text-xs text-gray-500 text-center">
-                  This won't affect your credit score
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-3">Similar Vehicles</h3>
-              <div className="space-y-3">
-                {MOCK_CARS.filter(c => c.id !== car.id).slice(0, 3).map((similarCar) => (
-                  <Link key={similarCar.id} href={`/car-details/${similarCar.id}`}>
-                    <div className="flex space-x-3 group">
-                      <div className="w-20 h-16 overflow-hidden rounded">
-                        <img src={similarCar.image} alt={similarCar.title} className="w-full h-full object-cover" />
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-sm group-hover:text-blue-600 transition-colors">{similarCar.title}</h4>
-                        <p className="text-blue-600 text-sm font-semibold">${similarCar.price.toLocaleString()}</p>
-                      </div>
+                
+                <div className="space-y-6">
+                  <h3 className="text-lg font-semibold">{t('service_history')}</h3>
+                  <div className="space-y-4">
+                    <div className="border-l-2 border-blue-500 pl-6 pb-6 relative">
+                      <div className="absolute w-4 h-4 bg-blue-500 rounded-full -left-[9px] top-0"></div>
+                      <p className="text-sm text-gray-500">{t('june_2023')}</p>
+                      <h4 className="font-medium text-lg">{t('regular_maintenance')}</h4>
+                      <p className="text-sm text-gray-600">{t('maintenance_details')}</p>
                     </div>
-                  </Link>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                    <div className="border-l-2 border-blue-500 pl-6 pb-6 relative">
+                      <div className="absolute w-4 h-4 bg-blue-500 rounded-full -left-[9px] top-0"></div>
+                      <p className="text-sm text-gray-500">{t('january_2023')}</p>
+                      <h4 className="font-medium text-lg">{t('winter_checkup')}</h4>
+                      <p className="text-sm text-gray-600">{t('winter_checkup_details')}</p>
+                    </div>
+                    <div className="border-l-2 border-blue-500 pl-6 relative">
+                      <div className="absolute w-4 h-4 bg-blue-500 rounded-full -left-[9px] top-0"></div>
+                      <p className="text-sm text-gray-500">{t('august_2022')}</p>
+                      <h4 className="font-medium text-lg">{t('full_service')}</h4>
+                      <p className="text-sm text-gray-600">{t('full_service_details')}</p>
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+          
+          {/* Right Column - Contact Information */}
+          <div className="space-y-6">
+            <Card className="border-0 shadow-lg">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-semibold mb-6">{t('contact_seller')}</h3>
+                <div className="space-y-4">
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700" size="lg">
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    {t('contact_seller')}
+                  </Button>
+                  <div className="text-center text-gray-600">{t('or_call')}</div>
+                  <Button variant="outline" className="w-full" size="lg">
+                    (555) 123-4567
+                  </Button>
+                  <Separator />
+                  <div className="flex justify-between">
+                    <Button variant="outline" size="sm" onClick={() => add_to_favorites(car.id)}>
+                      <Heart className="mr-2 h-4 w-4" />
+                      {t('save')}
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      <Share2 className="mr-2 h-4 w-4" />
+                      {t('share')}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-0 shadow-lg">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-semibold mb-6">{t('financing_options')}</h3>
+                <div className="space-y-6">
+                  <div className="bg-gray-50 p-6 rounded-xl">
+                    <div className="text-sm text-gray-600 mb-1">{t('estimated_monthly_payment')}</div>
+                    <div className="text-3xl font-bold text-blue-600">₪{monthlyPayment.toLocaleString()}</div>
+                    <div className="text-sm text-gray-500 mt-2">{t('for_months', { months: loanTerm, rate: interestRate })}</div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div>
+                      <div className="flex justify-between mb-3">
+                        <label className="text-sm font-medium">{t('interest_rate')}</label>
+                        <span className="text-sm text-gray-600">{interestRate}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="2"
+                        max="12"
+                        step="0.1"
+                        value={interestRate}
+                        onChange={(e) => setInterestRate(parseFloat(e.target.value))}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                      />
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between mb-3">
+                        <label className="text-sm font-medium">{t('loan_term')}</label>
+                        <span className="text-sm text-gray-600">{loanTerm} {t('months')}</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="12"
+                        max="84"
+                        step="12"
+                        value={loanTerm}
+                        onChange={(e) => setLoanTerm(parseInt(e.target.value))}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                      />
+                    </div>
+                  </div>
+
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                    {t('check_your_rate')}
+                  </Button>
+                  <p className="text-xs text-gray-500 text-center">
+                    {t('no_credit_score_impact')}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-0 shadow-lg">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-semibold mb-6">{t('similar_vehicles')}</h3>
+                <div className="space-y-4">
+                  {listings.filter(c => c.id !== car.id).slice(0, 3).map((similarCar) => (
+                    <Link key={similarCar.id} href={`/car-details/${similarCar.id}`}>
+                      <div className="flex space-x-4 group p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div className="w-24 h-20 overflow-hidden rounded-lg">
+                          <Img
+                            external={true}
+                            width={96}
+                            height={80}
+                            src={similarCar.mainImage}
+                            alt={similarCar.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm group-hover:text-blue-600 transition-colors">{similarCar.title}</h4>
+                          <p className="text-blue-600 text-sm font-semibold mt-1">{similarCar.price}</p>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
       
       {/* Video Section */}
-      <div className="mt-16">
-        <h2 className="text-2xl font-bold mb-6">Watch Car Review Videos</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="aspect-video rounded-lg overflow-hidden shadow-md">
-            <iframe 
-              width="100%" 
-              height="100%" 
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
-              title="YouTube video" 
-              frameBorder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowFullScreen
-            ></iframe>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('car_reviews')}</h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            {t('watch_reviews_description')}
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Main Review Video */}
+          <div className="space-y-6">
+            <div className="aspect-video rounded-xl overflow-hidden shadow-lg bg-gray-900">
+              <iframe 
+                width="100%" 
+                height="100%" 
+                src="https://www.youtube.com/embed/vUR3kvg9PnI" 
+                title="Car Review Video" 
+                frameBorder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowFullScreen
+              ></iframe>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-lg">
+              <h3 className="text-xl font-semibold mb-4">{t('review_highlights')}</h3>
+              <div className="space-y-4">
+                <div className="flex items-start space-x-4">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <Check className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-900">{t('pros')}</h4>
+                    <ul className="mt-2 space-y-2 text-gray-600">
+                      <li>• {t('excellent_performance')}</li>
+                      <li>• {t('comfortable_interior')}</li>
+                      <li>• {t('advanced_tech')}</li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="p-2 bg-red-100 rounded-lg">
+                    <X className="h-5 w-5 text-red-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-900">{t('cons')}</h4>
+                    <ul className="mt-2 space-y-2 text-gray-600">
+                      <li>• {t('higher_price')}</li>
+                      <li>• {t('firm_ride')}</li>
+                      <li>• {t('limited_cargo')}</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="aspect-video rounded-lg overflow-hidden shadow-md">
-            <iframe 
-              width="100%" 
-              height="100%" 
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
-              title="YouTube video" 
-              frameBorder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowFullScreen
-            ></iframe>
-          </div>
-          <div className="aspect-video rounded-lg overflow-hidden shadow-md">
-            <iframe 
-              width="100%" 
-              height="100%" 
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
-              title="YouTube video" 
-              frameBorder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowFullScreen
-            ></iframe>
+
+          {/* Comparison Section */}
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl p-6 shadow-lg">
+              <h3 className="text-xl font-semibold mb-6">{t('compare_with_similar')}</h3>
+              <div className="space-y-4">
+                {listings.filter(c => c.id !== car.id).slice(0, 3).map((similarCar) => (
+                  <div key={similarCar.id} className="flex items-center space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="w-24 h-16 overflow-hidden rounded-lg">
+                      <Img
+                        external={true}
+                        width={96}
+                        height={64}
+                        src={similarCar.mainImage}
+                        alt={similarCar.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-sm">{similarCar.title}</h4>
+                      <div className="flex items-center space-x-4 mt-1">
+                        <span className="text-blue-600 text-sm font-semibold">{similarCar.price}</span>
+                        <span className="text-gray-500 text-sm">{similarCar.year}</span>
+                      </div>
+                    </div>
+                    <Button variant="ghost" size="sm" className="text-blue-600">
+                      {t('watch_review')}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Additional Reviews */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="aspect-video rounded-xl overflow-hidden shadow-lg">
+                <iframe 
+                  width="100%" 
+                  height="100%" 
+                  src="https://www.youtube.com/embed/V8UCaOHrwzU" 
+                  title="Car Review Video" 
+                  frameBorder="0" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                  allowFullScreen
+                ></iframe>
+              </div>
+              <div className="aspect-video rounded-xl overflow-hidden shadow-lg">
+                <iframe 
+                  width="100%" 
+                  height="100%" 
+                  src="https://www.youtube.com/embed/PqWmedWLU-Q" 
+                  title="Car Review Video" 
+                  frameBorder="0" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                  allowFullScreen
+                ></iframe>
+              </div>
+            </div>
           </div>
         </div>
       </div>
