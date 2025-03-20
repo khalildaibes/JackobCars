@@ -39,7 +39,7 @@ export default function Navbar() {
             </button>
           </Link>
           <Link href="/findcarbyplate" onClick={() => setIsMenuOpen(false)}>
-            <button className=" text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">
+            <button className="bg-royal-blue text-white px-4 py-2 rounded-full w-full md:w-auto shadow-lg md:shadow-xl">
               {t("find_by_plate")}
             </button>
           </Link>

@@ -141,7 +141,7 @@ export default function FeaturedListingsSection({
                                   viewport={{ once: true }}
                                 >
 
-                          <Link href={`/detailsvone?car=${listing.id}`}>
+                          <Link href={`/car-details/${listing.id}`}>
                             <div className={cn("px-[15px] cursor-pointer text-card-foreground shadow-sm overflow-hidden border-0 card-hover bg-white rounded-xl",
                                     'overflow-hidden border-0 card-hover bg-white rounded-xl w-full h-full object-cover transition-transform duration-500 hover:scale-105')}>
                               <div className="flex flex-col rounded-[16px] bg-white-a700  bg-no-repeat bg-cover">

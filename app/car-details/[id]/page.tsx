@@ -158,10 +158,12 @@ const CarDetails: React.FC = () => {
             fuel: normalizedFuelType,
             condition: product.details?.car.condition || "Used",
             transmission: product.details?.car.transmission || "Unknown",
-            details: product.details?.car.transmission || "Unknown",
+            details: product.details?.car || "Unknown",
             price: `$${product.price.toLocaleString()}`,
             mileage: product.details?.car.miles || "N/A",
             year: product.details.car.year,
+            pros: product.details.car.pros,
+            cons: product.details.car.cons,
             fuelType: normalizedFuelType,
             make: normalizedMake,
             bodyType: normalizedBodyType,
@@ -286,6 +288,7 @@ const CarDetails: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+
             
             {/* Vehicle Information */}
             <div className="bg-white rounded-xl shadow-sm p-8">
@@ -534,7 +537,76 @@ const CarDetails: React.FC = () => {
           </div>
         </div>
       </div>
-      
+                  
+            {/* Pros and Cons Section */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              <div className="bg-white rounded-xl p-6 shadow-lg">
+                <h3 className="text-xl font-semibold mb-6 text-center">{t('review_highlights')}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Pros */}
+                  <div className="flex flex-col items-center text-center">
+                    <div className="p-3 bg-green-100 rounded-full mb-4">
+                      <Check className="h-6 w-6 text-green-600" />
+                    </div>
+                    <h4 className="font-medium text-gray-900 text-lg mb-4">{t('pros')}</h4>
+                    <ul className="space-y-3 text-gray-600">
+                      {car.pros?.map((pro: string, index: number) => (
+                        <li key={index} className="flex items-center justify-center">
+                          <span className="mr-2">•</span>
+                          {pro}
+                        </li>
+                      )) || (
+                        <>
+                          <li className="flex items-center justify-center">
+                            <span className="mr-2">•</span>
+                            {t('excellent_performance')}
+                          </li>
+                          <li className="flex items-center justify-center">
+                            <span className="mr-2">•</span>
+                            {t('comfortable_interior')}
+                          </li>
+                          <li className="flex items-center justify-center">
+                            <span className="mr-2">•</span>
+                            {t('advanced_tech')}
+                          </li>
+                        </>
+                      )}
+                    </ul>
+                  </div>
+
+                  {/* Cons */}
+                  <div className="flex flex-col items-center text-center">
+                    <div className="p-3 bg-red-100 rounded-full mb-4">
+                      <X className="h-6 w-6 text-red-600" />
+                    </div>
+                    <h4 className="font-medium text-gray-900 text-lg mb-4">{t('cons')}</h4>
+                    <ul className="space-y-3 text-gray-600">
+                      {car.cons?.map((con: string, index: number) => (
+                        <li key={index} className="flex items-center justify-center">
+                          <span className="mr-2">•</span>
+                          {con}
+                        </li>
+                      )) || (
+                        <>
+                          <li className="flex items-center justify-center">
+                            <span className="mr-2">•</span>
+                            {t('higher_price')}
+                          </li>
+                          <li className="flex items-center justify-center">
+                            <span className="mr-2">•</span>
+                            {t('firm_ride')}
+                          </li>
+                          <li className="flex items-center justify-center">
+                            <span className="mr-2">•</span>
+                            {t('limited_cargo')}
+                          </li>
+                        </>
+                      )}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
       {/* Video Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
@@ -557,37 +629,6 @@ const CarDetails: React.FC = () => {
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                 allowFullScreen
               ></iframe>
-            </div>
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h3 className="text-xl font-semibold mb-4">{t('review_highlights')}</h3>
-              <div className="space-y-4">
-                <div className="flex items-start space-x-4">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <Check className="h-5 w-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-gray-900">{t('pros')}</h4>
-                    <ul className="mt-2 space-y-2 text-gray-600">
-                      <li>• {t('excellent_performance')}</li>
-                      <li>• {t('comfortable_interior')}</li>
-                      <li>• {t('advanced_tech')}</li>
-                    </ul>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-4">
-                  <div className="p-2 bg-red-100 rounded-lg">
-                    <X className="h-5 w-5 text-red-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-gray-900">{t('cons')}</h4>
-                    <ul className="mt-2 space-y-2 text-gray-600">
-                      <li>• {t('higher_price')}</li>
-                      <li>• {t('firm_ride')}</li>
-                      <li>• {t('limited_cargo')}</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 
