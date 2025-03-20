@@ -292,7 +292,8 @@
       "electric": "חשמלי",
       "hybrid": "היברידי",
       "plug_in_hybrid": "היברידי נטען"
-    }
+    },
+    "make_ai_recommendation": "קבל המלצת בינה מלאכותית"
   },
   "CarDetails": {
     "financing_options": "אפשרויות מימון",

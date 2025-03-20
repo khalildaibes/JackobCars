@@ -295,7 +295,8 @@
       "electric": "Electric",
       "hybrid": "Hybrid",
       "plug_in_hybrid": "Plug-in Hybrid"
-    }
+    },
+    "make_ai_recommendation": "Get AI Recommendation"
   },
   "CarDetails": {
     "financing_options": "Financing Options",

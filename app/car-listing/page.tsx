@@ -9,7 +9,7 @@ import { Slider } from "../../components/ui/slider";
 import { Card, CardContent } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-import { Check, Heart, MessageSquare, Plus, Car,Calendar, Gauge, Fuel } from "lucide-react";
+import { Check, Heart, MessageSquare, Plus, Car,Calendar, Gauge, Fuel, Sparkles } from "lucide-react";
 import { Badge } from "../../components/ui/badge";
 import { fetchStrapiData } from '../lib/strapiClient';
 import { Img } from '../../components/Img';
@@ -293,9 +293,15 @@ const CarListings: React.FC = () => {
           className="text-center mb-12"
         >
           <h1 className="text-4xl font-bold text-gray-900 mb-4">{t('find_perfect_car')}</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
             {t('browse_collection')}
           </p>
+          <Button 
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center mx-auto"
+          >
+            <Sparkles className="h-5 w-5 mr-2" />
+            {t('make_ai_recommendation')}
+          </Button>
         </motion.div>
         
         {/* Search and Filter Section */}

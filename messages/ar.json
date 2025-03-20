@@ -306,7 +306,8 @@
       "electric": "كهربائي",
       "hybrid": "هجين",
       "plug_in_hybrid": "هجين قابلة للشحن"
-    }
+    },
+    "make_ai_recommendation": "احصل على توصية الذكاء الاصطناعي"
   },
   "CarDetails": {
     "financing_options": "خيارات التمويل",
