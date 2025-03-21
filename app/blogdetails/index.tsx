@@ -19,11 +19,6 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader } from "../../components/ui/card";
 import { Skeleton } from "../../components/ui/skeleton";
 import { Share2, Calendar, User, ArrowLeft, ArrowRight, MessageCircle } from "lucide-react";
-import emailjs from '@emailjs/browser';
-import { toast } from "react-hot-toast";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/dialog";
-import { Input } from "../../components/ui/input";
-import { Textarea } from "../../components/ui/textarea";
 
 interface BlogDetailsData {
   breadcrumb: { text: string; link: string; isCurrentPage?: boolean }[];
@@ -80,15 +75,6 @@ export default function BlogDetailsPage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const t = useTranslations("BlogDetails");
   const locale = useLocale();
-  const [sendingEmail, setSendingEmail] = useState(false);
-  const [emailFormData, setEmailFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-  const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
-  const [post, setPost] = useState(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -142,60 +128,12 @@ export default function BlogDetailsPage() {
     }
   };
 
-  const handleEmailInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setEmailFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSendEmail = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSendingEmail(true);
-
-    try {
-      const templateParams = {
-        from_name: emailFormData.name,
-        from_email: emailFormData.email,
-        subject: emailFormData.subject,
-        message: emailFormData.message,
-        post_title: data?.pageTitle,
-      };
-
-      const response = await emailjs.send(
-        'YOUR_SERVICE_ID', // Replace with your EmailJS service ID
-        'YOUR_TEMPLATE_ID', // Replace with your EmailJS template ID
-        templateParams,
-        'YOUR_PUBLIC_KEY' // Replace with your EmailJS public key
-      );
-
-      if (response.status === 200) {
-        toast.success(t('emailSentSuccess'));
-        setIsEmailDialogOpen(false);
-        setEmailFormData({
-          name: '',
-          email: '',
-          subject: '',
-          message: ''
-        });
-      } else {
-        throw new Error('Failed to send email');
-      }
-    } catch (error) {
-      toast.error(t('emailSendError'));
-    } finally {
-      setSendingEmail(false);
-    }
-  };
-
   useEffect(() => {
     fetch("/api/blogdata")
       .then((res) => res.json())
       .then((json: Record<string, any>) => {
         setData(json[locale]);
         setLoading(false);
-        setPost(json[locale]);
       })
       .catch((err) => {
         console.error("Error fetching blog data:", err);
@@ -285,19 +223,10 @@ export default function BlogDetailsPage() {
               {t("postedOn")} {data.authorSection.date}
             </Text>
           </div>
-          <div className="flex gap-2 ml-auto">
-            <Button 
-              onClick={() => setIsEmailDialogOpen(true)}
-              className="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 shadow-sm"
-            >
-              <MessageCircle className="w-4 h-4" />
-              {t("contactAuthor")}
-            </Button>
-            <Button className="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 shadow-sm">
-              <Share2 className="w-4 h-4" />
-              {t("shareButton")}
-            </Button>
-          </div>
+          <Button className="ml-auto flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 shadow-sm">
+            <Share2 className="w-4 h-4" />
+            {t("shareButton")}
+          </Button>
         </motion.div>
 
         {/* 🖼 Blog Image */}
@@ -473,74 +402,6 @@ export default function BlogDetailsPage() {
             </CardContent>
           </Card>
         </motion.div>
-
-        {/* Email Dialog */}
-        <Dialog open={isEmailDialogOpen} onOpenChange={setIsEmailDialogOpen}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>{t("contactAuthor")}</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSendEmail} className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium text-gray-700">
-                  {t("name")}
-                </label>
-                <Input
-                  id="name"
-                  name="name"
-                  value={emailFormData.name}
-                  onChange={handleEmailInputChange}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium text-gray-700">
-                  {t("email")}
-                </label>
-                <Input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={emailFormData.email}
-                  onChange={handleEmailInputChange}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="subject" className="text-sm font-medium text-gray-700">
-                  {t("subject")}
-                </label>
-                <Input
-                  id="subject"
-                  name="subject"
-                  value={emailFormData.subject}
-                  onChange={handleEmailInputChange}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="message" className="text-sm font-medium text-gray-700">
-                  {t("message")}
-                </label>
-                <Textarea
-                  id="message"
-                  name="message"
-                  value={emailFormData.message}
-                  onChange={handleEmailInputChange}
-                  rows={4}
-                  required
-                />
-              </div>
-              <Button
-                type="submit"
-                disabled={sendingEmail}
-                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {sendingEmail ? t("sending") : t("send")}
-              </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
       </div>
 
       {/* 🔗 Related Posts */}

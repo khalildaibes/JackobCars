@@ -241,7 +241,7 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
 
       const response = await emailjs.send(
         'service_fiv09zs',
-        'template_gtronog',
+        'template_o7riedx',
         templateParams,
         'XNc8KcHCQwchLLHG5'
       );

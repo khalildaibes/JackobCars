@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import { 
   Search, MapPin, Star, Phone, Mail, Loader2, Store, 
-  SlidersHorizontal, X, ChevronDown, Clock 
+  SlidersHorizontal, X, ChevronDown, Clock, Heart, Share2, Navigation 
 } from "lucide-react";
 import { Img } from "../../components/Img";
 
@@ -24,6 +24,7 @@ interface Store {
   };
   featured: boolean;
 }
+
 
 interface Filters {
   featured: boolean;
@@ -48,6 +49,14 @@ export default function StoresPage() {
     specialty: "",
     sortBy: "",
     openingHours: "all"
+  });
+
+  // Add scroll progress indicator
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
   });
 
   const fetchStores = async () => {
@@ -222,6 +231,13 @@ export default function StoresPage() {
   );
 
   return (
+    <>
+      {/* Scroll Progress Indicator */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 bg-emerald-500 origin-left z-50"
+        style={{ scaleX }}
+      />
+
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-blue-50 pt-24">
         <div className="container mx-auto px-4">
           {/* Header Section */}
@@ -230,170 +246,242 @@ export default function StoresPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
           >
-            <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-green-600 mb-4">
+            <motion.h1 
+              className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 via-teal-500 to-green-600"
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
               {t("title")}
-            </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+            </motion.h1>
+            <motion.p 
+              className="text-gray-600 max-w-2xl mx-auto text-lg"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
               {t("subtitle")}
-            </p>
+            </motion.p>
           </motion.div>
 
-          <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex flex-col lg:flex-row gap-8">
             {/* Filters Section */}
-            <div className="lg:w-1/4">
+            <motion.div 
+              className="lg:w-1/4"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+            >
               {/* Mobile Filter Toggle */}
               <div className="lg:hidden mb-4">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => setShowFilters(!showFilters)}
-                  className="w-full flex items-center justify-between px-4 py-3 bg-white rounded-xl shadow-sm"
+                  className="w-full flex items-center justify-between px-6 py-4 bg-white/90 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
                 >
-                  <div className="flex items-center gap-2">
-                    <SlidersHorizontal size={20} />
-                    <span>{t("filters.title")}</span>
+                  <div className="flex items-center gap-3">
+                    <SlidersHorizontal className="text-emerald-600" size={20} />
+                    <span className="font-medium">{t("filters.title")}</span>
                   </div>
                   <ChevronDown
                     size={20}
-                    className={`transform transition-transform ${showFilters ? 'rotate-180' : ''}`}
+                    className={`transform transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`}
                   />
-                </button>
+                </motion.button>
               </div>
 
               {/* Filter Panel */}
               <AnimatePresence>
                 {(showFilters || window.innerWidth >= 1024) && <FilterPanel />}
               </AnimatePresence>
-            </div>
+            </motion.div>
 
             {/* Main Content */}
             <div className="lg:w-3/4">
               {/* Search Bar */}
-              <div className="mb-6">
+              <motion.div 
+                className="mb-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
                 <div className="relative">
                   <input
                     type="text"
                     placeholder={t("search_placeholder")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-6 py-4 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-200 
+                    className="w-full px-6 py-4 rounded-xl bg-white/90 backdrop-blur-sm border border-gray-200 
                     pr-12 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent
-                    shadow-sm"
+                    shadow-sm hover:shadow-md transition-all duration-300 text-lg"
                   />
-                  <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-emerald-600" />
                 </div>
-              </div>
+              </motion.div>
 
               {/* Stores Grid */}
               {loading ? (
-                <div className="flex items-center justify-center h-64">
+                <motion.div 
+                  className="flex items-center justify-center h-64"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                   >
-                    <Loader2 size={40} className="text-emerald-600" />
+                    <Loader2 size={48} className="text-emerald-600" />
                   </motion.div>
-                </div>
+                </motion.div>
               ) : error ? (
-                <div className="text-center py-12">
-                  <Store size={48} className="mx-auto text-gray-400 mb-4" />
-                  <p className="text-gray-600 mb-4">{error}</p>
-                  <button
+                <motion.div 
+                  className="text-center py-16 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                >
+                  <Store size={64} className="mx-auto text-gray-400 mb-6" />
+                  <p className="text-gray-600 mb-6 text-lg">{error}</p>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={fetchStores}
-                    className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 
-                    transition-colors"
+                    className="px-8 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 
+                    transition-colors shadow-md hover:shadow-lg font-medium"
                   >
                     {t("try_again")}
-                  </button>
-                </div>
+                  </motion.button>
+                </motion.div>
               ) : stores.length === 0 ? (
-                <div className="text-center py-12">
-                  <Store size={48} className="mx-auto text-gray-400 mb-4" />
-                  <p className="text-gray-600">{t("no_results")}</p>
-                </div>
+                <motion.div 
+                  className="text-center py-16 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                >
+                  <Store size={64} className="mx-auto text-gray-400 mb-6" />
+                  <p className="text-gray-600 text-lg">{t("no_results")}</p>
+                </motion.div>
               ) : (
                 <motion.div
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
-                  className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                  className="grid grid-cols-1 md:grid-cols-2 gap-8"
                 >
                   {stores.map((store) => (
                     <motion.div
                       key={store.id}
                       variants={itemVariants}
-                      className="bg-white/80 backdrop-blur-sm rounded-xl overflow-hidden shadow-lg 
-                      hover:shadow-xl transition-all duration-300 group"
+                      className="bg-white/90 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg 
+                      hover:shadow-xl transition-all duration-500 group"
                     >
-                      <div className="relative h-48">
+                      <div className="relative h-56">
                         <Img
                           src={store.image}
                           alt={store.name}
                           external={true}
-                          width={328}
-                          height={218}
-                          className="h-full w-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                          width={400}
+                          height={300}
+                          className="h-full w-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                         />
                         {store.featured && (
-                          <div className="absolute top-4 right-4 bg-emerald-500 text-white px-3 py-1 
+                          <div className="absolute top-4 right-4 bg-emerald-500/90 backdrop-blur-sm text-white px-4 py-2 
                           rounded-full text-sm font-medium shadow-lg">
                             {t("featured_stores")}
                           </div>
                         )}
+                        <div className="absolute top-4 left-4 flex gap-2">
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-colors"
+                          >
+                            <Heart className="h-5 w-5 text-gray-700" />
+                          </motion.button>
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-colors"
+                          >
+                            <Share2 className="h-5 w-5 text-gray-700" />
+                          </motion.button>
+                        </div>
                       </div>
-                      <div className="p-6">
-                        <h3 className="text-xl font-semibold text-gray-800 mb-2">{store.name}</h3>
+                      <div className="p-8">
+                        <h3 className="text-2xl font-bold text-gray-800 mb-3 group-hover:text-emerald-600 transition-colors">
+                          {store.name}
+                        </h3>
                         <div className="flex items-center mb-4">
-                          <div className="flex items-center">
+                          <div className="flex items-center bg-yellow-50 px-3 py-1 rounded-full">
                             <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                            <span className="ml-2 text-gray-700">{store.rating}</span>
+                            <span className="ml-2 font-medium text-gray-700">{store.rating}</span>
                           </div>
                           <span className="mx-2 text-gray-400">•</span>
                           <span className="text-gray-600">{store.reviewCount} {t("reviews")}</span>
                         </div>
-                        <div className="flex items-start space-x-2 text-gray-600 mb-4">
-                          <MapPin className="h-5 w-5 mt-1 flex-shrink-0" />
+                        <div className="flex items-start space-x-3 text-gray-600 mb-4">
+                          <MapPin className="h-5 w-5 mt-1 flex-shrink-0 text-emerald-600" />
                           <span>{store.location}</span>
                         </div>
-                        <div className="flex items-center space-x-2 text-gray-600 mb-4">
-                          <Clock className="h-5 w-5 flex-shrink-0" />
+                        <div className="flex items-center space-x-3 text-gray-600 mb-4">
+                          <Clock className="h-5 w-5 flex-shrink-0 text-emerald-600" />
                           <span>{store.openingHours}</span>
                         </div>
-                        <div className="mb-4">
-                          <h4 className="font-medium text-gray-700 mb-2">{t("specialties")}</h4>
+                        <div className="mb-6">
+                          <h4 className="font-medium text-gray-700 mb-3">{t("specialties")}</h4>
                           <div className="flex flex-wrap gap-2">
                             {store.specialties.map((specialty, index) => (
                               <span
                                 key={index}
-                                className="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-sm font-medium"
+                                className="px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-sm font-medium
+                                hover:bg-emerald-100 transition-colors cursor-default"
                               >
                                 {specialty}
                               </span>
                             ))}
                           </div>
                         </div>
-                        <div className="border-t border-gray-100 pt-4">
+                        <div className="border-t border-gray-100 pt-6">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-4">
-                              <a
+                              <motion.a
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
                                 href={`tel:${store.contact.phone}`}
-                                className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-full transition-colors"
+                                className="p-3 text-emerald-600 hover:bg-emerald-50 rounded-full transition-colors"
                                 title={t("phone")}
                               >
                                 <Phone size={20} />
-                              </a>
-                              <a
+                              </motion.a>
+                              <motion.a
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
                                 href={`mailto:${store.contact.email}`}
-                                className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-full transition-colors"
+                                className="p-3 text-emerald-600 hover:bg-emerald-50 rounded-full transition-colors"
                                 title={t("email")}
                               >
                                 <Mail size={20} />
-                              </a>
+                              </motion.a>
                             </div>
-                            <button
-                              className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 
-                              transition-colors text-sm font-medium flex items-center gap-2 group-hover:shadow-lg"
-                            >
-                              {t("view_details")}
-                            </button>
+                            <div className="flex gap-3">
+                              <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl hover:bg-emerald-100 
+                                transition-colors text-sm font-medium flex items-center gap-2"
+                              >
+                                <Navigation size={16} />
+                                {t("get_directions")}
+                              </motion.button>
+                              <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 
+                                transition-colors text-sm font-medium flex items-center gap-2 shadow-md hover:shadow-lg"
+                              >
+                                {t("view_details")}
+                              </motion.button>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -405,5 +493,6 @@ export default function StoresPage() {
           </div>
         </div>
       </div>
+    </>
   );
 } 
