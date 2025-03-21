@@ -607,5 +607,53 @@
     "loading_spinner": "جاري التحميل...",
     "filter_toggle": "تبديل عوامل التصفية",
     "view_mode_toggle": "تبديل وضع العرض"
+  },
+  "Stores": {
+    "title": "متاجر قطع غيار السيارات",
+    "subtitle": "ابحث عن أفضل متاجر قطع غيار السيارات ومراكز الخدمة بالقرب منك",
+    "search_placeholder": "ابحث باسم المتجر، التخصص، أو الموقع...",
+    "featured_stores": "المتاجر المميزة",
+    "all_stores": "جميع المتاجر",
+    "filter_featured": "عرض المميزة فقط",
+    "rating": "التقييم",
+    "reviews": "التقييمات",
+    "specialties": "التخصصات",
+    "opening_hours": "ساعات العمل",
+    "contact": "اتصل",
+    "phone": "الهاتف",
+    "email": "البريد الإلكتروني",
+    "view_details": "عرض التفاصيل",
+    "get_directions": "احصل على الاتجاهات",
+    "loading": "جاري التحميل...",
+    "error": "خطأ في تحميل المتاجر",
+    "no_results": "لم يتم العثور على متاجر",
+    "try_again": "حاول مرة أخرى",
+    "contact_store": "اتصل بالمتجر",
+    "filters": {
+      "title": "التصفية",
+      "clear_all": "مسح الكل",
+      "apply": "تطبيق التصفية",
+      "rating_min": "الحد الأدنى للتقييم",
+      "location": "الموقع",
+      "any_location": "أي موقع",
+      "specialty": "التخصص",
+      "any_specialty": "أي تخصص",
+      "sort_by": "ترتيب حسب",
+      "sort_options": {
+        "rating_high": "الأعلى تقييماً",
+        "rating_low": "الأقل تقييماً",
+        "reviews_high": "الأكثر تقييمات",
+        "reviews_low": "الأقل تقييمات",
+        "name_asc": "الاسم (أ-ي)",
+        "name_desc": "الاسم (ي-أ)"
+      },
+      "hours": "ساعات العمل",
+      "hours_options": {
+        "all": "كل الساعات",
+        "open_now": "مفتوح الآن",
+        "open_weekends": "مفتوح في عطلة نهاية الأسبوع",
+        "open_24h": "مفتوح 24/7"
+      }
+    }
   }
 }

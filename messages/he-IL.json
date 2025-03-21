@@ -593,5 +593,53 @@
     "loading_spinner": "טוען...",
     "filter_toggle": "החלף סינון",
     "view_mode_toggle": "החלף מצב תצוגה"
+  },
+  "Stores": {
+    "title": "חנויות חלקי רכב",
+    "subtitle": "מצא את חנויות חלקי הרכב ומרכזי השירות הטובים ביותר בקרבתך",
+    "search_placeholder": "חפש לפי שם חנות, התמחות או מיקום...",
+    "featured_stores": "חנויות מומלצות",
+    "all_stores": "כל החנויות",
+    "filter_featured": "הצג מומלצות בלבד",
+    "rating": "דירוג",
+    "reviews": "ביקורות",
+    "specialties": "התמחויות",
+    "opening_hours": "שעות פתיחה",
+    "contact": "צור קשר",
+    "phone": "טלפון",
+    "email": "דוא״ל",
+    "view_details": "הצג פרטים",
+    "get_directions": "קבל הוראות הגעה",
+    "loading": "טוען חנויות...",
+    "error": "שגיאה בטעינת החנויות",
+    "no_results": "לא נמצאו חנויות",
+    "try_again": "נסה שוב",
+    "contact_store": "צור קשר עם החנות",
+    "filters": {
+      "title": "סינון",
+      "clear_all": "נקה הכל",
+      "apply": "החל סינון",
+      "rating_min": "דירוג מינימלי",
+      "location": "מיקום",
+      "any_location": "כל המיקומים",
+      "specialty": "התמחות",
+      "any_specialty": "כל ההתמחויות",
+      "sort_by": "מיין לפי",
+      "sort_options": {
+        "rating_high": "דירוג גבוה ביותר",
+        "rating_low": "דירוג נמוך ביותר",
+        "reviews_high": "הכי הרבה ביקורות",
+        "reviews_low": "הכי מעט ביקורות",
+        "name_asc": "שם (א-ת)",
+        "name_desc": "שם (ת-א)"
+      },
+      "hours": "שעות פתיחה",
+      "hours_options": {
+        "all": "כל השעות",
+        "open_now": "פתוח עכשיו",
+        "open_weekends": "פתוח בסופי שבוע",
+        "open_24h": "פתוח 24/7"
+      }
+    }
   }
 }

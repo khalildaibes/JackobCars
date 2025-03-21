@@ -626,6 +626,32 @@
     "error": "Error loading stores",
     "no_results": "No stores found",
     "try_again": "Try Again",
-    "contact_store": "Contact Store"
+    "contact_store": "Contact Store",
+    "filters": {
+      "title": "Filters",
+      "clear_all": "Clear All",
+      "apply": "Apply Filters",
+      "rating_min": "Minimum Rating",
+      "location": "Location",
+      "any_location": "Any Location",
+      "specialty": "Specialty",
+      "any_specialty": "Any Specialty",
+      "sort_by": "Sort By",
+      "sort_options": {
+        "rating_high": "Highest Rated",
+        "rating_low": "Lowest Rated",
+        "reviews_high": "Most Reviews",
+        "reviews_low": "Least Reviews",
+        "name_asc": "Name (A-Z)",
+        "name_desc": "Name (Z-A)"
+      },
+      "hours": "Opening Hours",
+      "hours_options": {
+        "all": "All Hours",
+        "open_now": "Open Now",
+        "open_weekends": "Open Weekends",
+        "open_24h": "Open 24/7"
+      }
+    }
   }
 }
