@@ -239,12 +239,13 @@
     "explore_car_specs": "أدخل رقم اللوحة لاستكشاف مواصفات السيارة التفصيلية"
   },
   "Navbar": {
-    "logo_alt": "شعار جاكوب كار",
+    "logo_alt": "شعار AtSpeedLimit",
     "cars_market": "سوق السيارات",
-    "find_by_plate": "ابحث برقم اللوحة",
+    "find_by_plate": "البحث برقم اللوحة",
     "news": "الأخبار",
-    "after_market": "قطع غيار السيارات",
-    "compare_cars": "مقارنة السيارات"
+    "after_market": "سوق الإكسسوارات",
+    "compare_cars": "مقارنة السيارات",
+    "stores": "المتاجر"
   },
   "SalesAndReviews": {
     "cars_for_sale": "السيارات المعروضة للبيع",
@@ -521,5 +522,90 @@
     "share_error": "خطأ في مشاركة المقارنة",
     "share_title": "مقارنة السيارات",
     "share_text": "تحقق من مقارنة السيارات هذه!"
+  },
+  "Footer": {
+    "company": "الشركة",
+    "resources": "الموارد",
+    "socials": "التواصل الاجتماعي",
+    "how_it_works": "كيف يعمل",
+    "featured": "مميز",
+    "partnership": "شراكة",
+    "business_relations": "علاقات تجارية",
+    "events": "الفعاليات",
+    "blog": "المدونة",
+    "podcast": "البودكاست",
+    "invite_friend": "دعوة صديق",
+    "discord": "ديسكورد",
+    "instagram": "انستغرام",
+    "twitter": "تويتر",
+    "facebook": "فيسبوك",
+    "all_rights_reserved": "جميع الحقوق محفوظة",
+    "privacy_policy": "سياسة الخصوصية",
+    "terms_of_use": "شروط الاستخدام"
+  },
+  "Pages": {
+    "how_it_works": {
+      "title": "كيف يعمل",
+      "description": "تعرف على كيفية عمل منصتنا"
+    },
+    "featured": {
+      "title": "السيارات المميزة",
+      "description": "اكتشف سياراتنا المميزة"
+    },
+    "partnership": {
+      "title": "الشراكة",
+      "description": "كن شريكاً معنا"
+    },
+    "business_relations": {
+      "title": "العلاقات التجارية",
+      "description": "بناء علاقات تجارية"
+    },
+    "events": {
+      "title": "الفعاليات",
+      "description": "الفعاليات القادمة والسابقة"
+    },
+    "blog": {
+      "title": "المدونة",
+      "description": "آخر الأخبار والتحديثات"
+    },
+    "podcast": {
+      "title": "البودكاست",
+      "description": "استمع إلى بودكاست السيارات"
+    },
+    "invite": {
+      "title": "دعوة صديق",
+      "description": "شارك مع أصدقائك"
+    }
+  },
+  "Products": {
+    "after_market_listings": "قائمة ما بعد السوق",
+    "listings_description": "تصفح مجموعتنا الواسعة من قطع غيار وإكسسوارات ما بعد السوق",
+    "filters": "التصفية",
+    "categories": "الفئات",
+    "sort_by": "ترتيب حسب",
+    "sort_placeholder": "ترتيب المنتجات",
+    "sort_latest": "ترتيب حسب الأحدث",
+    "sort_price_low": "ترتيب حسب السعر: من الأقل إلى الأعلى",
+    "sort_price_high": "ترتيب حسب السعر: من الأعلى إلى الأقل",
+    "showing_results": "عرض {count} نتيجة",
+    "loading_cars": "جاري تحميل المنتجات...",
+    "unknown_category": "فئة غير معروفة",
+    "unknown_car": "منتج غير معروف",
+    "unknown_fuel": "غير متوفر",
+    "unknown_transmission": "غير متوفر",
+    "fetch_error": "فشل في جلب المنتجات",
+    "invalid_response": "هيكل استجابة API غير صالح",
+    "grid_view": "عرض الشبكة",
+    "list_view": "عرض القائمة",
+    "try_again": "حاول مرة أخرى",
+    "no_results": "لم يتم العثور على منتجات",
+    "no_results_description": "حاول تعديل عوامل التصفية أو مصطلحات البحث",
+    "price": "السعر",
+    "fuel_type": "نوع الوقود",
+    "transmission": "ناقل الحركة",
+    "view_details": "عرض التفاصيل",
+    "loading_spinner": "جاري التحميل...",
+    "filter_toggle": "تبديل عوامل التصفية",
+    "view_mode_toggle": "تبديل وضع العرض"
   }
 }

@@ -166,7 +166,8 @@
     "find_by_plate": "Find by Plate Number",
     "news": "News",
     "after_market": "After Market",
-    "compare_cars": "Compare Cars"
+    "compare_cars": "Compare Cars",
+    "stores": "Stores"
   },
   "SalesAndReviews": {
     "cars_for_sale": "CARS FOR SALE",
@@ -519,5 +520,112 @@
     "car_added_to_comparison": "Car added to comparison",
     "car_removed_from_comparison": "Car removed from comparison",
     "comparison_cleared": "Comparison cleared"
+  },
+  "Footer": {
+    "company": "Company",
+    "resources": "Resources",
+    "socials": "Socials",
+    "how_it_works": "How it works",
+    "featured": "Featured",
+    "partnership": "Partnership",
+    "business_relations": "Business Relations",
+    "events": "Events",
+    "blog": "Blog",
+    "podcast": "Podcast",
+    "invite_friend": "Invite a friend",
+    "discord": "Discord",
+    "instagram": "Instagram",
+    "twitter": "Twitter",
+    "facebook": "Facebook",
+    "all_rights_reserved": "All rights reserved",
+    "privacy_policy": "Privacy Policy",
+    "terms_of_use": "Terms of Use"
+  },
+  "Pages": {
+    "how_it_works": {
+      "title": "How It Works",
+      "description": "Learn how our platform works"
+    },
+    "featured": {
+      "title": "Featured Cars",
+      "description": "Discover our featured vehicles"
+    },
+    "partnership": {
+      "title": "Partnership",
+      "description": "Partner with us"
+    },
+    "business_relations": {
+      "title": "Business Relations",
+      "description": "Build business relationships"
+    },
+    "events": {
+      "title": "Events",
+      "description": "Upcoming and past events"
+    },
+    "blog": {
+      "title": "Blog",
+      "description": "Latest news and updates"
+    },
+    "podcast": {
+      "title": "Podcast",
+      "description": "Listen to our automotive podcast"
+    },
+    "invite": {
+      "title": "Invite a Friend",
+      "description": "Share with your friends"
+    }
+  },
+  "Products": {
+    "after_market_listings": "After Market Listings",
+    "listings_description": "Browse our extensive collection of after-market parts and accessories",
+    "filters": "Filters",
+    "categories": "Categories",
+    "sort_by": "Sort By",
+    "sort_placeholder": "Sort Products",
+    "sort_latest": "Sort by Latest",
+    "sort_price_low": "Sort by Price: Low to High",
+    "sort_price_high": "Sort by Price: High to Low",
+    "showing_results": "Showing {count} results",
+    "loading_cars": "Loading products...",
+    "unknown_category": "Unknown Category",
+    "unknown_car": "Unknown Product",
+    "unknown_fuel": "N/A",
+    "unknown_transmission": "N/A",
+    "fetch_error": "Failed to fetch products",
+    "invalid_response": "Invalid API response structure",
+    "grid_view": "Grid View",
+    "list_view": "List View",
+    "try_again": "Try Again",
+    "no_results": "No products found",
+    "no_results_description": "Try adjusting your filters or search terms",
+    "price": "Price",
+    "fuel_type": "Fuel Type",
+    "transmission": "Transmission",
+    "view_details": "View Details",
+    "loading_spinner": "Loading...",
+    "filter_toggle": "Toggle Filters",
+    "view_mode_toggle": "Toggle View Mode"
+  },
+  "Stores": {
+    "title": "Auto Parts Stores",
+    "subtitle": "Find the best auto parts stores and service centers near you",
+    "search_placeholder": "Search by store name, specialty, or location...",
+    "featured_stores": "Featured Stores",
+    "all_stores": "All Stores",
+    "filter_featured": "Show Featured Only",
+    "rating": "Rating",
+    "reviews": "Reviews",
+    "specialties": "Specialties",
+    "opening_hours": "Opening Hours",
+    "contact": "Contact",
+    "phone": "Phone",
+    "email": "Email",
+    "view_details": "View Details",
+    "get_directions": "Get Directions",
+    "loading": "Loading stores...",
+    "error": "Error loading stores",
+    "no_results": "No stores found",
+    "try_again": "Try Again",
+    "contact_store": "Contact Store"
   }
 }

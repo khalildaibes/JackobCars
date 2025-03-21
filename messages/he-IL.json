@@ -180,12 +180,13 @@
     "loading": "טוען נתונים..."
   },
   "Navbar": {
-    "logo_alt": "לוגו של ג'ייקובקאר",
+    "logo_alt": "לוגו AtSpeedLimit",
     "cars_market": "שוק הרכבים",
-    "find_by_plate": "מצא לפי מספר לוחית",
+    "find_by_plate": "חיפוש לפי מספר רישוי",
     "news": "חדשות",
-    "after_market": "אביזרי רכב",
-    "compare_cars": "השוואת רכבים"
+    "after_market": "שוק האביזרים",
+    "compare_cars": "השוואת רכבים",
+    "stores": "חנויות"
   },
   "BlogDetailsPage": {
     "breadcrumb": {
@@ -507,5 +508,90 @@
     "share_error": "שגיאה בשיתוף ההשוואה",
     "share_title": "השוואת רכבים",
     "share_text": "בדוק את השוואת הרכבים הזו!"
+  },
+  "Footer": {
+    "company": "חברה",
+    "resources": "משאבים",
+    "socials": "רשתות חברתיות",
+    "how_it_works": "איך זה עובד",
+    "featured": "מומלצים",
+    "partnership": "שותפות",
+    "business_relations": "קשרים עסקיים",
+    "events": "אירועים",
+    "blog": "בלוג",
+    "podcast": "פודקאסט",
+    "invite_friend": "הזמן חבר",
+    "discord": "דיסקורד",
+    "instagram": "אינסטגרם",
+    "twitter": "טוויטר",
+    "facebook": "פייסבוק",
+    "all_rights_reserved": "כל הזכויות שמורות",
+    "privacy_policy": "מדיניות פרטיות",
+    "terms_of_use": "תנאי שימוש"
+  },
+  "Pages": {
+    "how_it_works": {
+      "title": "איך זה עובד",
+      "description": "למד איך הפלטפורמה שלנו עובדת"
+    },
+    "featured": {
+      "title": "רכבים מומלצים",
+      "description": "גלה את הרכבים המומלצים שלנו"
+    },
+    "partnership": {
+      "title": "שותפות",
+      "description": "הצטרף כשותף"
+    },
+    "business_relations": {
+      "title": "קשרים עסקיים",
+      "description": "בנה קשרים עסקיים"
+    },
+    "events": {
+      "title": "אירועים",
+      "description": "אירועים קרובים ועבר"
+    },
+    "blog": {
+      "title": "בלוג",
+      "description": "חדשות ועדכונים אחרונים"
+    },
+    "podcast": {
+      "title": "פודקאסט",
+      "description": "האזן לפודקאסט הרכב שלנו"
+    },
+    "invite": {
+      "title": "הזמן חבר",
+      "description": "שתף עם חברים"
+    }
+  },
+  "Products": {
+    "after_market_listings": "רשימת שוק משני",
+    "listings_description": "עיין באוסף הנרחב שלנו של חלקי חילוף ואביזרים לשוק המשני",
+    "filters": "סינון",
+    "categories": "קטגוריות",
+    "sort_by": "מיין לפי",
+    "sort_placeholder": "מיין מוצרים",
+    "sort_latest": "מיין לפי החדש ביותר",
+    "sort_price_low": "מיין לפי מחיר: מהנמוך לגבוה",
+    "sort_price_high": "מיין לפי מחיר: מהגבוה לנמוך",
+    "showing_results": "מציג {count} תוצאות",
+    "loading_cars": "טוען מוצרים...",
+    "unknown_category": "קטגוריה לא ידועה",
+    "unknown_car": "מוצר לא ידוע",
+    "unknown_fuel": "לא זמין",
+    "unknown_transmission": "לא זמין",
+    "fetch_error": "נכשל בהבאת מוצרים",
+    "invalid_response": "מבנה תגובת API לא תקין",
+    "grid_view": "תצוגת רשת",
+    "list_view": "תצוגת רשימה",
+    "try_again": "נסה שוב",
+    "no_results": "לא נמצאו מוצרים",
+    "no_results_description": "נסה לשנות את הסינון או מונחי החיפוש",
+    "price": "מחיר",
+    "fuel_type": "סוג דלק",
+    "transmission": "תיבת הילוכים",
+    "view_details": "הצג פרטים",
+    "loading_spinner": "טוען...",
+    "filter_toggle": "החלף סינון",
+    "view_mode_toggle": "החלף מצב תצוגה"
   }
 }
