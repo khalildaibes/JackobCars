@@ -5,19 +5,19 @@ import { Text } from "../Text";
 
 interface Props {
   className?: string;
-  test1150x150jpg?: string;
+  adminImage: string;
   admin?: React.ReactNode;
-  november222023?: React.ReactNode;
+  date?: string;
   reply?: React.ReactNode;
-  loremIpsumDolor?: React.ReactNode;
+  comment: string;
 }
 
 export default function BlogDetailsItem({
-  test1150x150jpg = "img_test1_150x150_jpg_40x40.png",
+  adminImage,
   admin = "admin",
-  november222023 = "November 22, 2023",
+  date = "November 22, 2023",
   reply = "Reply",
-  loremIpsumDolor = "&lt;&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim&lt;br /&gt;ad minim veniam.&lt;/&gt;",
+  comment,
   ...props
 }: Props) {
   return (
@@ -28,10 +28,10 @@ export default function BlogDetailsItem({
       <div className="flex items-center justify-between gap-5 self-stretch">
         <div className="flex flex-1 items-center">
           <Img
-            src={test1150x150jpg}
+            src={adminImage}
             width={40}
             height={40}
-            alt="Test1 150x150 Jpg"
+            alt="Admin Avatar"
             className="h-[40px] rounded-[20px] object-cover"
           />
           <div className="flex py-1">
@@ -39,8 +39,8 @@ export default function BlogDetailsItem({
               {admin}
             </Heading>
           </div>
-          <Text  as="p" className="ml-3 text-[14px] font-normal">
-            {november222023}
+          <Text as="p" className="ml-3 text-[14px] font-normal">
+            {date}
           </Text>
         </div>
         <div className="flex">
@@ -50,7 +50,7 @@ export default function BlogDetailsItem({
         </div>
       </div>
       <Text as="p" className="text-[15px] font-normal leading-[27px]">
-        {loremIpsumDolor}
+        {comment}
       </Text>
     </div>
   );

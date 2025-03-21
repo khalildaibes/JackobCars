@@ -168,7 +168,9 @@
     "rank": "דירוג",
     "enter_plate_number": "הכנס מספר רכב",
     "search_car": "חפש רכב",
-    "loading_data": "טוען נתונים..."
+    "loading_data": "טוען נתונים...",
+    "find_car_plate_heading": "חיפוש רכב לפי מספר לוחית",
+    "explore_car_specs": "הזן מספר לוחית כדי לצפות במפרט מפורט של הרכב"
   },
   "SalesAndReviews": {
     "cars_for_sale": "מכוניות למכירה",
@@ -293,7 +295,14 @@
       "hybrid": "היברידי",
       "plug_in_hybrid": "היברידי נטען"
     },
-    "make_ai_recommendation": "קבל המלצת בינה מלאכותית"
+    "make_ai_recommendation": "קבל המלצת בינה מלאכותית",
+    "add_to_comparison": "הוסף להשוואה",
+    "remove_from_comparison": "הסר",
+    "cars_selected": "רכבים נבחרו",
+    "compare_cars": "השווה עכשיו",
+    "max_comparison_limit": "ניתן להשוות עד 3 רכבים",
+    "added_to_comparison": "נוסף להשוואה",
+    "removed_from_comparison": "הוסר מההשוואה"
   },
   "CarDetails": {
     "financing_options": "אפשרויות מימון",
@@ -334,5 +343,169 @@
     "cons": "חסרונות",
     "pros": "יתרונות",
     "error": "שגיאה בטעינת פרטי הרכב. אנא נסה שוב מאוחר יותר."
+  },
+  "CarRecommendations": {
+    "title": "מצא את הרכב המושלם שלך",
+    "subtitle": "ענה על מספר שאלות ונמליץ על רכבים שתואמים את הצרכים וההעדפות שלך.",
+    "question_progress": "שאלה {current} מתוך {total}",
+    "complete": "{percentage}% הושלם",
+    "back": "חזור",
+    "next": "הבא",
+    "get_recommendations": "קבל המלצות",
+    "start_over": "התחל מחדש",
+    "top_matches": "הרכבים המתאימים ביותר עבורך",
+    "matches_description": "תבסס על התשובות שלך, מצאנו את הרכבים האלה שתואמים בצורה הטובה ביותר להעדפות שלך.",
+    "match_percentage": "התאמה של {percentage}%",
+    "based_on_preferences": "תבסס על ההעדפות שלך",
+    "pros": "יתרונות",
+    "cons": "חסרונות",
+    "view_similar": "צפה ברכבים דומים",
+    "find_dealerships": "מצא סוכנויות",
+    "video_reviews": "ביקורות וידאו",
+    "video_reviews_description": "צפה בביקורות וידאו ממומחים על הרכבים המומלצים שלך",
+    "watch_video": "צפה בסרטון",
+    "watch_reel": "צפה ב-ריל",
+    "interior_features": "סיור מהיר: תכונות פנים",
+    "owners_experience": "חווית בעלים: אחרי שנה",
+    "questions": {
+      "budget": {
+        "question": "מה התקציב שלך?",
+        "min": "$10,000",
+        "max": "$100,000+"
+      },
+      "primaryUse": {
+        "question": "מה השימוש העיקרי ברכב שלך?",
+        "options": {
+          "commuting": "נסיעות יומיומיות",
+          "family": "תחבורה משפחתית",
+          "performance": "ביצועים/ספורט",
+          "offroad": "הרפתקאות שטח",
+          "luxury": "יוקרה ונוחות"
+        }
+      },
+      "bodyType": {
+        "question": "איזה סוג גוף אתה מעדיף?",
+        "options": {
+          "sedan": "סדאן",
+          "suv": "SUV/קרוס אובר",
+          "truck": "משאית",
+          "coupe": "קופה",
+          "convertible": "קבריולה",
+          "hatchback": "האצ'בק",
+          "wagon": "סטיישן",
+          "van": "ואן"
+        }
+      },
+      "fuelType": {
+        "question": "איזה סוג דלק אתה מעדיף?",
+        "options": {
+          "gasoline": "בנזין",
+          "diesel": "דיזל",
+          "hybrid": "היברידי",
+          "electric": "חשמלי",
+          "any": "ללא העדפה"
+        }
+      },
+      "passengers": {
+        "question": "כמה נוסעים אתה מעביר בדרך כלל?",
+        "options": {
+          "1-2": "1-2 אנשים",
+          "3-4": "3-4 אנשים",
+          "5-6": "5-6 אנשים",
+          "7+": "7+ אנשים"
+        }
+      },
+      "driving": {
+        "question": "איזה סוג נהיגה אתה בדרך כלל עושה?",
+        "options": {
+          "city": "עיר/עירוני",
+          "highway": "כביש מהיר/נסיעות",
+          "mixed": "מעורב עיר וכביש מהיר",
+          "rural": "כבישים כפריים",
+          "offroad": "שטח"
+        }
+      },
+      "cargoSpace": {
+        "question": "כמה חשוב לך מקום מטען?",
+        "min": "לא חשוב",
+        "max": "חשוב מאוד"
+      },
+      "fuelEfficiency": {
+        "question": "כמה חשובה לך יעילות דלק?",
+        "min": "לא חשוב",
+        "max": "חשוב מאוד"
+      },
+      "luxury": {
+        "question": "כמה חשובות לך תכונות יוקרה?",
+        "min": "לא חשוב",
+        "max": "חשוב מאוד"
+      },
+      "performance": {
+        "question": "כמה חשובים לך ביצועים/תאוצה?",
+        "min": "לא חשוב",
+        "max": "חשוב מאוד"
+      },
+      "safety": {
+        "question": "כמה חשובות לך תכונות בטיחות מתקדמות?",
+        "min": "לא חשוב",
+        "max": "חשוב מאוד"
+      },
+      "tech": {
+        "question": "כמה חשובה לך טכנולוגיה ברכב?",
+        "min": "לא חשוב",
+        "max": "חשוב מאוד"
+      },
+      "reliability": {
+        "question": "כמה חשובה לך אמינות לטווח ארוך?",
+        "min": "לא חשוב",
+        "max": "חשוב מאוד"
+      },
+      "brand": {
+        "question": "האם יש לך העדפות למותגים?",
+        "options": {
+          "toyota": "טויוטה",
+          "honda": "הונדה",
+          "ford": "פורד",
+          "chevrolet": "שברולט",
+          "bmw": "BMW",
+          "mercedes": "מרצדס-בנץ",
+          "audi": "אאודי",
+          "tesla": "טסלה",
+          "lexus": "לקסוס",
+          "subaru": "סובארו",
+          "no_preference": "ללא העדפה"
+        }
+      },
+      "maintenance": {
+        "question": "כמה אתה מודאג מעלויות תחזוקה?",
+        "min": "לא מודאג",
+        "max": "מודאג מאוד"
+      }
+    }
+  },
+  "BlogDetails": {
+    "shareButton": "שתף",
+    "commentsTitle": "תגובות",
+    "leaveComment": "השאר תגובה",
+    "loadingText": "טוען...",
+    "errorLoadingData": "שגיאה בטעינת נתוני הבלוג. אנא נסה שוב מאוחר יותר.",
+    "previousPost": "פוסט קודם",
+    "nextPost": "פוסט הבא",
+    "by": "מאת",
+    "postedOn": "פורסם ב"
+  },
+  "Comparison": {
+    "compare_cars": "השוואת רכבים",
+    "compare_description": "השווה מפרטים ותכונות של רכבים נבחרים",
+    "back_to_listings": "חזרה לרשימה",
+    "clear_comparison": "נקה השוואה",
+    "select_cars_prompt": "בחר רכבים להשוואה",
+    "select_cars_description": "אנא בחר לפחות 2 רכבים מהרשימה להשוואת המפרטים שלהם",
+    "browse_cars": "עיין ברכבים",
+    "share_comparison": "שתף השוואה",
+    "copied_to_clipboard": "קישור ההשוואה הועתק",
+    "share_error": "שגיאה בשיתוף ההשוואה",
+    "share_title": "השוואת רכבים",
+    "share_text": "בדוק את השוואת הרכבים הזו!"
   }
 }

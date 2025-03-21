@@ -1,6 +1,8 @@
 import { Heading } from "../../components/Heading";
 import BlogDetailsArticle from "../../components/BlogDetailsArticle";
 import React, { Suspense } from "react";
+import { Card, CardContent } from "../../components/ui/card";
+import { motion } from "framer-motion";
 
 const articlePreviewList = [
   {
@@ -59,24 +61,68 @@ const articlePreviewList = [
   },
 ];
 
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2
+    }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 }
+};
+
 export default function RelatedPostsSection() {
   return (
-    <>
-      {/* related posts section */}
-      <div className="mb-[50px] flex flex-col items-center self-stretch">
-        <div className="container-xs flex flex-col items-start gap-9 px-3.5 lg:px-5 md:px-5">
-          <Heading as="h1" className="text-[40px] font-bold lg:text-[34px] md:text-[34px] sm:text-[32px]">
+    <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <Heading 
+            as="h2" 
+            className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600"
+          >
             Related Posts
           </Heading>
-          <div className="flex gap-[30px] self-stretch md:flex-col">
-            <Suspense fallback={<div>Loading feed...</div>}>
-              {articlePreviewList.map((d, index) => (
-                <BlogDetailsArticle {...d} key={"group9126" + index} />
-              ))}
-            </Suspense>
-          </div>
+          <div className="mt-4 w-20 h-1 bg-gradient-to-r from-purple-500 to-blue-500 mx-auto rounded-full"/>
         </div>
+
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
+          <Suspense 
+            fallback={
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[1, 2, 3].map((i) => (
+                  <Card key={i} className="animate-pulse">
+                    <CardContent className="p-4">
+                      <div className="w-full h-48 bg-gray-200 rounded-lg mb-4" />
+                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
+                      <div className="h-4 bg-gray-200 rounded w-1/2" />
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            }
+          >
+            {articlePreviewList.map((article, index) => (
+              <motion.div
+                key={index}
+                variants={item}
+                className="transform transition-all duration-300 hover:scale-105"
+              >
+                <BlogDetailsArticle {...article} />
+              </motion.div>
+            ))}
+          </Suspense>
+        </motion.div>
       </div>
-    </>
+    </section>
   );
 }

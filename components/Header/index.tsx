@@ -20,7 +20,7 @@ export default function Header({ ...props }: Props) {
   return (
     <header {...props} className={`${props.className} flex justify-between items-center gap-5 relative `}>
       <Img
-        src="img_header_logo.svg"
+        src="img_header_logo-with-bg.png"
         width={108}
         height={26}
         alt="Header Logo`"

@@ -17,8 +17,8 @@ export default function Navbar() {
       <div className="container mx-auto max-w-screen-xl px-4 flex items-center justify-between gap-6">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="min-w-[200px] h-20 flex items-center justify-center rounded-full shadow-lg md:shadow-xl bg-white p-2 md:p-3">
-            <Image src="/logo.svg" alt={t("logo_alt")} width={200} height={200} className="object-fill" />
+          <div className="min-w-[80px] h-20 flex items-center justify-center rounded-full shadow-lg md:shadow-xl bg-white p-2 md:p-3">
+            <Image src="/logo-transparent.png" alt={t("logo_alt")} width={80} height={200} className="object-fill" />
           </div>
         </Link>
 

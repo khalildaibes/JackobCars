@@ -7,8 +7,11 @@ import "../app/styles/tailwind.css";
 import "../app/styles/font.css";
 import {NextIntlClientProvider} from 'next-intl';
 // import {notFound} from 'next/navigation';
+import { ComparisonProvider } from './context/ComparisonContext';
+import { Toaster } from 'react-hot-toast';
+
 export const metadata: Metadata = {
-  title: "JackobCar's",
+  title: "AtSpeedLimit",
   description: "Discover best cars!",
 };
 import {getLocale, getMessages} from 'next-intl/server';
@@ -31,14 +34,15 @@ export default async function RootLayout({
     <html lang={locale}>
       <body>
         <NextIntlClientProvider messages={messages}>
-          <Navbar />
+          <ComparisonProvider>
+            <Navbar />
 
-          <TranslateChildren targetLang={'fr'}>{children}</TranslateChildren>
+            <TranslateChildren targetLang={'fr'}>{children}</TranslateChildren>
 
-          <Analytics />
-          <Footer />
-
-
+            <Analytics />
+            <Footer />
+            <Toaster />
+          </ComparisonProvider>
         </NextIntlClientProvider>
       </body>
     </html>

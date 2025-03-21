@@ -234,7 +234,9 @@
     "rank": "التصنيف",
     "enter_plate_number": "أدخل رقم اللوحة",
     "search_car": "ابحث عن سيارة",
-    "loading_data": "جارٍ تحميل البيانات..."
+    "loading_data": "جارٍ تحميل البيانات...",
+    "find_car_plate_heading": "البحث عن سيارة برقم اللوحة",
+    "explore_car_specs": "أدخل رقم اللوحة لاستكشاف مواصفات السيارة التفصيلية"
   },
   "Navbar": {
     "logo_alt": "شعار جاكوب كار",
@@ -307,7 +309,14 @@
       "hybrid": "هجين",
       "plug_in_hybrid": "هجين قابلة للشحن"
     },
-    "make_ai_recommendation": "احصل على توصية الذكاء الاصطناعي"
+    "make_ai_recommendation": "احصل على توصية الذكاء الاصطناعي",
+    "add_to_comparison": "أضف للمقارنة",
+    "remove_from_comparison": "إزالة",
+    "cars_selected": "سيارات مختارة",
+    "compare_cars": "قارن الآن",
+    "max_comparison_limit": "يمكنك مقارنة حتى 3 سيارات",
+    "added_to_comparison": "تمت الإضافة للمقارنة",
+    "removed_from_comparison": "تمت الإزالة من المقارنة"
   },
   "CarDetails": {
     "financing_options": "خيارات التمويل",
@@ -348,5 +357,169 @@
     "cons": "السلبيات",
     "pros": "الإيجابيات",
     "error": "خطأ في تحميل تفاصيل السيارة. يرجى المحاولة مرة أخرى لاحقاً."
+  },
+  "CarRecommendations": {
+    "title": "اعثر على سيارتك المثالية",
+    "subtitle": "أجب عن بعض الأسئلة وسنوصي بالسيارات التي تناسب احتياجاتك وتفضيلاتك.",
+    "question_progress": "السؤال {current} من {total}",
+    "complete": "{percentage}% مكتمل",
+    "back": "رجوع",
+    "next": "التالي",
+    "get_recommendations": "احصل على التوصيات",
+    "start_over": "ابدأ من جديد",
+    "top_matches": "أفضل السيارات المناسبة لك",
+    "matches_description": "بناءً على إجاباتك، وجدنا هذه السيارات التي تناسب تفضيلاتك بشكل أفضل.",
+    "match_percentage": "تطابق {percentage}%",
+    "based_on_preferences": "بناءً على تفضيلاتك",
+    "pros": "المميزات",
+    "cons": "العيوب",
+    "view_similar": "عرض سيارات مماثلة",
+    "find_dealerships": "البحث عن الوكالات",
+    "video_reviews": "مراجعات الفيديو",
+    "video_reviews_description": "شاهد مراجعات فيديو من الخبراء للسيارات الموصى بها",
+    "watch_video": "شاهد الفيديو",
+    "watch_reel": "شاهد الريل",
+    "interior_features": "جولة سريعة: ميزات المقصورة",
+    "owners_experience": "تجربة المالك: بعد سنة",
+    "questions": {
+      "budget": {
+        "question": "ما هي ميزانيتك؟",
+        "min": "$10,000",
+        "max": "$100,000+"
+      },
+      "primaryUse": {
+        "question": "ما هو الاستخدام الرئيسي لسيارتك؟",
+        "options": {
+          "commuting": "التنقل اليومي",
+          "family": "نقل العائلة",
+          "performance": "الأداء/الرياضة",
+          "offroad": "المغامرة خارج الطرق",
+          "luxury": "الفخامة والراحة"
+        }
+      },
+      "bodyType": {
+        "question": "ما هو نوع الهيكل الذي تفضله؟",
+        "options": {
+          "sedan": "سيدان",
+          "suv": "دفع رباعي/كروس أوفر",
+          "truck": "شاحنة",
+          "coupe": "كوبيه",
+          "convertible": "كابريوليه",
+          "hatchback": "هاتشباك",
+          "wagon": "ستيشن واجن",
+          "van": "فان"
+        }
+      },
+      "fuelType": {
+        "question": "ما هو نوع الوقود الذي تفضله؟",
+        "options": {
+          "gasoline": "بنزين",
+          "diesel": "ديزل",
+          "hybrid": "هجين",
+          "electric": "كهربائي",
+          "any": "بدون تفضيل"
+        }
+      },
+      "passengers": {
+        "question": "كم عدد الركاب الذين تنقلهم عادةً؟",
+        "options": {
+          "1-2": "1-2 أشخاص",
+          "3-4": "3-4 أشخاص",
+          "5-6": "5-6 أشخاص",
+          "7+": "7+ أشخاص"
+        }
+      },
+      "driving": {
+        "question": "ما هو نوع القيادة الذي تقوم به عادةً؟",
+        "options": {
+          "city": "مدينة/حضرية",
+          "highway": "طرق سريعة/تنقل",
+          "mixed": "مختلطة مدينة وطرق سريعة",
+          "rural": "طرق ريفية/ريفية",
+          "offroad": "طرق خارجية"
+        }
+      },
+      "cargoSpace": {
+        "question": "ما مدى أهمية مساحة الشحن بالنسبة لك؟",
+        "min": "غير مهم",
+        "max": "مهم جداً"
+      },
+      "fuelEfficiency": {
+        "question": "ما مدى أهمية كفاءة الوقود بالنسبة لك؟",
+        "min": "غير مهم",
+        "max": "مهم جداً"
+      },
+      "luxury": {
+        "question": "ما مدى أهمية الميزات الفاخرة بالنسبة لك؟",
+        "min": "غير مهم",
+        "max": "مهم جداً"
+      },
+      "performance": {
+        "question": "ما مدى أهمية الأداء/التسارع بالنسبة لك؟",
+        "min": "غير مهم",
+        "max": "مهم جداً"
+      },
+      "safety": {
+        "question": "ما مدى أهمية ميزات السلامة المتقدمة؟",
+        "min": "غير مهم",
+        "max": "مهم جداً"
+      },
+      "tech": {
+        "question": "ما مدى أهمية التكنولوجيا في السيارة بالنسبة لك؟",
+        "min": "غير مهم",
+        "max": "مهم جداً"
+      },
+      "reliability": {
+        "question": "ما مدى أهمية الموثوقية طويلة المدى بالنسبة لك؟",
+        "min": "غير مهم",
+        "max": "مهم جداً"
+      },
+      "brand": {
+        "question": "هل لديك أي تفضيلات للعلامات التجارية؟",
+        "options": {
+          "toyota": "تويوتا",
+          "honda": "هوندا",
+          "ford": "فورد",
+          "chevrolet": "شيفروليه",
+          "bmw": "بي إم دبليو",
+          "mercedes": "مرسيدس بنز",
+          "audi": "أودي",
+          "tesla": "تسلا",
+          "lexus": "لكزس",
+          "subaru": "سوبارو",
+          "no_preference": "بدون تفضيل"
+        }
+      },
+      "maintenance": {
+        "question": "ما مدى اهتمامك بتكاليف الصيانة؟",
+        "min": "غير مهتم",
+        "max": "مهتم جداً"
+      }
+    }
+  },
+  "BlogDetails": {
+    "shareButton": "مشاركة",
+    "commentsTitle": "التعليقات",
+    "leaveComment": "اترك تعليقاً",
+    "loadingText": "جاري التحميل...",
+    "errorLoadingData": "خطأ في تحميل بيانات المدونة. يرجى المحاولة مرة أخرى لاحقاً.",
+    "previousPost": "المقال السابق",
+    "nextPost": "المقال التالي",
+    "by": "بواسطة",
+    "postedOn": "نشر في"
+  },
+  "Comparison": {
+    "compare_cars": "مقارنة السيارات",
+    "compare_description": "قارن المواصفات والميزات للسيارات المختارة",
+    "back_to_listings": "العودة إلى القائمة",
+    "clear_comparison": "مسح المقارنة",
+    "select_cars_prompt": "اختر السيارات للمقارنة",
+    "select_cars_description": "يرجى اختيار سيارتين على الأقل من القائمة لمقارنة مواصفاتهما",
+    "browse_cars": "تصفح السيارات",
+    "share_comparison": "مشاركة المقارنة",
+    "copied_to_clipboard": "تم نسخ رابط المقارنة",
+    "share_error": "خطأ في مشاركة المقارنة",
+    "share_title": "مقارنة السيارات",
+    "share_text": "تحقق من مقارنة السيارات هذه!"
   }
 }

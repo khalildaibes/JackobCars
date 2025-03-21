@@ -25,7 +25,7 @@ const SearchManufacturer = ({
     <div className="relative flex-1">
       {/* Car Logo Icon */}
       <Image
-        src="/car-logo.svg" // Ensure the correct path
+        src="/car-logo-with-bg.png" // Ensure the correct path
         width={20}
         height={20}
         alt={t("search_car_logo_alt")}

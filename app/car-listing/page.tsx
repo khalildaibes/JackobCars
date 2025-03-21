@@ -9,12 +9,15 @@ import { Slider } from "../../components/ui/slider";
 import { Card, CardContent } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-import { Check, Heart, MessageSquare, Plus, Car,Calendar, Gauge, Fuel, Sparkles } from "lucide-react";
+import { Check, Heart, MessageSquare, Plus, Car,Calendar, Gauge, Fuel, Sparkles, Scale } from "lucide-react";
 import { Badge } from "../../components/ui/badge";
 import { fetchStrapiData } from '../lib/strapiClient';
 import { Img } from '../../components/Img';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { useComparison } from '../context/ComparisonContext';
+import Link from 'next/link';
+import { toast } from 'react-hot-toast';
 
 // First, add this helper function at the top of your file
 const extractPrice = (price: string | number): number => {
@@ -25,6 +28,7 @@ const extractPrice = (price: string | number): number => {
 const YEARS = Array.from({ length: 30 }, (_, i) => 2024 - i);
 
 const CarListings: React.FC = () => {
+  const { addToComparison, removeFromComparison, isInComparison, selectedCars } = useComparison();
   const t = useTranslations('CarListing');
   const router = useRouter();
   
@@ -99,7 +103,7 @@ const CarListings: React.FC = () => {
       localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
       console.log("added to favorites id ", id ,favorites)
     };
-    
+
     const fetchProducts = async () => {
         try {
           const response = await fetch(`/api/deals`);
@@ -283,6 +287,20 @@ const CarListings: React.FC = () => {
     router.push(`/car-details/${carId}`);
   };
 
+  const handleCompareToggle = (car: any) => {
+    if (isInComparison(car.id)) {
+      removeFromComparison(car.id);
+      toast.success(t('removed_from_comparison'));
+    } else {
+      if (selectedCars.length >= 3) {
+        toast.error(t('max_comparison_limit'));
+        return;
+      }
+      addToComparison(car);
+      toast.success(t('added_to_comparison'));
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl mt-[5%]">
       <div className="space-y-6">
@@ -297,6 +315,7 @@ const CarListings: React.FC = () => {
             {t('browse_collection')}
           </p>
           <Button 
+            onClick={() => router.push('/car-recomendations')}
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center mx-auto"
           >
             <Sparkles className="h-5 w-5 mr-2" />
@@ -480,6 +499,17 @@ const CarListings: React.FC = () => {
                             </Button>
                           </div>
                         </div>
+                        <div className="mt-4 flex justify-between items-center">
+                          <Button
+                            variant={isInComparison(car.id) ? "destructive" : "outline"}
+                            size="sm"
+                            onClick={() => handleCompareToggle(car)}
+                            className="flex items-center gap-2"
+                          >
+                            <Scale className="w-4 h-4" />
+                            {isInComparison(car.id) ? t('remove_from_comparison') : t('add_to_comparison')}
+                          </Button>
+                        </div>
                       </CardContent>
                     </Card>
                   </motion.div>
@@ -566,6 +596,17 @@ const CarListings: React.FC = () => {
                               </Button>
                             </div>
                           </div>
+                          <div className="mt-4 flex justify-between items-center">
+                            <Button
+                              variant={isInComparison(car.id) ? "destructive" : "outline"}
+                              size="sm"
+                              onClick={() => handleCompareToggle(car)}
+                              className="flex items-center gap-2"
+                            >
+                              <Scale className="w-4 h-4" />
+                              {isInComparison(car.id) ? t('remove_from_comparison') : t('add_to_comparison')}
+                            </Button>
+                          </div>
                         </CardContent>
                       </div>
                     </Card>
@@ -580,6 +621,31 @@ const CarListings: React.FC = () => {
         </div>
         
       </div>
+      {selectedCars.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50"
+        >
+          <Card className="bg-white shadow-lg border-0">
+            <CardContent className="p-4 flex items-center gap-4">
+              <div className="text-sm text-gray-600">
+                {selectedCars.length} {t('cars_selected')}
+              </div>
+              <Button
+                asChild
+                variant="default"
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Link href="/comparison">
+                  <Scale className="w-4 h-4 mr-2" />
+                  {t('compare_cars')}
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
     </div>
   );
 };

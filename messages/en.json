@@ -156,10 +156,12 @@
     "rank": "Rank",
     "enter_plate_number": "Enter Plate Number",
     "search_car": "Search Car",
-    "loading_data": "Loading data..."
+    "loading_data": "Loading data...",
+    "find_car_plate_heading": "Find Car by License Plate",
+    "explore_car_specs": "Enter a license plate number to explore detailed car specifications"
   },
   "Navbar": {
-    "logo_alt": "JackobCar's Logo",
+    "logo_alt": "AtSpeedLimit Logo",
     "cars_market": "Cars Market",
     "find_by_plate": "Find by Plate Number",
     "news": "News",
@@ -296,7 +298,14 @@
       "hybrid": "Hybrid",
       "plug_in_hybrid": "Plug-in Hybrid"
     },
-    "make_ai_recommendation": "Get AI Recommendation"
+    "make_ai_recommendation": "Get AI Recommendation",
+    "add_to_comparison": "Add to Compare",
+    "remove_from_comparison": "Remove",
+    "cars_selected": "cars selected",
+    "compare_cars": "Compare Now",
+    "max_comparison_limit": "You can compare up to 3 cars",
+    "added_to_comparison": "Added to comparison",
+    "removed_from_comparison": "Removed from comparison"
   },
   "CarDetails": {
     "financing_options": "Financing Options",
@@ -337,5 +346,178 @@
     "cons": "Cons",
     "pros": "Pros",
     "error": "Error loading car details. Please try again later."
+  },
+  "CarRecommendations": {
+    "title": "Find Your Perfect Car",
+    "subtitle": "Answer a few questions and we'll recommend cars that match your needs and preferences.",
+    "question_progress": "Question {current} of {total}",
+    "complete": "{percentage}% Complete",
+    "back": "Back",
+    "next": "Next",
+    "get_recommendations": "Get Recommendations",
+    "start_over": "Start Over",
+    "top_matches": "Your Top Car Matches",
+    "matches_description": "Based on your answers, we've found these cars that best match your preferences.",
+    "match_percentage": "{percentage}% Match",
+    "based_on_preferences": "Based on your preferences",
+    "pros": "Pros",
+    "cons": "Cons",
+    "view_similar": "View Similar Cars",
+    "find_dealerships": "Find Dealerships",
+    "video_reviews": "Video Reviews",
+    "video_reviews_description": "Watch expert video reviews of your recommended cars",
+    "watch_video": "Watch Video",
+    "watch_reel": "Watch Reel",
+    "interior_features": "Quick Tour: Interior Features",
+    "owners_experience": "Owner's Experience: 1 Year Later",
+    "questions": {
+      "budget": {
+        "question": "What is your budget?",
+        "min": "$10,000",
+        "max": "$100,000+"
+      },
+      "primaryUse": {
+        "question": "What will be the primary use of your car?",
+        "options": {
+          "commuting": "Daily Commuting",
+          "family": "Family Transport",
+          "performance": "Performance/Sport",
+          "offroad": "Off-Road Adventure",
+          "luxury": "Luxury & Comfort"
+        }
+      },
+      "bodyType": {
+        "question": "What body type do you prefer?",
+        "options": {
+          "sedan": "Sedan",
+          "suv": "SUV/Crossover",
+          "truck": "Truck",
+          "coupe": "Coupe",
+          "convertible": "Convertible",
+          "hatchback": "Hatchback",
+          "wagon": "Wagon",
+          "van": "Minivan"
+        }
+      },
+      "fuelType": {
+        "question": "What fuel type do you prefer?",
+        "options": {
+          "gasoline": "Gasoline",
+          "diesel": "Diesel",
+          "hybrid": "Hybrid",
+          "electric": "Electric",
+          "any": "No Preference"
+        }
+      },
+      "passengers": {
+        "question": "How many passengers do you regularly transport?",
+        "options": {
+          "1-2": "1-2 People",
+          "3-4": "3-4 People",
+          "5-6": "5-6 People",
+          "7+": "7+ People"
+        }
+      },
+      "driving": {
+        "question": "What type of driving do you typically do?",
+        "options": {
+          "city": "City/Urban",
+          "highway": "Highway/Commuting",
+          "mixed": "Mixed City & Highway",
+          "rural": "Rural/Country Roads",
+          "offroad": "Off-Road Terrain"
+        }
+      },
+      "cargoSpace": {
+        "question": "How important is cargo space to you?",
+        "min": "Not Important",
+        "max": "Very Important"
+      },
+      "fuelEfficiency": {
+        "question": "How important is fuel efficiency to you?",
+        "min": "Not Important",
+        "max": "Very Important"
+      },
+      "luxury": {
+        "question": "How important are luxury features to you?",
+        "min": "Not Important",
+        "max": "Very Important"
+      },
+      "performance": {
+        "question": "How important is performance/acceleration to you?",
+        "min": "Not Important",
+        "max": "Very Important"
+      },
+      "safety": {
+        "question": "How important are advanced safety features?",
+        "min": "Not Important",
+        "max": "Very Important"
+      },
+      "tech": {
+        "question": "How important is in-car technology to you?",
+        "min": "Not Important",
+        "max": "Very Important"
+      },
+      "reliability": {
+        "question": "How important is long-term reliability to you?",
+        "min": "Not Important",
+        "max": "Very Important"
+      },
+      "brand": {
+        "question": "Do you have any brand preferences?",
+        "options": {
+          "toyota": "Toyota",
+          "honda": "Honda",
+          "ford": "Ford",
+          "chevrolet": "Chevrolet",
+          "bmw": "BMW",
+          "mercedes": "Mercedes-Benz",
+          "audi": "Audi",
+          "tesla": "Tesla",
+          "lexus": "Lexus",
+          "subaru": "Subaru",
+          "no_preference": "No Preference"
+        }
+      },
+      "maintenance": {
+        "question": "How concerned are you about maintenance costs?",
+        "min": "Not Concerned",
+        "max": "Very Concerned"
+      }
+    }
+  },
+  "BlogDetails": {
+    "by": "by",
+    "postedOn": "Posted on",
+    "shareButton": "Share",
+    "commentsTitle": "Comments",
+    "leaveComment": "Leave a Comment",
+    "loadingText": "Submitting...",
+    "name": "Name",
+    "email": "Email",
+    "website": "Website (optional)",
+    "comment": "Your Comment",
+    "saveInfo": "Save my information for next time",
+    "submitComment": "Post Comment",
+    "errorLoadingData": "Error loading blog post"
+  },
+  "Comparison": {
+    "compare_cars": "Compare Cars",
+    "compare_description": "Compare specifications and features of selected cars",
+    "back_to_listings": "Back to Listings",
+    "clear_comparison": "Clear Comparison",
+    "select_cars_prompt": "Select Cars to Compare",
+    "select_cars_description": "Please select at least two cars from the listing to compare their specifications",
+    "browse_cars": "Browse Cars",
+    "share_comparison": "Share Comparison",
+    "copied_to_clipboard": "Comparison link copied to clipboard",
+    "share_error": "Error sharing comparison",
+    "share_title": "Car Comparison",
+    "share_text": "Check out this car comparison!",
+    "car_already_added": "This car is already in comparison",
+    "max_cars_reached": "Maximum of 3 cars can be compared",
+    "car_added_to_comparison": "Car added to comparison",
+    "car_removed_from_comparison": "Car removed from comparison",
+    "comparison_cleared": "Comparison cleared"
   }
 }
