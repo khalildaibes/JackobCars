@@ -1,5 +1,5 @@
 "use client";
-
+// sdada
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
@@ -150,44 +150,10 @@ export default function StorePage() {
             } : undefined
           } : undefined,
           openingHours: storeDataItem.openingHours || defaultOpeningHours,
-          products: storeDataItem.products.map((product: any) => {
-            return {
-              id: product.id,
-              name: product.name,
-              slug: product.slug,
-              price: product.price,
-              quantity: product.quantity || 0,
-              image: product.image,
-              details: {
-                car: {
-                  cons: product.details?.car?.cons || [],
-                  pros: product.details?.car?.pros || [],
-                  fuel: product.details?.car?.fuel || '',
-                  year: product.details?.car?.year || 0,
-                  miles: product.details?.car?.miles || '',
-                  price: product.details?.car?.price || 0,
-                  badges: product.details?.car?.badges || [],
-                  images: {
-                    main: product.details?.car?.images?.main || '',
-                    additional: product.details?.car?.images?.additional || [],
-                  },
-                  actions: {
-                    save: product.details?.car?.actions?.save || { icon: '', label: '' },
-                    share: product.details?.car?.actions?.share || { icon: '', label: '' },
-                    compare: product.details?.car?.actions?.compare || { icon: '', label: '' },
-                  },
-                  mileage: product.details?.car?.mileage || '',
-                  features: product.details?.car?.features || [],
-                  transmission: product.details?.car?.transmission || '',
-                  dimensions_capacity: product.details?.car?.dimensions_capacity || [],
-                  engine_transmission_details: product.details?.car?.engine_transmission_details || [],
-                }
-              },
-              categories: product.categories,
-              video: product.video,
-              colors: product.colors,
-            } as Product;
-          }) as Product[]
+          products: storeDataItem.products.map((product: any) => ({
+            ...product,
+            categories: product.categories || "",
+          })) as Product[]
         };
 
         setStore(storeInstance);
@@ -212,7 +178,7 @@ export default function StorePage() {
       setFilteredProducts(store?.products || []);
     } else {
       setFilteredProducts(store?.products.filter(product => 
-        product.categories?.toString().split(',').map(cat => cat.trim()).includes(category)
+        product.categories.split(',').map(cat => cat.trim()).includes(category)
       ) || []);
     }
   };
@@ -274,8 +240,8 @@ export default function StorePage() {
   const openingHours = store.openingHours || defaultOpeningHours;
   const tags = store.tags ? store.tags.split(',').map(tag => tag.trim()) : [];
   const categories = Array.from(new Set(
-    store?.products.flatMap(product => 
-      product.categories ? product.categories.toString()?.split(',').map(cat => cat.trim()) : []
+    store.products.flatMap(product => 
+      product.categories.split(',').map(cat => cat.trim())
     )
   ));
 
@@ -440,7 +406,7 @@ export default function StorePage() {
             filteredProducts.map((product) => (
               <div key={product.id} className="bg-white rounded-lg shadow-lg p-4 transition-transform transform hover:scale-105">
                 <Img
-                  src={'/placeholder.png'}
+                  src={product.image[0]?.url || '/placeholder.png'}
                   alt={product.name}
                   external={true}
                   width={300}
