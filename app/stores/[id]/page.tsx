@@ -212,7 +212,7 @@ export default function StorePage() {
       setFilteredProducts(store?.products || []);
     } else {
       setFilteredProducts(store?.products.filter(product => 
-        product.categories?.some(cat => cat.name === category)
+        product.categories?.toString().split(',').map(cat => cat.trim()).includes(category)
       ) || []);
     }
   };
@@ -275,7 +275,7 @@ export default function StorePage() {
   const tags = store.tags ? store.tags.split(',').map(tag => tag.trim()) : [];
   const categories = Array.from(new Set(
     store?.products.flatMap(product => 
-      product.categories ? product.categories.split(',').map(cat => cat.trim()) : []
+      product.categories ? product.categories.toString()?.split(',').map(cat => cat.trim()) : []
     )
   ));
 
