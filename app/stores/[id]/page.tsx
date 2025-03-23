@@ -5,8 +5,8 @@ import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { 
   Loader2, MapPin, Phone, Mail, Globe, Clock, Tag, 
-  Facebook, Instagram, WhatsApp, Navigation, ChevronDown,
-  Star, Calendar, MessageSquare, Share2, Search
+  Facebook, Instagram, Navigation, ChevronDown,
+  MessageSquare, Search
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
