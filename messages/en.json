@@ -653,5 +653,18 @@
         "open_24h": "Open 24/7"
       }
     }
+  },
+  "VirtualAssistant": {
+    "title": "Virtual Assistant",
+    "subtitle": "Meet our AI-powered automotive expert who can help you learn about our services and vehicles",
+    "select_script": "Select a Topic",
+    "click_play": "Click play to start the presentation",
+    "loading": "Generating presentation...",
+    "error": "Something went wrong. Please try again.",
+    "play": "Play",
+    "pause": "Pause",
+    "restart": "Restart",
+    "mute": "Mute",
+    "unmute": "Unmute"
   }
 }

@@ -374,7 +374,7 @@ const CategoriesPage = () => {
   const t = useTranslations("Categories");
   const [selectedFilter, setSelectedFilter] = useState("parts");
   const [searchQuery, setSearchQuery] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [selectedPriceRange, setSelectedPriceRange] = useState<string[]>([]);
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
   const [selectedAvailability, setSelectedAvailability] = useState<string[]>([]);
@@ -459,43 +459,173 @@ const CategoriesPage = () => {
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setShowFilters(!showFilters)}
-              className="px-6 py-3 rounded-2xl bg-blue-600 text-white flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20"
+              onClick={() => setShowMobileFilters(!showMobileFilters)}
+              className="md:hidden px-6 py-3 rounded-2xl bg-blue-600 text-white flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20"
             >
               <FilterIcon size={20} />
-              {showFilters ? "Hide Filters" : "Show Filters"}
+              {showMobileFilters ? "Hide Filters" : "Show Filters"}
             </motion.button>
           </div>
 
-          {/* Advanced Filters */}
+          {/* Advanced Filters - Desktop (Always Visible) */}
+          <div className="hidden md:block">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Type Filter */}
+                <div className="space-y-3">
+                  <h3 className="font-medium text-gray-700">Type</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {FILTERS.map((filter) => (
+                      <button
+                        key={filter}
+                        onClick={() => setSelectedFilter(filter)}
+                        className={`px-4 py-2 rounded-xl text-sm font-medium transition-all
+                          ${selectedFilter === filter
+                            ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          }`}
+                      >
+                        {t(filter)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Price Range Filter */}
+                <div className="space-y-3">
+                  <h3 className="font-medium text-gray-700 flex items-center gap-2">
+                    <DollarSign size={16} />
+                    Price Range
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {PRICE_RANGES.map((range) => (
+                      <button
+                        key={range}
+                        onClick={() => {
+                          setSelectedPriceRange(
+                            selectedPriceRange.includes(range)
+                              ? selectedPriceRange.filter((r) => r !== range)
+                              : [...selectedPriceRange, range]
+                          );
+                        }}
+                        className={`px-4 py-2 rounded-xl text-sm font-medium transition-all
+                          ${selectedPriceRange.includes(range)
+                            ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          }`}
+                      >
+                        {range.charAt(0).toUpperCase() + range.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Rating Filter */}
+                <div className="space-y-3">
+                  <h3 className="font-medium text-gray-700 flex items-center gap-2">
+                    <Star size={16} />
+                    Minimum Rating
+                  </h3>
+                  <div className="flex gap-2">
+                    {RATINGS.map((rating) => (
+                      <button
+                        key={rating}
+                        onClick={() => setSelectedRating(rating)}
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all
+                          ${selectedRating === rating
+                            ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          }`}
+                      >
+                        {rating}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Availability Filter */}
+                <div className="space-y-3">
+                  <h3 className="font-medium text-gray-700 flex items-center gap-2">
+                    <Clock size={16} />
+                    Availability
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {AVAILABILITY.map((status) => (
+                      <button
+                        key={status}
+                        onClick={() => {
+                          setSelectedAvailability(
+                            selectedAvailability.includes(status)
+                              ? selectedAvailability.filter((s) => s !== status)
+                              : [...selectedAvailability, status]
+                          );
+                        }}
+                        className={`px-4 py-2 rounded-xl text-sm font-medium transition-all
+                          ${selectedAvailability.includes(status)
+                            ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          }`}
+                      >
+                        {status.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Sort Options */}
+              <div className="mt-6 flex items-center gap-4 border-t pt-4">
+                <span className="text-gray-700 font-medium">Sort by:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-4 py-2 rounded-xl bg-gray-100 text-gray-700 border-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="relevance">Relevance</option>
+                  <option value="price_low">Price: Low to High</option>
+                  <option value="price_high">Price: High to Low</option>
+                  <option value="rating">Rating</option>
+                </select>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Advanced Filters - Mobile (Toggleable) */}
           <AnimatePresence>
-            {showFilters && (
+            {showMobileFilters && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
-                className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl"
+                className="md:hidden bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl"
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Same filter content as desktop */}
+                <div className="grid grid-cols-1 gap-6">
+                  {/* Copy the same filter content from above */}
                   {/* Type Filter */}
                   <div className="space-y-3">
                     <h3 className="font-medium text-gray-700">Type</h3>
                     <div className="flex flex-wrap gap-2">
-                      {FILTERS.map((filter) => (
-                        <button
-                          key={filter}
-                          onClick={() => setSelectedFilter(filter)}
+        {FILTERS.map((filter) => (
+          <button
+            key={filter}
+            onClick={() => setSelectedFilter(filter)}
                           className={`px-4 py-2 rounded-xl text-sm font-medium transition-all
                             ${selectedFilter === filter
                               ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
                               : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                            }`}
-                        >
-                          {t(filter)}
-                        </button>
-                      ))}
-                    </div>
+              }`}
+          >
+            {t(filter)}
+          </button>
+        ))}
+      </div>
                   </div>
 
                   {/* Price Range Filter */}
@@ -613,7 +743,7 @@ const CategoriesPage = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Link href={`/category1/${category.key}`}>
+          <Link href={`/category1/${category.key}`}>
                 <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
                   <div className="flex flex-col items-center gap-4">
                     <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-blue-50 to-purple-50 p-4 flex items-center justify-center">
@@ -648,8 +778,8 @@ const CategoriesPage = () => {
                       )}
                     </div>
                   </div>
-                </div>
-              </Link>
+          </div>
+          </Link>
             </motion.div>
           ))}
         </motion.div>

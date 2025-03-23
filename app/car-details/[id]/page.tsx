@@ -431,7 +431,7 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
                   <div>
                       <div className="text-xs text-gray-500">{t('warranty')}</div>
                       <div className="font-medium">{t('warranty_period', { months: 3 })}</div>
-                    </div>
+                  </div>
                 </div>
               </div>
               
@@ -457,7 +457,7 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
                   <div className="p-2 bg-green-100 rounded-lg">
                     <Check className="h-6 w-6 text-green-600" />
                   </div>
-                  <div>
+                <div>
                     <h3 className="font-medium text-green-800">{t('clean_title')}</h3>
                     <p className="text-sm text-green-700">{t('clean_title_description')}</p>
                 </div>
@@ -471,7 +471,7 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
                       <p className="text-sm text-gray-500">{t('june_2023')}</p>
                       <h4 className="font-medium text-lg">{t('regular_maintenance')}</h4>
                       <p className="text-sm text-gray-600">{t('maintenance_details')}</p>
-                    </div>
+                  </div>
                     <div className="border-l-2 border-blue-500 pl-6 pb-6 relative">
                       <div className="absolute w-4 h-4 bg-blue-500 rounded-full -left-[9px] top-0"></div>
                       <p className="text-sm text-gray-500">{t('january_2023')}</p>
@@ -662,7 +662,7 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
                       <div>
                         <h4 className="font-medium text-sm group-hover:text-blue-600 transition-colors">{similarCar.title}</h4>
                           <p className="text-blue-600 text-sm font-semibold mt-1">{similarCar.price}</p>
-                        </div>
+                      </div>
                     </div>
                   </Link>
                 ))}
@@ -753,9 +753,9 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
               allowFullScreen
             ></iframe>
-              </div>
-            </div>
           </div>
+        </div>
+      </div>
         </div>
       </div>
 

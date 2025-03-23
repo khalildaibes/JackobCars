@@ -9,7 +9,7 @@ export async function GET(req) {
         const { searchParams } = new URL(req.url);
 
         // Define allowed filters
-        const allowedFilters = ["category", "min_price", "max_price", "fuel", "body_type", "year", "mileage", "store"];
+        const allowedFilters = ["name", "phone", "address", "details", "hostname", "visits", "tags", "provider", "slug"];
 
         // Build query parameters dynamically
         const queryParams = new URLSearchParams();
@@ -17,19 +17,14 @@ export async function GET(req) {
         allowedFilters.forEach((key) => {
             const value = searchParams.get(key);
             if (value) {
-                if (key === "category") queryParams.append("filters[categories][$contains]", value);
-                if (key === "min_price") queryParams.append("filters[price][$gte]", value);
-                if (key === "max_price") queryParams.append("filters[price][$lte]", value);
-                if (key === "fuel") queryParams.append("filters[fuel][$contains]", value);
-                if (key === "body_type") queryParams.append("filters[body_type][$contains]", value);
-                if (key === "year") queryParams.append("filters[year][$contains]", value);
-                if (key === "mileage") queryParams.append("filters[mileage][$lte]", value);
-                if (key === "store") queryParams.append("filters[store][$contains]", value);
+                if (key === "tags") queryParams.append(`filters[${key}][$containsi]`, value);
+                else if (key === "slug") queryParams.append(`filters[${key}][$contains]`, value);
+                else queryParams.append(`filters[${key}][$contains]`, value);
             }
         });
 
         // Construct the final API URL with filters
-        let apiUrl = `http://68.183.215.202/api/products?populate=*&locale=${locale}`;
+        let apiUrl = `http://68.183.215.202/api/stores?populate=*`;
         if (queryParams.toString()) {
             apiUrl += `&${queryParams.toString()}`;
         }
@@ -45,13 +40,17 @@ export async function GET(req) {
         });
 
         if (!response.ok) {
-            return new Response(JSON.stringify({ message: "Failed to fetch products" }), { status: response.status });
+            return new Response(JSON.stringify({ message: "Failed to fetch stores" }), { status: response.status });
         }
 
         const data = await response.json();
+        
+
+
+        // Otherwise return all stores
         return new Response(JSON.stringify(data), { status: 200 });
     } catch (error) {
         console.error("API Proxy Error:", error);
         return new Response(JSON.stringify({ message: "Internal Server Error" }), { status: 500 });
     }
-}
+} 
