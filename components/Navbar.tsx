@@ -17,7 +17,7 @@ const buttonStyles = {
 };
 
 export default function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const [isMenuOpen, setIsMenuOpen] = useState(false);
   const t = useTranslations("Navbar");
 
   const NavButton = ({ href, gradient, children }: { href: string; gradient: string; children: React.ReactNode }) => (

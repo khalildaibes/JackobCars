@@ -1,124 +1,190 @@
+"use client";
 
-import React from 'react';
-import NewsCard from './NewsCard';
-import { Button } from "../components/ui/button";
+import React, { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
-const NewsGrid = () => {
-  const newsArticles = [
+interface Article {
+  id: number;
+  title: string;
+  excerpt: string;
+  imageUrl: string;
+  category: string;
+  date: string;
+  author: string;
+  description: string;
+  cover: {
+    url: string;
+  } | null;
+  categories: Array<{ name: string }>;
+  publishedAt: string;
+  locale: string;
+  slug: string;
+  blocks: Array<{
+    type: string;
+    content: string;
+    image?: {
+      url: string;
+      alt: string;
+    };
+  }>;
+}
+
+interface NewsGridProps {
+  articles: Article[];
+}
+
+const NewsGrid: React.FC<NewsGridProps> = ({ articles }) => {
+  const t = useTranslations('NewsPage');
+  const [displayArticles, setDisplayArticles] = useState<Article[]>(articles);
+
+  // Default articles if none provided
+  const defaultArticles: Article[] = [
     {
       id: 1,
-      title: "BMW Unveils Revolutionary Aerodynamic Design for Upcoming EV Flagship",
-      excerpt: "The German automaker's latest concept promises to set new standards in electric vehicle efficiency and performance.",
-      imageUrl: "https://images.unsplash.com/photo-1556189250-72ba954cfc2b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      category: "Design",
-      date: "May 8, 2023",
-      author: "James Wilson"
+      title: t('blog_title_1'),
+      excerpt: t('blog_subtitle_1'),
+      imageUrl: '/images/blog1.jpg',
+      category: t('blog_category_sound'),
+      date: t('blog_date_1'),
+      author: t('admin'),
+      description: t('blog_subtitle_1'),
+      cover: null,
+      categories: [{ name: t('blog_category_sound') }],
+      publishedAt: '2023-11-22',
+      locale: 'en',
+      slug: 'blog-1',
+      blocks: []
     },
     {
       id: 2,
-      title: "Japan's Hydrogen Highway: The Future of Sustainable Transportation",
-      excerpt: "With investments in hydrogen infrastructure, Japan aims to lead the world in clean mobility solutions beyond battery electric vehicles.",
-      imageUrl: "https://images.unsplash.com/photo-1622185135505-2d795003994a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      category: "Infrastructure",
-      date: "May 7, 2023",
-      author: "Akira Tanaka"
+      title: t('blog_title_2'),
+      excerpt: t('blog_subtitle_2'),
+      imageUrl: '/images/blog2.jpg',
+      category: t('blog_category_accessories'),
+      date: t('blog_date_2'),
+      author: t('admin'),
+      description: t('blog_subtitle_2'),
+      cover: null,
+      categories: [{ name: t('blog_category_accessories') }],
+      publishedAt: '2023-11-22',
+      locale: 'en',
+      slug: 'blog-2',
+      blocks: []
     },
     {
       id: 3,
-      title: "Formula E Technology Making Its Way to Production EVs",
-      excerpt: "Innovations from electric racing are accelerating the development of more efficient and powerful consumer electric vehicles.",
-      imageUrl: "https://images.unsplash.com/photo-1604053627808-18bc326f40a8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      category: "Motorsport",
-      date: "May 5, 2023",
-      author: "Elena Rodriguez"
+      title: t('blog_title_3'),
+      excerpt: t('blog_subtitle_3'),
+      imageUrl: '/images/blog3.jpg',
+      category: t('blog_category_sound'),
+      date: t('blog_date_3'),
+      author: t('admin'),
+      description: t('blog_subtitle_3'),
+      cover: null,
+      categories: [{ name: t('blog_category_sound') }],
+      publishedAt: '2023-11-22',
+      locale: 'en',
+      slug: 'blog-3',
+      blocks: []
     },
     {
       id: 4,
-      title: "Iconic American Muscle Cars Embrace Electrification",
-      excerpt: "Traditional performance brands are reimagining their legendary models with high-performance electric powertrains.",
-      imageUrl: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      category: "Performance",
-      date: "May 3, 2023",
-      author: "Robert Johnson"
+      title: t('blog_title_4'),
+      excerpt: t('blog_subtitle_4'),
+      imageUrl: '/images/blog4.jpg',
+      category: t('blog_category_accessories'),
+      date: t('blog_date_1'),
+      author: t('admin'),
+      description: t('blog_subtitle_4'),
+      cover: null,
+      categories: [{ name: t('blog_category_accessories') }],
+      publishedAt: '2023-11-22',
+      locale: 'en',
+      slug: 'blog-4',
+      blocks: []
     },
     {
       id: 5,
-      title: "Sustainable Materials Revolutionizing Car Interiors",
-      excerpt: "From recycled ocean plastic to plant-based leather alternatives, automakers are embracing eco-friendly cabin materials.",
-      imageUrl: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      category: "Sustainability",
-      date: "May 1, 2023",
-      author: "Emma Thompson"
-    },
-    {
-      id: 6,
-      title: "The Rise of Ultra-Fast Charging Networks",
-      excerpt: "New charging technologies promise to reduce EV charging times to just minutes, comparable to traditional refueling.",
-      imageUrl: "https://images.unsplash.com/photo-1558425555-c256012d7e43?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      category: "Technology",
-      date: "April 29, 2023",
-      author: "Thomas Brown"
+      title: t('blog_title_1'),
+      excerpt: t('blog_subtitle_1'),
+      imageUrl: '/images/blog5.jpg',
+      category: t('blog_category_sound'),
+      date: t('blog_date_2'),
+      author: t('admin'),
+      description: t('blog_subtitle_1'),
+      cover: null,
+      categories: [{ name: t('blog_category_sound') }],
+      publishedAt: '2023-11-22',
+      locale: 'en',
+      slug: 'blog-5',
+      blocks: []
     }
   ];
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
-  };
+  // Use default articles if no articles provided
+  React.useEffect(() => {
+    setDisplayArticles(articles.length > 0 ? articles : defaultArticles);
+  }, [articles]);
 
   return (
-    <section className="py-16 bg-white">
-      <div className="container mx-auto px-6 md:px-0">
-        <div className="mb-10">
-          <h2 className="font-display text-3xl font-bold text-gray-900 mb-4">Latest News</h2>
-          <div className="flex flex-wrap gap-3 mb-6">
-            <Button variant="outline" className="rounded-full bg-blue-600-600 text-white hover:bg-blue-600-700 border-none">All</Button>
-            <Button variant="outline" className="rounded-full text-gray-700 hover:bg-blue-600-50 hover:text-blue-700">Electric</Button>
-            <Button variant="outline" className="rounded-full text-gray-700 hover:bg-blue-600-50 hover:text-blue-700">Technology</Button>
-            <Button variant="outline" className="rounded-full text-gray-700 hover:bg-blue-600-50 hover:text-blue-700">Industry</Button>
-            <Button variant="outline" className="rounded-full text-gray-700 hover:bg-blue-600-50 hover:text-blue-700">Design</Button>
-            <Button variant="outline" className="rounded-full text-gray-700 hover:bg-blue-600-50 hover:text-blue-700">Motorsport</Button>
-          </div>
+    <section className="py-16 bg-gray-50">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-900">{t('latest_news')}</h2>
+          <Link 
+            href="/news"
+            className="text-blue-600 hover:text-blue-700 font-medium flex items-center"
+          >
+            {t('view_all')}
+            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
         </div>
-        
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-        >
-          {newsArticles.map((article) => (
-            <motion.div key={article.id} variants={item}>
-              <NewsCard
-                title={article.title}
-                excerpt={article.excerpt}
-                imageUrl={article.imageUrl}
-                category={article.category}
-                date={article.date}
-                author={article.author}
-              />
-            </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {displayArticles.map((article) => (
+            <Link 
+              href={`/news/${article.slug}`}
+              key={article.id}
+              className="group"
+            >
+              <motion.article
+                whileHover={{ y: -5 }}
+                className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+              >
+                <div className="relative h-48">
+                  <Image
+                    src={article.imageUrl}
+                    alt={article.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
+                    <span>{article.category}</span>
+                    <span>•</span>
+                    <span>{article.date}</span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                    {article.title}
+                  </h3>
+                  <p className="text-gray-600 line-clamp-2">
+                    {article.excerpt}
+                  </p>
+                  <div className="mt-4 flex items-center text-blue-600 font-medium">
+                    {t('read_more')}
+                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+              </motion.article>
+            </Link>
           ))}
-        </motion.div>
-        
-        <div className="mt-12 text-center">
-          <Button variant="outline" className="border-gray-300 hover:bg-blue-600-50 hover:text-blue-700">
-            Load More
-            <ChevronDown className="ml-2 h-4 w-4" />
-          </Button>
         </div>
       </div>
     </section>

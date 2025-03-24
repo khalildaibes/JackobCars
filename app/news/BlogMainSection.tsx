@@ -10,27 +10,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "../../components/Bre
 import { useTranslations } from "next-intl";
 
 const articleGrid = [
-  {
-    detailPostQgc: "img_detail_post_qgc_266x414.png",
-    link: "sound",
-    admin: "author",
-    publishDate: "publish_date",
-    articleTitle: "blog_title_1",
-  },
-  {
-    detailPostQgc: "img_blog9_qgcqjcnb6.png",
-    link: "accessories",
-    admin: "author",
-    publishDate: "publish_date",
-    articleTitle: "blog_title_2",
-  },
-  {
-    detailPostQgc: "img_blog8_qgcqjcnb6.png",
-    link: "body_kit",
-    admin: "author",
-    publishDate: "publish_date",
-    articleTitle: "blog_title_3",
-  }
+ 
 ];
 
 export default function BlogMainSection() {

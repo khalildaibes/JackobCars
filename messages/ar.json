@@ -1,4 +1,24 @@
 {
+  "NewsPage": {
+    "welcome": "مرحبًا بكم في AutoNews",
+    "description": "اكتشف أحدث أخبار السيارات والاتجاهات",
+    "stay_updated": "ابق على اطلاع بتميز السيارات",
+    "subscribe": "اشترك",
+    "email_placeholder": "عنوان بريدك الإلكتروني",
+    "privacy_policy": "من خلال الاشتراك، فإنك توافق على سياسة الخصوصية الخاصة بنا وتوافق على تلقي التحديثات من شركتنا.",
+    "loading": "جارٍ التحميل...",
+    "featured_news": "الأخبار المميزة",
+    "news_grid": "آخر الأخبار",
+    "join_community": "انضم إلى مجتمعنا من عشاق السيارات والمهنيين في الصناعة لتلقي محتوى منسق حول عالم السيارات.",
+    "latest_news": "أحدث الأخبار",
+    "all_categories": "جميع الفئات",
+    "electric": "كهربائي",
+    "technology": "التكنولوجيا",
+    "industry": "الصناعة",
+    "design": "التصميم",
+    "motorsport": "سباق السيارات",
+    "load_more": "تحميل المزيد"
+  },
   "HomePage": {
     "find_car_plate_heading": "ابحث عن سيارتك برقم اللوحة",
     "explore_car_specs": "استكشف مواصفات السيارة",
@@ -541,7 +561,8 @@
     "facebook": "فيسبوك",
     "all_rights_reserved": "جميع الحقوق محفوظة",
     "privacy_policy": "سياسة الخصوصية",
-    "terms_of_use": "شروط الاستخدام"
+    "terms_of_use": "شروط الاستخدام",
+    "invite_a_friend": "دعوة صديق"
   },
   "Pages": {
     "how_it_works": {

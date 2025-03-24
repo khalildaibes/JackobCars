@@ -666,5 +666,31 @@
     "restart": "Restart",
     "mute": "Mute",
     "unmute": "Unmute"
+  },
+  "NewsPage": {
+    "welcome": "ברוכים הבאים ל-AutoNews",
+    "description": "גלה את החדשות והטרנדים האחרונים בעולם הרכב",
+    "stay_updated": "הישאר מעודכן עם מצוינות רכב",
+    "subscribe": "הרשם",
+    "email_placeholder": "כתובת האימייל שלך",
+    "privacy_policy": "על ידי הרשמה, אתה מסכים למדיניות הפרטיות שלנו ומסכים לקבל עדכונים מהחברה שלנו.",
+    "loading": "טוען...",
+    "featured_news": "חדשות מומלצות",
+    "news_grid": "חדשות אחרונות",
+    "join_community": "הצטרף לקהילתנו של חובבי רכב ומקצוענים בתעשייה כדי לקבל תוכן מותאם אישית על עולם הרכב.",
+    "latest_news": "Latest News",
+    "all_categories": "All Categories",
+    "electric": "Electric",
+    "technology": "Technology",
+    "industry": "Industry",
+    "design": "Design",
+    "motorsport": "Motorsport",
+    "load_more": "Load More",
+    "featured_news": "Featured News",
+    "news_grid": "News Grid",
+    "join_community": "Join Our Community",
+    "subscribe": "Subscribe",
+    "email_placeholder": "Your email address",
+    "privacy_policy": "By subscribing, you agree to our Privacy Policy and consent to receive updates from our company."
   }
 }

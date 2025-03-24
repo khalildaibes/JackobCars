@@ -1,81 +1,407 @@
-
 "use client"; // This marks the component as a Client Component
 
-
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar';
 import HeroSection from '../../components/HeroSection';
 import FeaturedNews from '../../components/FeaturedNews';
 import NewsGrid from '../../components/NewsGrid';
 import Footer from '../../components/Footer';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from 'next-intl';
+import { Link } from 'react-alice-carousel';
+
+interface Article {
+  id: number;
+  title: string;
+  excerpt: string;
+  imageUrl: string;
+  category: string;
+  date: string;
+  author: string;
+  description: string;
+  cover: {
+    url: string;
+  } | null;
+  categories: Array<{ name: string }>;
+  publishedAt: string;
+  locale: string;
+  slug: string;
+  blocks: any[];
+}
+
+interface StoryViewerProps {
+  articles: Article[];
+  currentIndex: number;
+  onClose: () => void;
+  onNext: () => void;
+  onPrevious: () => void;
+}
+
+const StoryViewer = ({ articles, currentIndex, onClose, onNext, onPrevious }: StoryViewerProps) => {
+  const [progress, setProgress] = useState(0);
+  const currentArticle = articles[currentIndex];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          onNext();
+          return 0;
+        }
+        return prev + 1;
+      });
+    }, 50); // 5 seconds total duration
+
+    return () => clearInterval(timer);
+  }, [currentIndex, onNext]);
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
+      <div className="w-full max-w-2xl mx-4">
+        {/* Progress bars */}
+        <div className="absolute top-4 left-4 right-4 flex gap-1">
+          {articles.map((_, index) => (
+            <div
+              key={index}
+              className="h-1 bg-gray-600 flex-1 rounded-full overflow-hidden"
+            >
+              <div
+                className={`h-full bg-white transition-all duration-50 ${
+                  index === currentIndex ? 'w-full' : index < currentIndex ? 'w-full' : 'w-0'
+                }`}
+                style={{ width: index === currentIndex ? `${progress}%` : index < currentIndex ? '100%' : '0%' }}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-white text-2xl hover:text-gray-300"
+        >
+          ×
+        </button>
+
+        {/* Story content */}
+        <div className="relative aspect-[9/16] bg-white rounded-lg overflow-hidden">
+          <img
+            src={currentArticle.imageUrl}
+            alt={currentArticle.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
+            <h2 className="text-white text-xl font-bold mb-2">{currentArticle.title}</h2>
+            <p className="text-white text-sm">{currentArticle.excerpt}</p>
+            <div className="flex justify-between items-center mt-2 text-white text-xs">
+              <span>{currentArticle.date}</span>
+              <span>{currentArticle.author}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation buttons */}
+        <button
+          onClick={onPrevious}
+          disabled={currentIndex === 0}
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-white text-2xl hover:text-gray-300 disabled:opacity-50"
+        >
+          ‹
+        </button>
+        <button
+          onClick={onNext}
+          disabled={currentIndex === articles.length - 1}
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-2xl hover:text-gray-300 disabled:opacity-50"
+        >
+          ›
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const StoryNews = ({ articles }: { articles: Article[] }) => {
+  const [selectedStoryIndex, setSelectedStoryIndex] = useState<number | null>(null);
+
+  const handleStoryClick = (index: number) => {
+    setSelectedStoryIndex(index);
+  };
+
+  const handleClose = () => {
+    setSelectedStoryIndex(null);
+  };
+
+  const handleNext = () => {
+    if (selectedStoryIndex !== null && selectedStoryIndex < articles.length - 1) {
+      setSelectedStoryIndex(selectedStoryIndex + 1);
+    } else {
+      handleClose();
+    }
+  };
+
+  const handlePrevious = () => {
+    if (selectedStoryIndex !== null && selectedStoryIndex > 0) {
+      setSelectedStoryIndex(selectedStoryIndex - 1);
+    }
+  };
+
+  return (
+    <>
+      <div className="w-full overflow-x-auto py-6 bg-white border-b">
+        <div className="container mx-auto px-4">
+          <div className="flex space-x-6 rtl:space-x-reverse">
+            {articles.map((article, index) => (
+              <div
+                key={article.id}
+                className="flex flex-col items-center space-y-2 cursor-pointer"
+                onClick={() => handleStoryClick(index)}
+              >
+                <div className="relative">
+                  <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-blue-500">
+                    <img
+                      src={article.imageUrl}
+                      alt={article.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2">
+                    <div className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+                      {article.category}
+                    </div>
+                  </div>
+                </div>
+                <span className="text-sm font-medium text-gray-700 max-w-[80px] text-center truncate">
+                  {article.title}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {selectedStoryIndex !== null && (
+          <StoryViewer
+            articles={articles}
+            currentIndex={selectedStoryIndex}
+            onClose={handleClose}
+            onNext={handleNext}
+            onPrevious={handlePrevious}
+          />
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
+
+const CategoryFilter = ({ 
+  categories, 
+  selectedCategory, 
+  onSelectCategory 
+}: { 
+  categories: string[];
+  selectedCategory: string | null;
+  onSelectCategory: (category: string) => void;
+}) => {
+  return (
+    <div className="w-full py-4 bg-white border-b">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-wrap gap-2 justify-center">
+          <button
+            onClick={() => onSelectCategory('')}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              selectedCategory === ''
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            الكل
+          </button>
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => onSelectCategory(category)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                selectedCategory === category
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Index = () => {
+  const t = useTranslations('NewsPage');
+  const [featuredArticles, setFeaturedArticles] = useState<Article[]>([]);
+  const [newsArticles, setNewsArticles] = useState<Article[]>([]);
+  const [storyArticles, setStoryArticles] = useState<Article[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [categories, setCategories] = useState<string[]>([]);
+
   useEffect(() => {
-    // Show welcome toast when the page loads
-    // toast.success('Welcome to AutoNews', {
-    //   description: 'Discover the latest automotive news and trends',
-    //   duration: 5000,
-    // });
+    const fetchArticles = async () => {
+      try {
+        const featuredResponse = await fetch('/api/articles?limit=3');
+        const featuredData = await featuredResponse.json();
+        
+        const newsResponse = await fetch('/api/articles?limit=5');
+        const newsData = await newsResponse.json();
+
+        const storyResponse = await fetch('/api/articles?limit=8');
+        const storyData = await storyResponse.json();
+
+        if (!featuredData.data || !newsData.data || !storyData.data) {
+          throw new Error('Invalid data format received from API');
+        }
+        console.log(newsData);
+
+        const transformArticle = (article: any) => ({
+          id: article.id,
+          title: article.title || '',
+          excerpt: article.description || '',
+          imageUrl: article.cover?.data?.url || '',
+          category: article.categories?.map((category: any) => category.name).join(', ') || '',
+          date: new Date(article.publishedAt).toLocaleDateString() || '',
+          author: article.author || '',
+          description: article.description || '',
+          cover: article.cover?.data || null,
+          categories: article.categories || [],
+          publishedAt: article.publishedAt || '',
+          locale: article.locale || 'en',
+          slug: article.slug || '',
+          blocks: article.blocks || []
+        });
+        const transformedFeatured = featuredData.data.map(transformArticle);
+        const transformedNews = newsData.data.map(transformArticle);
+        const transformedStories = storyData.data.map(transformArticle);
+
+        setFeaturedArticles(transformedFeatured);
+        setNewsArticles(transformedNews);
+        setStoryArticles(transformedStories);
+
+        // Extract unique categories
+        const allCategories = new Set<string>();
+        [...transformedFeatured, ...transformedNews, ...transformedStories].forEach(article => {
+          if (article.category) {
+            article.category.split(', ').forEach(cat => allCategories.add(cat));
+          }
+        });
+        setCategories(Array.from(allCategories));
+        console.log(allCategories);
+
+      } catch (error) {
+        console.error('Error fetching articles:', error);
+        setError('Failed to load articles. Please try again later.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchArticles();
   }, []);
+
+  const filteredFeaturedArticles = selectedCategory
+    ? featuredArticles.filter(article => article.category.includes(selectedCategory))
+    : featuredArticles;
+
+  const filteredNewsArticles = selectedCategory
+    ? newsArticles.filter(article => article.category.includes(selectedCategory))
+    : newsArticles;
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
+          <p className="text-gray-600">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen"
+      className="min-h-screen rtl"
+      dir="rtl"
     >
-      
       <main>
-        <HeroSection 
-          title="The Evolution of Performance: Electric Supercars Redefining Speed"
-          description="As battery technology advances, electric vehicles are not just matching but exceeding the performance of traditional supercars. We explore the new generation of high-performance EVs that are challenging everything we thought we knew about automotive excellence."
-          imageUrl="https://images.unsplash.com/photo-1611859266238-4b98091d9d9b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
-          category="Electric Performance"
-          date="May 18, 2023"
-        />
-        
-        <FeaturedNews />
-        
-        <NewsGrid />
-        
-        <section className="py-16 bg-blue-600-50">
-          <div className="container mx-auto px-6 md:px-0 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-              className="max-w-2xl mx-auto"
-            >
-              <h2 className="font-display text-3xl font-bold text-gray-900 mb-4">
-                Stay Updated with Automotive Excellence
-              </h2>
-              <p className="text-gray-600 mb-8">
-                Join our community of car enthusiasts and industry professionals to receive curated content about the automotive world.
-              </p>
-              <div className="bg-white rounded-xl p-8 shadow-sm">
-                <div className="flex flex-col md:flex-row md:items-center md:space-x-4">
-                  <input
-                    type="email"
-                    placeholder="Your email address"
-                    className="flex-grow px-4 py-3 mb-4 md:mb-0 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <button className="bg-blue-600-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-600-700 transition-colors">
-                    Subscribe
-                  </button>
-                </div>
-                <p className="text-xs text-gray-500 mt-4">
-                  By subscribing, you agree to our Privacy Policy and consent to receive updates from our company.
-                </p>
+        <div className="container mx-auto px-4">
+          <div className="py-8">
+            <h1 className="text-3xl font-bold mb-6 text-right">أخبار السيارات</h1>
+            
+            {isLoading ? (
+              <div className="flex justify-center items-center py-16">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
               </div>
-            </motion.div>
+            ) : (
+              <>
+              {/* change this to fetch from cookies favorites */}
+                <StoryNews articles={storyArticles.filter(article => article.category.includes('New'))} />
+                <CategoryFilter
+                  categories={categories}
+                  selectedCategory={selectedCategory}
+                  onSelectCategory={setSelectedCategory}
+                />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                  {filteredFeaturedArticles.map((article) => (
+                    article.category.includes('New') && (  
+                      <Link href={`/news/${article.slug}`} className="block w-full">
+
+                    <div key={article.id} className="bg-white rounded-lg shadow-md overflow-hidden" >
+                      <img 
+                        src={article.imageUrl} 
+                        alt={article.title}
+                        className="w-full h-80 object-cover"
+                      />
+                      <div className="p-4">
+                        <h2 className="text-xl font-semibold mb-2">{article.title}</h2>
+                        <p className="text-gray-600 mb-4">{article.excerpt}</p>
+                        <div className="flex justify-between items-center text-sm text-gray-500">
+                          <span>{article.date}</span>
+                          <span>{article.author}</span>
+                        </div>
+                      </div>
+                    </div>
+                    </Link>
+                  ))  )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {filteredNewsArticles.map((article) => (
+                    <div key={article.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+                      <img 
+                        src={article.imageUrl} 
+                        alt={article.title}
+                        className="w-full h-40 object-cover"
+                      />
+                      <div className="p-4">
+                        <h3 className="text-lg font-semibold mb-2">{article.title}</h3>
+                        <p className="text-gray-600 text-sm mb-2">{article.excerpt}</p>
+                        <div className="flex justify-between items-center text-xs text-gray-500">
+                          <span>{article.date}</span>
+                          <span>{article.author}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
-        </section>
+        </div>
       </main>
-      
-      <Footer />
     </motion.div>
   );
 };

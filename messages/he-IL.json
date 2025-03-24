@@ -527,7 +527,8 @@
     "facebook": "פייסבוק",
     "all_rights_reserved": "כל הזכויות שמורות",
     "privacy_policy": "מדיניות פרטיות",
-    "terms_of_use": "תנאי שימוש"
+    "terms_of_use": "תנאי שימוש",
+    "invite_a_friend": "הזמן חבר"
   },
   "Pages": {
     "how_it_works": {
@@ -641,5 +642,31 @@
         "open_24h": "פתוח 24/7"
       }
     }
+  },
+  "NewsPage": {
+    "welcome": "ברוכים הבאים ל-AutoNews",
+    "description": "גלה את החדשות והטרנדים האחרונים בעולם הרכב",
+    "stay_updated": "הישאר מעודכן עם מצוינות רכב",
+    "subscribe": "הרשם",
+    "email_placeholder": "כתובת האימייל שלך",
+    "privacy_policy": "על ידי הרשמה, אתה מסכים למדיניות הפרטיות שלנו ומסכים לקבל עדכונים מהחברה שלנו.",
+    "loading": "טוען...",
+    "featured_news": "חדשות מומלצות",
+    "news_grid": "חדשות אחרונות",
+    "join_community": "הצטרף לקהילתנו של חובבי רכב ומקצוענים בתעשייה כדי לקבל תוכן מותאם אישית על עולם הרכב.",
+    "latest_news": "חדשות אחרונות",
+    "all_categories": "כל הקטגוריות",
+    "electric": "חשמלי",
+    "technology": "טכנולוגיה",
+    "industry": "תעשייה",
+    "design": "עיצוב",
+    "motorsport": "ספורט מוטורי",
+    "load_more": "טען עוד",
+    "featured_news": "חדשות מומלצות",
+    "news_grid": "רשת חדשות",
+    "join_community": "הצטרף לקהילתנו",
+    "subscribe": "הירשם",
+    "email_placeholder": "כתובת הדוא״ל שלך",
+    "privacy_policy": "בהרשמה, אתה מסכים למדיניות הפרטיות שלנו ומסכים לקבל עדכונים מהחברה שלנו."
   }
 }
