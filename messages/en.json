@@ -306,7 +306,8 @@
     "compare_cars": "Compare Now",
     "max_comparison_limit": "You can compare up to 3 cars",
     "added_to_comparison": "Added to comparison",
-    "removed_from_comparison": "Removed from comparison"
+    "removed_from_comparison": "Removed from comparison",
+    "currency_symbol": "$"
   },
   "CarDetails": {
     "financing_options": "Financing Options",

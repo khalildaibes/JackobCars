@@ -16,6 +16,15 @@ export interface SearchManufacturerProps {
 }
 
 export interface CarProps {
+  mainImage: string;
+  alt: string;
+  title: string;
+  miles: string | number;
+  condition: string;
+  details: string;
+  price: string;
+  mileage: string | number;
+  category: string[];
   id: number;
   make: string;
   model: string;

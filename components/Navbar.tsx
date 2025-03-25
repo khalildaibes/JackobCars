@@ -21,11 +21,11 @@ const [isMenuOpen, setIsMenuOpen] = useState(false);
   const t = useTranslations("Navbar");
 
   const NavButton = ({ href, gradient, children }: { href: string; gradient: string; children: React.ReactNode }) => (
-    <Link href={href} onClick={() => setIsMenuOpen(false)}>
+    <Link href={href} onClick={() => setIsMenuOpen(false)} className="w-full">
       <button 
         className={`
           relative group overflow-hidden
-          px-6 py-2.5 rounded-xl
+          px-4 py-2 rounded-xl
           text-white font-medium
           bg-gradient-to-br ${gradient}
           transition-all duration-300
@@ -33,10 +33,15 @@ const [isMenuOpen, setIsMenuOpen] = useState(false);
           shadow-[0_2px_8px_rgba(0,0,0,0.1)]
           hover:shadow-[0_4px_12px_rgba(0,0,0,0.2)]
           active:scale-[0.98]
-          w-full md:w-auto
+          w-full
+          max-h-[60]
+          min-h-[60px]
+          flex items-center justify-center
+          text-base md:text-xl lg:text-sm
+          leading-tight
         `}
       >
-        <span className="relative z-10">{children}</span>
+        <span className="relative z-10 text-center line-clamp-2">{children}</span>
         <div 
           className="absolute inset-0 w-full h-full 
           bg-gradient-to-r from-white/0 via-white/[0.1] to-white/0
@@ -70,7 +75,7 @@ const [isMenuOpen, setIsMenuOpen] = useState(false);
         <div
           className={`${
             isMenuOpen ? "flex" : "hidden"
-          } md:flex flex-col md:flex-row gap-4 items-center absolute md:static top-20 left-0 w-full md:w-auto 
+          } md:flex flex-col md:flex-row gap-4 items-stretch md:items-center absolute md:static top-20 left-0 w-full md:w-auto 
           bg-white/95 md:bg-transparent backdrop-blur-lg md:backdrop-blur-none
           shadow-lg md:shadow-none p-6 md:p-0 
           transition-all duration-300 ease-in-out
@@ -94,9 +99,14 @@ const [isMenuOpen, setIsMenuOpen] = useState(false);
           <NavButton href="/stores" gradient={buttonStyles.stores}>
             {t("stores")}
           </NavButton>
+          
+          {/* Language Switcher for Mobile */}
+          <div className="md:hidden w-full mt-4">
+            <LanguageSwitcher />
+          </div>
         </div>
 
-        {/* Language Switcher */}
+        {/* Language Switcher for Desktop */}
         <div className="hidden md:block">
           <LanguageSwitcher />
         </div>

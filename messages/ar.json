@@ -17,9 +17,12 @@
     "industry": "الصناعة",
     "design": "التصميم",
     "motorsport": "سباق السيارات",
-    "load_more": "تحميل المزيد"
+    "load_more": "تحميل المزيد",
+    "view_all": "عرض الكل"
   },
   "HomePage": {
+    "invite_a_friend": "دعوة صديق",
+    "view_all": "عرض الكل",
     "find_car_plate_heading": "ابحث عن سيارتك برقم اللوحة",
     "explore_car_specs": "استكشف مواصفات السيارة",
     "car_catalogue_heading": "كتالوج السيارات",
@@ -279,6 +282,7 @@
     "Accessories": "اكسسوارات"
   },
   "CarListing": {
+    "currency_symbol": "د.إ",
     "find_perfect_car": "اعثر على سيارتك المثالية",
     "browse_collection": "تصفح مجموعتنا الواسعة من السيارات عالية الجودة واعثر على السيارة المناسبة لك.",
     "search_placeholder": "ابحث حسب الماركة أو الموديل أو الكلمات المفتاحية...",
@@ -519,29 +523,47 @@
     }
   },
   "BlogDetails": {
+    "by": "بواسطة",
+    "postedOn": "نشر في",
     "shareButton": "مشاركة",
     "commentsTitle": "التعليقات",
     "leaveComment": "اترك تعليقاً",
     "loadingText": "جاري التحميل...",
-    "errorLoadingData": "خطأ في تحميل بيانات المدونة. يرجى المحاولة مرة أخرى لاحقاً.",
-    "previousPost": "المقال السابق",
-    "nextPost": "المقال التالي",
-    "by": "بواسطة",
-    "postedOn": "نشر في"
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "website": "الموقع الإلكتروني (اختياري)",
+    "comment": "تعليقك",
+    "saveInfo": "احفظ معلوماتي للمرة القادمة",
+    "submitComment": "نشر التعليق",
+    "errorLoadingData": "خطأ في تحميل مقال المدونة"
   },
   "Comparison": {
     "compare_cars": "مقارنة السيارات",
-    "compare_description": "قارن المواصفات والميزات للسيارات المختارة",
+    "compare_description": "قارن المواصفات والميزات بين السيارات المختارة",
     "back_to_listings": "العودة إلى القائمة",
     "clear_comparison": "مسح المقارنة",
     "select_cars_prompt": "اختر السيارات للمقارنة",
-    "select_cars_description": "يرجى اختيار سيارتين على الأقل من القائمة لمقارنة مواصفاتهما",
+    "select_cars_description": "الرجاء اختيار سيارة واحدة على الأقل من القائمة لمقارنة مواصفاتها",
     "browse_cars": "تصفح السيارات",
     "share_comparison": "مشاركة المقارنة",
     "copied_to_clipboard": "تم نسخ رابط المقارنة",
     "share_error": "خطأ في مشاركة المقارنة",
     "share_title": "مقارنة السيارات",
-    "share_text": "تحقق من مقارنة السيارات هذه!"
+    "share_text": "تحقق من مقارنة السيارات هذه!",
+    "car_already_added": "هذه السيارة موجودة بالفعل في المقارنة",
+    "max_cars_reached": "يمكن مقارنة 3 سيارات كحد أقصى",
+    "car_added_to_comparison": "تمت إضافة السيارة إلى المقارنة",
+    "car_removed_from_comparison": "تمت إزالة السيارة من المقارنة",
+    "comparison_cleared": "تم مسح المقارنة",
+    "ai_insights": "رؤى الذكاء الاصطناعي",
+    "performance": "الأداء",
+    "safety_features": "ميزات السلامة",
+    "reliability": "الموثوقية",
+    "value_for_money": "القيمة مقابل المال",
+    "environmental_impact": "التأثير البيئي",
+    "technology_features": "ميزات التكنولوجيا",
+    "pros": "المميزات",
+    "cons": "العيوب"
   },
   "Footer": {
     "company": "الشركة",
@@ -555,14 +577,14 @@
     "blog": "المدونة",
     "podcast": "البودكاست",
     "invite_friend": "دعوة صديق",
+    "invite_a_friend": "دعوة صديق",
     "discord": "ديسكورد",
     "instagram": "انستغرام",
     "twitter": "تويتر",
     "facebook": "فيسبوك",
     "all_rights_reserved": "جميع الحقوق محفوظة",
     "privacy_policy": "سياسة الخصوصية",
-    "terms_of_use": "شروط الاستخدام",
-    "invite_a_friend": "دعوة صديق"
+    "terms_of_use": "شروط الاستخدام"
   },
   "Pages": {
     "how_it_works": {

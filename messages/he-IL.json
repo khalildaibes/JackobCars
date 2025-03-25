@@ -303,7 +303,8 @@
     "compare_cars": "השווה עכשיו",
     "max_comparison_limit": "ניתן להשוות עד 3 רכבים",
     "added_to_comparison": "נוסף להשוואה",
-    "removed_from_comparison": "הוסר מההשוואה"
+    "removed_from_comparison": "הוסר מההשוואה",
+    "currency_symbol": "₪"
   },
   "CarDetails": {
     "financing_options": "אפשרויות מימון",
@@ -507,7 +508,21 @@
     "copied_to_clipboard": "קישור ההשוואה הועתק",
     "share_error": "שגיאה בשיתוף ההשוואה",
     "share_title": "השוואת רכבים",
-    "share_text": "בדוק את השוואת הרכבים הזו!"
+    "share_text": "בדוק את השוואת הרכבים הזו!",
+    "car_already_added": "רכב זה כבר נמצא בהשוואה",
+    "max_cars_reached": "ניתן להשוות עד 3 רכבים",
+    "car_added_to_comparison": "הרכב נוסף להשוואה",
+    "car_removed_from_comparison": "הרכב הוסר מההשוואה",
+    "comparison_cleared": "ההשוואה נמחקה",
+    "ai_insights": "תובנות בינה מלאכותית",
+    "performance": "ביצועים",
+    "safety_features": "תכונות בטיחות",
+    "reliability": "אמינות",
+    "value_for_money": "ערך לכסף",
+    "environmental_impact": "השפעה סביבתית",
+    "technology_features": "תכונות טכנולוגיות",
+    "pros": "יתרונות",
+    "cons": "חסרונות"
   },
   "Footer": {
     "company": "חברה",

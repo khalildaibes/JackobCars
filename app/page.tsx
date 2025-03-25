@@ -22,118 +22,9 @@ import ResponsiveNewsLayout from "../components/Responsivenews";
 import HeroSection from "../components/NewHero";
 import LookingForCar from "../components/comp";
 import SearchBar from "../components/SearchBar";
-const listings = [
-  {
-    id: 1,
-    image: "img_h92_jpg.png",
-    alt: "Car 1",
-    title: "Toyota Camry 2020",
-    miles: "20,000 miles",
-    fuel: "Gasoline",
-    condition: "used",
-    transmission: "Automatic",
-    price: "$20,000",
-  },
-  {
-    id: 2,
-    image: "img_h92_jpg.png",
-    alt: "Car 2",
-    title: "Honda Accord 2019",
-    miles: "30,000 miles",
-    fuel: "Gasoline",
-    condition: "used",
-    transmission: "Automatic",
-    price: "$18,000",
-  },
-  {
-    id: 3,
-    image: "img_h92_jpg.png",
-    alt: "Car 3",
-    condition: "used",
-    title: "Ford Focus 2018",
-    miles: "25,000 miles",
-    fuel: "Gasoline",
-    transmission: "Manual",
-    price: "$15,000",
-  },
-  {
-    id: 4,
-    image: "img_h46_jpg.png",
-    alt: "Car 4",
-    condition: "used",
-    title: "Chevrolet Malibu 2021",
-    miles: "10,000 miles",
-    fuel: "Gasoline",
-    transmission: "Automatic",
-    price: "$22,000",
-  },
-  {
-    id: 5,
-    image: "img_car9_660x440_jpg_218x328.png",
-    alt: "Car 5",
-    condition: "used",
-    title: "Nissan Altima 2020",
-    miles: "15,000 miles",
-    fuel: "Gasoline",
-    transmission: "Automatic",
-    price: "$19,000",
-  },
-  {
-    id: 6,
-    image: "img_car12_660x440_jpg_1.png",
-    alt: "Car 6",
-    condition: "new",
-    title: "BMW 3 Series 2019",
-    miles: "18,000 miles",
-    fuel: "Gasoline",
-    transmission: "Automatic",
-    price: "$28,000",
-  },
-  {
-    id: 7,
-    image: "img_h21_jpg.png",
-    alt: "Car 7",
-    condition: "new",
-    title: "Audi A4 2018",
-    miles: "22,000 miles",
-    fuel: "Gasoline",
-    transmission: "Automatic",
-    price: "$27,000",
-  },
-  {
-    id: 8,
-    image: "img_car20_660x440_jpg.png",
-    alt: "Car 8",
-    condition: "new",
-    title: "Mercedes C-Class 2020",
-    miles: "12,000 miles",
-    fuel: "Gasoline",
-    transmission: "Automatic",
-    price: "$35,000",
-  },
-  {
-    id: 9,
-    image: "img_car12_660x440_jpg_1.png",
-    alt: "Car 9",
-    condition: "new",
-    title: "Hyundai Sonata 2021",
-    miles: "8,000 miles",
-    fuel: "Gasoline",
-    transmission: "Automatic",
-    price: "$21,000",
-  },
-  {
-    id: 10,
-    image: "img_car9_660x440_jpg_218x328.png",
-    alt: "Car 10",
-    condition: "new",
-    title: "Kia Optima 2019",
-    miles: "16,000 miles",
-    fuel: "Gasoline",
-    transmission: "Automatic",
-    price: "$17,000",
-  },
-];
+import { Img } from "../components/Img";
+import Link from "next/link";
+
 const FindCarByPlate = dynamic(
   () => import("./findcarbyplate/FindCarByPlate"),
   { ssr: false }
@@ -222,23 +113,107 @@ async function HomeContent() {
   
       console.log("Fetched Products:",  data);
       // Transform the fetched data into the required listings format
-      const formattedListings = data.data.map((product: any) => ({
-        id: product.id,
-        mainImage: product.image
-        // ? `http://68.183.215.202${data.data[0].image[0].url}`
-        ? `http://68.183.215.202${product.image[0].url}`
-        : "/default-car.png",
-        alt: product.name || "Car Image",
-        title: product.name,
-        miles: product.details.car?.miles || "N/A",
-        fuel: product.details.car?.fuel || "Unknown",
-        condition: product.details.car?.condition || "Used", // Default to "Used"
-        transmission: product.details.car?.transmission || "Unknown",
-        details: product.details.car?.transmission || "Unknown",
-        price: `$${product.price.toLocaleString()}`,
-        category: product.categories ? product.categories.split(",").map((c: string) => c.toLowerCase().trim()) : [], // Convert categories string to an array
+      const formattedListings = data.data.map((product: any) => {
+        // Get the fuel type and normalize it
+        const rawFuelType = product.details?.car.fuel || "Unknown";
+        let normalizedFuelType = rawFuelType;
+        
+        // Normalize fuel type values to English
+        if (rawFuelType.toLowerCase().includes("plug-in") || 
+            rawFuelType.toLowerCase().includes("plug in") || 
+            rawFuelType === "היברידי נטען" ||
+            rawFuelType === "هجين قابل للشحن") {
+          normalizedFuelType = "Plug-in Hybrid";
+        } else if (rawFuelType.toLowerCase().includes("hybrid") || 
+                  rawFuelType === "היברידי" ||
+                  rawFuelType === "هجين") {
+          normalizedFuelType = "Hybrid";
+        } else if (rawFuelType.toLowerCase().includes("electric") || 
+                  rawFuelType === "חשמלי" ||
+                  rawFuelType === "كهربائي") {
+          normalizedFuelType = "Electric";
+        } else if (rawFuelType.toLowerCase().includes("diesel") || 
+                  rawFuelType === "דיזל" ||
+                  rawFuelType === "ديزل") {
+          normalizedFuelType = "Diesel";
+        } else if (rawFuelType.toLowerCase().includes("gasoline") || 
+                  rawFuelType.toLowerCase().includes("petrol") || 
+                  rawFuelType === "בנזין" ||
+                  rawFuelType === "بنزين") {
+          normalizedFuelType = "Gasoline";
+        }
 
-      }));
+        // Normalize make values to English
+        const rawMake = product.details?.car.make || "Unknown";
+        let normalizedMake = rawMake;
+        
+        // Normalize make values to English
+        if (rawMake.toLowerCase().includes("toyota") || rawMake === "טויוטה" || rawMake === "تويوتا") {
+          normalizedMake = "Toyota";
+        } else if (rawMake.toLowerCase().includes("honda") || rawMake === "הונדה" || rawMake === "هوندا") {
+          normalizedMake = "Honda";
+        } else if (rawMake.toLowerCase().includes("ford") || rawMake === "פורד" || rawMake === "فورد") {
+          normalizedMake = "Ford";
+        } else if (rawMake.toLowerCase().includes("chevrolet") || rawMake === "שברולט" || rawMake === "شيفروليه") {
+          normalizedMake = "Chevrolet";
+        } else if (rawMake.toLowerCase().includes("bmw") || rawMake === "ב.מ.וו" || rawMake === "بي ام دبليو") {
+          normalizedMake = "BMW";
+        } else if (rawMake.toLowerCase().includes("mercedes") || rawMake === "מרצדס" || rawMake === "مرسيدس") {
+          normalizedMake = "Mercedes-Benz";
+        } else if (rawMake.toLowerCase().includes("audi") || rawMake === "אאודי" || rawMake === "أودي") {
+          normalizedMake = "Audi";
+        } else if (rawMake.toLowerCase().includes("tesla") || rawMake === "טסלה" || rawMake === "تيسلا") {
+          normalizedMake = "Tesla";
+        } else if (rawMake.toLowerCase().includes("lexus") || rawMake === "לקסוס" || rawMake === "لكزس") {
+          normalizedMake = "Lexus";
+        } else if (rawMake.toLowerCase().includes("subaru") || rawMake === "סובארו" || rawMake === "سوبارو") {
+          normalizedMake = "Subaru";
+        }
+
+        // Normalize body type values to English
+        const rawBodyType = product.details?.car.body_type || "Unknown";
+        let normalizedBodyType = rawBodyType;
+        
+        // Normalize body type values to English
+        if (rawBodyType.toLowerCase().includes("sedan") || rawBodyType === "סדאן" || rawBodyType === "سيدان") {
+          normalizedBodyType = "Sedan";
+        } else if (rawBodyType.toLowerCase().includes("suv") || rawBodyType === "רכב שטח" || rawBodyType === "سيارة رياضية متعددة الاستخدامات") {
+          normalizedBodyType = "SUV";
+        } else if (rawBodyType.toLowerCase().includes("truck") || rawBodyType === "משאית" || rawBodyType === "شاحنة") {
+          normalizedBodyType = "Truck";
+        } else if (rawBodyType.toLowerCase().includes("coupe") || rawBodyType === "קופה" || rawBodyType === "كوبيه") {
+          normalizedBodyType = "Coupe";
+        } else if (rawBodyType.toLowerCase().includes("convertible") || rawBodyType === "קבריולה" || rawBodyType === "كابريوليه") {
+          normalizedBodyType = "Convertible";
+        } else if (rawBodyType.toLowerCase().includes("hatchback") || rawBodyType === "הצ'בק" || rawBodyType === "هاتشباك") {
+          normalizedBodyType = "Hatchback";
+        } else if (rawBodyType.toLowerCase().includes("wagon") || rawBodyType === "סטיישן" || rawBodyType === "ستيشن") {
+          normalizedBodyType = "Wagon";
+        } else if (rawBodyType.toLowerCase().includes("van") || rawBodyType === "ואן" || rawBodyType === "فان") {
+          normalizedBodyType = "Van";
+        }
+
+        return {
+          id: product.id,
+              mainImage: product.image ? `http://68.183.215.202${product.image[0]?.url}` : "/default-car.png",
+              alt: product.name || "Car Image",
+              title: product.name,
+              miles: product.details?.car.miles || "N/A",
+              fuel: normalizedFuelType,
+              condition: product.details?.car.condition || "Used",
+              transmission: product.details?.car.transmission || "Unknown",
+              details: product.details?.car.transmission || "Unknown",
+              price: `$${product.price.toLocaleString()}`,
+              mileage: product.details?.car.miles || "N/A",
+              year: product.details.car.year,
+              fuelType: normalizedFuelType,
+              make: normalizedMake,
+              bodyType: normalizedBodyType,
+              description: product.details.car.description,
+              features: product.details.car.features.map((feature: any) => feature.value) || [],
+              category: product.categories ? product.categories.split(",").map((c: string) => c.toLowerCase().trim()) : [],
+        };
+      });
       
       // Update state with formatted listings
       setListings(formattedListings);
@@ -290,7 +265,84 @@ async function HomeContent() {
     fetchHomePageData();
   }, []);
 
+  interface Article {
+    id: string;
+    title: string;
+    excerpt: string;
+    imageUrl: string;
+    category: string;
+    date: string;
+    author: string;
+    description: string;
+    cover: any;
+    categories: any[];
+    publishedAt: string;
+    locale: string;
+    slug: string;
+    blocks: any[];
+  }
 
+  const [featuredArticles, setFeaturedArticles] = useState<Article[]>([]);
+
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const featuredResponse = await fetch('/api/articles?limit=3');
+        const featuredData = await featuredResponse.json();
+        
+        const newsResponse = await fetch('/api/articles?limit=5');
+        const newsData = await newsResponse.json();
+
+        const storyResponse = await fetch('/api/articles?limit=8');
+        const storyData = await storyResponse.json();
+
+        if (!featuredData.data || !newsData.data || !storyData.data) {
+          throw new Error('Invalid data format received from API');
+        }
+        console.log(newsData.data[0].cover);
+
+        const transformArticle = (article: any) => ({
+          id: article.id,
+          title: article.title || '',
+          excerpt: article.excerpt || '',
+          imageUrl: article.cover ? article.cover.url : '',
+          category: article.categories?.map((category: any) => category.name).join(', ') || '',
+          date: new Date(article.publishedAt).toLocaleDateString() || '',
+          author: article.author || '',
+          description: article.description || '',
+          cover: article.cover || null,
+          categories: article.categories || [],
+          publishedAt: article.publishedAt || '',
+          locale: article.locale || 'en',
+          slug: article.slug || '',
+          blocks: article.blocks || []
+        });
+        const transformedFeatured = featuredData.data.map(transformArticle);
+        const transformedNews = newsData.data.map(transformArticle);
+        const transformedStories = storyData.data.map(transformArticle);
+
+        setFeaturedArticles(transformedFeatured);
+
+
+        // Extract unique categories
+        const allCategories = new Set<string>();
+        [...transformedFeatured, ...transformedNews, ...transformedStories].forEach(article => {
+          if (article.category) {
+            article.category.split(', ').forEach(cat => allCategories.add(cat));
+          }
+        });
+
+        console.log(allCategories);
+
+      } catch (error) {
+        console.error('Error fetching articles:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchArticles();
+  }, []);
   const data = [
     {
       text: t("looking_for_car_text"),
@@ -386,7 +438,7 @@ async function HomeContent() {
         <section>{/* Other sections can be added here */}</section>
       ) : (
         <section>
-          <div className="text-center grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 relative">
+          <div className="text-center grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 relative">
             {filteredCars.map((car) => (
               <CarCard key={car.id} car={car} />
             ))}
@@ -420,105 +472,89 @@ async function HomeContent() {
 
 
         <HeroSection />
-       
-        <div className="justify-center pt-8 gap-6 flex-col flex md:flex-row bg-white">
-        <div className="justify-center pt-8 gap-6 flex-col flex md:flex-row">
-  {data.map(({ title, text, buttonColor, backgroundColor,icon, buttonTextColor, textColor }, index) => (
-    <LookingForCar
-      key={index} // Always provide a unique key when mapping over an array
-      text={text} // Use the dynamic text
-      title={title} // Use the dynamic title
-      backgroundColor={backgroundColor}
-      textColor={textColor}
-      buttonColor={buttonColor}
-      buttonTextColor={buttonTextColor}
-      icon={icon}
-    />
-  ))}
-</div>
+             {/* latest blog posts section */}
+     {/* Category Navigation */}
+     <div className="sticky top-20 z-30 bg-white/95 backdrop-blur-md shadow-sm">
 
-    </div>
+
+              {/* Breaking News Section */}
+              <div className="my-12">
+                <div className="flex items-center mb-8">
+                  <div className="w-2 h-8 bg-red-600 ml-4"></div>
+                  <h2 className="text-2xl font-bold text-gray-900">عاجل</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center">
+                  {featuredArticles.map((article) => (
+                    article.category.includes('featured') && (
+                      <Link href={`/news/${article.slug}`} key={article.id} className="group block">
+                        <div className="bg-white rounded-xl shadow-sm overflow-hidden transition-shadow hover:shadow-md">
+                          <div className="aspect-[16/9] overflow-hidden">
+                            <Img
+                              src={`http://68.183.215.202${article.imageUrl}`}
+                              alt={article.title}
+                              className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                              width={1290}
+                              height={2040}
+                              external={true}
+                            />
+                          </div>
+                          <div className="p-6">
+                            <div className="flex items-center mb-3">
+                              <span className="text-xs font-medium text-red-600 bg-red-50 px-2 py-1 rounded-full">
+                                {article.category}
+                              </span>
+                              <span className="mx-2 text-gray-400">•</span>
+                              <span className="text-sm text-gray-500">{article.date}</span>
+                            </div>
+                            <h2 className="text-xl font-bold mb-3 text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                              {article.title}
+              </h2>
+                            <p className="text-gray-600 line-clamp-3 mb-4">{article.excerpt}</p>
+                            <div className="flex items-center text-sm text-gray-500">
+                              <span className="font-medium">{article.author}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    )
+                  ))}
+                </div>
+                </div>
+          </div>
+
+
+
       {/* featured listings section */}
       <FeaturedListingsSection listings={listings} initialFavorites={[]} />
 
       {/* sales and reviews section */}
       <SalesAndReviewsSection />
-
       {/* recently added section */}
-      <RecentlyAddedSection listings={listings}/>
+      <RecentlyAddedSection listings={listings} />
 
       {/* customer testimonials section */}
       {/* <CustomerTestimonialsSection /> */}
-
-      {/* latest blog posts section */}
-      <LatestBlogPostsSection />
-
-      {/* Blogs Section */}
-      {/* <div className="titleParent w-full max-w-screen-lg mx-auto overflow-x-hidden px-4">
-        <div className="titleParent w-full max-w-screen-xl mx-auto overflow-x-hidden px-6">
-          <div className="title w-full text-center">
-            <div className="titleChild" />
-            <div className="featuredWrapper">
-              <div className="featured text-2xl font-bold">
-                {t("blogs_heading")}
-              </div>
-            </div>
-          </div>
-
-          <div className="blogParent flex flex-wrap justify-center gap-6">
-            <div className="blog">
-              <div className="rectangleParent shadow-md rounded-lg overflow-hidden">
-                <Image
-                  className="frameChild w-full h-auto object-cover"
-                  width={300}
-                  height={250}
-                  alt={t("porsche_alt")}
-                  src="/hero.png"
-                />
-                <div className="findYourPlaceWithWrapper text-center">
-                  <div className="findYourPlace text-lg font-medium">
-                    {t("blog1_title")}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="blog">
-              <div className="rectangleParent shadow-md rounded-lg overflow-hidden">
-                <Image
-                  className="frameChild w-full h-auto object-cover"
-                  width={500}
-                  height={350}
-                  alt={t("toyota_alt")}
-                  src="/hero.png"
-                />
-                <div className="findYourPlaceWithWrapper p-4 text-center">
-                  <div className="findYourPlace text-lg font-medium">
-                    {t("blog2_title")}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="blog">
-              <div className="rectangleParent shadow-md rounded-lg overflow-hidden">
-                <Image
-                  className="frameChild w-full h-auto object-cover"
-                  width={500}
-                  height={350}
-                  alt={t("kia_alt")}
-                  src="/hero.png"
-                />
-                <div className="findYourPlaceWithWrapper p-4 text-center">
-                  <div className="findYourPlace text-lg font-medium">
-                    {t("blog3_title")}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="justify-center pt-8 gap-6 flex-col flex md:flex-row bg-white">
+        <div className="justify-center pt-8 gap-6 flex-col flex md:flex-row">
+          {data.map(({ title, text, buttonColor, backgroundColor,icon, buttonTextColor, textColor }, index) => (
+            <LookingForCar
+              key={index} // Always provide a unique key when mapping over an array
+              text={text} // Use the dynamic text
+              title={title} // Use the dynamic title
+              backgroundColor={backgroundColor}
+              textColor={textColor}
+              buttonColor={buttonColor}
+              buttonTextColor={buttonTextColor}
+              icon={icon}
+            />
+          ))}
         </div>
-      </div> */}
+        
+
+    </div>
+      
+
+
     </main>
   );
 }
@@ -528,3 +564,71 @@ export default function HomePage() {
       <HomeContent />
   );
 }
+
+
+      // {/* Blogs Section */}
+      // <div className="titleParent w-full max-w-screen-lg mx-auto overflow-x-hidden px-4">
+      //   <div className="titleParent w-full max-w-screen-xl mx-auto overflow-x-hidden px-6">
+      //     <div className="title w-full text-center">
+      //       <div className="titleChild" />
+      //       <div className="featuredWrapper">
+      //         <div className="featured text-2xl font-bold">
+      //           {t("blogs_heading")}
+      //         </div>
+      //       </div>
+      //     </div>
+
+      //     <div className="blogParent flex flex-wrap justify-center gap-6">
+      //       <div className="blog">
+      //         <div className="rectangleParent shadow-md rounded-lg overflow-hidden">
+      //           <Image
+      //             className="frameChild w-full h-auto object-cover"
+      //             width={300}
+      //             height={250}
+      //             alt={t("porsche_alt")}
+      //             src="/hero.png"
+      //           />
+      //           <div className="findYourPlaceWithWrapper text-center">
+      //             <div className="findYourPlace text-lg font-medium">
+      //               {t("blog1_title")}
+      //             </div>
+      //           </div>
+      //         </div>
+      //       </div>
+
+      //       <div className="blog">
+      //         <div className="rectangleParent shadow-md rounded-lg overflow-hidden">
+      //           <Image
+      //             className="frameChild w-full h-auto object-cover"
+      //             width={500}
+      //             height={350}
+      //             alt={t("toyota_alt")}
+      //             src="/hero.png"
+      //           />
+      //           <div className="findYourPlaceWithWrapper p-4 text-center">
+      //             <div className="findYourPlace text-lg font-medium">
+      //               {t("blog2_title")}
+      //             </div>
+      //           </div>
+      //         </div>
+      //       </div>
+
+      //       <div className="blog">
+      //         <div className="rectangleParent shadow-md rounded-lg overflow-hidden">
+      //           <Image
+      //             className="frameChild w-full h-auto object-cover"
+      //             width={500}
+      //             height={350}
+      //             alt={t("kia_alt")}
+      //             src="/hero.png"
+      //           />
+      //           <div className="findYourPlaceWithWrapper p-4 text-center">
+      //             <div className="findYourPlace text-lg font-medium">
+      //               {t("blog3_title")}
+      //             </div>
+      //           </div>
+      //         </div>
+      //       </div>
+      //     </div>
+      //   </div>
+      // </div> */}

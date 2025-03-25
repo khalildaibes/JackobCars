@@ -1,115 +1,284 @@
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import { CarProps } from "../types";
-import { generateCarImageUrl } from "../utils";
-import CustomButton from "./CustomButton";
-import CardDetails from "./CardDetails";
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Card, CardContent } from "./ui/card";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { Img } from "./Img";
+import { Car, Fuel, Heart, MessageSquare, Scale, Calendar, Gauge, Check } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useComparison } from "../app/context/ComparisonContext";
+import { toast } from "react-hot-toast";
+import { useTranslations } from "next-intl";
 
 interface CarCardProps {
-  car: CarProps;
+  car: {
+    id: string | number;
+    mainImage: string;
+    title: string;
+    year: number;
+    mileage: string;
+    price: string;
+    bodyType: string;
+    fuelType: string;
+    description: string;
+    location?: string;
+    features?: string[];
+  };
+  variant?: "grid" | "list";
 }
 
-const CarCard = ({ car }: CarCardProps) => {
-  const { city_mpg, year, make, model, transmission, drive } = car;
-  const [isOpen, setIsOpen] = useState(false);
-  const [isAdded, setIsAdded] = useState(false);
+export default function CarCard({ car, variant = "grid" }: CarCardProps) {
+  const router = useRouter();
+  const t = useTranslations("CarListing");
+  const { addToComparison, removeFromComparison, isInComparison } = useComparison();
+  const [favorites, setFavorites] = useState<(string | number)[]>([]);
 
   useEffect(() => {
-    const comparedCars = JSON.parse(localStorage.getItem("comparedCars") || "[]");
-    setIsAdded(comparedCars.some((c: CarProps) => c.model === car.model));
-  }, [car]);
+    if (typeof window !== "undefined") {
+      const storedFavorites = localStorage.getItem("favorites");
+      if (storedFavorites) {
+        setFavorites(JSON.parse(storedFavorites));
+      }
+    }
+  }, []);
 
-  const addToComparison = () => {
-    let comparedCars = JSON.parse(localStorage.getItem("comparedCars") || "[]");
-    if (!isAdded) {
-      comparedCars.push(car);
-      localStorage.setItem("comparedCars", JSON.stringify(comparedCars));
-      setIsAdded(true);
+  const handleFavoriteToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    let updatedFavorites;
+    if (favorites.includes(car.id)) {
+      updatedFavorites = favorites.filter((favId) => favId !== car.id);
+    } else {
+      updatedFavorites = [...favorites, car.id];
+    }
+    setFavorites(updatedFavorites);
+    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+  };
+
+  const handleContactSeller = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      const response = await fetch(`/api/send-email`, {
+        method: 'POST',
+        body: JSON.stringify({ id: car.id.toString() }),
+      });
+      if (response.ok) {
+        toast.success(t('email_sent'));
+      } else {
+        toast.error(t('email_failed'));
+      }
+    } catch (error) {
+      toast.error(t('email_failed'));
     }
   };
 
-  return (
-    <div className="car-card group relative p-4 bg-white shadow-md rounded-lg"
-    onClick={() => setIsOpen(true)}
->
-      <div className="car-card__content">
-        <h2 className="car-card__content-title">
-          {make} {model}
-        </h2>
-      </div>
+  const handleViewDetails = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    router.push(`/car-details/${car.id}`);
+  };
 
-      <p className="flex mt-6 text-[32px] font-extrabold">
-        <span className="self-start text-[14px] font-semibold">$</span>
-        200,000
-      </p>
+  const handleCompareToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isInComparison(car.id.toString())) {
+      removeFromComparison(car.id.toString());
+      toast.success(t('removed_from_comparison'));
+    } else {
+      addToComparison(car);
+      toast.success(t('added_to_comparison'));
+    }
+  };
 
-      <div className="relative w-full h-40 my-3 object-contain">
-        <Image
-          src={generateCarImageUrl(car)}
-          alt="car model"
-          fill
-          priority
-          className="object-contain"
+  const gridContent = (
+    <Card className="overflow-hidden h-full flex flex-col hover:shadow-lg transition-shadow duration-300">
+      <div className="relative">
+        <Img
+          width={1920}
+          height={1080}
+          external={true}
+          src={car.mainImage}
+          alt={car.title}
+          className="w-full h-48 object-fit"
         />
-      </div>
-
-      <div className="relative flex w-full mt-2">
-        {/* Desktop View: Show only on hover */}
-        <div className="hidden sm:flex group-hover:flex w-full justify-between text-gray transition-all duration-300">
-          <div className="flex flex-col justify-center items-center gap-2">
-            <Image src="/steering-wheel.svg" width={20} height={20} alt="steering wheel" />
-            <p className="text-[14px]">{transmission === "a" ? "Automatic" : "Manual"}</p>
-          </div>
-          <div className="flex flex-col justify-center items-center gap-2">
-            <Image src="/tire.svg" width={20} height={20} alt="tire" />
-            <p className="text-[14px]">{drive.toUpperCase()}</p>
-          </div>
-          <div className="flex flex-col justify-center items-center gap-2">
-            <Image src="/gas.svg" width={20} height={20} alt="gas" />
-            <p className="text-[14px]">{city_mpg} MPG</p>
-          </div>
+        <Button 
+          size="icon" 
+          onClick={handleFavoriteToggle}
+          variant="ghost" 
+          className="absolute top-2 right-2 bg-white/80 hover:bg-white text-red-500 rounded-full"
+        >
+          <Heart className={`h-5 w-5 ${favorites.includes(car.id) ? 'fill-current text-red-500' : ''}`} />
+        </Button>
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+          <Badge className="bg-blue-500 text-white">{car.year}</Badge>
+          <Badge className="bg-blue-800 ml-2 text-white">{car.mileage}</Badge>
         </div>
       </div>
-
-      {/* Buttons */}
-      <div className="absolute bottom-0 left-0 w-full flex flex-col gap-2 p-2 bg-white shadow-md transition-all duration-300 sm:hidden group-hover:flex">
-        <CustomButton
-          title="View More"
-          containerStyles="w-full py-[16px] rounded-full bg-primary-blue"
-          textStyles="text-white text-[14px] leading-[17px] font-bold"
-          rightIcon="/right-arrow.svg"
-          handleClick={() => setIsOpen(true)}
-        />
-        <CustomButton
-          title={isAdded ? "Added" : "Add to Compare"}
-          containerStyles={`w-full py-[10px] rounded-full ${isAdded ? "bg-gray-400" : "bg-green-500"} mt-2`}
-          textStyles="text-white text-[14px] leading-[17px] font-bold"
-          handleClick={addToComparison}
-          isDisabled={isAdded}
-        />
-      </div>
-
-      {/* Mobile View: Always show buttons */}
-      <div className="sm:hidden flex flex-col gap-2 mt-4">
-        <CustomButton
-          title="View More"
-          containerStyles="w-full py-[16px] rounded-full bg-primary-blue"
-          textStyles="text-white text-[14px] leading-[17px] font-bold"
-          rightIcon="/right-arrow.svg"
-          handleClick={() => setIsOpen(true)}
-        />
-        <CustomButton
-          title={isAdded ? "Added" : "Add to Compare"}
-          containerStyles={`w-full py-[10px] rounded-full ${isAdded ? "bg-gray-400" : "bg-green-500"} mt-2`}
-          textStyles="text-white text-[14px] leading-[17px] font-bold"
-          handleClick={addToComparison}
-          isDisabled={isAdded}
-        />
-      </div>
-
-      <CardDetails isOpen={isOpen} closeModal={() => setIsOpen(false)} car={car} />
-    </div>
+      <CardContent className="flex-grow flex flex-col pt-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-1">{car.title}</h3>
+        <p className="text-2xl font-bold text-blue-600 mb-2">{car.price}</p>
+        <div className="flex items-center text-gray-600 mb-3 text-sm">
+          <Car size={16} className="mr-1" />
+          <span>{car.bodyType}</span>
+          <span className="mx-2">•</span>
+          <Fuel size={16} className="mr-1" />
+          <span>{car.fuelType}</span>
+        </div>
+        <p className="text-gray-600 text-sm line-clamp-2 mb-4">{car.description}</p>
+        <div className="mt-auto flex justify-between items-center">
+          {car.location && <span className="text-sm text-gray-700">{car.location}</span>}
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="bg-blue-500 text-white"
+              onClick={handleContactSeller}
+            >
+              <MessageSquare className="h-4 w-4 mr-1" />
+              {t('contact')}
+            </Button>
+            <Button 
+              size="sm" 
+              className="bg-blue-500 text-white"
+              onClick={handleViewDetails}
+            >
+              {t('view_details')}
+            </Button>
+          </div>
+        </div>
+        <div className="mt-4 flex justify-between items-center">
+          <Button
+            variant={isInComparison(car.id.toString()) ? "destructive" : "outline"}
+            size="sm"
+            onClick={handleCompareToggle}
+            className="flex items-center gap-2"
+          >
+            <Scale className="w-4 h-4" />
+            {isInComparison(car.id.toString()) ? t('remove_from_comparison') : t('add_to_comparison')}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
-};
 
-export default CarCard;
+  const listContent = (
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+      <div className="flex flex-col md:flex-row">
+        <div className="relative md:w-1/3">
+          <Img
+            external={true}
+            width={1920}
+            height={1080}
+            src={car.mainImage}
+            alt={car.title}
+            className="w-full h-48 md:h-full object-cover"
+          />
+          <Button 
+            size="icon" 
+            onClick={handleFavoriteToggle}
+            variant="ghost" 
+            className="absolute top-2 right-2 bg-white/80 hover:bg-white text-red-500 rounded-full"
+          >
+            <Heart className={`h-5 w-5 ${favorites.includes(car.id) ? 'fill-current text-red-500' : ''}`} />
+          </Button>
+        </div>
+        <CardContent className="md:w-2/3 p-4 md:p-6">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4">
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-1">{car.title}</h3>
+              <div className="flex items-center text-gray-600 mb-2 text-sm">
+                <Car size={16} className="mr-1" />
+                <span>{car.bodyType}</span>
+                <span className="mx-2">•</span>
+                <Calendar size={16} className="mr-1" />
+                <span>{car.year}</span>
+                <span className="mx-2">•</span>
+                <Gauge size={16} className="mr-1" />
+                <span>{car.mileage}</span>
+                <span className="mx-2">•</span>
+                <Fuel size={16} className="mr-1" />
+                <span>{car.fuelType}</span>
+              </div>
+            </div>
+            <p className="text-2xl font-bold text-blue-600">{car.price}</p>
+          </div>
+          <p className="text-gray-600 mb-4">{car.description}</p>
+          {car.features && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {car.features.slice(0, 3).map((feature, idx) => (
+                <Badge key={idx} variant="outline" className="flex items-center gap-1">
+                  <Check className="h-3 w-3" />
+                  {feature}
+                </Badge>
+              ))}
+              {car.features.length > 3 && (
+                <Badge variant="outline">
+                  +{car.features.length - 3} more
+                </Badge>
+              )}
+            </div>
+          )}
+          <div className="flex items-center justify-between mt-4 w-full">
+            {car.location && <span className="text-sm text-gray-500">{car.location}</span>}
+            <div className="flex space-x-3">
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="bg-blue-500 text-white"
+                onClick={handleContactSeller}
+              >
+                <MessageSquare className="h-4 w-4 mr-2" />
+                {t('contact')}
+              </Button>
+              <Button 
+                size="sm" 
+                className="bg-blue-500 text-white"
+                onClick={handleViewDetails}
+              >
+                {t('view_details')}
+              </Button>
+            </div>
+          </div>
+          <div className="mt-4 flex justify-between items-center">
+            <Button
+              variant={isInComparison(car.id.toString()) ? "destructive" : "outline"}
+              size="sm"
+              onClick={handleCompareToggle}
+              className="flex items-center gap-2"
+            >
+              <Scale className="w-4 h-4" />
+              {isInComparison(car.id.toString()) ? t('remove_from_comparison') : t('add_to_comparison')}
+            </Button>
+          </div>
+        </CardContent>
+      </div>
+    </Card>
+  );
+
+  if (variant === "list") {
+    return (
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3 }}
+        className="w-full"
+      >
+        {listContent}
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
+      className="w-full"
+    >
+      {gridContent}
+    </motion.div>
+  );
+}

@@ -81,11 +81,11 @@ const SearchBar: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-4">
+      <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-4 z-10">
         <CustomFilter
           title={t("search_fuel_type")}
           options={fuels}
-          selected={selectedFuel}
+          selected={selectedFuel}          
           onChange={(value) => {
             setSelectedFuel(value);
             handleFilterChange("fuel", value);
@@ -95,6 +95,7 @@ const SearchBar: React.FC = () => {
           title={t("search_year")}
           options={yearsOfProduction}
           selected={selectedYear}
+          
           onChange={(value) => {
             setSelectedYear(value);
             handleFilterChange("year", value);

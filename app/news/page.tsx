@@ -9,6 +9,7 @@ import Footer from '../../components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { Link } from 'react-alice-carousel';
+import { Img } from '../../components/Img';
 
 interface Article {
   id: number;
@@ -85,8 +86,11 @@ const StoryViewer = ({ articles, currentIndex, onClose, onNext, onPrevious }: St
 
         {/* Story content */}
         <div className="relative aspect-[9/16] bg-white rounded-lg overflow-hidden">
-          <img
-            src={currentArticle.imageUrl}
+          <Img
+            width={100}
+            height={100}
+            external={true}
+            src={`http://68.183.215.202${currentArticle.imageUrl}`}
             alt={currentArticle.title}
             className="w-full h-full object-cover"
           />
@@ -158,10 +162,13 @@ const StoryNews = ({ articles }: { articles: Article[] }) => {
               >
                 <div className="relative">
                   <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-blue-500">
-                    <img
-                      src={article.imageUrl}
+                    <Img
+                      src={`http://68.183.215.202${article.imageUrl}`}
                       alt={article.title}
                       className="w-full h-full object-cover"
+                      width={100}
+                      height={100}
+                      external={true}
                     />
                   </div>
                   <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2">
@@ -238,13 +245,13 @@ const CategoryFilter = ({
 
 const Index = () => {
   const t = useTranslations('NewsPage');
-  const [featuredArticles, setFeaturedArticles] = useState<Article[]>([]);
   const [newsArticles, setNewsArticles] = useState<Article[]>([]);
   const [storyArticles, setStoryArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [categories, setCategories] = useState<string[]>([]);
+  const [featuredArticles, setFeaturedArticles] = useState<Article[]>([]);
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -261,18 +268,18 @@ const Index = () => {
         if (!featuredData.data || !newsData.data || !storyData.data) {
           throw new Error('Invalid data format received from API');
         }
-        console.log(newsData);
+        console.log(newsData.data[0].cover);
 
         const transformArticle = (article: any) => ({
           id: article.id,
           title: article.title || '',
-          excerpt: article.description || '',
-          imageUrl: article.cover?.data?.url || '',
+          excerpt: article.excerpt || '',
+          imageUrl: article.cover ? article.cover.url : '',
           category: article.categories?.map((category: any) => category.name).join(', ') || '',
           date: new Date(article.publishedAt).toLocaleDateString() || '',
           author: article.author || '',
           description: article.description || '',
-          cover: article.cover?.data || null,
+          cover: article.cover || null,
           categories: article.categories || [],
           publishedAt: article.publishedAt || '',
           locale: article.locale || 'en',
@@ -332,75 +339,125 @@ const Index = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen rtl"
+      className="min-h-screen rtl bg-gray-50"
       dir="rtl"
     >
       <main>
         <div className="container mx-auto px-4">
-          <div className="py-8">
-            <h1 className="text-3xl font-bold mb-6 text-right">أخبار السيارات</h1>
-            
-            {isLoading ? (
-              <div className="flex justify-center items-center py-16">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+          {/* Header Section */}
+          <div className="py-8 border-b border-gray-200">
+            <h1 className="text-4xl font-bold text-right text-gray-900">أخبار السيارات</h1>
+            <p className="text-gray-600 mt-2">آخر أخبار وتطورات عالم السيارات</p>
+          </div>
+
+          {isLoading ? (
+            <div className="flex justify-center items-center py-16">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+            </div>
+          ) : (
+            <>
+              {/* Stories Section */}
+              <div className="mb-12">
+                <StoryNews articles={storyArticles.filter(article => article.category.includes('story'))} />
               </div>
-            ) : (
-              <>
-              {/* change this to fetch from cookies favorites */}
-                <StoryNews articles={storyArticles.filter(article => article.category.includes('New'))} />
+
+              {/* Category Navigation */}
+              <div className="sticky top-20 z-30 bg-white/95 backdrop-blur-md shadow-sm">
                 <CategoryFilter
                   categories={categories}
                   selectedCategory={selectedCategory}
                   onSelectCategory={setSelectedCategory}
                 />
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                  {filteredFeaturedArticles.map((article) => (
-                    article.category.includes('New') && (  
-                      <Link href={`/news/${article.slug}`} className="block w-full">
+              </div>
 
-                    <div key={article.id} className="bg-white rounded-lg shadow-md overflow-hidden" >
-                      <img 
-                        src={article.imageUrl} 
-                        alt={article.title}
-                        className="w-full h-80 object-cover"
-                      />
-                      <div className="p-4">
-                        <h2 className="text-xl font-semibold mb-2">{article.title}</h2>
-                        <p className="text-gray-600 mb-4">{article.excerpt}</p>
-                        <div className="flex justify-between items-center text-sm text-gray-500">
-                          <span>{article.date}</span>
-                          <span>{article.author}</span>
-                        </div>
-                      </div>
-                    </div>
-                    </Link>
-                  ))  )}
+              {/* Breaking News Section */}
+              <div className="my-12">
+                <div className="flex items-center mb-8">
+                  <div className="w-2 h-8 bg-red-600 ml-4"></div>
+                  <h2 className="text-2xl font-bold text-gray-900">عاجل</h2>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {filteredNewsArticles.map((article) => (
-                    <div key={article.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-                      <img 
-                        src={article.imageUrl} 
-                        alt={article.title}
-                        className="w-full h-40 object-cover"
-                      />
-                      <div className="p-4">
-                        <h3 className="text-lg font-semibold mb-2">{article.title}</h3>
-                        <p className="text-gray-600 text-sm mb-2">{article.excerpt}</p>
-                        <div className="flex justify-between items-center text-xs text-gray-500">
-                          <span>{article.date}</span>
-                          <span>{article.author}</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {filteredFeaturedArticles.map((article) => (
+                    article.category.includes('featured') && (
+                      <Link href={`/news/${article.slug}`} key={article.id} className="group block">
+                        <div className="bg-white rounded-xl shadow-sm overflow-hidden transition-shadow hover:shadow-md">
+                          <div className="aspect-[16/9] overflow-hidden">
+                            <Img
+                              src={`http://68.183.215.202${article.imageUrl}`}
+                              alt={article.title}
+                              className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                              width={1290}
+                              height={2040}
+                              external={true}
+                            />
+                          </div>
+                          <div className="p-6">
+                            <div className="flex items-center mb-3">
+                              <span className="text-xs font-medium text-red-600 bg-red-50 px-2 py-1 rounded-full">
+                                {article.category}
+                              </span>
+                              <span className="mx-2 text-gray-400">•</span>
+                              <span className="text-sm text-gray-500">{article.date}</span>
+                            </div>
+                            <h2 className="text-xl font-bold mb-3 text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                              {article.title}
+              </h2>
+                            <p className="text-gray-600 line-clamp-3 mb-4">{article.excerpt}</p>
+                            <div className="flex items-center text-sm text-gray-500">
+                              <span className="font-medium">{article.author}</span>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
+                      </Link>
+                    )
                   ))}
                 </div>
-              </>
-            )}
+              </div>
+
+              {/* Latest News Grid */}
+              <div className="my-12">
+                <div className="flex items-center mb-8">
+                  <div className="w-2 h-8 bg-blue-600 ml-4"></div>
+                  <h2 className="text-2xl font-bold text-gray-900">أحدث الأخبار</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {filteredNewsArticles.map((article) => (
+                    <Link href={`/news/${article.slug}`} key={article.id} className="group block">
+                      <div className="bg-white rounded-xl shadow-sm overflow-hidden transition-shadow hover:shadow-md h-full">
+                        <div className="aspect-[4/3] overflow-hidden">
+                          <Img 
+                            src={`http://68.183.215.202${article.imageUrl}`}
+                            alt={article.title}
+                            width={1290}
+                            height={2040}
+                            external={true}
+                            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                        <div className="p-4">
+                          <div className="flex items-center mb-2">
+                            <span className="text-xs text-gray-500">{article.date}</span>
+                            <span className="mx-2 text-gray-400">•</span>
+                            <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                              {article.category}
+                            </span>
+                          </div>
+                          <h3 className="text-lg font-bold mb-2 text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                            {article.title}
+                          </h3>
+                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                            {article.excerpt}
+                          </p>
+                          <span className="text-xs text-gray-500">{article.author}</span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
           </div>
-        </div>
       </main>
     </motion.div>
   );

@@ -1,3 +1,4 @@
+import { getLocale } from 'next-intl/server';
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
@@ -8,7 +9,7 @@ const openai = new OpenAI({
 export async function POST(request: Request) {
   try {
     const { make, model, year, specs } = await request.json();
-
+    const locale = await getLocale();
     const prompt = `
       Analyze this ${year} ${make} ${model} car and provide:
       1. A list of 3-5 major pros/advantages
@@ -37,6 +38,9 @@ export async function POST(request: Request) {
           "technologyFeatures": "..."
         }
       }
+
+      Make sure to provide a detailed and comprehensive analysis of the car.
+      write your reponse in locale language of ${locale}   
     `;
 
     const completion = await openai.chat.completions.create({

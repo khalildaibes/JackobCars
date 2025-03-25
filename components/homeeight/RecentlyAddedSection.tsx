@@ -10,6 +10,7 @@ import React from "react";
 import AliceCarousel, { EventObject } from "react-alice-carousel";
 import { useTranslations } from "next-intl";
 import { cn } from "../../app/lib/utils";
+import CarCard from "../CarCard";
 
 export default function RecentlyAddedSection({ listings }) {
   const t = useTranslations("HomePage");
@@ -60,94 +61,7 @@ export default function RecentlyAddedSection({ listings }) {
                     }}
                     ref={sliderRef}
                     items={listings.map((car) => (
-                      <React.Fragment key={car.id}>
-                        <Link href={`detailsvone?car=${car.id}`}>
-                          <div className="px-[15px] rounded-[16px]">
-                             <div className={cn("px-[15px] cursor-pointer text-card-foreground shadow-sm overflow-hidden border-0 card-hover bg-white rounded-xl",
-                                                                'overflow-hidden border-0 card-hover bg-white rounded-xl w-full h-full object-cover transition-transform duration-500 hover:scale-105')}>
-                              <div className="relative h-[218px] content-center lg:h-auto md:h-auto">
-                                <Img
-                                  src={car.mainImage}
-                                  width={328}
-                                  height={218}
-                                  external={true}
-                                  alt={car.alt}
-                                  className="h-[218px] w-full flex-1 object-cover rounded-t-[16px]"
-                                />
-                                <Button
-                                  shape="circle"
-                                  className="absolute right-5 top-5 m-auto w-[36px] rounded-[18px] px-3"
-                                >
-                                  <Img
-                                    src="img_bookmark.svg"
-                                    width={8}
-                                    height={12}
-                                    className="rounded-[16px]"
-                                    alt={t("bookmark")}
-                                  />
-                                </Button>
-                              </div>
-                              <div className="flex flex-col items-center gap-[18px] rounded-bl-[16px] rounded-br-[16px] border-b border-l border-r border-solid border-gray-200 p-3.5">
-                                <div className="flex w-[88%] flex-col items-start gap-1 lg:w-full md:w-full">
-                                  <Heading
-                                    size="text2xl"
-                                    as="p"
-                                    className="text-[18px] font-medium lg:text-[15px] !text-black"
-                                  >
-                                    {car.title}
-                                  </Heading>
-                                  <div className="flex items-center self-stretch">
-                                    <Text
-                                      size="textmd"
-                                      as="p"
-                                      className="text-[14px] font-normal !text-black"
-                                    >
-                                      {car.miles}
-                                    </Text>
-                                    <div className="mb-1.5 ml-2 h-[4px] w-[4px] self-end rounded-sm bg-gray-500" />
-                                    <Text
-                                      size="textmd"
-                                      as="p"
-                                      className="ml-2.5 text-[14px] font-normal !text-black"
-                                    >
-                                      {car.fuel}
-                                    </Text>
-                                    <div className="mb-1.5 ml-2 h-[4px] w-[4px] self-end rounded-sm bg-gray-500" />
-                                    <Text
-                                      size="textmd"
-                                      as="p"
-                                      className="ml-2.5 text-[14px] font-normal !text-black"
-                                    >
-                                      {car.transmission}
-                                    </Text>
-                                  </div>
-                                </div>
-                                <div className="mb-2 flex w-[88%] flex-col items-start gap-1.5 lg:w-full md:w-full">
-                                  <Heading
-                                    size="headings"
-                                    as="h5"
-                                    className="text-[20px] font-bold lg:text-[17px] !text-black"
-                                  >
-                                    {car.price}
-                                  </Heading>
-                                  <div className="flex items-center gap-2.5 self-stretch">
-                                    <Text as="p" className="text-[15px] font-medium !text-black">
-                                      {t("view_details")}
-                                    </Text>
-                                    <Img
-                                      src="img_arrow_left_indigo_a400.svg"
-                                      width={14}
-                                      height={14}
-                                      alt={t("arrow_left")}
-                                      className="h-[14px] self-end"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </Link>
-                      </React.Fragment>
+                      <CarCard key={car.id} car={car} />
                     ))}
                   />
                 </div>
