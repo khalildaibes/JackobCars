@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { Img } from "../../../components/Img";
+import { CarCard } from "../../../components";
 
 interface Store {
   id: number;
@@ -70,6 +71,9 @@ interface Product {
   image: { url: string }[]; // Image array for localization
   details: {
     car: {
+      description: string;
+      fuelType: string;
+      bodyType: string;
       cons: string[]; // List of disadvantages
       pros: string[]; // List of advantages
       fuel: string; // Fuel type
@@ -404,7 +408,20 @@ export default function StorePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product) => (
-              <CarCard key={product.id} car={product} />
+              <CarCard 
+                key={product.id} 
+                car={{
+                  id: product.id,
+                  mainImage: product.image[0].url || '',
+                  title: product.name || '',
+                  year: product.details.car.year || 0,
+                  mileage: product.details.car.mileage || '',
+                  bodyType: product.details.car.bodyType || '',
+                  fuelType: product.details.car.fuelType || '',
+                  description: product.details.car.description || '',
+                  price: product.details.car.price.toString() || ''
+                }}
+              />
             ))
           ) : (
             <p className="text-gray-600">No products found.</p>

@@ -12,6 +12,20 @@ const JSONEditor = dynamic(
   { ssr: false }
 );
 
+interface Product {
+    id: string;
+    attributes: {
+      name: string;
+      description: string;
+      price: number;
+      category: string;
+      stock: number;
+      isActive: boolean;
+      images: { data: Array<{ attributes: { url: string } }> };
+      locale: string;
+      details?: CarDetails;
+    };
+  }
 interface CarDetails {
   car: {
     cons: string[];
@@ -41,14 +55,23 @@ export default function ProductDialog({ isOpen, onClose, product, onSuccess }: P
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedLocale, setSelectedLocale] = useState("en");
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    description: string;
+    price: number;
+    category: string;
+    stock: number;
+    isActive: boolean;
+    images: File[];
+    details?: CarDetails;
+  }>({
     name: "",
     description: "",
     price: 0,
     category: "",
     stock: 0,
     isActive: true,
-    images: [] as File[]
+    images: []
   });
   const [imagePreview, setImagePreview] = useState<string[]>([]);
   const [productType, setProductType] = useState("regular");
@@ -92,29 +115,29 @@ export default function ProductDialog({ isOpen, onClose, product, onSuccess }: P
   useEffect(() => {
     if (isOpen && product) {
       // Set the locale from the product
-      setSelectedLocale(product.locale || "en");
+      setSelectedLocale(product.attributes.locale || "en");
       
       // Set form data from product
       setFormData({
-        name: product.name || "",
-        description: product.description || "",
-        price: product.price || 0,
-        category: product.category || "",
-        stock: product.stock || 0,
-        isActive: product.isActive || false,
+        name: product.attributes.name || "",
+        description: product.attributes.description || "",
+        price: product.attributes.price || 0,
+        category: product.attributes.category || "",
+        stock: product.attributes.stock || 0,
+        isActive: product.attributes.isActive || false,
         images: []
       });
 
       // Set image previews from existing product images
-      const existingImages = product.images?.data?.map(
-        img => img.url
+      const existingImages = product.attributes.images?.data?.map(
+        img => img.attributes.url
       ) || [];
       setImagePreview(existingImages);
 
       // Check if product has car details
-      if (product.details?.car) {
+      if (product.attributes.details?.car) {
         setProductType("car");
-        setCarDetails(product.details);
+        setCarDetails(product.attributes.details);
       } else {
         setProductType("regular");
         setCarDetails({
@@ -231,7 +254,7 @@ export default function ProductDialog({ isOpen, onClose, product, onSuccess }: P
       
       // Add details if product type is car
       if (productType === "car") {
-        finalFormData.details = carDetails;
+        finalFormData.details = carDetails as CarDetails;
       }
 
       // First, translate the content if needed
