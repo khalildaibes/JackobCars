@@ -5,9 +5,6 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { Dialog } from '@headlessui/react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-// At the top of app/blog/create/page.tsx, add:
 import { blogService } from '../../../app/services/blogService';
 
 // Types for our blog content
@@ -24,12 +21,6 @@ interface ContentBlock {
   htmlContent?: string; // For rich text content
 }
 
-interface BlogTranslations {
-  ar: BlogContent;
-  en: BlogContent;
-  'he-IL': BlogContent;
-}
-
 interface BlogContent {
   title: string;
   description: string;
@@ -44,6 +35,23 @@ interface BlogContent {
   createdAt: string;
   content: ContentBlock[];
 }
+
+interface BlogTranslations {
+  ar: BlogContent | null;
+  en: BlogContent | null;
+  'he-IL': BlogContent | null;
+}
+
+// Dynamically import ReactQuill with no SSR
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+  loading: () => <div className="h-64 bg-gray-100 animate-pulse rounded" />
+});
+
+// Dynamically import the CSS
+const QuillStyles = dynamic(() => import('react-quill/dist/quill.snow.css'), {
+  ssr: false
+});
 
 // Define the PreviewModal props interface
 interface PreviewModalProps {
