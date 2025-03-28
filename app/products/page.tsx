@@ -177,11 +177,10 @@ export default function ProductsPage() {
           <ProductCard
             key={product.id}
             product={{
-              id: product.id,
-              name: product.name,
-              description: product.description, 
-              price: product.price,
-              isActive: product.isActive
+              name: product.attributes.name,
+              description: product.attributes.description,
+              price: product.attributes.price,
+              isActive: product.attributes.isActive
             }}
             onDelete={() => handleDelete(product.id)}
             onUpdate={() => handleUpdate(product)}
