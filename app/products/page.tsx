@@ -177,6 +177,7 @@ export default function ProductsPage() {
           <ProductCard
             key={product.id}
             product={{
+              id: product.id,
               name: product.attributes.name,
               description: product.attributes.description,
               price: product.attributes.price,

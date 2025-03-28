@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { Editor } from '@tinymce/tinymce-react';
 import dynamic from 'next/dynamic';
 import { Plus, Minus, X } from 'lucide-react';
 
