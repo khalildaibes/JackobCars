@@ -48,10 +48,7 @@ const ReactQuill = dynamic(() => import('react-quill'), {
   loading: () => <div className="h-64 bg-gray-100 animate-pulse rounded" />
 });
 
-// Dynamically import the CSS
-const QuillStyles = dynamic(() => import('react-quill/dist/quill.snow.css'), {
-  ssr: false
-});
+
 
 // Define the PreviewModal props interface
 interface PreviewModalProps {
