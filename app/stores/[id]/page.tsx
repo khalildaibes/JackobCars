@@ -11,7 +11,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { Img } from "../../../components/Img";
-import { CarCard } from "../../../components";
+import  CarCard  from "../../../components/CarCard";
 
 interface Store {
   id: number;
