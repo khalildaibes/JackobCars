@@ -10,13 +10,13 @@ const Footer = () => {
   const t = useTranslations('Footer');
 
   return (
-    <footer className="flex flex-col text-black-100 mt-5 border-t border-gray-100">
+    <footer className="flex flex-col  mt-5 border-t border-gray-100">
       <div className="flex max-md:flex-col flex-wrap justify-between gap-5 sm:px-16 px-6 py-10">
         <div className="flex flex-col justify-start items-start gap-6">
           <Link href="/" className="flex items-center gap-2">
-            <div className="min-w-[80px] h-16 flex items-center justify-center rounded-2xl bg-white/90 p-2 transition-all hover:scale-105">
+            <div className="min-w-[80px] h-16 flex items-center justify-center rounded-2xl p-2 transition-all hover:scale-105">
               <Image
-                src="/logo-transparent.png"
+                src="/logo-transparent-1.png"
                 alt="logo"
                 width={118}
                 height={18}

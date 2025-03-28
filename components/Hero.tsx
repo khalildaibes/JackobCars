@@ -33,7 +33,7 @@ const Hero = () => {
           />
         </div>
 
-        <div className="hero__image-container z-[-1] relative overflow-x-hidden sm:overflow-x-hidden max-h-[420px] ">
+        <div className="hero__image-container z-[-1] relative overflow-x-hidden sm:overflow-x-hidden max-h-[300px] ">
           <div className="hero__image">
             <Image src="/hero.png" alt="hero" fill className="object-contain " />
           </div>

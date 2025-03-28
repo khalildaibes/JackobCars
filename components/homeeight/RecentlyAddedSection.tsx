@@ -12,7 +12,17 @@ import { useTranslations } from "next-intl";
 import { cn } from "../../app/lib/utils";
 import CarCard from "../CarCard";
 
-export default function RecentlyAddedSection({ listings }) {
+interface RecentlyAddedSectionProps {
+  listings: any[];
+  title?: string;
+  viewAllLink?: string;
+}
+
+export default function RecentlyAddedSection({ 
+  listings, 
+  title = "Recently Added", // default title if none provided
+  viewAllLink = "#" 
+}: RecentlyAddedSectionProps) {
   const t = useTranslations("HomePage");
   const [sliderState, setSliderState] = React.useState(0);
   const sliderRef = React.useRef<AliceCarousel>(null);
@@ -27,10 +37,10 @@ export default function RecentlyAddedSection({ listings }) {
                 as="h1"
                 className="text-2xl font-bold text-center sm:text-[40px] sm:font-bold sm:text-left md:text-[34px] lg:text-[34px]"
               >
-                {t("recently_added")}
+                {title || t("recently_added")}
               </Heading>
               <div className="flex items-center gap-2">
-                <Link href="#">
+                <Link href={viewAllLink}>
                   <Text as="p" className="text-base font-medium">
                     {t("view_all")}
                   </Text>
@@ -53,7 +63,12 @@ export default function RecentlyAddedSection({ listings }) {
                   <Slider
                     autoPlay
                     autoPlayInterval={2000}
-                    responsive={{ "0": { items: 1 }, "551": { items: 1 }, "1051": { items: 2 }, "1441": { items: 4 } }}
+                    responsive={{ 
+                      "0": { items: 1 }, 
+                      "551": { items: 1 }, 
+                      "1051": { items: 2 }, 
+                      "1441": { items: 4 } 
+                    }}
                     disableDotsControls
                     activeIndex={sliderState}
                     onSlideChanged={(e: EventObject) => {

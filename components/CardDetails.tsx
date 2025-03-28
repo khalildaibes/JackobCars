@@ -44,7 +44,7 @@ const CardDetails = ({ isOpen, closeModal, car }: cardDetailsProps) => {
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="absolute top-2 right-2 z-10 w-fit p-2 bg-primary-blue-100 rounded-full"
+                    className="absolute top-2 right-2 z-10 w-fit p-2  rounded-full"
                   >
                     <Image
                       src="/close.svg"
@@ -56,7 +56,7 @@ const CardDetails = ({ isOpen, closeModal, car }: cardDetailsProps) => {
                   </button>
 
                   <div className="flex-1 flex flex-col gap-3">
-                    <div className="relative w-full h-40 bg-pattern bg-cover bg-center rounded-lg">
+                    <div className="relative w-full h-40  bg-cover bg-center rounded-lg">
                       <Image
                         src={generateCarImageUrl(car)}
                         alt="car model"
@@ -67,7 +67,7 @@ const CardDetails = ({ isOpen, closeModal, car }: cardDetailsProps) => {
                     </div>
 
                     <div className="flex gap-3">
-                      <div className="flex-1 relative w-full h-24 bg-primary-blue-100 rounded-lg">
+                      <div className="flex-1 relative w-full h-24  rounded-lg">
                         <Image
                           src={generateCarImageUrl(car, "29")}
                           alt="car model"
@@ -76,7 +76,7 @@ const CardDetails = ({ isOpen, closeModal, car }: cardDetailsProps) => {
                           className="object-contain"
                         />
                       </div>
-                      <div className="flex-1 relative w-full h-24 bg-primary-blue-100 rounded-lg">
+                      <div className="flex-1 relative w-full h-24  rounded-lg">
                         <Image
                           src={generateCarImageUrl(car, "33")}
                           alt="car model"
@@ -85,7 +85,7 @@ const CardDetails = ({ isOpen, closeModal, car }: cardDetailsProps) => {
                           className="object-contain"
                         />
                       </div>
-                      <div className="flex-1 relative w-full h-24 bg-primary-blue-100 rounded-lg">
+                      <div className="flex-1 relative w-full h-24  rounded-lg">
                         <Image
                           src={generateCarImageUrl(car, "13")}
                           alt="car model"
@@ -108,10 +108,10 @@ const CardDetails = ({ isOpen, closeModal, car }: cardDetailsProps) => {
                           className="flex justify-between gap-5 w-full text-right"
                           key={key}
                         >
-                          <h4 className="text-grey capitalize">
+                          <h4 className=" capitalize">
                             {key.split("_").join(" ")}
                           </h4>
-                          <p className="text-black-100 font-semibold">
+                          <p className=" font-semibold">
                             {value}
                           </p>
                         </div>

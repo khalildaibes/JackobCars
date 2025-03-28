@@ -404,23 +404,7 @@ export default function StorePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product) => (
-              <div key={product.id} className="bg-white rounded-lg shadow-lg p-4 transition-transform transform hover:scale-105">
-                <Img
-                  src={product.image[0]?.url || '/placeholder.png'}
-                  alt={product.name}
-                  external={true}
-                  width={300}
-                  height={200}
-                  className="object-cover rounded"
-                />
-                <h3 className="text-lg font-semibold mt-2">{product.name}</h3>
-                <p className="text-gray-600">Price: ${product.price}</p>
-                <Link href={`/products/${product.slug}`}>
-                  <button className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
-                    View Details
-                  </button>
-                </Link>
-              </div>
+              <CarCard key={product.id} car={product} />
             ))
           ) : (
             <p className="text-gray-600">No products found.</p>

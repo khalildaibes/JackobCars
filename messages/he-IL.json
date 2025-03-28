@@ -186,7 +186,9 @@
     "news": "חדשות",
     "after_market": "שוק האביזרים",
     "compare_cars": "השוואת רכבים",
-    "stores": "חנויות"
+    "stores": "חנויות",
+    "login": "התחברות",
+    "open_24h": "פתוח 24/7"
   },
   "BlogDetailsPage": {
     "breadcrumb": {
@@ -608,7 +610,59 @@
     "view_details": "הצג פרטים",
     "loading_spinner": "טוען...",
     "filter_toggle": "החלף סינון",
-    "view_mode_toggle": "החלף מצב תצוגה"
+    "view_mode_toggle": "החלף מצב תצוגה",
+    "add_product": "הוסף מוצר",
+    "edit_product": "ערוך מוצר",
+    "product_name": "שם המוצר",
+    "description": "תיאור",
+    "stock": "מלאי",
+    "status": "סטטוס",
+    "images": "תמונות",
+    "select_category": "בחר קטגוריה",
+    "active": "פעיל",
+    "inactive": "לא פעיל",
+    "saving": "שומר...",
+    "update": "עדכן",
+    "create": "צור",
+    "cancel": "ביטול",
+    "loading": "טוען...",
+    "categories": {
+      "electronics": "אלקטרוניקה",
+      "clothing": "ביגוד",
+      "accessories": "אביזרים",
+      "home": "בית",
+      "sports": "ספורט"
+    },
+    "search": "חיפוש מוצרים...",
+    "all_categories": "כל הקטגוריות",
+    "all_status": "כל הסטטוסים",
+    "min_price": "מחיר מינימלי",
+    "max_price": "מחיר מקסימלי",
+    "confirm_delete": "האם אתה בטוח שברצונך למחוק מוצר זה?",
+    "language": "שפת תוכן",
+    "saved": "נשמר בהצלחה",
+    "description_placeholder": "הזן תיאור מפורט של המוצר...",
+    "text_direction": "כיוון טקסט",
+    "rtl": "מימין לשמאל",
+    "ltr": "משמאל לימין",
+    "product_type": "סוג מוצר",
+    "regular_product": "מוצר רגיל",
+    "car": "רכב",
+    "car_details": "פרטי הרכב",
+    "car_template": "השתמש בתבנית רכב",
+    "invalid_json": "פורמט JSON לא תקין",
+    "car_name": "שם הרכב",
+    "year": "שנה",
+    "mileage": "קילומטראז'",
+    "fuel_type": "סוג דלק",
+    "pros": "יתרונות",
+    "cons": "חסרונות",
+    "add_pro": "הוסף יתרון",
+    "add_con": "הוסף חיסרון",
+    "dimensions_capacity": "מידות וקיבולת",
+    "engine_transmission": "מנוע ותיבת הילוכים",
+    "spec_label": "תווית מפרט",
+    "spec_value": "ערך"
   },
   "Stores": {
     "title": "חנויות חלקי רכב",
@@ -683,5 +737,9 @@
     "subscribe": "הירשם",
     "email_placeholder": "כתובת הדוא״ל שלך",
     "privacy_policy": "בהרשמה, אתה מסכים למדיניות הפרטיות שלנו ומסכים לקבל עדכונים מהחברה שלנו."
+  },
+  "UserMenu": {
+    "settings": "הגדרות",
+    "logout": "התנתק"
   }
 }

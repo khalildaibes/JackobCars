@@ -167,7 +167,8 @@
     "news": "News",
     "after_market": "After Market",
     "compare_cars": "Compare Cars",
-    "stores": "Stores"
+    "stores": "Stores",
+    "login": "Login"
   },
   "SalesAndReviews": {
     "cars_for_sale": "CARS FOR SALE",
@@ -605,7 +606,47 @@
     "view_details": "View Details",
     "loading_spinner": "Loading...",
     "filter_toggle": "Toggle Filters",
-    "view_mode_toggle": "Toggle View Mode"
+    "view_mode_toggle": "Toggle View Mode",
+    "add_product": "Add Product",
+    "edit_product": "Edit Product",
+    "product_name": "Product Name",
+    "description": "Description",
+    "stock": "Stock",
+    "status": "Status",
+    "images": "Images",
+    "select_category": "Select Category",
+    "active": "Active",
+    "inactive": "Inactive",
+    "saving": "Saving...",
+    "update": "Update",
+    "create": "Create",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "categories": {
+      "electronics": "Electronics",
+      "clothing": "Clothing",
+      "accessories": "Accessories",
+      "home": "Home",
+      "sports": "Sports"
+    },
+    "search": "Search products...",
+    "all_categories": "All Categories",
+    "all_status": "All Status",
+    "min_price": "Min Price",
+    "max_price": "Max Price",
+    "confirm_delete": "Are you sure you want to delete this product?",
+    "language": "Content Language",
+    "saved": "Saved successfully",
+    "description_placeholder": "Enter detailed product description...",
+    "text_direction": "Text Direction",
+    "rtl": "Right to Left",
+    "ltr": "Left to Right",
+    "product_type": "Product Type",
+    "regular_product": "Regular Product",
+    "car": "Car",
+    "car_details": "Car Details",
+    "car_template": "Use Car Template",
+    "invalid_json": "Invalid JSON format"
   },
   "Stores": {
     "title": "Auto Parts Stores",
@@ -693,5 +734,9 @@
     "subscribe": "Subscribe",
     "email_placeholder": "Your email address",
     "privacy_policy": "By subscribing, you agree to our Privacy Policy and consent to receive updates from our company."
+  },
+  "UserMenu": {
+    "settings": "Settings",
+    "logout": "Logout"
   }
 }

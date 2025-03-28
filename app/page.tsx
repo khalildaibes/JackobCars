@@ -1,7 +1,8 @@
 "use client"; // This marks the component as a Client Component
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import CarCard from "../components/CarCard";
 import ShowMore from "../components/ShowMore";
 import Hero from "../components/Hero";
@@ -12,76 +13,318 @@ import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import React from "react";
-import SalesAndReviewsSection from "../components/homeeight/SalesAndReviewsSection";
 import CustomerTestimonialsSection from "../components/homeeight/CustomerTestimonialsSection";
-import FeaturedListingsSection from "../components/homeeight/FeaturedListingsSection";
 import LatestBlogPostsSection from "../components/homeeight/LatestBlogPostsSection";
 import RecentlyAddedSection from "../components/homeeight/RecentlyAddedSection";
 import {  useTranslations } from "next-intl";
 import ResponsiveNewsLayout from "../components/Responsivenews";
-import HeroSection from "../components/NewHero";
-import LookingForCar from "../components/comp";
 import SearchBar from "../components/SearchBar";
 import { Img } from "../components/Img";
 import Link from "next/link";
 
-const FindCarByPlate = dynamic(
-  () => import("./findcarbyplate/FindCarByPlate"),
-  { ssr: false }
-);
+// Types
+interface Deal {
+  id: string;
+  image: Array<{ url: string }>;
+  name: string;
+  details: {
+    car: {
+      fuel: string;
+      make: string;
+      body_type: string;
+      miles: string;
+      condition: string;
+      transmission: string;
+      year: number;
+      description: string;
+      features: Array<{ value: string }>;
+    };
+  };
+  price: number;
+  categories: string;
+}
 
-async function HomeContent() {
+interface Article {
+  id: string;
+  title: string;
+  excerpt: string;
+  cover: { url: string };
+  categories: Array<{ name: string }>;
+  publishedAt: string;
+  author: string;
+  description: string;
+  locale: string;
+  slug: string;
+  blocks: any[];
+}
+
+interface HomePageData {
+  banner: any;
+  featured: any;
+  textcards: any;
+  locale: string;
+  localizations: any;
+}
+
+interface Listing {
+  id: number;
+  mainImage: string;
+  alt: string;
+  title: string;
+  miles: string;
+  fuel: string;
+  condition: string;
+  transmission: string;
+  details: string;
+  price: string;
+  mileage: string;
+  year: number;
+  fuelType: string;
+  make: string;
+  bodyType: string;
+  description: string;
+  features: string[];
+  category: string[];
+}
+
+// API fetch functions
+const fetchHomePageData = async (): Promise<HomePageData> => {
+  const response = await fetch("/api/homepage");
+  if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
+  const data = await response.json();
+  if (!data?.data) throw new Error("Invalid API response structure");
+  return data.data;
+};
+
+const fetchArticles = async () => {
+  const [featuredResponse, newsResponse, storyResponse] = await Promise.all([
+    fetch('/api/articles?limit=3'),
+    fetch('/api/articles?limit=5'),
+    fetch('/api/articles?limit=8')
+  ]);
+
+  const [featuredData, newsData, storyData] = await Promise.all([
+    featuredResponse.json(),
+    newsResponse.json(),
+    storyResponse.json()
+  ]);
+
+  if (!featuredData.data || !newsData.data || !storyData.data) {
+    throw new Error('Invalid data format received from API');
+  }
+
+  return { featuredData, newsData, storyData };
+};
+
+const fetchDeals = async (): Promise<Deal[]> => {
+  const response = await fetch('/api/deals');
+  if (!response.ok) throw new Error(`Failed to fetch deals: ${response.statusText}`);
+  const data = await response.json();
+  if (!data?.data) throw new Error("Invalid API response structure");
+  return data.data;
+};
+
+// Normalization functions
+const normalizeFuelType = (rawFuelType: string): string => {
+  const fuelTypes = {
+    'plug-in': 'Plug-in Hybrid',
+    'plug in': 'Plug-in Hybrid',
+    'היברידי נטען': 'Plug-in Hybrid',
+    'هجين قابل للشحن': 'Plug-in Hybrid',
+    'hybrid': 'Hybrid',
+    'היברידי': 'Hybrid',
+    'هجين': 'Hybrid',
+    'electric': 'Electric',
+    'חשמלי': 'Electric',
+    'كهربائي': 'Electric',
+    'diesel': 'Diesel',
+    'דיזל': 'Diesel',
+    'ديزل': 'Diesel',
+    'gasoline': 'Gasoline',
+    'petrol': 'Gasoline',
+    'בנזין': 'Gasoline',
+    'بنزين': 'Gasoline'
+  };
+
+  const normalized = Object.entries(fuelTypes).find(([key]) => 
+    rawFuelType.toLowerCase().includes(key)
+  );
+  return normalized ? normalized[1] : rawFuelType;
+};
+
+const normalizeMake = (rawMake: string): string => {
+  const makes = {
+    'toyota': 'Toyota',
+    'טויוטה': 'Toyota',
+    'تويوتا': 'Toyota',
+    'honda': 'Honda',
+    'הונדה': 'Honda',
+    'هوندا': 'Honda',
+    'ford': 'Ford',
+    'פורד': 'Ford',
+    'فورد': 'Ford',
+    'chevrolet': 'Chevrolet',
+    'שברולט': 'Chevrolet',
+    'شيفروليه': 'Chevrolet',
+    'bmw': 'BMW',
+    'ב.מ.וו': 'BMW',
+    'بي ام دبليو': 'BMW',
+    'mercedes': 'Mercedes-Benz',
+    'מרצדס': 'Mercedes-Benz',
+    'مرسيدس': 'Mercedes-Benz',
+    'audi': 'Audi',
+    'אאודי': 'Audi',
+    'أودي': 'Audi',
+    'tesla': 'Tesla',
+    'טסלה': 'Tesla',
+    'تيسلا': 'Tesla',
+    'lexus': 'Lexus',
+    'לקסוס': 'Lexus',
+    'لكزس': 'Lexus',
+    'subaru': 'Subaru',
+    'סובארו': 'Subaru',
+    'سوبارو': 'Subaru'
+  };
+
+  const normalized = Object.entries(makes).find(([key]) => 
+    rawMake.toLowerCase().includes(key)
+  );
+  return normalized ? normalized[1] : rawMake;
+};
+
+const normalizeBodyType = (rawBodyType: string): string => {
+  const bodyTypes = {
+    'sedan': 'Sedan',
+    'סדאן': 'Sedan',
+    'سيدان': 'Sedan',
+    'suv': 'SUV',
+    'רכב שטח': 'SUV',
+    'سيارة رياضية متعددة الاستخدامات': 'SUV',
+    'truck': 'Truck',
+    'משאית': 'Truck',
+    'شاحنة': 'Truck',
+    'coupe': 'Coupe',
+    'קופה': 'Coupe',
+    'كوبيه': 'Coupe',
+    'convertible': 'Convertible',
+    'קבריולה': 'Convertible',
+    'كابريوليه': 'Convertible',
+    'hatchback': 'Hatchback',
+    'הצ\'בק': 'Hatchback',
+    'هاتشباك': 'Hatchback',
+    'wagon': 'Wagon',
+    'סטיישן': 'Wagon',
+    'ستيشن': 'Wagon',
+    'van': 'Van',
+    'ואן': 'Van',
+    'فان': 'Van'
+  };
+
+  const normalized = Object.entries(bodyTypes).find(([key]) => 
+    rawBodyType.toLowerCase().includes(key)
+  );
+  return normalized ? normalized[1] : rawBodyType;
+};
+
+// Dynamically import components
+const FindCarByPlate = dynamic(() => import("./findcarbyplate/FindCarByPlate"), { ssr: false });
+const HeroSection = dynamic(() => import("../components/NewHero"));
+const LookingForCar = dynamic(() => import("../components/comp"));
+const FeaturedListingsSection = dynamic(() => import("../components/homeeight/FeaturedListingsSection"));
+const SalesAndReviewsSection = dynamic(() => import("../components/homeeight/SalesAndReviewsSection"));
+
+function HomeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [selectedFuel, setSelectedFuel] = useState("");
-  const [selectedYear, setSelectedYear] = useState("");
-  
-  useEffect(() => {
-    setSelectedFuel(searchParams.get("fuel") || "");
-    setSelectedYear(searchParams.get("year") || "");
-  }, [searchParams]);
-  
-  const selectedManufacturer = searchParams.get("manufacturer");
-  const selectedLimit = searchParams.get("limit");
-  const selectedModel = searchParams.get("model");
-  // const dropDownOptions = [
-  //   { label: "Option1", value: "option1" },
-  //   { label: "Option2", value: "option2" },
-  //   { label: "Option3", value: "option3" },
-  // ];
-  const [filteredCars, setFilteredCars] = useState<CarProps[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const t = useTranslations("HomePage");
   const [activeIndex, setActiveIndex] = useState(0);
 
+  // Get search params with memoization
+  const { selectedFuel, selectedYear, selectedManufacturer, selectedLimit, selectedModel } = useMemo(() => ({
+    selectedFuel: searchParams.get("fuel") || "",
+    selectedYear: searchParams.get("year") || "",
+    selectedManufacturer: searchParams.get("manufacturer"),
+    selectedLimit: searchParams.get("limit"),
+    selectedModel: searchParams.get("model")
+  }), [searchParams]);
 
-
-
-  useEffect(() => {
-    async function getCars() {
-      setIsLoading(true);
-      try {
-        let allCars: CarProps[] = [];
-        if (selectedManufacturer || selectedModel) {
-          allCars = await fetchCars({
+  // React Query hooks
+  const { data: carsData, isLoading: isLoadingCars } = useQuery({
+    queryKey: ['cars', selectedManufacturer, selectedModel, selectedYear, selectedFuel, selectedLimit],
+    queryFn: () => fetchCars({
             manufacturer: selectedManufacturer || "",
             year: selectedYear ? parseInt(selectedYear, 10) : 0,
             fuel: selectedFuel || "",
             limit: selectedLimit ? parseInt(selectedLimit, 10) : 12,
             model: selectedModel || "",
-          });
-        }
-        setFilteredCars(allCars || []);
-        
-      } catch (error) {
-        console.error("Error fetching cars:", error);
-        setFilteredCars([]);
-      }
-      setIsLoading(false);
-    }
-  
-    getCars();
-  }, [selectedFuel, selectedYear, selectedManufacturer, selectedLimit, selectedModel]);
-  
+    }),
+    enabled: !!selectedManufacturer || !!selectedModel
+  });
+
+  const { data: dealsData } = useQuery({
+    queryKey: ['deals'],
+    queryFn: fetchDeals
+  });
+
+  const { data: articlesData } = useQuery({
+    queryKey: ['articles'],
+    queryFn: fetchArticles
+  });
+
+  const { data: homepageData } = useQuery({
+    queryKey: ['homepage'],
+    queryFn: fetchHomePageData
+  });
+
+  // Transform deals data with memoization
+  const listings = useMemo(() => {
+    if (!dealsData) return [];
+    
+    return dealsData.map((product: Deal): Listing => ({
+      id: parseInt(product.id),
+      mainImage: product.image ? `http://68.183.215.202${product.image[0]?.url}` : "/default-car.png",
+      alt: product.name || "Car Image",
+      title: product.name,
+      miles: product.details?.car.miles || "N/A",
+      fuel: normalizeFuelType(product.details?.car.fuel || "Unknown"),
+      condition: product.details?.car.condition || "Used",
+      transmission: product.details?.car.transmission || "Unknown",
+      details: product.details?.car.transmission || "Unknown",
+      price: `$${product.price.toLocaleString()}`,
+      mileage: product.details?.car.miles || "N/A",
+      year: product.details.car.year,
+      fuelType: normalizeFuelType(product.details?.car.fuel || "Unknown"),
+      make: normalizeMake(product.details?.car.make || "Unknown"),
+      bodyType: normalizeBodyType(product.details?.car.body_type || "Unknown"),
+      description: product.details.car.description,
+      features: product.details.car.features.map((feature) => feature.value) || [],
+      category: product.categories ? product.categories.split(",").map((c) => c.toLowerCase().trim()) : [],
+    }));
+  }, [dealsData]);
+
+  // Transform articles data with memoization
+  const transformedArticles = useMemo(() => {
+    if (!articlesData?.featuredData?.data) return [];
+    
+    return articlesData.featuredData.data.map((article: Article) => ({
+      id: article.id,
+      title: article.title || '',
+      excerpt: article.excerpt || '',
+      imageUrl: article.cover ? article.cover.url : '',
+      category: article.categories?.map((category) => category.name).join(', ') || '',
+      date: new Date(article.publishedAt).toLocaleDateString() || '',
+      author: article.author || '',
+      description: article.description || '',
+      cover: article.cover || null,
+      categories: article.categories || [],
+      publishedAt: article.publishedAt || '',
+      locale: article.locale || 'en',
+      slug: article.slug || '',
+      blocks: article.blocks || []
+    }));
+  }, [articlesData]);
+
+  // Memoized filter change handler
   const handleFilterChange = useCallback((title: string, value: string) => {
     const params = new URLSearchParams(window.location.search);
     if (value) {
@@ -92,258 +335,8 @@ async function HomeContent() {
     router.push(`/carsearch?${params.toString()}`);
   }, [router]);
 
-  // Use the "HomePage" namespace to access your translations
-  const t = useTranslations("HomePage");
-  
-
-  const [listings, setListings] = useState([]);
-
-  const fetchProducts = async () => {
-    try {
-    
-
-      const response = await fetch(`/api/deals`);
-      if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
-  
-      const data = await response.json();
-      if (!data || !data.data) throw new Error("Invalid API response structure");
-  
-  
-
-  
-      console.log("Fetched Products:",  data);
-      // Transform the fetched data into the required listings format
-      const formattedListings = data.data.map((product: any) => {
-        // Get the fuel type and normalize it
-        const rawFuelType = product.details?.car.fuel || "Unknown";
-        let normalizedFuelType = rawFuelType;
-        
-        // Normalize fuel type values to English
-        if (rawFuelType.toLowerCase().includes("plug-in") || 
-            rawFuelType.toLowerCase().includes("plug in") || 
-            rawFuelType === "היברידי נטען" ||
-            rawFuelType === "هجين قابل للشحن") {
-          normalizedFuelType = "Plug-in Hybrid";
-        } else if (rawFuelType.toLowerCase().includes("hybrid") || 
-                  rawFuelType === "היברידי" ||
-                  rawFuelType === "هجين") {
-          normalizedFuelType = "Hybrid";
-        } else if (rawFuelType.toLowerCase().includes("electric") || 
-                  rawFuelType === "חשמלי" ||
-                  rawFuelType === "كهربائي") {
-          normalizedFuelType = "Electric";
-        } else if (rawFuelType.toLowerCase().includes("diesel") || 
-                  rawFuelType === "דיזל" ||
-                  rawFuelType === "ديزل") {
-          normalizedFuelType = "Diesel";
-        } else if (rawFuelType.toLowerCase().includes("gasoline") || 
-                  rawFuelType.toLowerCase().includes("petrol") || 
-                  rawFuelType === "בנזין" ||
-                  rawFuelType === "بنزين") {
-          normalizedFuelType = "Gasoline";
-        }
-
-        // Normalize make values to English
-        const rawMake = product.details?.car.make || "Unknown";
-        let normalizedMake = rawMake;
-        
-        // Normalize make values to English
-        if (rawMake.toLowerCase().includes("toyota") || rawMake === "טויוטה" || rawMake === "تويوتا") {
-          normalizedMake = "Toyota";
-        } else if (rawMake.toLowerCase().includes("honda") || rawMake === "הונדה" || rawMake === "هوندا") {
-          normalizedMake = "Honda";
-        } else if (rawMake.toLowerCase().includes("ford") || rawMake === "פורד" || rawMake === "فورد") {
-          normalizedMake = "Ford";
-        } else if (rawMake.toLowerCase().includes("chevrolet") || rawMake === "שברולט" || rawMake === "شيفروليه") {
-          normalizedMake = "Chevrolet";
-        } else if (rawMake.toLowerCase().includes("bmw") || rawMake === "ב.מ.וו" || rawMake === "بي ام دبليو") {
-          normalizedMake = "BMW";
-        } else if (rawMake.toLowerCase().includes("mercedes") || rawMake === "מרצדס" || rawMake === "مرسيدس") {
-          normalizedMake = "Mercedes-Benz";
-        } else if (rawMake.toLowerCase().includes("audi") || rawMake === "אאודי" || rawMake === "أودي") {
-          normalizedMake = "Audi";
-        } else if (rawMake.toLowerCase().includes("tesla") || rawMake === "טסלה" || rawMake === "تيسلا") {
-          normalizedMake = "Tesla";
-        } else if (rawMake.toLowerCase().includes("lexus") || rawMake === "לקסוס" || rawMake === "لكزس") {
-          normalizedMake = "Lexus";
-        } else if (rawMake.toLowerCase().includes("subaru") || rawMake === "סובארו" || rawMake === "سوبارو") {
-          normalizedMake = "Subaru";
-        }
-
-        // Normalize body type values to English
-        const rawBodyType = product.details?.car.body_type || "Unknown";
-        let normalizedBodyType = rawBodyType;
-        
-        // Normalize body type values to English
-        if (rawBodyType.toLowerCase().includes("sedan") || rawBodyType === "סדאן" || rawBodyType === "سيدان") {
-          normalizedBodyType = "Sedan";
-        } else if (rawBodyType.toLowerCase().includes("suv") || rawBodyType === "רכב שטח" || rawBodyType === "سيارة رياضية متعددة الاستخدامات") {
-          normalizedBodyType = "SUV";
-        } else if (rawBodyType.toLowerCase().includes("truck") || rawBodyType === "משאית" || rawBodyType === "شاحنة") {
-          normalizedBodyType = "Truck";
-        } else if (rawBodyType.toLowerCase().includes("coupe") || rawBodyType === "קופה" || rawBodyType === "كوبيه") {
-          normalizedBodyType = "Coupe";
-        } else if (rawBodyType.toLowerCase().includes("convertible") || rawBodyType === "קבריולה" || rawBodyType === "كابريوليه") {
-          normalizedBodyType = "Convertible";
-        } else if (rawBodyType.toLowerCase().includes("hatchback") || rawBodyType === "הצ'בק" || rawBodyType === "هاتشباك") {
-          normalizedBodyType = "Hatchback";
-        } else if (rawBodyType.toLowerCase().includes("wagon") || rawBodyType === "סטיישן" || rawBodyType === "ستيشن") {
-          normalizedBodyType = "Wagon";
-        } else if (rawBodyType.toLowerCase().includes("van") || rawBodyType === "ואן" || rawBodyType === "فان") {
-          normalizedBodyType = "Van";
-        }
-
-        return {
-          id: product.id,
-              mainImage: product.image ? `http://68.183.215.202${product.image[0]?.url}` : "/default-car.png",
-              alt: product.name || "Car Image",
-              title: product.name,
-              miles: product.details?.car.miles || "N/A",
-              fuel: normalizedFuelType,
-              condition: product.details?.car.condition || "Used",
-              transmission: product.details?.car.transmission || "Unknown",
-              details: product.details?.car.transmission || "Unknown",
-              price: `$${product.price.toLocaleString()}`,
-              mileage: product.details?.car.miles || "N/A",
-              year: product.details.car.year,
-              fuelType: normalizedFuelType,
-              make: normalizedMake,
-              bodyType: normalizedBodyType,
-              description: product.details.car.description,
-              features: product.details.car.features.map((feature: any) => feature.value) || [],
-              category: product.categories ? product.categories.split(",").map((c: string) => c.toLowerCase().trim()) : [],
-        };
-      });
-      
-      // Update state with formatted listings
-      setListings(formattedListings);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      setListings([]); // Ensure listings are reset if there's an error
-    }
-  };
-  
-  // Fetch data on component mount
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-
-  
-  const [homePageData, setHomePageData] = useState({});
-
-  const fetchHomePageData = async () => {
-    try {
-      const response = await fetch("/api/homepage");
-      if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
-  
-      const data = await response.json();
-      if (!data || !data.data) throw new Error("Invalid API response structure");
-  
-      console.log("Fetched homepage:", data.data);
-      
-      // Transform the fetched data into the required listings format
-      const formattedHomepage ={
-        banner: data.data.banner,
-        featured: data.data.featured,
-        textcards: data.data.textcards,
-        locale: data.data.locale,
-        localizations:data.data.localizations
-      };
-      setHomePageData(formattedHomepage);
-      console.error("formattedHomepage:", formattedHomepage);
-
-      // Update state with formatted listings
-    } catch (error) {
-      console.error("Error fetching homepage:", error);
-      setHomePageData([]); // Ensure listings are reset if there's an error
-    }
-  };
-  
-  // Fetch data on component mount
-  useEffect(() => {
-    fetchHomePageData();
-  }, []);
-
-  interface Article {
-    id: string;
-    title: string;
-    excerpt: string;
-    imageUrl: string;
-    category: string;
-    date: string;
-    author: string;
-    description: string;
-    cover: any;
-    categories: any[];
-    publishedAt: string;
-    locale: string;
-    slug: string;
-    blocks: any[];
-  }
-
-  const [featuredArticles, setFeaturedArticles] = useState<Article[]>([]);
-
-  useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const featuredResponse = await fetch('/api/articles?limit=3');
-        const featuredData = await featuredResponse.json();
-        
-        const newsResponse = await fetch('/api/articles?limit=5');
-        const newsData = await newsResponse.json();
-
-        const storyResponse = await fetch('/api/articles?limit=8');
-        const storyData = await storyResponse.json();
-
-        if (!featuredData.data || !newsData.data || !storyData.data) {
-          throw new Error('Invalid data format received from API');
-        }
-        console.log(newsData.data[0].cover);
-
-        const transformArticle = (article: any) => ({
-          id: article.id,
-          title: article.title || '',
-          excerpt: article.excerpt || '',
-          imageUrl: article.cover ? article.cover.url : '',
-          category: article.categories?.map((category: any) => category.name).join(', ') || '',
-          date: new Date(article.publishedAt).toLocaleDateString() || '',
-          author: article.author || '',
-          description: article.description || '',
-          cover: article.cover || null,
-          categories: article.categories || [],
-          publishedAt: article.publishedAt || '',
-          locale: article.locale || 'en',
-          slug: article.slug || '',
-          blocks: article.blocks || []
-        });
-        const transformedFeatured = featuredData.data.map(transformArticle);
-        const transformedNews = newsData.data.map(transformArticle);
-        const transformedStories = storyData.data.map(transformArticle);
-
-        setFeaturedArticles(transformedFeatured);
-
-
-        // Extract unique categories
-        const allCategories = new Set<string>();
-        [...transformedFeatured, ...transformedNews, ...transformedStories].forEach(article => {
-          if (article.category) {
-            article.category.split(', ').forEach(cat => allCategories.add(cat));
-          }
-        });
-
-        console.log(allCategories);
-
-      } catch (error) {
-        console.error('Error fetching articles:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchArticles();
-  }, []);
-  const data = [
+  // Memoized data for LookingForCar component
+  const lookingForCarData = useMemo(() => [
     {
       text: t("looking_for_car_text"),
       title: t("looking_for_car_title"),
@@ -362,11 +355,10 @@ async function HomeContent() {
       buttonTextColor: "#050B20",
       icon: "/icons/car-icon.svg"
     }
-  ];
-  
+  ], [t]);
   
   return (
-    <main className="items-center justify-center w-full overflow-hidden">
+    <main className="items-center justify-center w-full overflow-hidden pt-12 ">
       {/* Filters for larger screens */}
       <div className="flex min-h-full items-center justify-center p-4 pt-0 text-center w-full overflow-hidden">
         <div className="hidden sm:block">
@@ -415,8 +407,12 @@ async function HomeContent() {
               <MobileFilters
                 selectedFuel={selectedFuel}
                 selectedYear={selectedYear}
-                setSelectedFuel={setSelectedFuel}
-                setSelectedYear={setSelectedYear}
+                setSelectedFuel={(selectedFuel: string) => {
+                  handleFilterChange("fuel", selectedFuel);
+                }}
+                setSelectedYear={(selectedYear: string) => {
+                  handleFilterChange("year", selectedYear);
+                }}
                 handleFilterChange={handleFilterChange}
               />
             </div>
@@ -424,9 +420,9 @@ async function HomeContent() {
         </motion.div>
       </div>
       {/* Loading State */}
-      {isLoading && activeIndex === 2 ? (
+      {isLoadingCars && activeIndex === 2 ? (
         <div className="text-center text-xl ">{t("loading_cars")}</div>
-      ) : !filteredCars.length ? (
+      ) : !carsData?.length ? (
         selectedManufacturer || selectedModel ? (
           <div className="home__error-container">
             <h2 className="text-black text-xl font-bold">
@@ -439,14 +435,14 @@ async function HomeContent() {
       ) : (
         <section>
           <div className="text-center grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 relative">
-            {filteredCars.map((car) => (
+            {carsData.map((car) => (
               <CarCard key={car.id} car={car} />
             ))}
           </div>
 
           <ShowMore
             pageNumber={parseInt(selectedLimit || "12", 10) / 12}
-            isNext={parseInt(selectedLimit || "12", 10) > filteredCars.length}
+            isNext={parseInt(selectedLimit || "12", 10) > carsData.length}
           />
         </section>
       )}
@@ -472,6 +468,12 @@ async function HomeContent() {
 
 
         <HeroSection />
+        <RecentlyAddedSection 
+                listings={listings.filter((listing) => listing)} 
+                title="Featured Cars" 
+                viewAllLink="/cars"
+              />
+
              {/* latest blog posts section */}
      {/* Category Navigation */}
      <div className="sticky top-20 z-30 bg-white/95 backdrop-blur-md shadow-sm">
@@ -481,10 +483,10 @@ async function HomeContent() {
               <div className="my-12">
                 <div className="flex items-center mb-8">
                   <div className="w-2 h-8 bg-red-600 ml-4"></div>
-                  <h2 className="text-2xl font-bold text-gray-900">عاجل</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">اخر الاخبار</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center">
-                  {featuredArticles.map((article) => (
+                  {transformedArticles.map((article) => (
                     article.category.includes('featured') && (
                       <Link href={`/news/${article.slug}`} key={article.id} className="group block">
                         <div className="bg-white rounded-xl shadow-sm overflow-hidden transition-shadow hover:shadow-md">
@@ -534,25 +536,25 @@ async function HomeContent() {
 
       {/* customer testimonials section */}
       {/* <CustomerTestimonialsSection /> */}
-      <div className="justify-center pt-8 gap-6 flex-col flex md:flex-row bg-white">
+        <div className="justify-center pt-8 gap-6 flex-col flex md:flex-row bg-white">
         <div className="justify-center pt-8 gap-6 flex-col flex md:flex-row">
-          {data.map(({ title, text, buttonColor, backgroundColor,icon, buttonTextColor, textColor }, index) => (
-            <LookingForCar
-              key={index} // Always provide a unique key when mapping over an array
-              text={text} // Use the dynamic text
-              title={title} // Use the dynamic title
-              backgroundColor={backgroundColor}
-              textColor={textColor}
-              buttonColor={buttonColor}
-              buttonTextColor={buttonTextColor}
-              icon={icon}
-            />
-          ))}
-        </div>
-        
+          {lookingForCarData.map(({ title, text, buttonColor, backgroundColor,icon, buttonTextColor, textColor }, index) => (
+    <LookingForCar
+      key={index} // Always provide a unique key when mapping over an array
+      text={text} // Use the dynamic text
+      title={title} // Use the dynamic title
+      backgroundColor={backgroundColor}
+      textColor={textColor}
+      buttonColor={buttonColor}
+      buttonTextColor={buttonTextColor}
+      icon={icon}
+    />
+  ))}
+</div>
 
-    </div>
-      
+
+          </div>
+
 
 
     </main>

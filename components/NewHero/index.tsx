@@ -33,11 +33,12 @@ const HeroSection: React.FC = () => {
 
   return (
     <div
-      className="relative w-full h-[849.94px] bg-cover bg-center px-4 sm:px-8 md:px-16 lg:px-32 xl:px-40 flex flex-col items-center md:items-start bg-[url(/images/img_background_820x1860.png)]"
+      className="relative w-full h-[600px] bg-cover bg-center px-4 sm:px-8 md:px-16 lg:px-32 xl:px-40 flex flex-col items-center md:items-start bg-[url(/images/img_background_820x1860.png)]"
     
     >
+      
       {/* Left Content - Text */}
-      <div className="text-center md:text-left mt-20 md:mt-40 max-w-lg">
+      <div className="text-center md:text-right mt-20 md:mt-40 max-w-lg">
         <h1 className="text-white text-[30px] sm:text-[50px] md:text-[70px] font-bold leading-[40px] sm:leading-[70px]">
           {t("hero_title")}
         </h1>
@@ -45,6 +46,7 @@ const HeroSection: React.FC = () => {
           {t("hero_subtitle")}
         </p>
       </div>
+      
 
       {/* Filters - Positioned based on screen size */}
       <div className="w-full mt-10 md:mt-16 flex flex-col md:flex-row items-center md:items-start">
@@ -84,6 +86,7 @@ const HeroSection: React.FC = () => {
           </div>
         ))}
       </div>
+      
     </div>
   );
 };

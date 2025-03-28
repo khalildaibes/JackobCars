@@ -9,7 +9,7 @@ interface PriceDisplayProps {
 
 const PriceDisplay = ({ 
   price, 
-  className = '', 
+  className = 'text-2xl font-bold text-blue-600 mb-2', 
   showCurrency = true 
 }: PriceDisplayProps) => {
   const locale = useLocale();

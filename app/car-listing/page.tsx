@@ -107,7 +107,7 @@ const CarListings: React.FC = () => {
 
     const fetchProducts = async () => {
         try {
-          const response = await fetch(`/api/deals`);
+          const response = await fetch(`/api/deals?category=car-listing`);
           if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
       
           const data = await response.json();

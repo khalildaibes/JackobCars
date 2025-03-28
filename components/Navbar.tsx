@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
+import UserMenu from "./UserMenu";
 import { Menu, X } from "lucide-react";
+import { authService } from "../app/services/authService";
 
 const buttonStyles = {
   carsMarket: "from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900",
@@ -17,8 +20,26 @@ const buttonStyles = {
 };
 
 export default function Navbar() {
-const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const router = useRouter();
   const t = useTranslations("Navbar");
+
+  useEffect(() => {
+    // Get user from cookies on component mount
+    const currentUser = authService.getCurrentUser();
+    setUser(currentUser);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      authService.logout();
+      setUser(null);
+      router.push('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   const NavButton = ({ href, gradient, children }: { href: string; gradient: string; children: React.ReactNode }) => (
     <Link href={href} onClick={() => setIsMenuOpen(false)} className="w-full">
@@ -58,8 +79,8 @@ const [isMenuOpen, setIsMenuOpen] = useState(false);
       <div className="container mx-auto max-w-screen-xl px-4 py-3 flex items-center justify-between gap-6">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="min-w-[80px] h-16 flex items-center justify-center rounded-2xl bg-white/90 p-2 transition-all hover:scale-105">
-            <Image src="/logo-transparent.png" alt={t("logo_alt")} width={80} height={200} className="object-fill" />
+          <div className="min-w-[80px] h-16 flex items-center justify-center rounded-2xl p-2 transition-all hover:scale-105">
+            <Image src="/logo-transparent-1.png" alt={t("logo_alt")} width={80} height={200} className="object-fill" />
           </div>
         </Link>
 
@@ -100,14 +121,32 @@ const [isMenuOpen, setIsMenuOpen] = useState(false);
             {t("stores")}
           </NavButton>
           
+          {/* Add UserMenu or Login Button for Mobile */}
+          <div className="md:hidden w-full mt-4">
+            {user ? (
+              <UserMenu user={user} onLogout={handleLogout} isMobile={true} />
+            ) : (
+              <NavButton href="/login" gradient={buttonStyles.carsMarket}>
+                {t("login")}
+              </NavButton>
+            )}
+          </div>
+
           {/* Language Switcher for Mobile */}
           <div className="md:hidden w-full mt-4">
             <LanguageSwitcher />
           </div>
         </div>
 
-        {/* Language Switcher for Desktop */}
-        <div className="hidden md:block">
+        {/* Desktop Right Section */}
+        <div className="hidden md:flex items-center gap-4">
+          {user ? (
+            <UserMenu user={user} onLogout={handleLogout} />
+          ) : (
+            <NavButton href="/login" gradient={buttonStyles.carsMarket}>
+              {t("login")}
+            </NavButton>
+          )}
           <LanguageSwitcher />
         </div>
       </div>

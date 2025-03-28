@@ -1,33 +1,32 @@
-import { NextResponse } from "next/server";
-import { TranslationServiceClient } from "@google-cloud/translate";
+import OpenAI from 'openai';
+import { NextResponse } from 'next/server';
 
-const translationClient = new TranslationServiceClient();
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY // Use server-side env variable
+});
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    // Parse JSON body { text: string, target: string }
-    const { text, target } = await req.json();
-    if (!text) {
-      return NextResponse.json({ error: "No text provided" }, { status: 400 });
-    }
+    const { text, targetLang } = await request.json();
+    
+    const response = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [{
+        role: "system",
+        content: `You are a professional translator. Translate the following text to ${targetLang}, keep in mind that your are translating for a car website.`
+      }, {
+        role: "user",
+        content: text
+      }]
+    });
 
-    const projectId = process.env.GOOGLE_PROJECT_ID || "jackobcars";
-    const location = "global";
-
-    // Build the Google Cloud Translation request
-    const request = {
-      parent: `projects/${projectId}/locations/${location}`,
-      contents: [text],
-      mimeType: "text/plain",
-      sourceLanguageCode: "en", // or omit if unknown
-      targetLanguageCode: target || "es",
-    };
-
-    const [response] = await translationClient.translateText(request);
-    const translations = response.translations?.map((t) => t.translatedText);
-
-    return NextResponse.json({ translations });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ 
+      translation: response.choices[0].message?.content 
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Translation failed' }, 
+      { status: 500 }
+    );
   }
 }
