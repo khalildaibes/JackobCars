@@ -9,8 +9,16 @@ import { Plus, Minus, X } from 'lucide-react';
 // Import JSON Editor dynamically to avoid SSR issues
 const JSONEditor = dynamic(
   () => import('react-json-editor-ajrm').then((mod) => mod.default),
-  { ssr: false }
-);
+  { 
+    ssr: false,
+    loading: () => <div className="w-full h-64 bg-gray-100 animate-pulse rounded" />
+  }
+) as React.FC<{
+  value: any;
+  onChange: (val: any) => void;
+  width: string;
+  height: string;
+}>;
 
 interface Product {
     id: string;
@@ -110,6 +118,13 @@ export default function ProductDialog({ isOpen, onClose, product, onSuccess }: P
     "home",
     "sports"
   ];
+
+  // Add this check before rendering the JSON editor
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Reset form when dialog opens/closes or product changes
   useEffect(() => {
@@ -740,6 +755,21 @@ export default function ProductDialog({ isOpen, onClose, product, onSuccess }: P
                 </div>
               ))}
             </div>
+
+            {/* Only render JSON editor on client side */}
+            {isClient && productType === "car" && (
+              <div className="mt-4">
+                <label className="block text-sm font-medium mb-2">
+                  {t("car_details")}
+                </label>
+                <JSONEditor
+                  value={carDetails}
+                  onChange={(val: any) => setCarDetails(val)}
+                  width="100%"
+                  height="300px"
+                />
+              </div>
+            )}
 
             <div className="flex gap-4">
               <button
