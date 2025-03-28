@@ -358,205 +358,124 @@ function HomeContent() {
   ], [t]);
   
   return (
-    <main className="items-center justify-center w-full overflow-hidden pt-12 ">
-      {/* Filters for larger screens */}
-      <div className="flex min-h-full items-center justify-center p-4 pt-0 text-center w-full overflow-hidden">
-        <div className="hidden sm:block">
-          {/* Additional desktop-only filters */}
-        </div>
-      </div>
+    <main className="flex flex-col w-full overflow-hidden ">
+      {/* 1. Hero Banner Section */}
+      <section className="w-full relative px-[10%] ">
+        <HeroSection />
+      </section>
 
-      {/* 3D Toggle Button Section */}
-      <div className="flex justify-center md:max-w-none ">
-        <motion.div
-          className="relative w-full flex justify-center items-center sm:hidden"
-          transition={{ duration: 0.5 }}
-        >
-          {activeIndex === 0 && (
-            <motion.div
-              className="h-full flex items-center justify-center rounded-lg shadow-lg text-xl font-bold plate_background "
-              transition={{ duration: 0.8 }}
-            >
-              <Hero />
-            </motion.div>
-          )}
-          {activeIndex === 1 && (
-            <motion.div
-              className="w-full flex items-center justify-center rounded-lg shadow-lg text-xl font-bold transition-transform h-[600px] "
-              transition={{ duration: 0.8 }}
-            >
-              <div className="">
-                <h1 className="text-center text-3xl font-extrabold">
-                  {t("tab_search_by_plate")}
-                </h1>
-                <p className="text-center">
-                  {t("explore_car_specs")}
-                </p>
-                <FindCarByPlate />
-              </div>
-            </motion.div>
-          )}
-          {activeIndex === 2 && (
-            <div className=" ">
-              <h1 className="text-4xl font-extrabold text-center sm:hidden">
-                {t("car_catalogue_heading")}
-              </h1>
-              <p className="text-center py-2">
-                {t("explore_cars_like")}
-              </p>
-              <MobileFilters
-                selectedFuel={selectedFuel}
-                selectedYear={selectedYear}
-                setSelectedFuel={(selectedFuel: string) => {
-                  handleFilterChange("fuel", selectedFuel);
-                }}
-                setSelectedYear={(selectedYear: string) => {
-                  handleFilterChange("year", selectedYear);
-                }}
-                handleFilterChange={handleFilterChange}
-              />
-            </div>
-          )}
-        </motion.div>
-      </div>
-      {/* Loading State */}
-      {isLoadingCars && activeIndex === 2 ? (
-        <div className="text-center text-xl ">{t("loading_cars")}</div>
-      ) : !carsData?.length ? (
-        selectedManufacturer || selectedModel ? (
-          <div className="home__error-container">
-            <h2 className="text-black text-xl font-bold">
-              {t("oops_no_results")}
-            </h2>
+      {/* 2. Featured Cars Section - Most Important Cars */}
+      {/* <section className="w-full bg-gradient-to-b from-gray-50 to-white py-16">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center mb-12">
+            <div className="w-1 h-12 bg-blue-600 mr-4"></div>
+            <h2 className="text-3xl font-bold text-gray-900">Featured Vehicles</h2>
           </div>
-        ) : null
-      ) : activeIndex !== 2 ? (
-        <section>{/* Other sections can be added here */}</section>
-      ) : (
-        <section>
-          <div className="text-center grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 relative">
-            {carsData.map((car) => (
-              <CarCard key={car.id} car={car} />
+          <FeaturedListingsSection listings={listings} initialFavorites={[]} />
+        </div>
+      </section> */}
+
+
+      {/* 4. Latest News Section - Industry Updates */}
+      <section className="w-full bg-gradient-to-b from-white to-gray-50 py-16">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center mb-12">
+            <div className="w-1 h-12 bg-green-600 mr-4"></div>
+            <h2 className="text-3xl font-bold text-gray-900">Latest Automotive News</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {transformedArticles.map((article) => (
+              article.category.includes('featured') && (
+                <Link href={`/news/${article.slug}`} key={article.id} className="group block">
+                  <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                    <div className="aspect-[16/9] overflow-hidden">
+                      <Img
+                        src={`http://68.183.215.202${article.imageUrl}`}
+                        alt={article.title}
+                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                        width={1290}
+                        height={2040}
+                        external={true}
+                      />
+                    </div>
+                    <div className="p-6">
+                      <div className="flex items-center mb-3">
+                        <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                          {article.category}
+                        </span>
+                        <span className="mx-2 text-gray-400">•</span>
+                        <span className="text-sm text-gray-500">{article.date}</span>
+                      </div>
+                      <h2 className="text-xl font-bold mb-3 text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                        {article.title}
+                      </h2>
+                      <p className="text-gray-600 line-clamp-3 mb-4">{article.excerpt}</p>
+                      <div className="flex items-center text-sm text-gray-500">
+                        <span className="font-medium">{article.author}</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              )
             ))}
           </div>
-
-          <ShowMore
-            pageNumber={parseInt(selectedLimit || "12", 10) / 12}
-            isNext={parseInt(selectedLimit || "12", 10) > carsData.length}
+        </div>
+      </section>
+      
+       {/* 3. Most Searched Section - Popular Cars */}
+       <section className="w-full bg-white pb-16">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center mb-12">
+          </div>
+          <RecentlyAddedSection 
+            listings={listings.filter((listing) => listing)} 
+            title="Most Searched Cars" 
+            viewAllLink="/cars"
           />
-        </section>
-      )}
-          {/* print fetched products */}
-{/* 
-  <div className="container mx-auto px-4 py-8">
-  <h1 className="text-2xl font-bold mb-4">Products</h1>
-  {products.length ? (
-    <ul>
-      {products.map((product: any) => (
-        <li key={product.id} className="mb-2">
-          <span>{product.name || product.documentId}</span>
-        </li>
-      ))}
-    </ul>
-  ) : (
-    <p>No products found</p>
-  )}
-</div> */}
+        </div>
+      </section>
 
+      {/* 5. Sales & Special Offers Section */}
+      <section className="w-full bg-white py-16">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center mb-12">
+            <div className="w-1 h-12 bg-yellow-500 mr-4"></div>
+            <h2 className="text-3xl font-bold text-gray-900">Special Offers & Sales</h2>
+          </div>
+          <SalesAndReviewsSection />
+        </div>
+      </section>
 
+      {/* 6. Recently Added Section - New Inventory */}
+      <section className="w-full bg-gradient-to-b from-gray-50 to-white py-16">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center mb-12">
+            <div className="w-1 h-12 bg-purple-600 mr-4"></div>
+            <h2 className="text-3xl font-bold text-gray-900">New Arrivals</h2>
+          </div>
+          <RecentlyAddedSection listings={listings} />
+        </div>
+      </section>
 
-
-
-        <HeroSection />
-        <RecentlyAddedSection 
-                listings={listings.filter((listing) => listing)} 
-                title="Featured Cars" 
-                viewAllLink="/cars"
+      {/* 7. Call to Action Section - Looking for a Car */}
+      <section className="w-full bg-gradient-to-r from-blue-900 to-blue-800 py-16">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row justify-center gap-8">
+            {lookingForCarData.map(({ title, text, buttonColor, backgroundColor, icon, buttonTextColor, textColor }, index) => (
+              <LookingForCar
+                key={index}
+                text={text}
+                title={title}
+                backgroundColor={backgroundColor}
+                textColor={textColor}
+                buttonColor={buttonColor}
+                buttonTextColor={buttonTextColor}
+                icon={icon}
               />
-
-             {/* latest blog posts section */}
-     {/* Category Navigation */}
-     <div className="sticky top-20 z-30 bg-white/95 backdrop-blur-md shadow-sm">
-
-
-              {/* Breaking News Section */}
-              <div className="my-12">
-                <div className="flex items-center mb-8">
-                  <div className="w-2 h-8 bg-red-600 ml-4"></div>
-                  <h2 className="text-2xl font-bold text-gray-900">اخر الاخبار</h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center">
-                  {transformedArticles.map((article) => (
-                    article.category.includes('featured') && (
-                      <Link href={`/news/${article.slug}`} key={article.id} className="group block">
-                        <div className="bg-white rounded-xl shadow-sm overflow-hidden transition-shadow hover:shadow-md">
-                          <div className="aspect-[16/9] overflow-hidden">
-                            <Img
-                              src={`http://68.183.215.202${article.imageUrl}`}
-                              alt={article.title}
-                              className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
-                              width={1290}
-                              height={2040}
-                              external={true}
-                            />
-                          </div>
-                          <div className="p-6">
-                            <div className="flex items-center mb-3">
-                              <span className="text-xs font-medium text-red-600 bg-red-50 px-2 py-1 rounded-full">
-                                {article.category}
-                              </span>
-                              <span className="mx-2 text-gray-400">•</span>
-                              <span className="text-sm text-gray-500">{article.date}</span>
-                            </div>
-                            <h2 className="text-xl font-bold mb-3 text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                              {article.title}
-              </h2>
-                            <p className="text-gray-600 line-clamp-3 mb-4">{article.excerpt}</p>
-                            <div className="flex items-center text-sm text-gray-500">
-                              <span className="font-medium">{article.author}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </Link>
-                    )
-                  ))}
-                </div>
-                </div>
+            ))}
           </div>
-
-
-
-      {/* featured listings section */}
-      <FeaturedListingsSection listings={listings} initialFavorites={[]} />
-
-      {/* sales and reviews section */}
-      <SalesAndReviewsSection />
-      {/* recently added section */}
-      <RecentlyAddedSection listings={listings} />
-
-      {/* customer testimonials section */}
-      {/* <CustomerTestimonialsSection /> */}
-        <div className="justify-center pt-8 gap-6 flex-col flex md:flex-row bg-white">
-        <div className="justify-center pt-8 gap-6 flex-col flex md:flex-row">
-          {lookingForCarData.map(({ title, text, buttonColor, backgroundColor,icon, buttonTextColor, textColor }, index) => (
-    <LookingForCar
-      key={index} // Always provide a unique key when mapping over an array
-      text={text} // Use the dynamic text
-      title={title} // Use the dynamic title
-      backgroundColor={backgroundColor}
-      textColor={textColor}
-      buttonColor={buttonColor}
-      buttonTextColor={buttonTextColor}
-      icon={icon}
-    />
-  ))}
-</div>
-
-
-          </div>
-
-
-
+        </div>
+      </section>
     </main>
   );
 }
@@ -566,71 +485,3 @@ export default function HomePage() {
       <HomeContent />
   );
 }
-
-
-      // {/* Blogs Section */}
-      // <div className="titleParent w-full max-w-screen-lg mx-auto overflow-x-hidden px-4">
-      //   <div className="titleParent w-full max-w-screen-xl mx-auto overflow-x-hidden px-6">
-      //     <div className="title w-full text-center">
-      //       <div className="titleChild" />
-      //       <div className="featuredWrapper">
-      //         <div className="featured text-2xl font-bold">
-      //           {t("blogs_heading")}
-      //         </div>
-      //       </div>
-      //     </div>
-
-      //     <div className="blogParent flex flex-wrap justify-center gap-6">
-      //       <div className="blog">
-      //         <div className="rectangleParent shadow-md rounded-lg overflow-hidden">
-      //           <Image
-      //             className="frameChild w-full h-auto object-cover"
-      //             width={300}
-      //             height={250}
-      //             alt={t("porsche_alt")}
-      //             src="/hero.png"
-      //           />
-      //           <div className="findYourPlaceWithWrapper text-center">
-      //             <div className="findYourPlace text-lg font-medium">
-      //               {t("blog1_title")}
-      //             </div>
-      //           </div>
-      //         </div>
-      //       </div>
-
-      //       <div className="blog">
-      //         <div className="rectangleParent shadow-md rounded-lg overflow-hidden">
-      //           <Image
-      //             className="frameChild w-full h-auto object-cover"
-      //             width={500}
-      //             height={350}
-      //             alt={t("toyota_alt")}
-      //             src="/hero.png"
-      //           />
-      //           <div className="findYourPlaceWithWrapper p-4 text-center">
-      //             <div className="findYourPlace text-lg font-medium">
-      //               {t("blog2_title")}
-      //             </div>
-      //           </div>
-      //         </div>
-      //       </div>
-
-      //       <div className="blog">
-      //         <div className="rectangleParent shadow-md rounded-lg overflow-hidden">
-      //           <Image
-      //             className="frameChild w-full h-auto object-cover"
-      //             width={500}
-      //             height={350}
-      //             alt={t("kia_alt")}
-      //             src="/hero.png"
-      //           />
-      //           <div className="findYourPlaceWithWrapper p-4 text-center">
-      //             <div className="findYourPlace text-lg font-medium">
-      //               {t("blog3_title")}
-      //             </div>
-      //           </div>
-      //         </div>
-      //       </div>
-      //     </div>
-      //   </div>
-      // </div> */}

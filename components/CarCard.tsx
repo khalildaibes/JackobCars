@@ -175,7 +175,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   }, [car.features]);
 
   const gridContent = (
-    <Card className="overflow-hidden h-full flex flex-col hover:shadow-lg transition-shadow duration-300 max-w-[400px]">
+    <Card className="overflow-hidden h-full flex flex-col hover:shadow-lg transition-shadow duration-300 max-w-[400px] max-h-[650px] min-h-[500px]">
       <div className="relative">
         <Img
           width={1920}

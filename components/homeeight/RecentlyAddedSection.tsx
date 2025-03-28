@@ -20,7 +20,7 @@ interface RecentlyAddedSectionProps {
 
 export default function RecentlyAddedSection({ 
   listings, 
-  title = "Recently Added", // default title if none provided
+  title = "", // default title if none provided
   viewAllLink = "#" 
 }: RecentlyAddedSectionProps) {
   const t = useTranslations("HomePage");
@@ -29,9 +29,9 @@ export default function RecentlyAddedSection({
 
   return (
     <>
-      <div className="mt-[108px] flex justify-end self-stretch">
+      <div className="flex justify-end self-stretch">
         <div className="flex w-[100%] flex-col gap-6 lg:w-full lg:px-5 md:w-full md:px-5">
-          <div className="container mx-auto px-4">
+        {title && (<div className="container mx-auto px-4">
             <div className="w-[90%] flex flex-col items-center justify-center gap-4 sm:flex-row sm:justify-between">
               <Heading
                 as="h1"
@@ -55,6 +55,8 @@ export default function RecentlyAddedSection({
               </div>
             </div>
           </div>
+          )
+        }
 
           <div>
             <div className="flex flex-col items-start">

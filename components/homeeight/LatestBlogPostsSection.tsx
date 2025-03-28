@@ -35,7 +35,7 @@ export default function LatestBlogPostsSection({
   loadingText = "Loading articles..."
 }: LatestBlogPostsSectionProps) {
   return (
-    <div className="mt-[108px] flex justify-center self-stretch">
+    <div className=" flex justify-center self-stretch">
       <div className="container-xs flex justify-center lg:px-5 md:px-5">
         <div className="flex w-full flex-col gap-6">
           {/* Section Header */}
