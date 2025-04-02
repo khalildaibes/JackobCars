@@ -381,8 +381,8 @@ function HomeContent() {
         <div className="container mx-auto px-4">
           <div className="flex items-center mb-12">
             <div className="w-1 h-12 bg-green-600 mr-4"></div>
-            <h2 className="text-3xl font-bold text-gray-900">Latest Automotive News</h2>
-          </div>
+            <h2 className="text-3xl font-bold text-gray-900">{t('other_news')}</h2>
+              </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {transformedArticles.map((article) => (
               article.category.includes('featured') && (
@@ -396,8 +396,8 @@ function HomeContent() {
                         width={1290}
                         height={2040}
                         external={true}
-                      />
-                    </div>
+              />
+            </div>
                     <div className="p-6">
                       <div className="flex items-center mb-3">
                         <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
@@ -405,16 +405,16 @@ function HomeContent() {
                         </span>
                         <span className="mx-2 text-gray-400">•</span>
                         <span className="text-sm text-gray-500">{article.date}</span>
-                      </div>
+      </div>
                       <h2 className="text-xl font-bold mb-3 text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
                         {article.title}
-                      </h2>
+            </h2>
                       <p className="text-gray-600 line-clamp-3 mb-4">{article.excerpt}</p>
                       <div className="flex items-center text-sm text-gray-500">
                         <span className="font-medium">{article.author}</span>
                       </div>
                     </div>
-                  </div>
+          </div>
                 </Link>
               )
             ))}
@@ -429,18 +429,18 @@ function HomeContent() {
           </div>
           <RecentlyAddedSection 
             listings={listings.filter((listing) => listing)} 
-            title="Most Searched Cars" 
+            title={t('most_searched_cars')}
             viewAllLink="/cars"
           />
         </div>
-      </section>
+        </section>
 
       {/* 5. Sales & Special Offers Section */}
       <section className="w-full bg-white py-16">
         <div className="container mx-auto px-4">
           <div className="flex items-center mb-12">
             <div className="w-1 h-12 bg-yellow-500 mr-4"></div>
-            <h2 className="text-3xl font-bold text-gray-900">Special Offers & Sales</h2>
+            <h2 className="text-3xl font-bold text-gray-900">{t('special_offers_sales')}</h2>
           </div>
           <SalesAndReviewsSection />
         </div>
@@ -451,7 +451,7 @@ function HomeContent() {
         <div className="container mx-auto px-4">
           <div className="flex items-center mb-12">
             <div className="w-1 h-12 bg-purple-600 mr-4"></div>
-            <h2 className="text-3xl font-bold text-gray-900">New Arrivals</h2>
+            <h2 className="text-3xl font-bold text-gray-900">{t('new_arrivals')}</h2>
           </div>
           <RecentlyAddedSection listings={listings} />
         </div>
@@ -462,17 +462,17 @@ function HomeContent() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-center gap-8">
             {lookingForCarData.map(({ title, text, buttonColor, backgroundColor, icon, buttonTextColor, textColor }, index) => (
-              <LookingForCar
+    <LookingForCar
                 key={index}
                 text={text}
                 title={title}
-                backgroundColor={backgroundColor}
-                textColor={textColor}
-                buttonColor={buttonColor}
-                buttonTextColor={buttonTextColor}
-                icon={icon}
-              />
-            ))}
+      backgroundColor={backgroundColor}
+      textColor={textColor}
+      buttonColor={buttonColor}
+      buttonTextColor={buttonTextColor}
+      icon={icon}
+    />
+  ))}
           </div>
         </div>
       </section>

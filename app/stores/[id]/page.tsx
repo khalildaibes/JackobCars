@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { Img } from "../../../components/Img";
+import { Img} from "../../../components/Img";
 import  CarCard  from "../../../components/CarCard";
 
 interface Store {
@@ -34,13 +34,8 @@ interface Store {
     lat: number;
     lng: number;
   };
-  logo?: {
-    data?: {
-      attributes: {
-        url: string;
-      };
-    };
-  };
+  logo?: any;
+  balance?: number;
   openingHours?: {
     monday?: string;
     tuesday?: string;
@@ -134,6 +129,7 @@ export default function StorePage() {
           details: String(storeDataItem.details[0].children[0].text || ''),
           hostname: String(storeDataItem.hostname || ''),
           visits: Number(storeDataItem.visits || 0),
+          logo: storeDataItem.logo[0] || '',
           tags: String(storeDataItem.tags || ''),
           provider: storeDataItem.provider ? String(storeDataItem.provider) : undefined,
           email: storeDataItem.email ? String(storeDataItem.email) : undefined,
@@ -146,13 +142,7 @@ export default function StorePage() {
             lat: Number(storeDataItem.location.lat || 0),
             lng: Number(storeDataItem.location.lng || 0)
           } : undefined,
-          logo: storeDataItem.logo ? {
-            data: storeDataItem.logo.data ? {
-              attributes: {
-                url: String(storeDataItem.logo.data.attributes?.url || '')
-              }
-            } : undefined
-          } : undefined,
+          balance: Number(storeDataItem.balance || 0),
           openingHours: storeDataItem.openingHours || defaultOpeningHours,
           products: storeDataItem.products.map((product: any) => ({
             ...product,
@@ -252,90 +242,79 @@ export default function StorePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-blue-50 pt-24">
       <div className="max-w-7xl mx-auto px-4">
-        {/* Search Bar */}
-        <div className="mb-8">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search stores..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 pl-12 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-          </div>
-        </div>
-
-        {/* Store Header */}
+        {/* Store Header with Logo */}
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg mb-8">
-          <div className="flex justify-between items-start">
-            <div className="flex gap-6">
-              {store.logo?.data && (
-                <div className="relative w-24 h-24 rounded-lg overflow-hidden">
-                  <Image
-                    src={store.logo.data.attributes.url}
-                    alt={store.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              )}
-              <div>
-                <h1 className="text-3xl font-bold text-gray-800 mb-4">{store.name}</h1>
-                <p className="text-gray-600 max-w-2xl mb-6">{store.details}</p>
-                
-                {tags.length > 0 && (
-                  <div className="flex flex-wrap gap-4">
-                    {tags.map((tag, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
+          <div className="flex flex-col md:flex-row gap-8">
+            {store.logo && (
+              <div className="relative md:w-[20%] w-[100%] h-[70%] rounded-xl overflow-hidden shadow-lg">
+                <Img
+                  src={`http://68.183.215.202${store.logo.url}` || ""}
+                  alt={store.name}
+                  width={1024}
+                  height={1024}
+                  external={true}
+                  className="object-fill"
+                />
+              </div>
+            )}
+            <div className="flex-1">
+              <h1 className="text-4xl font-bold text-gray-800 mb-4">{store.name}</h1>
+              <p className="text-gray-600 text-lg mb-6">{store.details}</p>
+              <div className="flex flex-wrap gap-3">
+                {tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="px-4 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Store Info Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-            {/* Contact & Location */}
+        {/* Info Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {/* Contact Information Card */}
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-gray-800">
+              <Phone className="w-5 h-5 text-blue-600" />
+              Contact Information
+            </h2>
             <div className="space-y-4">
-              <div className="flex items-center gap-2 text-gray-600">
-                <Phone className="w-5 h-5 text-blue-600" />
-                <span>{store.phone}</span>
-              </div>
-              {store.email && (
-                <div className="flex items-center gap-2 text-gray-600">
-                  <Mail className="w-5 h-5 text-blue-600" />
-                  <span>{store.email}</span>
+              <a href={`tel:${store.phone}`} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+                  <Phone className="w-5 h-5 text-blue-600" />
                 </div>
+                <span className="text-gray-600">{store.phone}</span>
+              </a>
+              {store.email && (
+                <a href={`mailto:${store.email}`} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                  <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+                    <Mail className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <span className="text-gray-600">{store.email}</span>
+                </a>
               )}
-              <div className="flex items-center gap-2 text-gray-600">
-                <MapPin className="w-5 h-5 text-blue-600" />
-                <span>{store.address}</span>
+              <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+                  <MapPin className="w-5 h-5 text-blue-600" />
+                </div>
+                <span className="text-gray-600">{store.address}</span>
               </div>
-              {/* <div className="flex items-center gap-2 text-gray-600">
-                <Globe className="w-5 h-5 text-blue-600" />
-                <span>{store.hostname}</span>
-              </div> */}
-                <div className="flex items-center gap-2 text-gray-600">
-                <Globe className="w-5 h-5 text-blue-600" />
-                <span>{store.details}</span>
-              </div> 
-              {store.socialMedia && (
-                <div className="flex gap-4 mt-4">
+            </div>
+            {store.socialMedia && (
+              <div className="mt-6 pt-6 border-t border-gray-100">
+                <div className="flex gap-4 justify-center">
                   {store.socialMedia.facebook && (
                     <a
                       href={store.socialMedia.facebook}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-700"
+                      className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors"
                     >
-                      <Facebook size={20} />
+                      <Facebook className="w-5 h-5 text-blue-600" />
                     </a>
                   )}
                   {store.socialMedia.instagram && (
@@ -343,111 +322,154 @@ export default function StorePage() {
                       href={store.socialMedia.instagram}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-700"
+                      className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors"
                     >
-                      <Instagram size={20} />
+                      <Instagram className="w-5 h-5 text-blue-600" />
                     </a>
                   )}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
+          </div>
 
-            {/* Opening Hours */}
-            <div>
-              <button
-                onClick={() => setShowHours(!showHours)}
-                className="flex items-center gap-2 text-gray-600 mb-4"
-              >
+          {/* Opening Hours Card */}
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+            <button
+              onClick={() => setShowHours(!showHours)}
+              className="w-full flex items-center justify-between text-xl font-semibold mb-6 text-gray-800"
+            >
+              <div className="flex items-center gap-2">
                 <Clock className="w-5 h-5 text-blue-600" />
                 <span>Opening Hours</span>
-                <ChevronDown className={`w-4 h-4 transition-transform ${showHours ? 'rotate-180' : ''}`} />
+              </div>
+              <ChevronDown className={`w-5 h-5 transition-transform ${showHours ? 'rotate-180' : ''}`} />
+            </button>
+            
+            {showHours && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="space-y-3"
+              >
+                {Object.entries(openingHours).map(([day, hours]) => (
+                  <div key={day} className="flex justify-between items-center p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                    <span className="capitalize font-medium text-gray-700">{day}</span>
+                    <span className="text-gray-600">{hours}</span>
+                  </div>
+                ))}
+              </motion.div>
+            )}
+          </div>
+
+          {/* Quick Actions Card */}
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-gray-800">
+              <Navigation className="w-5 h-5 text-blue-600" />
+              Quick Actions
+            </h2>
+            <div className="space-y-4">
+              <button
+                onClick={() => handleContact('whatsapp')}
+                className="w-full flex items-center gap-3 p-4 rounded-lg bg-green-50 hover:bg-green-100 transition-colors"
+              >
+                <MessageSquare className="w-5 h-5 text-green-600" />
+                <span className="text-green-700 font-medium">Chat on WhatsApp</span>
               </button>
-              
-              {showHours && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="space-y-2"
+              {store.location && (
+                <button
+                  onClick={handleNavigation}
+                  className="w-full flex items-center gap-3 p-4 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors"
                 >
-                  {Object.entries(openingHours).map(([day, hours]) => (
-                    <div key={day} className="flex justify-between text-sm text-gray-600">
-                      <span className="capitalize">{day}</span>
-                      <span>{hours}</span>
-                    </div>
-                  ))}
-                </motion.div>
+                  <Navigation className="w-5 h-5 text-blue-600" />
+                  <span className="text-blue-700 font-medium">Get Directions</span>
+                </button>
               )}
             </div>
           </div>
         </div>
 
-        {/* Products Filter Section */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Products</h2>
-          <div className="flex flex-wrap gap-4 mb-4">
-            <button 
-              onClick={() => handleFilterChange(null)} 
-              className={`px-4 py-2 rounded-lg ${!selectedCategory ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'}`}
-            >
-              All
-            </button>
-            {categories.map(category => (
-              <button 
-                key={category} 
-                onClick={() => handleFilterChange(category)} 
-                className={`px-4 py-2 rounded-lg ${selectedCategory === category ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'}`}
-              >
-                {category}
-              </button>
-            ))}
+        {/* Products and Services Sections */}
+        <div className="space-y-8">
+          {/* Services Section */}
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Services</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredProducts
+                .filter(product => product.categories.toString().includes('services-product'))
+                .map((service) => (
+                  <div
+                    key={service.id}
+                    className="p-6 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 hover:shadow-md transition-all"
+                  >
+                    <h3 className="text-xl font-semibold text-gray-800 mb-3">{service.name}</h3>
+                    <p className="text-gray-600 mb-4">{service.details.car.description}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-blue-600 font-semibold">
+                        ${service.details.car.price.toLocaleString()}
+                      </span>
+                      <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        Learn More
+                      </button>
+                    </div>
+                  </div>
+                ))}
+            </div>
           </div>
-        </div>
 
-        {/* Products Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProducts.length > 0 ? (
-            filteredProducts.map((product) => (
-              <CarCard 
-                key={product.id} 
-                car={{
-                  id: product.id,
-                  mainImage: product.image[0].url || '',
-                  title: product.name || '',
-                  year: product.details.car.year || 0,
-                  mileage: product.details.car.mileage || '',
-                  bodyType: product.details.car.bodyType || '',
-                  fuelType: product.details.car.fuelType || '',
-                  description: product.details.car.description || '',
-                  price: product.details.car.price.toString() || ''
-                }}
-              />
-            ))
-          ) : (
-            <p className="text-gray-600">No products found.</p>
-          )}
-        </div>
-
-        {/* Action Buttons */}
-        <div className="fixed bottom-8 right-8 flex flex-col gap-4">
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors"
-            onClick={() => handleContact('whatsapp')}
-          >
-            <MessageSquare size={24} />
-          </motion.button>
-          {store.location && (
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors"
-              onClick={handleNavigation}
-            >
-              <Navigation size={24} />
-            </motion.button>
-          )}
+          {/* Products Section */}
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">Products</h2>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => handleFilterChange(null)} 
+                  className={`px-4 py-2 rounded-lg transition-colors ${
+                    !selectedCategory 
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  All
+                </button>
+                {categories
+                  .filter(cat => cat !== 'services-product')
+                  .map(category => (
+                    <button 
+                      key={category} 
+                      onClick={() => handleFilterChange(category)} 
+                      className={`px-4 py-2 rounded-lg transition-colors ${
+                        selectedCategory === category 
+                          ? 'bg-blue-600 text-white' 
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {category}
+                    </button>
+                  ))}
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredProducts
+                .filter(product => !product.categories.toString().includes('services-product'))
+                .map((product) => (
+                  <CarCard 
+                    key={product.id} 
+                    car={{
+                      id: product.id,
+                      mainImage: product.image ? `${product.image}` : "/default-car.png",
+                      title: product.name || '',
+                      year: product.details.car.year || 0,
+                      mileage: product.details.car.mileage || '',
+                      bodyType: product.details.car.bodyType || '',
+                      fuelType: product.details.car.fuelType || '',
+                      description: product.details.car.description || '',
+                      price: product.details.car.price.toString() || ''
+                    }}
+                  />
+                ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -100,7 +100,7 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
               {image && (
                 <div className="my-8">
                   <Img
-                    src={image.url}
+                    src={`http://68.183.215.202${image.url}`}
                     alt={`Article image ${currentImageIndex}`}
                     external={true}
                     width={1920}
@@ -172,7 +172,7 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
         <section className="relative h-[60vh] w-full">
           {cover?.url ? (
             <Img
-              src={cover.url}
+              src={`http://68.183.215.202${cover.url}`}
               alt={title}
               external={true}
               width={1920}
@@ -213,7 +213,7 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
               <div className="max-w-4xl mx-auto">
                 <div className="relative aspect-[16/9] rounded-xl overflow-hidden shadow-xl">
                   <Img
-                    src={conver[0].url}
+                    src={`http://68.183.215.202${conver[0].url}`}
                     alt="Featured gallery image"
                     external={true}
                     width={1920}
@@ -244,7 +244,7 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
                     {conver.slice(1, -1).map((image: any, index: number) => (
                       <div key={index} className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-lg group">
                         <Img
-                          src={image.url}
+                          src={`http://68.183.215.202${image.url}`}
                           alt={`Gallery image ${index + 2}`}
                           external={true}
                           width={1920}
@@ -273,7 +273,7 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
                   <div className="max-w-4xl mx-auto">
                     <div className="relative aspect-[16/9] rounded-xl overflow-hidden shadow-xl">
                       <Img
-                        src={conver[conver.length - 1].url}
+                        src={`http://68.183.215.202${conver[0].url}`}
                         alt="Final gallery image"
                         external={true}
                         width={1920}

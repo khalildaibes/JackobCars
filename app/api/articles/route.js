@@ -51,3 +51,61 @@ export async function GET(req) {
         return new Response(JSON.stringify({ message: "Internal Server Error" }), { status: 500 });
     }
 }
+
+export async function POST(req) {
+  try {
+    const body = await req.json();
+    const locale = await getLocale();
+
+    // Construct the API URL for creating an article
+    const apiUrl = `http://68.183.215.202/api/articles`;
+
+    // Send POST request to Strapi
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
+      },
+      body: JSON.stringify({
+        data: {
+          title: body.data.title,
+          description: body.data.description,
+          content: body.data.content,
+          cover: {
+            url: body.data.coverImage.url,
+            alt: body.data.coverImage.alt
+          },
+          locale: locale
+        }
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      return new Response(JSON.stringify({ 
+        message: "Failed to create article",
+        error: error 
+      }), { 
+        status: response.status 
+      });
+    }
+
+    const data = await response.json();
+    return new Response(JSON.stringify(data), { 
+      status: 201,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+  } catch (error) {
+    console.error("API Create Article Error:", error);
+    return new Response(JSON.stringify({ 
+      message: "Internal Server Error",
+      error: error.message 
+    }), { 
+      status: 500 
+    });
+  }
+}

@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
+import { useLocale } from "next-intl";
+import { Card, CardContent } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
 import { Alert, AlertDescription } from "../../components/ui/alert";
-import { Skeleton } from "../../components/ui/skeleton";
 import {
   Loader2,
   Search,
@@ -26,9 +26,8 @@ import {
 } from "lucide-react";
 
 // Move these to environment variables
-const API_BASE_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337";
-const GOV_API_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&q=";
-const GOV_ALTERNATE_API_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=03adc637-b6fe-402b-9937-7c3d3afc9140&q=";
+const API_BASE_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&q=";
+const ALTERNATE_API_BASE_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=03adc637-b6fe-402b-9937-7c3d3afc9140&q=";
 
 interface CarData {
   [key: string]: string;
@@ -36,6 +35,10 @@ interface CarData {
 
 const CarSearch = () => {
   const t = useTranslations("CarSearch");
+  const locale = useLocale();
+  const isRTL = locale === 'ar' || locale === 'he-IL';
+  const resultsRef = React.useRef<HTMLDivElement>(null);
+  
   const [plateNumber, setPlateNumber] = useState("");
   const [carData, setCarData] = useState<CarData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -86,127 +89,142 @@ const CarSearch = () => {
   };
 
   const fetchCarData = async () => {
-    if (!plateNumber) {
-      setError(t("please_enter_plate"));
-      return;
-    }
-    
+    if (!plateNumber) return;
     setLoading(true);
     setError(null);
     let data = null;
 
     try {
-      // First try to fetch from Strapi
-      const strapiResponse = await fetch(`${API_BASE_URL}/api/cars?filters[plateNumber]=${plateNumber}`);
-      const strapiData = await strapiResponse.json();
+      // First fetch with the primary API
+      const response = await fetch(`${API_BASE_URL}${plateNumber}`);
+      const primaryData = await response.json();
+      console.log(`${API_BASE_URL}${plateNumber}`)
 
-      if (strapiData?.data?.length) {
-        // Use Strapi data if available
-        const carDetails = strapiData.data[0].attributes;
-        setCarData(carDetails);
+      // If no records were returned, try the alternate API
+      if (primaryData?.result?.records?.length) {
+        console.log("record")
+        console.log(primaryData?.result?.records)
+        data = primaryData;
       } else {
-        // Fallback to government API
-        const govResponse = await fetch(`${GOV_API_URL}${plateNumber}`);
-        const primaryData = await govResponse.json();
+        const alternateResponse = await fetch(`${ALTERNATE_API_BASE_URL}${plateNumber}`);
+        data = await alternateResponse.json();
+      }
 
-        if (primaryData?.result?.records?.length) {
-          data = primaryData;
-        } else {
-          const alternateResponse = await fetch(`${GOV_ALTERNATE_API_URL}${plateNumber}`);
-          data = await alternateResponse.json();
-        }
+      if (data?.result?.records?.length) {
+        const record = data.result.records[0] as Record<string, unknown>;
+        console.log(record)
 
-        if (data?.result?.records?.length) {
-          const record = data.result.records[0] as Record<string, unknown>;
-          const translatedData = Object.fromEntries(
-            Object.entries(record).map(([key, value]) => [
-              translationMap[key as keyof typeof translationMap] || key,
-              String(value),
-            ])
-          );
+        const translatedData = Object.fromEntries(
+          Object.entries(record).map(([key, value]) => [
+            translationMap[key as keyof typeof translationMap] || key,
+            String(value),
+          ])
+        );
 
-          setCarData(translatedData);
-
-          // Store in Strapi for future use
-          try {
-            await fetch(`${API_BASE_URL}/api/cars`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                data: {
-                  plateNumber,
-                  ...translatedData,
-                }
-              }),
-            });
-          } catch (error) {
-            console.error('Error storing data in Strapi:', error);
-          }
-        } else {
-          setError(t("no_car_found"));
-        }
+        setCarData(translatedData);
+        // Scroll to results after data is loaded
+        setTimeout(() => {
+          resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      } else {
+        setCarData(null);
+        setError(t("no_car_found"));
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      setError(t("error_fetching_data"));
+      setError(t("error_fetching"));
     }
 
     setLoading(false);
   };
 
-  const getIcon = (key: string) => {
-    const IconComponent = iconMap[key as keyof typeof iconMap] || Settings;
-    return <IconComponent className="h-5 w-5 text-gray-500" />;
-  };
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">{t("find_car_plate_heading")}</h1>
-          <p className="text-xl text-gray-600">{t("explore_car_specs")}</p>
-        </div>
-
-        <Card className="mb-8">
-          <CardContent className="pt-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Input
-                  type="text"
-                  value={plateNumber}
-                  onChange={(e) => {
-                    setPlateNumber(e.target.value);
-                    setError(null);
-                  }}
-                  placeholder={t("enter_plate_number")}
-                  className="pr-12"
-                  maxLength={8}
-                />
-                <Car className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              </div>
+    <div className={`min-h-screen ${isRTL ? 'rtl' : 'ltr'}`}>
+      {/* Hero Section */}
+      <div 
+        className="relative h-[600px] bg-cover bg-center"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("/car-showroom-dark.jpg")'
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/70" />
+        
+        <div className="container mx-auto px-4 h-full flex flex-col items-center justify-center relative z-10">
+          <h1 className="text-5xl font-bold text-white mb-6 text-center">
+            {t("title")}
+          </h1>
+          <p className="text-xl text-white mb-12 text-center max-w-2xl">
+            {t("subtitle")}
+          </p>
+          
+          <div className="w-full max-w-xl">
+            <div className="relative">
+              <Input
+                type="text"
+                value={plateNumber}
+                onChange={(e) => {
+                  setPlateNumber(e.target.value);
+                  setError(null);
+                }}
+                placeholder={t("enter_plate")}
+                className={`w-full px-6 py-7 text-lg rounded-full shadow-lg bg-white/95 focus:bg-white transition-colors border-0 focus:ring-2 focus:ring-blue-500 ${
+                  isRTL ? 'text-right pr-6 pl-16' : 'text-left pl-6 pr-16'
+                }`}
+                maxLength={8}
+              />
               <Button 
                 onClick={fetchCarData} 
                 disabled={loading}
-                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 transition-colors"
+                className={`absolute ${
+                  isRTL ? 'left-2' : 'right-2'
+                } top-1/2 transform -translate-y-1/2 rounded-full w-12 h-12 p-0 bg-blue-600 hover:bg-blue-700 transition-colors`}
               >
                 {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t("loading_data")}
-                  </>
+                  <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
-                  <>
-                    <Search className="mr-2 h-4 w-4" />
-                    {t("search_car")}
-                  </>
+                  <Search className="h-5 w-5" />
                 )}
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
+      </div>
 
+      {/* How It Works Section */}
+      <div className="bg-white py-16 rounded-t-3xl -mt-8 relative z-20">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">{t("how_it_works")}</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Car className="w-10 h-10 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">{t("step1_title")}</h3>
+              <p className="text-gray-600">{t("step1_desc")}</p>
+            </div>
+            
+            <div className="text-center">
+              <div className="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-10 h-10 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">{t("step2_title")}</h3>
+              <p className="text-gray-600">{t("step2_desc")}</p>
+            </div>
+            
+            <div className="text-center">
+              <div className="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Tag className="w-10 h-10 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">{t("step3_title")}</h3>
+              <p className="text-gray-600">{t("step3_desc")}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Results Section */}
+      <div ref={resultsRef} className="container mx-auto px-4 py-8 scroll-mt-8">
         {error && (
           <Alert variant="destructive" className="mb-8">
             <AlertCircle className="h-4 w-4" />
@@ -214,43 +232,23 @@ const CarSearch = () => {
           </Alert>
         )}
 
-        {loading && (
-          <Card>
-            <CardHeader>
-              <Skeleton className="h-8 w-2/3" />
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                    <Skeleton className="h-5 w-5" />
-                    <div className="flex-1">
-                      <Skeleton className="h-4 w-24 mb-2" />
-                      <Skeleton className="h-4 w-32" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
         {carData && !loading && (
           <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl">
-                {carData[t("manufacturer_name")]} {carData[t("model_name")]}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+            <CardContent className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {Object.entries(carData).map(([key, value]) => (
                   <div key={key} className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <div className="flex-shrink-0">
-                      {getIcon(key)}
+                    <div className={`flex-shrink-0 ${isRTL ? 'order-2' : 'order-1'}`}>
+                      {iconMap[key as keyof typeof iconMap] ? (
+                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                          {React.createElement(iconMap[key as keyof typeof iconMap], {
+                            className: "h-5 w-5 text-blue-600"
+                          })}
+                        </div>
+                      ) : null}
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">{key}</p>
+                    <div className={isRTL ? 'order-1 text-right' : 'order-2 text-left'}>
+                      <p className="text-sm font-medium text-gray-500">{t(key)}</p>
                       <p className="font-semibold text-gray-900">{String(value)}</p>
                     </div>
                   </div>

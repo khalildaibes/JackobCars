@@ -4,7 +4,7 @@ import React from "react";
 
 export default function BlogvOnePage() {
   return (
-    <div className="relative w-full content-center lg:h-auto md:h-auto">
+    <div className="relative w-full content-center lg:h-auto md:h-auto ">
       <div className="w-full overflow-x-scroll bg-white-a700 mt-[6%]">
       <ResponsiveNewsLayout />
 

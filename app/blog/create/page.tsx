@@ -48,7 +48,46 @@ const ReactQuill = dynamic(() => import('react-quill'), {
   loading: () => <div className="h-64 bg-gray-100 animate-pulse rounded" />
 });
 
+// Add these new interfaces and functions after the existing interfaces
+interface ExtractedImage {
+  id: string;
+  base64: string;
+  originalText: string;
+}
 
+// Function to extract base64 images from content and replace with placeholders
+const extractImagesFromContent = (content: string): { 
+  processedContent: string;
+  extractedImages: ExtractedImage[];
+} => {
+  const images: ExtractedImage[] = [];
+  let processedContent = content;
+
+  // Regular expression to match base64 images
+  const base64Regex = /data:image\/[^;]+;base64,[^\s}]+/g;
+  const matches = processedContent.match(base64Regex);
+
+  if (matches) {
+    matches.forEach((match, index) => {
+      const imageId = `image_${Date.now()}_${index}`;
+      images.push({
+        id: imageId,
+        base64: match,
+        originalText: match
+      });
+      processedContent = processedContent.replace(match, `{{${imageId}}}`);
+    });
+  }
+
+  return { processedContent, extractedImages: images };
+};
+
+// Function to convert base64 to File object
+const base64ToFile = async (base64String: string, filename: string): Promise<File> => {
+  const res = await fetch(base64String);
+  const blob = await res.blob();
+  return new File([blob], filename, { type: blob.type });
+};
 
 // Define the PreviewModal props interface
 interface PreviewModalProps {
@@ -312,23 +351,55 @@ export default function BlogEditor() {
             </div>
 
             {block.type === 'text' && (
-              <ReactQuill
-                value={block.content}
-                onChange={(content) => updateBlock(block.id, { 
-                  content,
-                  htmlContent: content // Store the HTML content
-                })}
-                modules={{
-                  toolbar: [
-                    [{ 'header': [1, 2, 3, false] }],
-                    ['bold', 'italic', 'underline', 'strike'],
-                    [{'list': 'ordered'}, {'list': 'bullet'}],
-                    ['link'],
-                    ['clean']
-                  ],
-                }}
-                className="h-64" // Set appropriate height
-              />
+              <div className="relative">
+                <ReactQuill
+                  value={block.content || ''}
+                  onChange={(content) => updateBlock(block.id, { 
+                    content,
+                    htmlContent: content
+                  })}
+                  modules={{
+                    toolbar: [
+                      [{ 'header': [1, 2, 3, false] }],
+                      ['bold', 'italic', 'underline', 'strike'],
+                      [{'list': 'ordered'}, {'list': 'bullet'}],
+                      ['link'],
+                      ['clean']
+                    ],
+                  }}
+                  className="h-64 bg-white rounded-lg"
+                  theme="snow"
+                  placeholder="Start writing..."
+                />
+                <style jsx global>{`
+                  .ql-container {
+                    border-bottom-left-radius: 0.5rem;
+                    border-bottom-right-radius: 0.5rem;
+                  }
+                  .ql-toolbar {
+                    border-top-left-radius: 0.5rem;
+                    border-top-right-radius: 0.5rem;
+                    background: #f9fafb;
+                  }
+                  .ql-editor {
+                    min-height: 200px;
+                  }
+                  /* Hide the arrows */
+                  .ql-toolbar .ql-formats {
+                    display: none;
+
+                  }
+                  .ql-toolbar .ql-formats:last-child {
+                    margin-right: 0;
+                  }
+                  .ql-toolbar .ql-formats button {
+                    display: none;
+                  }
+                  .ql-toolbar .ql-formats select {
+                    display: none;
+                  }
+                `}</style>
+              </div>
             )}
 
             {block.type === 'heading' && (
@@ -446,7 +517,7 @@ export default function BlogEditor() {
     }
   };
 
-  // Function to translate the entire blog content
+  // Update the translateBlog function to handle image placeholders
   const translateBlog = async (blog: BlogContent, targetLang: 'ar' | 'en' | 'he-IL'): Promise<BlogContent> => {
     try {
       // Translate basic fields
@@ -462,9 +533,22 @@ export default function BlogEditor() {
           const newBlock = { ...block };
           
           if (block.type === 'text') {
-            const translatedText = await translateText(block.content, targetLang);
-            newBlock.content = translatedText;
-            newBlock.htmlContent = translatedText;
+            // Split content by image placeholders
+            const parts = block.content.split(/(\{\{image_[^}]+\}\})/g);
+            
+            // Translate only text parts, preserve image placeholders
+            const translatedParts = await Promise.all(
+              parts.map(async (part) => {
+                if (part.startsWith('{{image_') && part.endsWith('}}')) {
+                  return part; // Keep image placeholder as is
+                }
+                return await translateText(part, targetLang);
+              })
+            );
+            
+            // Rejoin the content
+            newBlock.content = translatedParts.join('');
+            newBlock.htmlContent = newBlock.content;
           }
           else if (block.type === 'heading') {
             newBlock.content = await translateText(block.content, targetLang);
@@ -492,7 +576,7 @@ export default function BlogEditor() {
       };
     } catch (error) {
       console.error('Translation error:', error);
-      return blog; // Return original content if translation fails
+      return blog;
     }
   };
 
@@ -521,71 +605,100 @@ export default function BlogEditor() {
   // Function to create blog entry in Strapi
   const createBlogEntry = async (content: BlogContent, locale: string) => {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/articles`,
-        {
+      const response = await fetch(`/api/articles/${locale}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
           data: {
             title: content.title,
             description: content.description,
+            slug: content.slug,
+            author: content.author,
+            tags: content.tags,
+            categories :[],
             content: content.content,
-            locale
+            conver: {
+              url: content.coverImage.fileUrl || '',
+              alt: content.coverImage.alt
+            },
           }
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`
-          }
-        }
-      );
-      return response.data;
+        })
+      });
+
+      if (!response.ok) {
+        console.log(response.json());
+        throw new Error('Failed to create blog entry');
+      }
+
+      const data = await response.json();
+      return data;
     } catch (error) {
       console.error('Blog creation error:', error);
       throw error;
     }
   };
 
-  // Handle publish with translations
+  // Update the handlePublish function to handle extracted images
   const handlePublish = async () => {
     try {
       setIsPublishing(true);
 
-      // Collect all files to upload
-      const files: File[] = [];
-      
-      // Add cover image if exists
-      if (blog.coverImage.file) {
-        files.push(blog.coverImage.file);
-      }
+      // Process each content block to extract images
+      const processedBlocks = await Promise.all(blog.content.map(async (block) => {
+        if (block.type === 'text' && block.content) {
+          const { processedContent, extractedImages } = extractImagesFromContent(block.content);
+          
+          // Convert extracted images to files and upload them
+          const imageFiles = await Promise.all(
+            extractedImages.map(async (img) => {
+              const file = await base64ToFile(img.base64, `${img.id}.jpg`);
+              return { id: img.id, file };
+            })
+          );
 
-      // Add content files
-      blog.content.forEach(block => {
-        if (block.file) {
-          files.push(block.file);
+          // Upload images to Strapi
+          const uploadedImages = await uploadFiles(imageFiles.map(img => img.file));
+
+          // Replace placeholders with image URLs
+          let finalContent = processedContent;
+          uploadedImages.forEach((uploadedImage, index) => {
+            const placeholder = `{{${imageFiles[index].id}}}`;
+            const imageUrl = uploadedImage.url;
+            finalContent = finalContent.replace(placeholder, `<img src="${imageUrl}" alt="Embedded Image" />`);
+          });
+
+          return {
+            ...block,
+            content: finalContent,
+            htmlContent: finalContent
+          };
         }
-      });
+        return block;
+      }));
+
+      // Update blog content with processed blocks
+      const processedBlog = {
+        ...blog,
+        content: processedBlocks
+      };
 
       // Create blog post for each language
       const locales = ['en', 'ar', 'he-IL'];
       
       await Promise.all(
         locales.map(async (locale) => {
-          const translatedContent = locale === 'en' 
-            ? blog 
-            : await translateBlog(blog, locale as 'ar' | 'en' | 'he-IL');
+          const translatedContent = locale === writingLanguage 
+            ? processedBlog 
+            : await translateBlog(processedBlog, locale as 'ar' | 'en' | 'he-IL');
 
-          await blogService.createBlogPost({
-            ...translatedContent,
-            coverImage: {
-              url: translatedContent.coverImage.fileUrl || '',
-              alt: translatedContent.coverImage.alt
-            },
-            locale
-          }, files);
+          await createBlogEntry(translatedContent, locale);
         })
       );
 
       alert('Blog published successfully in all languages!');
-      router.push('/blog'); // Redirect to blog listing page
+      router.push('/blog');
     } catch (error) {
       console.error('Publishing error:', error);
       alert('Error publishing blog. Please try again.');
@@ -704,6 +817,39 @@ export default function BlogEditor() {
       </select>
     </div>
   );
+
+  // Update the ReactQuill configuration to handle image uploads
+  const quillModules = {
+    toolbar: {
+      container: [
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{'list': 'ordered'}, {'list': 'bullet'}],
+        ['link', 'image'],
+        ['clean']
+      ],
+      handlers: {
+        image: function() {
+          const input = document.createElement('input');
+          input.setAttribute('type', 'file');
+          input.setAttribute('accept', 'image/*');
+          input.click();
+
+          input.onchange = async () => {
+            const file = input.files?.[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                const range = this.quill.getSelection(true);
+                this.quill.insertEmbed(range.index, 'image', e.target?.result);
+              };
+              reader.readAsDataURL(file);
+            }
+          };
+        }
+      }
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-6 mt-[10%]">
