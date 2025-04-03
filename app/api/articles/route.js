@@ -56,9 +56,31 @@ export async function POST(req) {
   try {
     const body = await req.json();
     const locale = await getLocale();
+    console.log('Creating article with locale:', locale);
+    console.log('Request body:', body);
 
     // Construct the API URL for creating an article
-    const apiUrl = `http://68.183.215.202/api/articles`;
+    const apiUrl = `http://68.183.215.202/api/articles?locale=${locale}`;
+
+    // Prepare the request body according to Strapi's requirements
+    const requestBody = {
+      data: {
+        title: body.title,
+        description: body.description,
+        slug: body.slug || body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        content: body.content,
+        locale: locale,
+        publishedAt: body.createdAt,
+        ...(body.tags && body.tags.length > 0 && {
+          tags: body.tags.map(tag => ({ name: tag }))
+        })
+      }
+    };
+
+    console.log('Sending request to Strapi:', {
+      url: apiUrl,
+      body: requestBody
+    });
 
     // Send POST request to Strapi
     const response = await fetch(apiUrl, {
@@ -67,25 +89,20 @@ export async function POST(req) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
       },
-      body: JSON.stringify({
-        data: {
-          title: body.data.title,
-          description: body.data.description,
-          content: body.data.content,
-          cover: {
-            url: body.data.coverImage.url,
-            alt: body.data.coverImage.alt
-          },
-          locale: locale
-        }
-      })
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const errorText = await response.text();
+      console.error('Strapi API Error Response:', {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText
+      });
+      
       return new Response(JSON.stringify({ 
         message: "Failed to create article",
-        error: error 
+        error: errorText
       }), { 
         status: response.status 
       });

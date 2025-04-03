@@ -6,12 +6,13 @@ import { motion } from "framer-motion";
 import { 
   Loader2, MapPin, Phone, Mail, Globe, Clock, Tag, 
   Facebook, Instagram, Navigation, ChevronDown,
-  MessageSquare, Search
+  MessageSquare, Search, Navigation2
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Img} from "../../../components/Img";
 import  CarCard  from "../../../components/CarCard";
+import axios from 'axios';
 
 interface Store {
   id: number;
@@ -65,6 +66,7 @@ interface Product {
   categories?: {string }[]; // Categories from Strapi
   image: { url: string }[]; // Image array for localization
   details: {
+    images: any;
     car: {
       description: string;
       fuelType: string;
@@ -111,7 +113,7 @@ export default function StorePage() {
     const fetchStore = async () => {
       try {
         setLoading(true);
-        const storeResponse = await fetch(`/api/stores?slug=${slug}`);
+        const storeResponse = await fetch(`/api/articles?slug=${slug}`);
         if (!storeResponse.ok) throw new Error("Failed to fetch store");
         const storeData = await storeResponse.json();
         
@@ -121,33 +123,44 @@ export default function StorePage() {
 
         const storeDataItem = storeData.data[0];
         console.log('Store Data:', JSON.stringify(storeDataItem, null, 2));
+        
+        // Transform the data to match our Store interface
         const storeInstance: Store = {
           id: Number(storeDataItem.id),
-          name: String(storeDataItem.name || ''),
-          phone: String(storeDataItem.phone || ''),
-          address: String(storeDataItem.address || ''),
-          details: String(storeDataItem.details[0].children[0].text || ''),
-          hostname: String(storeDataItem.hostname || ''),
-          visits: Number(storeDataItem.visits || 0),
-          logo: storeDataItem.logo[0] || '',
-          tags: String(storeDataItem.tags || ''),
-          provider: storeDataItem.provider ? String(storeDataItem.provider) : undefined,
-          email: storeDataItem.email ? String(storeDataItem.email) : undefined,
-          socialMedia: storeDataItem.socialMedia ? {
-            facebook: storeDataItem.socialMedia.facebook ? String(storeDataItem.socialMedia.facebook) : undefined,
-            instagram: storeDataItem.socialMedia.instagram ? String(storeDataItem.socialMedia.instagram) : undefined,
-            whatsapp: storeDataItem.socialMedia.whatsapp ? String(storeDataItem.socialMedia.whatsapp) : undefined
+          name: String(storeDataItem.attributes.name || ''),
+          phone: String(storeDataItem.attributes.phone || ''),
+          address: String(storeDataItem.attributes.address || ''),
+          details: String(storeDataItem.attributes.details || ''),
+          hostname: String(storeDataItem.attributes.hostname || ''),
+          visits: Number(storeDataItem.attributes.visits || 0),
+          logo: storeDataItem.attributes.logo?.data || null,
+          tags: String(storeDataItem.attributes.tags || ''),
+          provider: storeDataItem.attributes.provider ? String(storeDataItem.attributes.provider) : undefined,
+          email: storeDataItem.attributes.email ? String(storeDataItem.attributes.email) : undefined,
+          socialMedia: storeDataItem.attributes.socialMedia ? {
+            facebook: storeDataItem.attributes.socialMedia.facebook ? String(storeDataItem.attributes.socialMedia.facebook) : undefined,
+            instagram: storeDataItem.attributes.socialMedia.instagram ? String(storeDataItem.attributes.socialMedia.instagram) : undefined,
+            whatsapp: storeDataItem.attributes.socialMedia.whatsapp ? String(storeDataItem.attributes.socialMedia.whatsapp) : undefined
           } : undefined,
-          location: storeDataItem.location ? {
-            lat: Number(storeDataItem.location.lat || 0),
-            lng: Number(storeDataItem.location.lng || 0)
+          location: storeDataItem.attributes.location ? {
+            lat: Number(storeDataItem.attributes.location.lat || 0),
+            lng: Number(storeDataItem.attributes.location.lng || 0)
           } : undefined,
-          balance: Number(storeDataItem.balance || 0),
-          openingHours: storeDataItem.openingHours || defaultOpeningHours,
-          products: storeDataItem.products.map((product: any) => ({
+          balance: Number(storeDataItem.attributes.balance || 0),
+          openingHours: storeDataItem.attributes.openingHours || defaultOpeningHours,
+          products: storeDataItem.attributes.products?.data?.map((product: any) => ({
             ...product,
-            categories: product.categories || "",
-          })) as Product[]
+            categories: product.attributes.categories || "",
+            details: {
+              car: {
+                ...product.attributes.details?.car,
+                images: {
+                  main: product.attributes.details?.car?.images?.main?.data?.attributes?.url || "",
+                  additional: product.attributes.details?.car?.images?.additional?.data?.map((img: any) => img.attributes.url) || []
+                }
+              }
+            }
+          })) || []
         };
 
         setStore(storeInstance);
@@ -193,12 +206,21 @@ export default function StorePage() {
     }
   };
 
-  const handleNavigation = () => {
+  const handleNavigation = (type: 'google' | 'waze') => {
     if (!store?.location) return;
-    window.open(
-      `https://www.google.com/maps/dir/?api=1&destination=${store.location.lat},${store.location.lng}`,
-      '_blank'
-    );
+    
+    const { lat, lng } = store.location;
+    if (type === 'google') {
+      window.open(
+        `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`,
+        '_blank'
+      );
+    } else {
+      window.open(
+        `https://www.waze.com/ul?ll=${lat},${lng}&navigate=yes&zoom=17`,
+        '_blank'
+      );
+    }
   };
 
   if (loading) {
@@ -248,7 +270,7 @@ export default function StorePage() {
             {store.logo && (
               <div className="relative md:w-[20%] w-[100%] h-[70%] rounded-xl overflow-hidden shadow-lg">
                 <Img
-                  src={`http://68.183.215.202${store.logo.url}` || ""}
+                  src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${store.logo.attributes.url}`}
                   alt={store.name}
                   width={1024}
                   height={1024}
@@ -376,15 +398,33 @@ export default function StorePage() {
                 <MessageSquare className="w-5 h-5 text-green-600" />
                 <span className="text-green-700 font-medium">Chat on WhatsApp</span>
               </button>
-              {store.location && (
-                <button
-                  onClick={handleNavigation}
-                  className="w-full flex items-center gap-3 p-4 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors"
-                >
-                  <Navigation className="w-5 h-5 text-blue-600" />
-                  <span className="text-blue-700 font-medium">Get Directions</span>
-                </button>
-              )}
+              
+              {/* Navigation Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium text-gray-700 mb-2">Get Directions</h3>
+                {store.address ? (
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      onClick={() => handleNavigation('google')}
+                      className="flex items-center justify-center gap-3 p-4 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors"
+                    >
+                      <Navigation className="w-5 h-5 text-blue-600" />
+                      <span className="text-blue-700 font-medium">Google Maps</span>
+                    </button>
+                    <button
+                      onClick={() => handleNavigation('waze')}
+                      className="flex items-center justify-center gap-3 p-4 rounded-lg bg-purple-50 hover:bg-purple-100 transition-colors"
+                    >
+                      <Navigation2 className="w-5 h-5 text-purple-600" />
+                      <span className="text-purple-700 font-medium">Waze</span>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="text-gray-500 text-sm italic">
+                    Location data not available for this store
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -457,7 +497,9 @@ export default function StorePage() {
                     key={product.id} 
                     car={{
                       id: product.id,
-                      mainImage: product.image ? `${product.image}` : "/default-car.png",
+                      mainImage: product.details.car.images.main 
+                        ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${product.details.car.images.main}`
+                        : "/default-car.png",
                       title: product.name || '',
                       year: product.details.car.year || 0,
                       mileage: product.details.car.mileage || '',

@@ -337,10 +337,10 @@ export default function StoresPage() {
                     <span>{String(store.phone)}</span>
                   </div>
 
-                  <div className="flex items-center gap-2 text-gray-600">
+                  {/* <div className="flex items-center gap-2 text-gray-600">
                     <Globe className="w-5 h-5 flex-shrink-0 text-blue-600" />
                     <span>{String(store.details)}</span>
-                  </div>
+                  </div> */}
 
                   {/* Tags */}
                   <div className="flex items-start gap-2">

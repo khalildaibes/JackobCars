@@ -571,7 +571,6 @@ export default function BlogEditor() {
         content: translatedContent,
         coverImage: {
           ...blog.coverImage,
-          alt: await translateText(blog.coverImage.alt, targetLang)
         }
       };
     } catch (error) {
@@ -582,54 +581,79 @@ export default function BlogEditor() {
 
   // Function to upload files to Strapi
   const uploadFiles = async (files: File[]) => {
+    if (!files || files.length === 0) {
+      return [];
+    }
+
     const formData = new FormData();
     files.forEach(file => formData.append('files', file));
 
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/upload`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`
-          }
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error('File upload error:', error);
-      throw error;
+      const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`
+        },
+        body: formData
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Upload failed');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      throw new Error(error.message || 'Failed to upload files');
     }
   };
 
   // Function to create blog entry in Strapi
   const createBlogEntry = async (content: BlogContent, locale: string) => {
     try {
-      const response = await fetch(`/api/articles/${locale}`, {
+      // Format the content blocks into a string
+      const formattedContent = content.content.map(block => {
+        switch (block.type) {
+          case 'text':
+            return block.htmlContent || block.content;
+          case 'heading':
+            return `<h${block.headingLevel}>${block.content}</h${block.headingLevel}>`;
+          case 'image':
+            return block.fileUrl ? `<img src="${block.fileUrl}" alt="${block.alt || ''}" />` : '';
+          case 'video':
+            return block.fileUrl ? `<video src="${block.fileUrl}" controls></video>` : '';
+          default:
+            return '';
+        }
+      }).join('\n');
+
+      // Create the blog entry
+      const response = await fetch('/api/articles', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          data: {
-            title: content.title,
-            description: content.description,
-            slug: content.slug,
-            author: content.author,
-            tags: content.tags,
-            categories :[],
-            content: content.content,
-            conver: {
-              url: content.coverImage.fileUrl || '',
-              alt: content.coverImage.alt
-            },
-          }
+          title: content.title,
+          description: content.description,
+          slug: content.slug || content.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+          content: formattedContent,
+          createdAt: content.createdAt,
+          tags: content.tags
         })
       });
 
       if (!response.ok) {
-        console.log(response.json());
-        throw new Error('Failed to create blog entry');
+        let errorMessage = 'Failed to create blog entry';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error?.message || errorMessage;
+        } catch (e) {
+          errorMessage = response.statusText || errorMessage;
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
@@ -640,40 +664,62 @@ export default function BlogEditor() {
     }
   };
 
-  // Update the handlePublish function to handle extracted images
+  // Update the handlePublish function to properly handle file uploads before creating the blog entry
   const handlePublish = async () => {
     try {
       setIsPublishing(true);
 
-      // Process each content block to extract images
+      // First, upload all files (cover image and content images)
+      const filesToUpload: File[] = [];
+      
+      // Add cover image if exists
+      if (blog.coverImage.file) {
+        filesToUpload.push(blog.coverImage.file);
+      }
+
+      // Add content images if they exist
+      blog.content.forEach(block => {
+        if (block.type === 'image' && block.file) {
+          filesToUpload.push(block.file);
+        }
+      });
+
+      // Upload all files
+      let uploadedFiles = [];
+      if (filesToUpload.length > 0) {
+        uploadedFiles = await uploadFiles(filesToUpload);
+      }
+
+      // Process content blocks to replace file URLs
       const processedBlocks = await Promise.all(blog.content.map(async (block) => {
         if (block.type === 'text' && block.content) {
           const { processedContent, extractedImages } = extractImagesFromContent(block.content);
           
-          // Convert extracted images to files and upload them
-          const imageFiles = await Promise.all(
-            extractedImages.map(async (img) => {
-              const file = await base64ToFile(img.base64, `${img.id}.jpg`);
-              return { id: img.id, file };
-            })
-          );
+          if (extractedImages.length > 0) {
+            const imageFiles = await Promise.all(
+              extractedImages.map(async (img) => {
+                const file = await base64ToFile(img.base64, `${img.id}.jpg`);
+                return { id: img.id, file };
+              })
+            );
 
-          // Upload images to Strapi
-          const uploadedImages = await uploadFiles(imageFiles.map(img => img.file));
+            const uploadedImages = await uploadFiles(imageFiles.map(img => img.file));
+            let finalContent = processedContent;
+            
+            if (Array.isArray(uploadedImages)) {
+              uploadedImages.forEach((uploadedImage, index) => {
+                const placeholder = `{{${imageFiles[index].id}}}`;
+                const imageUrl = uploadedImage.url;
+                finalContent = finalContent.replace(placeholder, `<img src="${imageUrl}" />`);
+              });
+            }
 
-          // Replace placeholders with image URLs
-          let finalContent = processedContent;
-          uploadedImages.forEach((uploadedImage, index) => {
-            const placeholder = `{{${imageFiles[index].id}}}`;
-            const imageUrl = uploadedImage.url;
-            finalContent = finalContent.replace(placeholder, `<img src="${imageUrl}" alt="Embedded Image" />`);
-          });
-
-          return {
-            ...block,
-            content: finalContent,
-            htmlContent: finalContent
-          };
+            return {
+              ...block,
+              content: finalContent,
+              htmlContent: finalContent
+            };
+          }
         }
         return block;
       }));
