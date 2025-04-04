@@ -1,21 +1,18 @@
 "use client"; // This marks the component as a Client Component
 
-import React, { useEffect, useState } from 'react';
-import Navbar from '../../components/Navbar';
-import HeroSection from '../../components/HeroSection';
-import FeaturedNews from '../../components/FeaturedNews';
-import NewsGrid from '../../components/NewsGrid';
-import Footer from '../../components/Footer';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { Link } from 'react-alice-carousel';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Img } from '../../components/Img';
 
 interface Article {
   id: number;
   title: string;
   excerpt: string;
-  imageUrl: string;
+  ImgUrl: string;
   category: string;
   date: string;
   author: string;
@@ -86,12 +83,10 @@ const StoryViewer = ({ articles, currentIndex, onClose, onNext, onPrevious }: St
 
         {/* Story content */}
         <div className="relative aspect-[9/16] bg-white rounded-lg overflow-hidden">
-          <Img
-            width={100}
-            height={100}
-            external={true}
-            src={`http://68.183.215.202${currentArticle.imageUrl}`}
+          <Image
+            src={`http://68.183.215.202${currentArticle.ImgUrl}`}
             alt={currentArticle.title}
+            fill
             className="w-full h-full object-cover"
           />
           <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
@@ -162,13 +157,12 @@ const StoryNews = ({ articles }: { articles: Article[] }) => {
               >
                 <div className="relative">
                   <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-blue-500">
-                    <Img
-                      src={`http://68.183.215.202${article.imageUrl}`}
+                    <Image
+                      src={`http://68.183.215.202${article.ImgUrl}`}
                       alt={article.title}
                       className="w-full h-full object-cover"
                       width={100}
                       height={100}
-                      external={true}
                     />
                   </div>
                   <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2">
@@ -245,143 +239,321 @@ const CategoryFilter = ({
   );
 };
 
-const NewsPage = () => {
+interface NewsItem {
+  categories: any;
+  id: string;
+    title: string;
+    description: string;
+    content: string;
+    slug: string;
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
+    locale: string;
+    cover: {
+      url: any;
+    };
+    author: {
+      data: {
+        name: string;
+        attributes: {
+          name: string;
+        };
+      };
+    };
+    tags: {
+      data: Array<{
+        attributes: {
+          name: string;
+        };
+      }>;
+    };
+  
+}
+
+// Add the LinkByUploadAction function
+async function LinkByUploadAction(prevState: any, formData: FormData) {
+  try {
+    const data = Object.fromEntries(formData);
+    const formDataToSend = new FormData();
+    formDataToSend.append("files", data.files);
+    formDataToSend.append("ref", data.ref);
+    formDataToSend.append("refId", data.refId);
+    formDataToSend.append("field", data.field);
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/upload`, {
+      method: "post",
+      body: formDataToSend,
+    });
+
+    const result = await response.json();
+
+    if (result.error) {
+      return {
+        uploadError: result.error.message,
+        uploadSuccess: null,
+      };
+    }
+
+    return {
+      uploadSuccess: "Image uploaded successfully!",
+      uploadError: null,
+    };
+  } catch (error: any) {
+    return {
+      uploadError: error.message,
+      uploadSuccess: null,
+    };
+  }
+}
+
+export default function NewsPage() {
+  const router = useRouter();
   const t = useTranslations('NewsPage');
-  const [activeTab, setActiveTab] = useState('LATEST');
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState<'en' | 'ar' | 'he-IL'>('en');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [uploadStatus, setUploadStatus] = useState<{ success: string | null; error: string | null }>({
+    success: null,
+    error: null
+  });
+
+  useEffect(() => {
+    fetchNews();
+  }, [selectedLanguage]);
+
+  const fetchNews = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/articles?locale=${selectedLanguage}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch news');
+      }
+      const data = await response.json();
+      setNews(data.data || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const filteredNews = news.filter(item => 
+    item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleImageUpload = async (file: File, refId: string) => {
+    try {
+      const formData = new FormData();
+      formData.append('files', file);
+      formData.append('ref', 'article');
+      formData.append('refId', refId);
+      formData.append('field', 'cover');
+
+      const result = await LinkByUploadAction(null, formData);
+      
+      if (result.uploadError) {
+        setUploadStatus({ success: null, error: result.uploadError });
+        return false;
+      }
+
+      setUploadStatus({ success: result.uploadSuccess, error: null });
+      return true;
+    } catch (error) {
+      setUploadStatus({ success: null, error: 'Failed to upload image' });
+      return false;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-red-500 text-center">
+          <p className="text-xl mb-4">Error loading news</p>
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">CAR NEWS</h1>
-        <nav className="flex space-x-6">
-          <Link href="/news" className="text-gray-900 hover:text-gray-600">{t('news')}</Link>
-          <Link href="/reviews" className="text-gray-900 hover:text-gray-600">{t('reviews')}</Link>
-          <Link href="/buying" className="text-gray-900 hover:text-gray-600">{t('buying')}</Link>
-          <button className="text-gray-900">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </button>
-        </nav>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex space-x-8 mb-8 border-b">
-        {['LATEST', 'POPULAR', 'FEATURED'].map((tab) => (
-          <button
-            key={tab}
-            className={`pb-4 px-2 text-sm font-medium transition-colors ${
-              activeTab === tab 
-                ? 'border-b-2 border-black text-black' 
-                : 'text-gray-500 hover:text-gray-900'
-            }`}
-            onClick={() => setActiveTab(tab)}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
-
-      {/* Featured Article */}
-      <div className="mb-12">
-        <div className="relative aspect-[2/1] rounded-lg overflow-hidden">
-          <Img
-            src="/path-to-featured-image.jpg"
-            alt="New Electric SUV"
-            className="w-full h-full object-cover"
-            width={1200}
-            height={600}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-6">
-            <h2 className="text-3xl font-bold text-white mb-3">
-              New Electric SUV Debuts with 300-Mile Range
-            </h2>
-            <p className="text-white/90 mb-4">
-              The new electric SUV offers a 300-mile range, fast charging capabilities, and a suite of advanced technology features.
-            </p>
-            <button className="text-white font-medium hover:underline">
-              READ MORE →
-            </button>
+    <div className="min-h-screen bg-gray-50 mt-[5%]">
+      {/* Hero Section with Search */}
+      <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold mb-6">Auto News & Updates</h1>
+            <p className="text-xl mb-8">Stay informed about the latest in automotive industry</p>
+            <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
+              <div className="w-full md:w-96">
+                <input
+                  type="text"
+                  placeholder="Search news..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <Link
+                href="/findcarbyplate"
+                className="px-6 py-3 bg-white text-blue-900 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
+              >
+                Search by Plate Number
+              </Link>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Latest News Grid */}
-      <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">LATEST NEWS</h2>
+      {/* Quick Actions */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-lg overflow-hidden shadow-sm">
-            <div className="aspect-video relative">
-              <Img
-                src="/path-to-image1.jpg"
-                alt="2024 Sports Sedan"
-                className="w-full h-full object-cover"
-                width={400}
-                height={300}
-              />
+          <Link
+            href="/carsearch"
+            className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow text-center"
+          >
+            <div className="text-blue-600 mb-2">
+              <svg className="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
             </div>
-            <div className="p-4">
-              <h3 className="text-xl font-bold mb-2">2024 Sports Sedan Boasts Over 500 Horsepower</h3>
+            <h3 className="text-lg font-semibold mb-2">Search Cars</h3>
+            <p className="text-gray-600">Find your perfect vehicle</p>
+          </Link>
+          <Link
+            href="/blog/create"
+            className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow text-center"
+          >
+            <div className="text-blue-600 mb-2">
+              <svg className="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
             </div>
-          </div>
-
-          <div className="bg-white rounded-lg overflow-hidden shadow-sm">
-            <div className="aspect-video relative">
-              <Img
-                src="/path-to-image2.jpg"
-                alt="New Luxury Flagship"
-                className="w-full h-full object-cover"
-                width={400}
-                height={300}
-              />
+            <h3 className="text-lg font-semibold mb-2">Create Post</h3>
+            <p className="text-gray-600">Share your automotive insights</p>
+          </Link>
+          <div className="bg-white p-6 rounded-xl shadow-md">
+            <div className="text-blue-600 mb-2">
+              <svg className="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
             </div>
-            <div className="p-4">
-              <h3 className="text-xl font-bold mb-2">Review: A Closer Look at the New Luxury Flagship</h3>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg overflow-hidden shadow-sm">
-            <div className="aspect-video relative">
-              <Img
-                src="/path-to-image3.jpg"
-                alt="Compact SUV"
-                className="w-full h-full object-cover"
-                width={400}
-                height={300}
-              />
-            </div>
-            <div className="p-4">
-              <h3 className="text-xl font-bold mb-2">Spy Shots: Facelifted Compact SUV Spotted Testing</h3>
-            </div>
+            <h3 className="text-lg font-semibold mb-2">Contact Us</h3>
+            <p className="text-gray-600">Get in touch with our team</p>
           </div>
         </div>
       </div>
 
-      {/* Latest Articles */}
-      <div>
-        <h2 className="text-2xl font-bold mb-6">LATEST ARTICLES</h2>
-        <div className="space-y-6">
-          <article className="flex gap-6">
-            <div className="w-1/4">
-              <Img
-                src="/path-to-article-image.jpg"
-                alt="Luxury Carmaker"
-                className="w-full aspect-[4/3] object-cover rounded-lg"
-                width={300}
-                height={225}
-              />
-            </div>
-            <div className="w-3/4">
-              <h3 className="text-xl font-bold mb-2">Luxury Carmaker Unveils Their Latest Flagship Model</h3>
-              <p className="text-gray-600">Description of the latest flagship model...</p>
-            </div>
-          </article>
+      {/* News Grid */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-900">Latest News</h2>
+          <select
+            value={selectedLanguage}
+            onChange={(e) => setSelectedLanguage(e.target.value as 'en' | 'ar' | 'he-IL')}
+            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="en">English</option>
+            <option value="ar">Arabic</option>
+            <option value="he-IL">Hebrew</option>
+          </select>
         </div>
+
+        {uploadStatus.error && (
+          <div className="mb-4 p-4 bg-red-50 text-red-700 rounded-lg">
+            {uploadStatus.error}
+          </div>
+        )}
+
+        {uploadStatus.success && (
+          <div className="mb-4 p-4 bg-green-50 text-green-700 rounded-lg">
+            {uploadStatus.success}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredNews.map((item) => (
+            <article
+              key={item.id}
+              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+            >
+              {item.cover?.url && (
+                <div className="relative h-48">
+                  <Img
+                    src={`http://68.183.215.202${item.cover?.url}`}
+                    alt={item.title}
+                    external={true}
+                    width={1024}
+                    height={1024}
+                    className="object-cover w-full h-full"
+                    onError={async (e) => {
+                      // If image fails to load, try to re-upload it
+                      const imgElement = e.target as HTMLImageElement;
+                      const response = await fetch(imgElement.src);
+                      const blob = await response.blob();
+                      const file = new File([blob], 'cover.jpg', { type: 'image/jpeg' });
+                      await handleImageUpload(file, item.id);
+                    }}
+                  />
+                </div>
+              )}
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  {item.tags?.data.map((tag) => (
+                    <span
+                      key={tag.attributes.name}
+                      className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full"
+                    >
+                      {tag.attributes.name}
+                    </span>
+                  ))}
+                </div>
+                <h2 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-2">
+                  {item.title}
+                </h2>
+                <p className="text-gray-600 mb-4 line-clamp-3">
+                  {item.description}
+                </p>
+                <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                  <span>{item.author?.data?.name || 'Anonymous'}</span>
+                  <span>{formatDate(item.publishedAt)}</span>
+                </div>
+                <button
+                  onClick={() => router.push(`/news/${item.slug}`)}
+                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Read More
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        {filteredNews.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">No news articles found.</p>
+          </div>
+        )}
       </div>
     </div>
   );
-};
-
-export default NewsPage;
+}

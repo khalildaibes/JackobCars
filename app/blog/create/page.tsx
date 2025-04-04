@@ -1,11 +1,14 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { Dialog } from '@headlessui/react';
 import { blogService } from '../../../app/services/blogService';
+
+// Define STRAPI_URL directly since we can't import from config
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://68.183.215.202:1337';
 
 // Types for our blog content
 type ContentBlockType = 'text' | 'heading' | 'image' | 'video';
@@ -27,13 +30,23 @@ interface BlogContent {
   slug: string;
   author: string;
   tags: string[];
-  coverImage: {
+  cover: {
     file?: File;
     fileUrl?: string;
     alt: string;
   };
   createdAt: string;
   content: ContentBlock[];
+}
+
+interface Author {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  image: string;
+  bio: string;
+  slug: string;
 }
 
 interface BlogTranslations {
@@ -99,19 +112,75 @@ interface PreviewModalProps {
   setIsPreviewOpen: (open: boolean) => void;
   handlePublish: () => void;
   setPreviewLanguage: (lang: 'en' | 'ar' | 'he-IL') => void;
+  selectedLanguages: string[];
+}
+
+// Define LinkByUploadAction as a regular function
+async function LinkByUploadAction(prevState: any, formData: FormData) {
+  try {
+    const data = Object.fromEntries(formData);
+    const formDataToSend = new FormData();
+    formDataToSend.append("files", data.files);
+    formDataToSend.append("ref", data.ref);
+    formDataToSend.append("refId", data.refId);
+    formDataToSend.append("field", data.field);
+
+    const response = await fetch(`${STRAPI_URL}/api/upload`, {
+      method: "post",
+      headers: {
+        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`
+      },
+      body: formDataToSend,
+    });
+
+    const result = await response.json();
+
+    if (result.error) {
+      return {
+        uploadError: result.error.message,
+        uploadSuccess: null,
+      };
+    }
+
+    return {
+      uploadSuccess: "Image uploaded successfully!",
+      uploadError: null,
+    };
+  } catch (error: any) {
+    return {
+      uploadError: error.message,
+      uploadSuccess: null,
+    };
+  }
+}
+
+// Add these interfaces before the BlogEditor component
+interface BlogContent {
+  title: string;
+  description: string;
+  content: ContentBlock[];
+  slug: string;
+}
+
+interface BlogContentState {
+  [key: string]: BlogContent;
 }
 
 export default function BlogEditor() {
   const router = useRouter();
   const [isPreview, setIsPreview] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [authors, setAuthors] = useState<Author[]>([]);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(['en']);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [cover, setcover] = useState<File | null>(null);
   const [blog, setBlog] = useState<BlogContent>({
     title: '',
     description: '',
     slug: '',
     author: '',
     tags: [],
-    coverImage: {
+    cover: {
       alt: '',
     },
     createdAt: new Date().toISOString(),
@@ -128,6 +197,49 @@ export default function BlogEditor() {
   const [previewLanguage, setPreviewLanguage] = useState<'en' | 'ar' | 'he-IL'>('en');
   const [isTranslating, setIsTranslating] = useState(false);
   const [writingLanguage, setWritingLanguage] = useState<'en' | 'ar' | 'he-IL'>('en');
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [blogContent, setBlogContent] = useState<BlogContentState>({
+    en: {
+      title: '',
+      description: '',
+      content: [],
+      slug: '',
+      author: '',
+      tags: [],
+      cover: {
+        alt: '',
+      },
+      createdAt: new Date().toISOString()
+    }
+  });
+
+  // Add getAuthors function
+  const getAuthors = async () => {
+    try {
+      const response = await fetch('/api/authors');
+      if (!response.ok) {
+        throw new Error('Failed to fetch authors');
+      }
+      const data = await response.json();
+      
+      // Ensure data is an array and has the correct structure
+      const authorsArray = Array.isArray(data) ? data : data.data || [];
+      
+      // Map the data to ensure it has the correct structure
+      
+
+      setAuthors(authorsArray);
+    } catch (error) {
+      console.error('Error fetching authors:', error);
+      setAuthors([]); // Set empty array on error
+    }
+  };
+
+  // Add useEffect to fetch authors on component mount
+  useEffect(() => {
+    getAuthors();
+  }, []);
 
   const addBlock = (type: ContentBlockType) => {
     const newBlock: ContentBlock = {
@@ -569,8 +681,8 @@ export default function BlogEditor() {
         author: translatedAuthor,
         slug: generateSlug(translatedTitle),
         content: translatedContent,
-        coverImage: {
-          ...blog.coverImage,
+        cover: {
+          ...blog.cover,
         }
       };
     } catch (error) {
@@ -628,7 +740,13 @@ export default function BlogEditor() {
             return '';
         }
       }).join('\n');
-
+      console.log(JSON.stringify({
+        title: content.title,
+        description: content.description,
+        slug: `${content.slug}-${locale}` || `${content.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${locale}`,
+        content: formattedContent,
+        createdAt: content.createdAt,
+      }));
       // Create the blog entry
       const response = await fetch('/api/articles', {
         method: 'POST',
@@ -638,10 +756,10 @@ export default function BlogEditor() {
         body: JSON.stringify({
           title: content.title,
           description: content.description,
-          slug: content.slug || content.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+          slug: `${content.slug}-${locale}` || `${content.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${locale}`,
           content: formattedContent,
+          locale: locale,
           createdAt: content.createdAt,
-          tags: content.tags
         })
       });
 
@@ -664,96 +782,7 @@ export default function BlogEditor() {
     }
   };
 
-  // Update the handlePublish function to properly handle file uploads before creating the blog entry
-  const handlePublish = async () => {
-    try {
-      setIsPublishing(true);
-
-      // First, upload all files (cover image and content images)
-      const filesToUpload: File[] = [];
-      
-      // Add cover image if exists
-      if (blog.coverImage.file) {
-        filesToUpload.push(blog.coverImage.file);
-      }
-
-      // Add content images if they exist
-      blog.content.forEach(block => {
-        if (block.type === 'image' && block.file) {
-          filesToUpload.push(block.file);
-        }
-      });
-
-      // Upload all files
-      let uploadedFiles = [];
-      if (filesToUpload.length > 0) {
-        uploadedFiles = await uploadFiles(filesToUpload);
-      }
-
-      // Process content blocks to replace file URLs
-      const processedBlocks = await Promise.all(blog.content.map(async (block) => {
-        if (block.type === 'text' && block.content) {
-          const { processedContent, extractedImages } = extractImagesFromContent(block.content);
-          
-          if (extractedImages.length > 0) {
-            const imageFiles = await Promise.all(
-              extractedImages.map(async (img) => {
-                const file = await base64ToFile(img.base64, `${img.id}.jpg`);
-                return { id: img.id, file };
-              })
-            );
-
-            const uploadedImages = await uploadFiles(imageFiles.map(img => img.file));
-            let finalContent = processedContent;
-            
-            if (Array.isArray(uploadedImages)) {
-              uploadedImages.forEach((uploadedImage, index) => {
-                const placeholder = `{{${imageFiles[index].id}}}`;
-                const imageUrl = uploadedImage.url;
-                finalContent = finalContent.replace(placeholder, `<img src="${imageUrl}" />`);
-              });
-            }
-
-            return {
-              ...block,
-              content: finalContent,
-              htmlContent: finalContent
-            };
-          }
-        }
-        return block;
-      }));
-
-      // Update blog content with processed blocks
-      const processedBlog = {
-        ...blog,
-        content: processedBlocks
-      };
-
-      // Create blog post for each language
-      const locales = ['en', 'ar', 'he-IL'];
-      
-      await Promise.all(
-        locales.map(async (locale) => {
-          const translatedContent = locale === writingLanguage 
-            ? processedBlog 
-            : await translateBlog(processedBlog, locale as 'ar' | 'en' | 'he-IL');
-
-          await createBlogEntry(translatedContent, locale);
-        })
-      );
-
-      alert('Blog published successfully in all languages!');
-      router.push('/blog');
-    } catch (error) {
-      console.error('Publishing error:', error);
-      alert('Error publishing blog. Please try again.');
-    } finally {
-      setIsPublishing(false);
-    }
-  };
-
-  // Update the handlePreviewOpen function to properly handle translations
+  // Update the handlePreviewClick function to only translate selected languages
   const handlePreviewClick = async () => {
     setIsPreviewOpen(true);
     setIsTranslating(true);
@@ -766,18 +795,15 @@ export default function BlogEditor() {
         [writingLanguage]: blog // Set the original content
       };
 
-      // Determine which languages need translation
-      const languagesToTranslate = ['en', 'ar', 'he-IL'].filter(
-        lang => lang !== writingLanguage
-      ) as Array<'en' | 'ar' | 'he-IL'>;
-
-      // Translate to other languages
-      const translationResults = await Promise.all(
-        languagesToTranslate.map(async (targetLang) => {
-          const translatedContent = await translateBlog(blog, targetLang);
+      // Only translate selected languages that are different from the writing language
+      const translationPromises = selectedLanguages
+        .filter(lang => lang !== writingLanguage)
+        .map(async (targetLang) => {
+          const translatedContent = await translateBlog(blog, targetLang as 'ar' | 'en' | 'he-IL');
           return { lang: targetLang, content: translatedContent };
-        })
-      );
+        });
+
+      const translationResults = await Promise.all(translationPromises);
 
       // Update translations with results
       translationResults.forEach(({ lang, content }) => {
@@ -788,7 +814,7 @@ export default function BlogEditor() {
       setPreviewLanguage(writingLanguage); // Show original language first
     } catch (error) {
       console.error('Translation error:', error);
-      alert('Error translating content. Please try again.');
+      setError('Error translating content. Please try again.');
     } finally {
       setIsTranslating(false);
     }
@@ -831,22 +857,40 @@ export default function BlogEditor() {
   };
 
   // Handle cover image upload
-  const handleCoverImageUpload = (file: File) => {
+  const handlecoverUpload = (file: File) => {
     const fileUrl = URL.createObjectURL(file);
     setBlog(prev => ({
       ...prev,
-      coverImage: {
-        ...prev.coverImage,
+      cover: {
+        ...prev.cover,
         file,
         fileUrl
       }
     }));
   };
 
+  // Add this new function to handle single language translation
+  const handleTranslateToLanguage = async (targetLang: 'ar' | 'en' | 'he-IL') => {
+    try {
+      setIsTranslating(true);
+      const translatedContent = await translateBlog(blog, targetLang);
+      
+      setTranslations(prev => ({
+        ...prev,
+        [targetLang]: translatedContent
+      }));
+    } catch (error) {
+      console.error('Translation error:', error);
+      alert('Error translating content. Please try again.');
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
   const currentContent = translations[previewLanguage];
   const isOriginalLanguage = previewLanguage === writingLanguage;
 
-  // Add this language selector component at the top of your editor
+  // Update the LanguageSelector component
   const LanguageSelector = () => (
     <div className="mb-6 flex items-center gap-2">
       <label className="text-sm font-medium text-gray-700">
@@ -861,6 +905,62 @@ export default function BlogEditor() {
         <option value="ar">Arabic</option>
         <option value="he-IL">Hebrew</option>
       </select>
+      
+      <div className="flex gap-2 ml-4">
+        <div className="relative">
+          <div className="text-sm font-medium text-gray-700 mb-2">Translate to:</div>
+          <div className="space-y-2">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={selectedLanguages.includes('en')}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSelectedLanguages([...selectedLanguages, 'en']);
+                  } else {
+                    setSelectedLanguages(selectedLanguages.filter(lang => lang !== 'en'));
+                  }
+                }}
+                disabled={writingLanguage === 'en' || isTranslating}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-700">English</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={selectedLanguages.includes('ar')}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSelectedLanguages([...selectedLanguages, 'ar']);
+                  } else {
+                    setSelectedLanguages(selectedLanguages.filter(lang => lang !== 'ar'));
+                  }
+                }}
+                disabled={writingLanguage === 'ar' || isTranslating}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-700">Arabic</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={selectedLanguages.includes('he-IL')}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSelectedLanguages([...selectedLanguages, 'he-IL']);
+                  } else {
+                    setSelectedLanguages(selectedLanguages.filter(lang => lang !== 'he-IL'));
+                  }
+                }}
+                disabled={writingLanguage === 'he-IL' || isTranslating}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-700">Hebrew</span>
+            </label>
+          </div>
+        </div>
+      </div>
     </div>
   );
 
@@ -894,6 +994,140 @@ export default function BlogEditor() {
           };
         }
       }
+    }
+  };
+
+  // Update the handlePublish function to show success/error messages
+  const handlePublish = async () => {
+    try {
+      setIsPublishing(true);
+      setError(null);
+      setSuccess(null);
+
+      let coverImageId = null;
+
+      // Handle cover image upload if exists
+      if (blog.cover.file) {
+        const formData = new FormData();
+        formData.append('files', blog.cover.file);
+        formData.append('fileInfo', JSON.stringify({
+          alternativeText: blog.cover.alt || blog.title,
+          caption: blog.description
+        }));
+
+        const uploadResponse = await fetch(`${STRAPI_URL}/api/upload`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`
+          },
+          body: formData
+        });
+
+        if (!uploadResponse.ok) {
+          const errorData = await uploadResponse.json();
+          throw new Error(errorData.error?.message || 'Failed to upload cover image');
+        }
+
+        const uploadData = await uploadResponse.json();
+        coverImageId = uploadData[0].id;
+      }
+
+      // Process blog content for each language
+      const processedBlogs = selectedLanguages.map(lang => {
+        const content = translations[lang] || blog;
+        
+        // Create blocks array with proper component structure
+        const blocks = content.content.map(block => {
+          switch (block.type) {
+            case 'text':
+              return {
+                __component: "shared.rich-text",
+                body: block.htmlContent || `<p>${block.content}</p>`
+              };
+            case 'heading':
+              return {
+                __component: "shared.rich-text",
+                body: `<h${block.headingLevel}>${block.content}</h${block.headingLevel}>`
+              };
+            case 'image':
+              return {
+                __component: "shared.media",
+                file: block.fileId || null // Will be updated after upload
+              };
+            case 'video':
+              return {
+                __component: "shared.vedio-links",
+                url: block.fileUrl || null // Will be updated after upload
+              };
+            default:
+              return null;
+          }
+        }).filter(Boolean);
+
+        // Create HTML content string
+        const htmlContent = content.content.map(block => {
+          switch (block.type) {
+            case 'text':
+              return block.htmlContent || `<p>${block.content}</p>`;
+            case 'heading':
+              return `<h${block.headingLevel}>${block.content}</h${block.headingLevel}>`;
+            case 'image':
+              return block.fileUrl ? `<img src="${block.fileUrl}" alt="${block.alt || ''}" />` : '';
+            case 'video':
+              return block.fileUrl ? `<video src="${block.fileUrl}" controls></video>` : '';
+            default:
+              return '';
+          }
+        }).join('\n');
+
+        // Generate slug from title if not provided
+        const slug = content.slug || (content.title ? content.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : `blog-${Date.now()}`);
+
+        return {
+          title: content.title || 'Untitled Blog',
+          description: content.description || '',
+          content: htmlContent,
+          blocks: blocks,
+          slug: slug,
+          locale: lang,
+          publishedAt: new Date().toISOString(),
+          categories: selectedCategories,
+          author: content.author || '',
+          cover: coverImageId ? {
+            id: coverImageId,
+            __type: 'upload'
+          } : null
+        };
+      });
+
+      // Create blog entries for each language
+      const createdBlogs = await Promise.all(
+        processedBlogs.map(async (blogData) => {
+          const response = await fetch('/api/articles', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(blogData)
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error?.message || `Failed to create blog in ${blogData.locale}`);
+          }
+
+          return await response.json();
+        })
+      );
+
+      setSuccess('Blog published successfully! Redirecting to news page...');
+      setTimeout(() => {
+        router.push('/news');
+      }, 2000);
+    } catch (err: any) {
+      setError(err.message || 'Failed to publish blog');
+    } finally {
+      setIsPublishing(false);
     }
   };
 
@@ -949,13 +1183,19 @@ export default function BlogEditor() {
             <label className="block text-sm font-medium text-gray-700">
               Author
             </label>
-            <input
-              type="text"
+            <select
               value={blog.author}
               onChange={(e) => setBlog(prev => ({ ...prev, author: e.target.value }))}
               className="w-full p-2 border rounded-md"
-              placeholder="Author name"
-            />
+            >
+              <option value="">select author</option>
+             
+              {Array.isArray(authors) && authors.map(author => (
+                <option key={author.id} value={author.id}>
+                  {author.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Description */}
@@ -984,7 +1224,7 @@ export default function BlogEditor() {
                 accept="image/*"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
-                  if (file) handleCoverImageUpload(file);
+                  if (file) handlecoverUpload(file);
                 }}
                 className="hidden"
                 id="cover-image-upload"
@@ -995,21 +1235,21 @@ export default function BlogEditor() {
               >
                 Choose Cover Image
               </label>
-              {blog.coverImage.fileUrl && (
+              {blog.cover.fileUrl && (
                 <div className="relative mt-2">
                   <img
-                    src={blog.coverImage.fileUrl}
-                    alt={blog.coverImage.alt}
+                    src={blog.cover.fileUrl}
+                    alt={blog.cover.alt}
                     className="max-h-48 rounded-md"
                   />
                 </div>
               )}
               <input
                 type="text"
-                value={blog.coverImage.alt}
+                value={blog.cover.alt}
                 onChange={(e) => setBlog(prev => ({
                   ...prev,
-                  coverImage: { ...prev.coverImage, alt: e.target.value }
+                  cover: { ...prev.cover, alt: e.target.value }
                 }))}
                 className="w-full p-2 border rounded-md mt-2"
                 placeholder="Image alt text"
@@ -1087,6 +1327,7 @@ export default function BlogEditor() {
           setIsPreviewOpen={setIsPreviewOpen}
           handlePublish={handlePublish}
           setPreviewLanguage={setPreviewLanguage}
+          selectedLanguages={selectedLanguages}
         />
       )}
     </div>
@@ -1102,10 +1343,16 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
   isPublishing,
   setIsPreviewOpen,
   handlePublish,
-  setPreviewLanguage
+  setPreviewLanguage,
+  selectedLanguages
 }) => {
   const currentContent = translations[previewLanguage];
   const isOriginalLanguage = previewLanguage === writingLanguage;
+
+  // Add this function to check if all selected languages are translated
+  const areAllSelectedLanguagesTranslated = () => {
+    return selectedLanguages.every(lang => translations[lang as 'en' | 'ar' | 'he-IL'] !== null);
+  };
 
   return (
     <Dialog
@@ -1157,9 +1404,9 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
                   
                   <button
                     onClick={handlePublish}
-                    disabled={isPublishing || !translations.ar || !translations['he-IL']}
+                    disabled={isPublishing || !areAllSelectedLanguagesTranslated()}
                     className={`px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 
-                      ${(isPublishing || !translations.ar || !translations['he-IL']) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      ${(isPublishing || !areAllSelectedLanguagesTranslated()) ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     {isPublishing ? 'Publishing...' : 'Publish'}
                   </button>

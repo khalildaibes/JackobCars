@@ -216,10 +216,10 @@ export default function StorePage() {
         '_blank'
       );
     } else {
-      window.open(
+    window.open(
         `https://www.waze.com/ul?ll=${lat},${lng}&navigate=yes&zoom=17`,
-        '_blank'
-      );
+      '_blank'
+    );
     }
   };
 
@@ -271,30 +271,30 @@ export default function StorePage() {
               <div className="relative md:w-[20%] w-[100%] h-[70%] rounded-xl overflow-hidden shadow-lg">
                 <Img
                   src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${store.logo.attributes.url}`}
-                  alt={store.name}
+                    alt={store.name}
                   width={1024}
                   height={1024}
                   external={true}
                   className="object-fill"
-                />
-              </div>
-            )}
+                  />
+                </div>
+              )}
             <div className="flex-1">
               <h1 className="text-4xl font-bold text-gray-800 mb-4">{store.name}</h1>
               <p className="text-gray-600 text-lg mb-6">{store.details}</p>
               <div className="flex flex-wrap gap-3">
-                {tags.map((tag, index) => (
-                  <span
-                    key={index}
+                    {tags.map((tag, index) => (
+                      <span
+                        key={index}
                     className="px-4 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
-                  >
-                    {tag}
-                  </span>
-                ))}
+                      >
+                        {tag}
+                      </span>
+                    ))}
               </div>
             </div>
           </div>
-        </div>
+          </div>
 
         {/* Info Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -307,26 +307,26 @@ export default function StorePage() {
             <div className="space-y-4">
               <a href={`tel:${store.phone}`} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                  <Phone className="w-5 h-5 text-blue-600" />
-                </div>
+                <Phone className="w-5 h-5 text-blue-600" />
+              </div>
                 <span className="text-gray-600">{store.phone}</span>
               </a>
               {store.email && (
                 <a href={`mailto:${store.email}`} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
                   <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                    <Mail className="w-5 h-5 text-blue-600" />
-                  </div>
+                  <Mail className="w-5 h-5 text-blue-600" />
+                </div>
                   <span className="text-gray-600">{store.email}</span>
                 </a>
               )}
               <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                  <MapPin className="w-5 h-5 text-blue-600" />
+                <MapPin className="w-5 h-5 text-blue-600" />
                 </div>
                 <span className="text-gray-600">{store.address}</span>
               </div>
-            </div>
-            {store.socialMedia && (
+              </div>
+              {store.socialMedia && (
               <div className="mt-6 pt-6 border-t border-gray-100">
                 <div className="flex gap-4 justify-center">
                   {store.socialMedia.facebook && (
@@ -350,38 +350,38 @@ export default function StorePage() {
                     </a>
                   )}
                 </div>
-              </div>
-            )}
-          </div>
+                </div>
+              )}
+            </div>
 
           {/* Opening Hours Card */}
           <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
-            <button
-              onClick={() => setShowHours(!showHours)}
+              <button
+                onClick={() => setShowHours(!showHours)}
               className="w-full flex items-center justify-between text-xl font-semibold mb-6 text-gray-800"
-            >
+              >
               <div className="flex items-center gap-2">
                 <Clock className="w-5 h-5 text-blue-600" />
                 <span>Opening Hours</span>
               </div>
               <ChevronDown className={`w-5 h-5 transition-transform ${showHours ? 'rotate-180' : ''}`} />
-            </button>
-            
-            {showHours && (
-              <motion.div
+              </button>
+              
+              {showHours && (
+                <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 className="space-y-3"
-              >
-                {Object.entries(openingHours).map(([day, hours]) => (
+                >
+                  {Object.entries(openingHours).map(([day, hours]) => (
                   <div key={day} className="flex justify-between items-center p-3 rounded-lg hover:bg-gray-50 transition-colors">
                     <span className="capitalize font-medium text-gray-700">{day}</span>
                     <span className="text-gray-600">{hours}</span>
-                  </div>
-                ))}
-              </motion.div>
-            )}
+                    </div>
+                  ))}
+                </motion.div>
+              )}
           </div>
 
           {/* Quick Actions Card */}

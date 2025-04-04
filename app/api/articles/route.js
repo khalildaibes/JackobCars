@@ -1,4 +1,5 @@
 import { getLocale } from "next-intl/server";
+import { NextResponse } from "next/server";
 
 export async function GET(req) {
     try {
@@ -52,77 +53,116 @@ export async function GET(req) {
     }
 }
 
-export async function POST(req) {
+
+export async function POST(request) {
   try {
-    const body = await req.json();
-    const locale = await getLocale();
-    console.log('Creating article with locale:', locale);
-    console.log('Request body:', body);
+    const contentType = request.headers.get('content-type');
+    console.log('Content-Type:', contentType);
 
-    // Construct the API URL for creating an article
-    const apiUrl = `http://68.183.215.202/api/articles?locale=${locale}`;
+    // Handle file uploads
+    if (contentType?.includes('multipart/form-data')) {
+      try {
+        const formData = await request.formData();
+        const file = formData.get('file');
+        const fileInfo = formData.get('fileInfo');
+        const locale = formData.get('locale') || 'en';
 
-    // Prepare the request body according to Strapi's requirements
-    const requestBody = {
-      data: {
-        title: body.title,
-        description: body.description,
-        slug: body.slug || body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-        content: body.content,
-        locale: locale,
-        publishedAt: body.createdAt,
-        ...(body.tags && body.tags.length > 0 && {
-          tags: body.tags.map(tag => ({ name: tag }))
-        })
+        if (!file) {
+          return NextResponse.json(
+            { error: 'No file provided' },
+            { status: 400 }
+          );
+        }
+
+        // Create FormData for Strapi
+        const strapiFormData = new FormData();
+        strapiFormData.append('files', file);
+        if (fileInfo) {
+          strapiFormData.append('fileInfo', fileInfo);
+        }
+
+        // Upload to Strapi
+        const uploadResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/upload`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
+            },
+            body: strapiFormData,
+          }
+        );
+
+        if (!uploadResponse.ok) {
+          const errorText = await uploadResponse.text();
+          console.error('Upload Error Response:', errorText);
+          return NextResponse.json(
+            { error: 'Failed to upload file', details: errorText },
+            { status: uploadResponse.status }
+          );
+        }
+
+        const uploadData = await uploadResponse.json();
+        return NextResponse.json(uploadData);
+      } catch (error) {
+        console.error('File upload error:', error);
+        return NextResponse.json(
+          { error: 'File upload failed', details: error.message },
+          { status: 500 }
+        );
       }
-    };
-
-    console.log('Sending request to Strapi:', {
-      url: apiUrl,
-      body: requestBody
-    });
-
-    // Send POST request to Strapi
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
-      },
-      body: JSON.stringify(requestBody)
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Strapi API Error Response:', {
-        status: response.status,
-        statusText: response.statusText,
-        body: errorText
-      });
-      
-      return new Response(JSON.stringify({ 
-        message: "Failed to create article",
-        error: errorText
-      }), { 
-        status: response.status 
-      });
     }
 
-    const data = await response.json();
-    return new Response(JSON.stringify(data), { 
-      status: 201,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+    // Handle blog creation
+    try {
+      const data = await request.json();
+      console.log('Request data:', data);
 
+      if (!data || typeof data !== 'object') {
+        return NextResponse.json(
+          { error: 'Invalid request body' },
+          { status: 400 }
+        );
+      }
+
+      const { locale = 'en', ...articleData } = data;
+
+      // Create the article in Strapi
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/articles?locale=${locale}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
+          },
+          body: JSON.stringify({ data: articleData }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Strapi Error Response:', errorText);
+        return NextResponse.json(
+          { error: 'Failed to create article', details: errorText },
+          { status: response.status }
+        );
+      }
+
+      const responseData = await response.json();
+      return NextResponse.json(responseData);
+    } catch (error) {
+      console.error('Blog creation error:', error);
+      return NextResponse.json(
+        { error: 'Failed to create article', details: error.message },
+        { status: 500 }
+      );
+    }
   } catch (error) {
-    console.error("API Create Article Error:", error);
-    return new Response(JSON.stringify({ 
-      message: "Internal Server Error",
-      error: error.message 
-    }), { 
-      status: 500 
-    });
+    console.error('General error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error', details: error.message },
+      { status: 500 }
+    );
   }
 }
