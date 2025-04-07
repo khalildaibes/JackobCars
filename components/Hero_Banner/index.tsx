@@ -6,7 +6,6 @@ import { Img } from "../Img/index";
 import { Text } from "../Text/index";
 import FindCarByPlate from "../../app/findcarbyplate/FindCarByPlate";
 import YearSelectBox from "../../components/homeeight/yearselectbox";
-import { motion } from "framer-motion";
 import { Tabs, TabList, Tab, TabPanel } from "react-tabs";
 import { SeekBar } from "../SeekBar";
 import { SelectBox } from "../SelectBox";
@@ -49,17 +48,14 @@ export default function Header({ ...props }: Props) {
 
 
         <TabPanel className="absolute items-center">
-          <motion.div
-            className="w-full flex items-center justify-center rounded-lg shadow-lg text-xl font-bold transition-transform"
-            transition={{ duration: 0.8 }}
-          >
-            <div className="">
-              <p className="text-center ">
+          <div className="w-full flex items-center justify-center rounded-lg shadow-lg text-xl font-bold">
+            <div>
+              <p className="text-center">
                 {t("explore_car_specs")}
               </p>
               <FindCarByPlate />
             </div>
-          </motion.div>
+          </div>
         </TabPanel>
 
         <TabPanel className="absolute items-center">
