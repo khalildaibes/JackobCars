@@ -1,6 +1,6 @@
 {
   "NewsPage": {
-    "welcome": "مرحبًا بكم في AutoNews",
+    "welcome": "مرحباً بكم في AutoNews",
     "description": "اكتشف أحدث أخبار السيارات والاتجاهات",
     "stay_updated": "ابق على اطلاع بتميز السيارات",
     "subscribe": "اشترك",
@@ -10,7 +10,7 @@
     "featured_news": "الأخبار المميزة",
     "news_grid": "آخر الأخبار",
     "join_community": "انضم إلى مجتمعنا من عشاق السيارات والمهنيين في الصناعة لتلقي محتوى منسق حول عالم السيارات.",
-    "latest_news": "أحدث الأخبار",
+    "latest_news": "آخر الأخبار",
     "all_categories": "جميع الفئات",
     "electric": "كهربائي",
     "technology": "التكنولوجيا",
@@ -18,7 +18,60 @@
     "design": "التصميم",
     "motorsport": "سباق السيارات",
     "load_more": "تحميل المزيد",
-    "view_all": "عرض الكل"
+    "view_all": "عرض الكل",
+    "search_placeholder": "البحث عن الأخبار...",
+    "search_by_plate": "البحث برقم اللوحة",
+    "quick_actions": {
+      "search_cars": "البحث عن السيارات",
+      "search_cars_desc": "اعثر على سيارتك المثالية",
+      "create_post": "إنشاء منشور",
+      "create_post_desc": "شارك رؤيتك في عالم السيارات",
+      "contact_us": "اتصل بنا",
+      "contact_us_desc": "تواصل مع فريقنا"
+    },
+    "news_grid": {
+      "title": "آخر الأخبار",
+      "read_more": "اقرأ المزيد",
+      "no_articles": "لم يتم العثور على مقالات إخبارية",
+      "author": "المؤلف",
+      "anonymous": "مجهول",
+      "published": "تم النشر"
+    },
+    "language_selector": {
+      "english": "الإنجليزية",
+      "arabic": "العربية",
+      "hebrew": "العبرية"
+    },
+    "error": {
+      "loading": "خطأ في تحميل الأخبار",
+      "article_not_found": "لم يتم العثور على المقال",
+      "fetch_error": "فشل في جلب المقالات الإخبارية",
+      "upload_error": "فشل في تحميل الصورة",
+      "upload_success": "تم تحميل الصورة بنجاح"
+    },
+    "loading_states": {
+      "loading_news": "جارٍ تحميل الأخبار...",
+      "loading_article": "جارٍ تحميل المقال...",
+      "uploading_image": "جارٍ تحميل الصورة..."
+    },
+    "date_format": {
+      "published": "تم النشر في {date}",
+      "updated": "تم التحديث في {date}"
+    },
+    "categories": {
+      "all": "جميع الفئات",
+      "electric": "السيارات الكهربائية",
+      "technology": "التكنولوجيا",
+      "industry": "أخبار الصناعة",
+      "design": "التصميم",
+      "motorsport": "سباق السيارات"
+    },
+    "tags": {
+      "all": "جميع الوسوم",
+      "new": "جديد",
+      "featured": "مميز",
+      "popular": "شائع"
+    }
   },
   "HomePage": {
     "invite_a_friend": "دعوة صديق",
@@ -52,7 +105,7 @@
     "all": "عرض الكل",
     "great_deal": "صفقة رائعة",
     "sale": "تخفيض",
-    "other_news": "الأخبار الأخرى",
+    "other_news": "الأخبار",
     "new_arrivals": "الأحدث",
     "special_offers_sales": "العروض الخاصة والمناسبات",
     "most_searched_cars": "السيارات الأكثر بحثا",
@@ -231,7 +284,30 @@
     "wheel_tire_accessories": "ملحقات العجلات والإطارات",
     "wheels": "العجلات",
     "winches": "الرافعات",
-    "page_title": "قطع غيار السيارات عالية الأداء للسيارات والشاحنات"
+    "page_title": "قطع غيار السيارات عالية الأداء للسيارات والشاحنات",
+    "page_description": "ابحث عن قطع غيار وملحقات عالية الجودة لسيارتك",
+    "search_placeholder": "ابحث عن قطع الغيار والملحقات...",
+    "stores": "المتاجر",
+    "services": "الخدمات",
+    "parts": "القطع",
+    "price_range": "نطاق السعر",
+    "low": "منخفض",
+    "medium": "متوسط",
+    "high": "مرتفع",
+    "minimum_rating": "الحد الأدنى للتقييم",
+    "availability": "التوفر",
+    "in_stock": "متوفر",
+    "limited": "كمية محدودة",
+    "out_of_stock": "غير متوفر",
+    "sort_by": "ترتيب حسب",
+    "relevance": "الأكثر صلة",
+    "price_low": "السعر: من الأقل إلى الأعلى",
+    "price_high": "السعر: من الأعلى إلى الأقل",
+    "rating": "التقييم",
+    "no_results_found": "لم يتم العثور على نتائج",
+    "clear_all_filters": "مسح جميع الفلاتر",
+    "show_filters": "إظهار الفلاتر",
+    "hide_filters": "إخفاء الفلاتر"
   },
   "CarSearch": {
     "title": "البحث عن السيارات برقم اللوحة",
@@ -818,6 +894,85 @@
         "open_now": "مفتوح الآن",
         "open_weekends": "مفتوح في عطلة نهاية الأسبوع",
         "open_24h": "مفتوح 24/7"
+      }
+    }
+  },
+  "blog": {
+    "create": {
+      "title": "إنشاء تدوينة جديدة",
+      "basicInfo": "المعلومات الأساسية",
+      "titleLabel": "العنوان",
+      "titlePlaceholder": "أدخل عنوان التدوينة",
+      "descriptionLabel": "الوصف",
+      "descriptionPlaceholder": "وصف مختصر للتدوينة",
+      "contentLabel": "المحتوى",
+      "contentPlaceholder": "اكتب محتوى التدوينة هنا...",
+      "slugLabel": "الرابط المختصر",
+      "slugPlaceholder": "رابط-التدوينة",
+      "imagesAndVideo": "الصور والفيديو",
+      "coverImageLabel": "صورة الغلاف",
+      "additionalImagesLabel": "صور إضافية",
+      "videoLabel": "فيديو (اختياري)",
+      "categories": "التصنيفات",
+      "author": "المؤلف",
+      "selectAuthor": "اختر المؤلف",
+      "tags": "الوسوم",
+      "addTag": "أضف وسم",
+      "add": "إضافة",
+      "chooseCoverImage": "اختر صورة الغلاف",
+      "imageAltText": "نص بديل للصورة",
+      "creationDate": "تاريخ الإنشاء",
+      "publish": "نشر التدوينة",
+      "publishing": "جاري النشر...",
+      "success": "تم نشر التدوينة بنجاح! جاري التوجيه...",
+      "error": "فشل في نشر التدوينة",
+      "uploadError": "فشل في رفع الصورة",
+      "createError": "فشل في إنشاء التدوينة باللغة {locale}",
+      "aiGenerationNote": "سيتم إنشاء الإيجابيات والسلبيات والمواصفات التفصيلية تلقائياً بناءً على المعلومات المقدمة عند نشر القائمة.",
+      "contentBlocks": {
+        "addBlock": "إضافة كتلة محتوى",
+        "text": "نص",
+        "heading": "عنوان",
+        "image": "صورة",
+        "video": "فيديو",
+        "moveUp": "نقل لأعلى",
+        "moveDown": "نقل لأسفل",
+        "remove": "إزالة",
+        "headingLevel": "مستوى العنوان",
+        "headingPlaceholder": "أدخل نص العنوان",
+        "textPlaceholder": "أدخل محتوى النص",
+        "imageAltPlaceholder": "أدخل وصف الصورة",
+        "videoUrlPlaceholder": "أدخل رابط الفيديو",
+        "uploadImage": "رفع صورة",
+        "uploadVideo": "رفع فيديو",
+        "dragDrop": "اسحب وأفلت أو انقر للرفع",
+        "supportedFormats": "التنسيقات المدعومة: {formats}",
+        "maxSize": "الحد الأقصى لحجم الملف: {size} ميجابايت",
+        "processing": "جاري المعالجة...",
+        "uploadError": "خطأ في رفع الملف",
+        "invalidFormat": "تنسيق ملف غير صالح",
+        "fileTooLarge": "حجم الملف كبير جداً"
+      },
+      "preview": {
+        "title": "معاينة",
+        "close": "إغلاق",
+        "language": "اللغة",
+        "writingLanguage": "لغة الكتابة",
+        "translating": "جاري الترجمة...",
+        "publishing": "جاري النشر...",
+        "publish": "نشر",
+        "allLanguagesTranslated": "تمت ترجمة جميع اللغات المحددة",
+        "someLanguagesMissing": "بعض اللغات المحددة تفتقر إلى الترجمات"
+      },
+      "validation": {
+        "titleRequired": "العنوان مطلوب",
+        "descriptionRequired": "الوصف مطلوب",
+        "contentRequired": "المحتوى مطلوب",
+        "slugRequired": "الرابط المختصر مطلوب",
+        "authorRequired": "المؤلف مطلوب",
+        "coverImageRequired": "صورة الغلاف مطلوبة",
+        "invalidSlug": "تنسيق الرابط المختصر غير صالح",
+        "slugExists": "هذا الرابط المختصر مستخدم بالفعل"
       }
     }
   }

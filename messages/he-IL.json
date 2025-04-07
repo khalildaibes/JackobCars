@@ -156,7 +156,30 @@
     "wheels": "גלגלים",
     "winches": "כננות",
 
-    "page_title": "חלקי רכב לביצועים לרכבים ומשאיות"
+    "page_title": "חלקי רכב ביצועים למכוניות ומשאיות",
+    "page_description": "מצא חלקי רכב ואביזרים באיכות גבוהה לרכב שלך",
+    "search_placeholder": "חפש חלקים ואביזרים...",
+    "stores": "חנויות",
+    "services": "שירותים",
+    "parts": "חלקים",
+    "price_range": "טווח מחירים",
+    "low": "נמוך",
+    "medium": "בינוני",
+    "high": "גבוה",
+    "minimum_rating": "דירוג מינימלי",
+    "availability": "זמינות",
+    "in_stock": "במלאי",
+    "limited": "כמות מוגבלת",
+    "out_of_stock": "אזל מהמלאי",
+    "sort_by": "מיין לפי",
+    "relevance": "רלוונטיות",
+    "price_low": "מחיר: מהנמוך לגבוה",
+    "price_high": "מחיר: מהגבוה לנמוך",
+    "rating": "דירוג",
+    "no_results_found": "לא נמצאו תוצאות",
+    "clear_all_filters": "נקה את כל המסננים",
+    "show_filters": "הצג מסננים",
+    "hide_filters": "הסתר מסננים"
   },
   "CarSearch": {
     "title": "חיפוש רכב לפי מספר רישוי",
@@ -813,15 +836,178 @@
     "design": "עיצוב",
     "motorsport": "ספורט מוטורי",
     "load_more": "טען עוד",
-    "featured_news": "חדשות מומלצות",
-    "news_grid": "רשת חדשות",
-    "join_community": "הצטרף לקהילתנו",
-    "subscribe": "הירשם",
-    "email_placeholder": "כתובת הדוא״ל שלך",
-    "privacy_policy": "בהרשמה, אתה מסכים למדיניות הפרטיות שלנו ומסכים לקבל עדכונים מהחברה שלנו."
+    "view_all": "הצג הכל",
+    "search_placeholder": "חיפוש חדשות...",
+    "search_by_plate": "חיפוש לפי מספר לוחית",
+    "quick_actions": {
+      "search_cars": "חיפוש רכבים",
+      "search_cars_desc": "מצא את הרכב המושלם שלך",
+      "create_post": "צור פוסט",
+      "create_post_desc": "שתף את התובנות שלך על עולם הרכב",
+      "contact_us": "צור קשר",
+      "contact_us_desc": "צור קשר עם הצוות שלנו"
+    },
+    "news_grid": {
+      "title": "חדשות אחרונות",
+      "read_more": "קרא עוד",
+      "no_articles": "לא נמצאו מאמרי חדשות",
+      "author": "מחבר",
+      "anonymous": "אנונימי",
+      "published": "פורסם"
+    },
+    "language_selector": {
+      "english": "אנגלית",
+      "arabic": "ערבית",
+      "hebrew": "עברית"
+    },
+    "error": {
+      "loading": "שגיאה בטעינת חדשות",
+      "article_not_found": "המאמר לא נמצא",
+      "fetch_error": "נכשל בטעינת מאמרי חדשות",
+      "upload_error": "נכשל בהעלאת תמונה",
+      "upload_success": "התמונה הועלתה בהצלחה"
+    },
+    "loading_states": {
+      "loading_news": "טוען חדשות...",
+      "loading_article": "טוען מאמר...",
+      "uploading_image": "מעלה תמונה..."
+    },
+    "date_format": {
+      "published": "פורסם ב-{date}",
+      "updated": "עודכן ב-{date}"
+    },
+    "categories": {
+      "all": "כל הקטגוריות",
+      "electric": "רכבים חשמליים",
+      "technology": "טכנולוגיה",
+      "industry": "חדשות תעשייה",
+      "design": "עיצוב",
+      "motorsport": "ספורט מוטורי"
+    },
+    "tags": {
+      "all": "כל התגיות",
+      "new": "חדש",
+      "featured": "מומלץ",
+      "popular": "פופולרי"
+    },
+    "create_blog": {
+      "title": "צור פוסט חדש",
+      "basic_info": "מידע בסיסי",
+      "title_label": "כותרת",
+      "title_placeholder": "הזן כותרת לפוסט",
+      "description_label": "תיאור",
+      "description_placeholder": "תיאור קצר של הפוסט",
+      "content_label": "תוכן",
+      "content_placeholder": "כתוב את תוכן הפוסט כאן...",
+      "slug_label": "כתובת URL",
+      "slug_placeholder": "כתובת-הפוסט",
+      "images_and_video": "תמונות ווידאו",
+      "cover_image_label": "תמונת כריכה",
+      "additional_images_label": "תמונות נוספות",
+      "video_label": "וידאו (אופציונלי)",
+      "categories": "קטגוריות",
+      "author": "מחבר",
+      "select_author": "בחר מחבר",
+      "tags": "תגיות",
+      "add_tag": "הוסף תגית",
+      "add": "הוסף",
+      "choose_cover_image": "בחר תמונת כריכה",
+      "image_alt_text": "טקסט חלופי לתמונה",
+      "creation_date": "תאריך יצירה",
+      "publish": "פרסם פוסט",
+      "publishing": "מפרסם...",
+      "success": "הפוסט פורסם בהצלחה! מעביר...",
+      "error": "נכשל בפרסום הפוסט",
+      "upload_error": "נכשל בהעלאת התמונה",
+      "create_error": "נכשל ביצירת הפוסט בשפה {locale}",
+      "add_tag": "הוסף תגית",
+      "alt_text": "טקסט חלופי",
+      "alt_text_placeholder": "הזן תיאור תמונה לנגישות",
+      "add_image": "הוסף תמונה",
+      "add_video": "הוסף וידאו",
+      "drag_drop": "גרור ושחרר קבצים לכאן, או לחץ לבחירת קבצים",
+      "supported_formats": "פורמטים נתמכים: {formats}",
+      "max_size": "גודל קובץ מקסימלי: {size}MB",
+      "processing": "מעבד...",
+      "upload_error": "שגיאה בהעלאת הקובץ",
+      "invalid_format": "פורמט קובץ לא תקין",
+      "file_too_large": "הקובץ גדול מדי",
+      "preview": {
+        "title": "תצוגה מקדימה",
+        "close": "סגור",
+        "language": "שפה",
+        "writing_language": "שפת כתיבה",
+        "translating": "מתרגם את התוכן שלך...",
+        "publishing": "מפרסם...",
+        "video_not_supported": "הדפדפן שלך אינו תומך בתג וידאו",
+        "translation_not_available": "תרגום לא זמין עבור {language}"
+      },
+      "validation": {
+        "title_required": "כותרת נדרשת",
+        "description_required": "תיאור נדרש",
+        "content_required": "תוכן נדרש",
+        "slug_required": "כתובת URL נדרשת",
+        "author_required": "מחבר נדרש",
+        "cover_image_required": "תמונת כריכה נדרשת",
+        "invalid_slug": "פורמט כתובת URL לא תקין",
+        "slug_exists": "כתובת URL זו כבר בשימוש"
+      },
+      "editor": {
+        "title_placeholder": "כותרת הבלוג",
+        "description_placeholder": "תיאור הבלוג",
+        "add_text": "הוסף טקסט",
+        "add_heading": "הוסף כותרת",
+        "add_image": "הוסף תמונה",
+        "add_video": "הוסף וידאו"
+      }
+    }
   },
   "UserMenu": {
     "settings": "הגדרות",
     "logout": "התנתק"
+  },
+  "blog": {
+    "create": {
+      "title": "צור פוסט חדש",
+      "titleLabel": "כותרת",
+      "titlePlaceholder": "הזן כותרת לפוסט",
+      "slugLabel": "כתובת URL",
+      "slugPlaceholder": "כתובת-URL-ידידותית",
+      "author": "מחבר",
+      "selectAuthor": "בחר מחבר",
+      "descriptionLabel": "תיאור",
+      "descriptionPlaceholder": "תיאור קצר של הפוסט",
+      "coverImageLabel": "תמונת כריכה",
+      "chooseCoverImage": "בחר תמונת כריכה",
+      "imageAltPlaceholder": "טקסט חלופי לתמונה",
+      "tags": "תגיות",
+      "addTag": "הוסף תגית",
+      "add": "הוסף",
+      "creationDate": "תאריך יצירה",
+      "preview": {
+        "title": "תצוגה מקדימה"
+      },
+      "translating": "מתרגם את התוכן שלך...",
+      "translationWait": "זה עשוי לקחת כמה רגעים",
+      "languageSelector": {
+        "english": "אנגלית",
+        "arabic": "ערבית",
+        "hebrew": "עברית"
+      },
+      "original": "מקורי",
+      "close": "סגור",
+      "publishing": "מפרסם...",
+      "publish": "פרסם",
+      "videoNotSupported": "הדפדפן שלך אינו תומך בתגית וידאו",
+      "translationNotAvailable": "תרגום לא זמין עבור {previewLanguage}",
+      "contentBlocks": {
+        "text": "טקסט",
+        "heading": "כותרת",
+        "image": "תמונה",
+        "video": "וידאו"
+      },
+      "success": "הפוסט פורסם בהצלחה!",
+      "error": "שגיאה בפרסום הפוסט"
+    }
   }
 }

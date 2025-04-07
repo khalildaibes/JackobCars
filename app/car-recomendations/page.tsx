@@ -247,15 +247,15 @@ const questions: Question[] = [
   const progress = ((currentQuestion + 1) / questions.length) * 100;
 
         return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className=" rounded-lg py-12 px-[10%] mt-[5%]">
       <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 bg-white rounded-lg p-4">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">{t('title')}</h1>
           <p className="text-xl text-gray-600">{t('subtitle')}</p>
         </div>
 
         {!showRecommendations ? (
-          <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="bg-white shadow-lg rounded-lg p-4">
             <div className="mb-6">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm text-gray-500">

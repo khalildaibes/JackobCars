@@ -289,7 +289,7 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
   }
   
   return (
-    <div className="min-h-screen bg-gray-50 mt-[5%]">
+    <div className="min-h-screen bg-gray-50 mt-[5%] bg-white">
       <Toaster position="top-right" />
       {/* Breadcrumb */}
       <div className="mb-6">
@@ -492,75 +492,7 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
         
         {/* Right Column - Contact Information */}
         <div className="space-y-6">
-            {/* Pros and Cons Section */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              <div className="bg-white rounded-xl p-6 shadow-lg">
-                <h3 className="text-xl font-semibold mb-6 text-center">{t('review_highlights')}</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {/* Pros */}
-                  <div className="flex flex-col items-center text-center">
-                    <div className="p-3 bg-green-100 rounded-full mb-4">
-                      <Check className="h-6 w-6 text-green-600" />
-                    </div>
-                    <h4 className="font-medium text-gray-900 text-lg mb-4">{t('pros')}</h4>
-                    <ul className="space-y-3 text-gray-600">
-                      {car.pros?.map((pro: string, index: number) => (
-                        <li key={index} className="flex items-center justify-center">
-                          <span className="mr-2">•</span>
-                          {pro}
-                        </li>
-                      )) || (
-                        <>
-                          <li className="flex items-center justify-center">
-                            <span className="mr-2">•</span>
-                            {t('excellent_performance')}
-                          </li>
-                          <li className="flex items-center justify-center">
-                            <span className="mr-2">•</span>
-                            {t('comfortable_interior')}
-                          </li>
-                          <li className="flex items-center justify-center">
-                            <span className="mr-2">•</span>
-                            {t('advanced_tech')}
-                          </li>
-                        </>
-                      )}
-                    </ul>
-                  </div>
-
-                  {/* Cons */}
-                  <div className="flex flex-col items-center text-center">
-                    <div className="p-3 bg-red-100 rounded-full mb-4">
-                      <X className="h-6 w-6 text-red-600" />
-                    </div>
-                    <h4 className="font-medium text-gray-900 text-lg mb-4">{t('cons')}</h4>
-                    <ul className="space-y-3 text-gray-600">
-                      {car.cons?.map((con: string, index: number) => (
-                        <li key={index} className="flex items-center justify-center">
-                          <span className="mr-2">•</span>
-                          {con}
-                        </li>
-                      )) || (
-                        <>
-                          <li className="flex items-center justify-center">
-                            <span className="mr-2">•</span>
-                            {t('higher_price')}
-                          </li>
-                          <li className="flex items-center justify-center">
-                            <span className="mr-2">•</span>
-                            {t('firm_ride')}
-                          </li>
-                          <li className="flex items-center justify-center">
-                            <span className="mr-2">•</span>
-                            {t('limited_cargo')}
-                          </li>
-                        </>
-                      )}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
+           
 
             {/* Contact Seller Section */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -672,7 +604,75 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
           </div>
         </div>
       </div>
-      
+       {/* Pros and Cons Section */}
+       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              <div className="bg-white rounded-xl p-6 shadow-lg">
+                <h3 className="text-xl font-semibold mb-6 text-center">{t('review_highlights')}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Pros */}
+                  <div className="flex flex-col items-center text-center">
+                    <div className="p-3 bg-green-100 rounded-full mb-4">
+                      <Check className="h-6 w-6 text-green-600" />
+                    </div>
+                    <h4 className="font-medium text-gray-900 text-lg mb-4">{t('pros')}</h4>
+                    <ul className="space-y-3 text-gray-600">
+                      {car.pros?.map((pro: string, index: number) => (
+                        <li key={index} className="flex items-center justify-center">
+                          <span className="mr-2">•</span>
+                          {pro}
+                        </li>
+                      )) || (
+                        <>
+                          <li className="flex items-center justify-center">
+                            <span className="mr-2">•</span>
+                            {t('excellent_performance')}
+                          </li>
+                          <li className="flex items-center justify-center">
+                            <span className="mr-2">•</span>
+                            {t('comfortable_interior')}
+                          </li>
+                          <li className="flex items-center justify-center">
+                            <span className="mr-2">•</span>
+                            {t('advanced_tech')}
+                          </li>
+                        </>
+                      )}
+                    </ul>
+                  </div>
+
+                  {/* Cons */}
+                  <div className="flex flex-col items-center text-center">
+                    <div className="p-3 bg-red-100 rounded-full mb-4">
+                      <X className="h-6 w-6 text-red-600" />
+                    </div>
+                    <h4 className="font-medium text-gray-900 text-lg mb-4">{t('cons')}</h4>
+                    <ul className="space-y-3 text-gray-600">
+                      {car.cons?.map((con: string, index: number) => (
+                        <li key={index} className="flex items-center justify-center">
+                          <span className="mr-2">•</span>
+                          {con}
+                        </li>
+                      )) || (
+                        <>
+                          <li className="flex items-center justify-center">
+                            <span className="mr-2">•</span>
+                            {t('higher_price')}
+                          </li>
+                          <li className="flex items-center justify-center">
+                            <span className="mr-2">•</span>
+                            {t('firm_ride')}
+                          </li>
+                          <li className="flex items-center justify-center">
+                            <span className="mr-2">•</span>
+                            {t('limited_cargo')}
+                          </li>
+                        </>
+                      )}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
       {/* Video Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
@@ -700,35 +700,7 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
 
           {/* Comparison Section */}
           <div className="space-y-6">
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h3 className="text-xl font-semibold mb-6">{t('compare_with_similar')}</h3>
-              <div className="space-y-4">
-                {listings.filter(c => c.id !== car.id).slice(0, 3).map((similarCar) => (
-                  <div key={similarCar.id} className="flex items-center space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-colors">
-                    <div className="w-24 h-16 overflow-hidden rounded-lg">
-                      <Img
-                        external={true}
-                        width={96}
-                        height={64}
-                        src={similarCar.mainImage}
-                        alt={similarCar.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-medium text-sm">{similarCar.title}</h4>
-                      <div className="flex items-center space-x-4 mt-1">
-                        <span className="text-blue-600 text-sm font-semibold">{similarCar.price}</span>
-                        <span className="text-gray-500 text-sm">{similarCar.year}</span>
-                      </div>
-                    </div>
-                    <Button variant="ghost" size="sm" className="text-blue-600">
-                      {t('watch_review')}
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </div>
+            
 
             {/* Additional Reviews */}
             <div className="grid grid-cols-2 gap-4">

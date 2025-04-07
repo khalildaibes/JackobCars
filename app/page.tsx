@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueries } from "@tanstack/react-query";
 import CarCard from "../components/CarCard";
 import ShowMore from "../components/ShowMore";
 import Hero from "../components/Hero";
@@ -248,33 +248,45 @@ function HomeContent() {
     selectedModel: searchParams.get("model")
   }), [searchParams]);
 
-  // React Query hooks
-  const { data: carsData, isLoading: isLoadingCars } = useQuery({
-    queryKey: ['cars', selectedManufacturer, selectedModel, selectedYear, selectedFuel, selectedLimit],
-    queryFn: () => fetchCars({
-            manufacturer: selectedManufacturer || "",
-            year: selectedYear ? parseInt(selectedYear, 10) : 0,
-            fuel: selectedFuel || "",
-            limit: selectedLimit ? parseInt(selectedLimit, 10) : 12,
-            model: selectedModel || "",
-    }),
-    enabled: !!selectedManufacturer || !!selectedModel
+  // Use useQueries to handle all queries together
+  const queryResults = useQueries({
+    queries: [
+      {
+        queryKey: ['cars', selectedManufacturer, selectedModel, selectedYear, selectedFuel, selectedLimit],
+        queryFn: () => fetchCars({
+          manufacturer: selectedManufacturer || "",
+          year: selectedYear ? parseInt(selectedYear, 10) : 0,
+          fuel: selectedFuel || "",
+          limit: selectedLimit ? parseInt(selectedLimit, 10) : 12,
+          model: selectedModel || "",
+        }),
+        enabled: !!selectedManufacturer || !!selectedModel
+      },
+      {
+        queryKey: ['deals'],
+        queryFn: fetchDeals
+      },
+      {
+        queryKey: ['articles'],
+        queryFn: fetchArticles
+      },
+      {
+        queryKey: ['homepage'],
+        queryFn: fetchHomePageData
+      }
+    ]
   });
 
-  const { data: dealsData } = useQuery({
-    queryKey: ['deals'],
-    queryFn: fetchDeals
-  });
+  // Destructure the results
+  const [
+    { data: carsData, isLoading: isLoadingCars },
+    { data: dealsData, isLoading: isLoadingDeals },
+    { data: articlesData, isLoading: isLoadingArticles },
+    { data: homepageData, isLoading: isLoadingHomepage }
+  ] = queryResults;
 
-  const { data: articlesData } = useQuery({
-    queryKey: ['articles'],
-    queryFn: fetchArticles
-  });
-
-  const { data: homepageData } = useQuery({
-    queryKey: ['homepage'],
-    queryFn: fetchHomePageData
-  });
+  // Check if any query is still loading
+  const isLoading = queryResults.some(result => result.isLoading);
 
   // Transform deals data with memoization
   const listings = useMemo(() => {
@@ -357,126 +369,226 @@ function HomeContent() {
     }
   ], [t]);
   
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+  
   return (
-    <main className="flex flex-col w-full overflow-hidden ">
+    <motion.main 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
+      className="flex flex-col w-full overflow-hidden"
+    >
       {/* 1. Hero Banner Section */}
-      <section className="w-full relative px-[10%] ">
+      <motion.section 
+        initial={{ opacity: 0, scale: 0.95, y: 50 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ 
+          duration: 0.8,
+          ease: [0.6, -0.05, 0.01, 0.99],
+          delay: 0.2
+        }}
+        className="w-full relative"
+      >
         <HeroSection />
-      </section>
-
-      {/* 2. Featured Cars Section - Most Important Cars */}
-      {/* <section className="w-full bg-gradient-to-b from-gray-50 to-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center mb-12">
-            <div className="w-1 h-12 bg-blue-600 mr-4"></div>
-            <h2 className="text-3xl font-bold text-gray-900">Featured Vehicles</h2>
-          </div>
-          <FeaturedListingsSection listings={listings} initialFavorites={[]} />
-        </div>
-      </section> */}
-
+      </motion.section>
 
       {/* 4. Latest News Section - Industry Updates */}
-      <section className="w-full bg-gradient-to-b from-white to-gray-50 py-16">
+      <motion.section 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="w-full bg-gradient-to-b from-white to-gray-50 py-16"
+      >
         <div className="container mx-auto px-4">
-          <div className="flex items-center mb-12">
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ 
+              duration: 0.8,
+              ease: [0.6, -0.05, 0.01, 0.99],
+              delay: 0.4
+            }}
+            className="flex items-center mb-12"
+          >
             <div className="w-1 h-12 bg-green-600 mr-4"></div>
             <h2 className="text-3xl font-bold text-gray-900">{t('other_news')}</h2>
-              </div>
+          </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {transformedArticles.map((article) => (
+            {transformedArticles.map((article, index) => (
               article.category.includes('featured') && (
-                <Link href={`/news/${article.slug}`} key={article.id} className="group block">
-                  <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                    <div className="aspect-[16/9] overflow-hidden">
-                      <Img
-                        src={`http://68.183.215.202${article.imageUrl}`}
-                        alt={article.title}
-                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
-                        width={1290}
-                        height={2040}
-                        external={true}
-              />
-            </div>
-                    <div className="p-6">
-                      <div className="flex items-center mb-3">
-                        <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
-                          {article.category}
-                        </span>
-                        <span className="mx-2 text-gray-400">•</span>
-                        <span className="text-sm text-gray-500">{article.date}</span>
-      </div>
-                      <h2 className="text-xl font-bold mb-3 text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                        {article.title}
-            </h2>
-                      <p className="text-gray-600 line-clamp-3 mb-4">{article.excerpt}</p>
-                      <div className="flex items-center text-sm text-gray-500">
-                        <span className="font-medium">{article.author}</span>
+                <motion.div
+                  key={article.id}
+                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ 
+                    duration: 0.6,
+                    ease: [0.6, -0.05, 0.01, 0.99],
+                    delay: 0.6 + (index * 0.1)
+                  }}
+                  whileHover={{ 
+                    scale: 1.02,
+                    transition: { duration: 0.2 }
+                  }}
+                >
+                  <Link href={`/news/${article.slug}`} className="group block">
+                    <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+                      <div className="aspect-[16/9] overflow-hidden">
+                        <Img
+                          src={`http://68.183.215.202${article.imageUrl}`}
+                          alt={article.title}
+                          className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                          width={1290}
+                          height={2040}
+                          external={true}
+                        />
+                      </div>
+                      <div className="p-6">
+                        <div className="flex items-center mb-3">
+                          <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                            {article.category}
+                          </span>
+                          <span className="mx-2 text-gray-400">•</span>
+                          <span className="text-sm text-gray-500">{article.date}</span>
+                        </div>
+                        <h2 className="text-xl font-bold mb-3 text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                          {article.title}
+                        </h2>
+                        <p className="text-gray-600 line-clamp-3 mb-4">{article.excerpt}</p>
+                        <div className="flex items-center text-sm text-gray-500">
+                          <span className="font-medium">{article.author}</span>
+                        </div>
                       </div>
                     </div>
-          </div>
-                </Link>
+                  </Link>
+                </motion.div>
               )
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
       
        {/* 3. Most Searched Section - Popular Cars */}
-       <section className="w-full bg-white pb-16">
+       <motion.section 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="w-full bg-white pb-16"
+      >
         <div className="container mx-auto px-4">
-          <div className="flex items-center mb-12">
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ 
+              duration: 0.8,
+              ease: [0.6, -0.05, 0.01, 0.99],
+              delay: 0.6
+            }}
+            className="flex items-center mb-12"
+          >
+          </motion.div>
           <RecentlyAddedSection 
             listings={listings.filter((listing) => listing)} 
             title={t('most_searched_cars')}
             viewAllLink="/cars"
           />
         </div>
-        </section>
+      </motion.section>
 
       {/* 5. Sales & Special Offers Section */}
-      <section className="w-full bg-white py-16">
+      <motion.section 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="w-full bg-white py-16"
+      >
         <div className="container mx-auto px-4">
-          <div className="flex items-center mb-12">
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ 
+              duration: 0.8,
+              ease: [0.6, -0.05, 0.01, 0.99],
+              delay: 0.8
+            }}
+            className="flex items-center mb-12"
+          >
             <div className="w-1 h-12 bg-yellow-500 mr-4"></div>
             <h2 className="text-3xl font-bold text-gray-900">{t('special_offers_sales')}</h2>
-          </div>
+          </motion.div>
           <SalesAndReviewsSection />
         </div>
-      </section>
+      </motion.section>
 
       {/* 6. Recently Added Section - New Inventory */}
-      <section className="w-full bg-gradient-to-b from-gray-50 to-white py-16">
+      <motion.section 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="w-full bg-gradient-to-b from-gray-50 to-white py-16"
+      >
         <div className="container mx-auto px-4">
-          <div className="flex items-center mb-12">
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ 
+              duration: 0.8,
+              ease: [0.6, -0.05, 0.01, 0.99],
+              delay: 1.0
+            }}
+            className="flex items-center mb-12"
+          >
             <div className="w-1 h-12 bg-purple-600 mr-4"></div>
             <h2 className="text-3xl font-bold text-gray-900">{t('new_arrivals')}</h2>
-          </div>
+          </motion.div>
           <RecentlyAddedSection listings={listings} />
         </div>
-      </section>
+      </motion.section>
 
       {/* 7. Call to Action Section - Looking for a Car */}
-      <section className="w-full bg-gradient-to-r from-blue-900 to-blue-800 py-16">
+      <motion.section 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="w-full bg-gradient-to-r from-blue-900 to-blue-800 py-16"
+      >
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-center gap-8">
             {lookingForCarData.map(({ title, text, buttonColor, backgroundColor, icon, buttonTextColor, textColor }, index) => (
-    <LookingForCar
+              <motion.div
                 key={index}
-                text={text}
-                title={title}
-      backgroundColor={backgroundColor}
-      textColor={textColor}
-      buttonColor={buttonColor}
-      buttonTextColor={buttonTextColor}
-      icon={icon}
-    />
-  ))}
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ 
+                  duration: 0.6,
+                  ease: [0.6, -0.05, 0.01, 0.99],
+                  delay: 1.2 + (index * 0.1)
+                }}
+                whileHover={{ 
+                  scale: 1.02,
+                  transition: { duration: 0.2 }
+                }}
+              >
+                <LookingForCar
+                  text={text}
+                  title={title}
+                  backgroundColor={backgroundColor}
+                  textColor={textColor}
+                  buttonColor={buttonColor}
+                  buttonTextColor={buttonTextColor}
+                  icon={icon}
+                />
+              </motion.div>
+            ))}
           </div>
         </div>
-      </section>
-    </main>
+      </motion.section>
+    </motion.main>
   );
 }
 

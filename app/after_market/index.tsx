@@ -416,14 +416,14 @@ const CategoriesPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen  py-12 px-4 sm:px-6 lg:px-8 mt-[5%] ">
+      <div className="max-w-7xl mx-auto ">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-12 bg-white rounded-lg "
         >
           <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 mb-4">
             {t("page_title")}
@@ -434,23 +434,23 @@ const CategoriesPage = () => {
         </motion.div>
 
         {/* Search and Filter Section */}
-        <div className="mb-8 space-y-6">
+        <div className="mb-8 space-y-6 rounded-lg py-4">
           {/* Search Bar with Filter Toggle */}
-          <div className="flex gap-4 max-w-4xl mx-auto">
+          <div className="flex gap-4 max-w-4xl mx-auto bg-white rounded-lg">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               className="flex-1"
             >
-              <div className="relative">
+              <div className="relative ">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                 <input
                   type="text"
                   placeholder={t("search_placeholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white/80 backdrop-blur-sm"
+                  className="w-full pl-10 pr-4 py-3 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white"
                 />
               </div>
             </motion.div>
@@ -473,7 +473,7 @@ const CategoriesPage = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
-              className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl"
+              className="bg-white rounded-2xl p-6 shadow-xl"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Type Filter */}
@@ -603,7 +603,7 @@ const CategoriesPage = () => {
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
-                className="md:hidden bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl"
+                className="md:hidden bg-white rounded-2xl p-6 shadow-xl"
               >
                 {/* Same filter content as desktop */}
                 <div className="grid grid-cols-1 gap-6">
@@ -612,20 +612,20 @@ const CategoriesPage = () => {
                   <div className="space-y-3">
                     <h3 className="font-medium text-gray-700">Type</h3>
                     <div className="flex flex-wrap gap-2">
-        {FILTERS.map((filter) => (
-          <button
-            key={filter}
-            onClick={() => setSelectedFilter(filter)}
+                      {FILTERS.map((filter) => (
+                        <button
+                          key={filter}
+                          onClick={() => setSelectedFilter(filter)}
                           className={`px-4 py-2 rounded-xl text-sm font-medium transition-all
                             ${selectedFilter === filter
                               ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
                               : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-          >
-            {t(filter)}
-          </button>
-        ))}
-      </div>
+                          }`}
+                        >
+                          {t(filter)}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Price Range Filter */}
@@ -743,8 +743,8 @@ const CategoriesPage = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-          <Link href={`/category1/${category.key}`}>
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
+              <Link href={`/category1/${category.key}`}>
+                <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
                   <div className="flex flex-col items-center gap-4">
                     <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-blue-50 to-purple-50 p-4 flex items-center justify-center">
                       <Img
@@ -778,8 +778,8 @@ const CategoriesPage = () => {
                       )}
                     </div>
                   </div>
-          </div>
-          </Link>
+                </div>
+              </Link>
             </motion.div>
           ))}
         </motion.div>
@@ -789,7 +789,7 @@ const CategoriesPage = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center py-12 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg"
+            className="text-center py-12 bg-white rounded-2xl shadow-lg"
           >
             <div className="flex flex-col items-center gap-4">
               <Search size={48} className="text-gray-400" />

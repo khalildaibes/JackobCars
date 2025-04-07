@@ -103,22 +103,34 @@ export default function Navbar() {
           border-t md:border-t-0 border-gray-100`}
         >
           <NavButton href="/car-listing" gradient={buttonStyles.carsMarket}>
-            {t("cars_market")}
+            <span className="relative z-10 text-center line-clamp-2" lang="ar">
+              {t("cars_market")}
+            </span>
           </NavButton>
           <NavButton href="/findcarbyplate" gradient={buttonStyles.findByPlate}>
-            {t("find_by_plate")}
+            <span className="relative z-10 text-center line-clamp-2" lang="ar">
+              {t("find_by_plate")}
+            </span>
           </NavButton>
           <NavButton href="/news" gradient={buttonStyles.news}>
-            {t("news")}
+            <span className="relative z-10 text-center line-clamp-2" lang="ar">
+              {t("news")}
+            </span>
           </NavButton>
           <NavButton href="/after_market" gradient={buttonStyles.afterMarket}>
-            {t("after_market")}
+            <span className="relative z-10 text-center line-clamp-2" lang="ar">
+              {t("after_market")}
+            </span>
           </NavButton>
           <NavButton href="/comparison" gradient={buttonStyles.comparison}>
-            {t("compare_cars")}
+            <span className="relative z-10 text-center line-clamp-2" lang="ar">
+              {t("compare_cars")}
+            </span>
           </NavButton>
           <NavButton href="/stores" gradient={buttonStyles.stores}>
-            {t("stores")}
+            <span className="relative z-10 text-center line-clamp-2" lang="ar">
+              {t("stores")}
+            </span>
           </NavButton>
           
           {/* Add UserMenu or Login Button for Mobile */}
@@ -127,7 +139,9 @@ export default function Navbar() {
               <UserMenu user={user} onLogout={handleLogout} isMobile={true} />
             ) : (
               <NavButton href="/login" gradient={buttonStyles.carsMarket}>
-                {t("login")}
+                <span className="relative z-10 text-center line-clamp-2" lang="ar">
+                  {t("login")}
+                </span>
               </NavButton>
             )}
           </div>
@@ -144,7 +158,9 @@ export default function Navbar() {
             <UserMenu user={user} onLogout={handleLogout} />
           ) : (
             <NavButton href="/login" gradient={buttonStyles.carsMarket}>
-              {t("login")}
+              <span className="relative z-10 text-center line-clamp-2" lang="ar">
+                {t("login")}
+              </span>
             </NavButton>
           )}
           <LanguageSwitcher />

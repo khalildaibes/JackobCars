@@ -33,7 +33,16 @@ const HeroSection: React.FC = () => {
   );
 
   return (
-    <div className="relative w-full h-[600px] overflow-hidden rounded-2xl shadow-2xl">
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.95, y: 50 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ 
+        duration: 0.8,
+        ease: [0.6, -0.05, 0.01, 0.99],
+        delay: 0.2
+      }}
+      className="relative w-full h-[600px] overflow-hidden rounded-2xl shadow-2xl"
+    >
       {/* Background Image with Overlay */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-[url(/images/img_background_820x1860.png)]"
@@ -43,22 +52,35 @@ const HeroSection: React.FC = () => {
         }}
       >
         {/* Animated Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-black/50 animate-gradient-x"></div>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-black/50 animate-gradient-x"
+        />
       </div>
 
       {/* Content Container */}
       <div className="relative h-full flex flex-col items-center md:items-start px-4 sm:px-8 md:px-16 lg:px-32 xl:px-40">
         {/* Left Content - Text with Animation */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ 
+            duration: 0.8,
+            ease: [0.6, -0.05, 0.01, 0.99],
+            delay: 0.4
+          }}
           className="text-center md:text-right mt-20 md:mt-40 max-w-lg"
         >
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ 
+              duration: 0.8,
+              ease: [0.6, -0.05, 0.01, 0.99],
+              delay: 0.5
+            }}
             className="text-white text-[30px] sm:text-[50px] md:text-[70px] font-bold leading-[40px] sm:leading-[70px] drop-shadow-lg"
           >
             {t("hero_title")}
@@ -66,7 +88,11 @@ const HeroSection: React.FC = () => {
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            transition={{ 
+              duration: 0.8,
+              ease: [0.6, -0.05, 0.01, 0.99],
+              delay: 0.6
+            }}
             className="text-white/90 text-[14px] sm:text-[16px] font-normal leading-[20px] sm:leading-[29.6px] drop-shadow-md"
           >
             {t("hero_subtitle")}
@@ -75,9 +101,13 @@ const HeroSection: React.FC = () => {
 
         {/* Filters with Animation */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ 
+            duration: 0.8,
+            ease: [0.6, -0.05, 0.01, 0.99],
+            delay: 0.7
+          }}
           className="w-full mt-10 md:mt-16 flex flex-col md:flex-row items-center md:items-start"
         >
           <div className="w-full md:w-2/3 backdrop-blur-sm bg-white/10 rounded-xl p-4 shadow-xl">
@@ -95,7 +125,11 @@ const HeroSection: React.FC = () => {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
+          transition={{ 
+            duration: 0.8,
+            ease: [0.6, -0.05, 0.01, 0.99],
+            delay: 0.8
+          }}
           className="absolute bottom-0 w-full flex flex-wrap justify-center md:justify-start gap-4 sm:gap-8 p-4 hidden md:flex"
         >
           {[
@@ -106,10 +140,17 @@ const HeroSection: React.FC = () => {
           ].map((category, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 1 + index * 0.1 }}
-              whileHover={{ scale: 1.05 }}
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ 
+                duration: 0.6,
+                ease: [0.6, -0.05, 0.01, 0.99],
+                delay: 0.9 + (index * 0.1)
+              }}
+              whileHover={{ 
+                scale: 1.05,
+                transition: { duration: 0.2 }
+              }}
               whileTap={{ scale: 0.95 }}
               className="flex items-center justify-center px-4 sm:px-[41px] py-[16px] rounded-xl bg-blue-600/90 hover:bg-blue-700 transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-xl"
             >
@@ -127,7 +168,7 @@ const HeroSection: React.FC = () => {
           ))}
         </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

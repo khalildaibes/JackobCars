@@ -76,10 +76,14 @@ export default function RecentlyAddedSection({
                     onSlideChanged={(e: EventObject) => {
                       setSliderState(e?.item);
                     }}
-                    ref={sliderRef}
+                    paddingLeft={20}
+                    paddingRight={20}
                     items={listings.map((car) => (
-                      <CarCard key={car.id} car={car} />
+                      <div key={car.id} className="px-2">
+                        <CarCard car={car} />
+                      </div>
                     ))}
+                    ref={sliderRef}
                   />
                 </div>
               </div>

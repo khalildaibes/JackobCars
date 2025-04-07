@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { Dialog } from '@headlessui/react';
 import { blogService } from '../../../app/services/blogService';
+import { useTranslations } from 'next-intl';
 
 // Define STRAPI_URL directly since we can't import from config
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://68.183.215.202:1337';
@@ -167,6 +168,7 @@ interface BlogContentState {
 }
 
 export default function BlogEditor() {
+  const t = useTranslations('blog.create');
   const router = useRouter();
   const [isPreview, setIsPreview] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
@@ -392,13 +394,13 @@ export default function BlogEditor() {
       <div className="space-y-4">
         <input
           type="text"
-          placeholder="Blog Title"
+          placeholder={t('titlePlaceholder')}
           className="w-full p-3 border rounded-lg"
           value={blog.title}
           onChange={e => setBlog(prev => ({ ...prev, title: e.target.value }))}
         />
         <textarea
-          placeholder="Blog Description"
+          placeholder={t('descriptionPlaceholder')}
           className="w-full p-3 border rounded-lg"
           rows={3}
           value={blog.description}
@@ -411,25 +413,25 @@ export default function BlogEditor() {
           onClick={() => addBlock('text')}
           className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200"
         >
-          Add Text
+          {t('contentBlocks.text')}
         </button>
         <button
           onClick={() => addBlock('heading')}
           className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200"
         >
-          Add Heading
+          {t('contentBlocks.heading')}
         </button>
         <button
           onClick={() => addBlock('image')}
           className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200"
         >
-          Add Image
+          {t('contentBlocks.image')}
         </button>
         <button
           onClick={() => addBlock('video')}
           className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200"
         >
-          Add Video
+          {t('contentBlocks.video')}
         </button>
       </div>
 
@@ -457,7 +459,7 @@ export default function BlogEditor() {
                   onClick={() => removeBlock(block.id)}
                   className="text-red-500 hover:text-red-700"
                 >
-                  Delete
+                  {t('contentBlocks.remove')}
                 </button>
               </div>
             </div>
@@ -481,7 +483,7 @@ export default function BlogEditor() {
                   }}
                   className="h-64 bg-white rounded-lg"
                   theme="snow"
-                  placeholder="Start writing..."
+                  placeholder={t('contentPlaceholder')}
                 />
                 <style jsx global>{`
                   .ql-container {
@@ -1120,12 +1122,12 @@ export default function BlogEditor() {
         })
       );
 
-      setSuccess('Blog published successfully! Redirecting to news page...');
+      setSuccess(t('success'));
       setTimeout(() => {
         router.push('/news');
       }, 2000);
     } catch (err: any) {
-      setError(err.message || 'Failed to publish blog');
+      setError(err.message || t('error'));
     } finally {
       setIsPublishing(false);
     }
@@ -1134,14 +1136,14 @@ export default function BlogEditor() {
   return (
     <div className="max-w-4xl mx-auto p-6 mt-[10%]">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Create Blog Post</h1>
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
         <div className="flex gap-4 items-center">
           <LanguageSelector />
           <button
             onClick={handlePreviewClick}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            Preview
+            {t('preview.title')}
           </button>
         </div>
       </div>
@@ -1152,14 +1154,14 @@ export default function BlogEditor() {
           {/* Title */}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              Title
+              {t('titleLabel')}
             </label>
             <input
               type="text"
               value={blog.title}
               onChange={(e) => handleTitleChange(e.target.value)}
               className="w-full p-2 border rounded-md"
-              placeholder="Enter blog title"
+              placeholder={t('titlePlaceholder')}
               dir={writingLanguage === 'ar' ? 'rtl' : 'ltr'}
             />
           </div>
@@ -1167,29 +1169,28 @@ export default function BlogEditor() {
           {/* Slug */}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              Slug
+              {t('slugLabel')}
             </label>
             <input
               type="text"
               value={blog.slug}
               onChange={(e) => setBlog(prev => ({ ...prev, slug: e.target.value }))}
               className="w-full p-2 border rounded-md"
-              placeholder="url-friendly-slug"
+              placeholder={t('slugPlaceholder')}
             />
           </div>
 
           {/* Author */}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              Author
+              {t('author')}
             </label>
             <select
               value={blog.author}
               onChange={(e) => setBlog(prev => ({ ...prev, author: e.target.value }))}
               className="w-full p-2 border rounded-md"
             >
-              <option value="">select author</option>
-             
+              <option value="">{t('selectAuthor')}</option>
               {Array.isArray(authors) && authors.map(author => (
                 <option key={author.id} value={author.id}>
                   {author.name}
@@ -1201,14 +1202,14 @@ export default function BlogEditor() {
           {/* Description */}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              Description
+              {t('descriptionLabel')}
             </label>
             <textarea
               value={blog.description}
               onChange={(e) => setBlog(prev => ({ ...prev, description: e.target.value }))}
               className="w-full p-2 border rounded-md"
               rows={3}
-              placeholder="Brief description of the blog post"
+              placeholder={t('descriptionPlaceholder')}
               dir={writingLanguage === 'ar' ? 'rtl' : 'ltr'}
             />
           </div>
@@ -1216,7 +1217,7 @@ export default function BlogEditor() {
           {/* Cover Image */}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              Cover Image
+              {t('coverImageLabel')}
             </label>
             <div className="space-y-2">
               <input
@@ -1233,7 +1234,7 @@ export default function BlogEditor() {
                 htmlFor="cover-image-upload"
                 className="inline-block px-4 py-2 bg-blue-500 text-white rounded-md cursor-pointer hover:bg-blue-600"
               >
-                Choose Cover Image
+                {t('chooseCoverImage')}
               </label>
               {blog.cover.fileUrl && (
                 <div className="relative mt-2">
@@ -1252,7 +1253,7 @@ export default function BlogEditor() {
                   cover: { ...prev.cover, alt: e.target.value }
                 }))}
                 className="w-full p-2 border rounded-md mt-2"
-                placeholder="Image alt text"
+                placeholder={t('imageAltPlaceholder')}
               />
             </div>
           </div>
@@ -1260,7 +1261,7 @@ export default function BlogEditor() {
           {/* Tags */}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              Tags
+              {t('tags')}
             </label>
             <div className="flex gap-2">
               <input
@@ -1269,13 +1270,13 @@ export default function BlogEditor() {
                 onChange={(e) => setCurrentTag(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
                 className="flex-1 p-2 border rounded-md"
-                placeholder="Add a tag"
+                placeholder={t('addTag')}
               />
               <button
                 onClick={handleAddTag}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
               >
-                Add
+                {t('add')}
               </button>
             </div>
             <div className="flex flex-wrap gap-2 mt-2">
@@ -1299,11 +1300,11 @@ export default function BlogEditor() {
           {/* Creation Date */}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              Creation Date
+              {t('creationDate')}
             </label>
             <input
               type="datetime-local"
-              value={blog.createdAt.slice(0, 16)} // Format for datetime-local input
+              value={blog.createdAt.slice(0, 16)}
               onChange={(e) => setBlog(prev => ({
                 ...prev,
                 createdAt: new Date(e.target.value).toISOString()
@@ -1346,6 +1347,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
   setPreviewLanguage,
   selectedLanguages
 }) => {
+  const t = useTranslations('blog.create');
   const currentContent = translations[previewLanguage];
   const isOriginalLanguage = previewLanguage === writingLanguage;
 
@@ -1367,14 +1369,14 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
           {isTranslating ? (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
-              <p className="text-lg text-gray-600">Translating your content...</p>
-              <p className="text-sm text-gray-500 mt-2">This may take a few moments</p>
+              <p className="text-lg text-gray-600">{t('translating')}</p>
+              <p className="text-sm text-gray-500 mt-2">{t('translationWait')}</p>
             </div>
           ) : (
             <>
               <div className="flex justify-between items-center mb-4">
                 <Dialog.Title className="text-2xl font-bold">
-                  Preview Blog Post
+                  {t('preview.title')}
                 </Dialog.Title>
                 <div className="flex gap-2">
                   <select
@@ -1383,14 +1385,14 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
                     className="px-3 py-2 border rounded"
                     disabled={isTranslating}
                   >
-                    <option value="en">English</option>
-                    <option value="ar">Arabic</option>
-                    <option value="he-IL">Hebrew</option>
+                    <option value="en">{t('languageSelector.english')}</option>
+                    <option value="ar">{t('languageSelector.arabic')}</option>
+                    <option value="he-IL">{t('languageSelector.hebrew')}</option>
                   </select>
                   
                   {isOriginalLanguage && (
                     <span className="text-sm text-green-600 bg-green-50 px-2 py-1 rounded">
-                      Original
+                      {t('original')}
                     </span>
                   )}
 
@@ -1399,7 +1401,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
                     className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200"
                     disabled={isTranslating}
                   >
-                    Close
+                    {t('close')}
                   </button>
                   
                   <button
@@ -1408,7 +1410,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
                     className={`px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 
                       ${(isPublishing || !areAllSelectedLanguagesTranslated()) ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
-                    {isPublishing ? 'Publishing...' : 'Publish'}
+                    {isPublishing ? t('publishing') : t('publish')}
                   </button>
                 </div>
               </div>
@@ -1459,7 +1461,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
                               controls
                               className="w-full rounded-lg"
                             >
-                              Your browser does not support the video tag.
+                              {t('videoNotSupported')}
                             </video>
                           </div>
                         )}
@@ -1469,7 +1471,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
                 </article>
               ) : (
                 <div className="text-center py-8">
-                  <p>Translation not available for {previewLanguage}</p>
+                  <p>{t('translationNotAvailable')}</p>
                 </div>
               )}
             </>

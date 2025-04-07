@@ -388,7 +388,7 @@ export default function NewsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-red-500 text-center">
-          <p className="text-xl mb-4">Error loading news</p>
+          <p className="text-xl mb-4">{t('error.loading')}</p>
           <p>{error}</p>
         </div>
       </div>
@@ -401,13 +401,13 @@ export default function NewsPage() {
       <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
-            <h1 className="text-4xl font-bold mb-6">Auto News & Updates</h1>
-            <p className="text-xl mb-8">Stay informed about the latest in automotive industry</p>
+            <h1 className="text-4xl font-bold mb-6">{t('welcome')}</h1>
+            <p className="text-xl mb-8">{t('description')}</p>
             <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
               <div className="w-full md:w-96">
                 <input
                   type="text"
-                  placeholder="Search news..."
+                  placeholder={t('search_placeholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -417,7 +417,7 @@ export default function NewsPage() {
                 href="/findcarbyplate"
                 className="px-6 py-3 bg-white text-blue-900 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
               >
-                Search by Plate Number
+                {t('search_by_plate')}
               </Link>
             </div>
           </div>
@@ -436,8 +436,8 @@ export default function NewsPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold mb-2">Search Cars</h3>
-            <p className="text-gray-600">Find your perfect vehicle</p>
+            <h3 className="text-lg font-semibold mb-2">{t('quick_actions.search_cars')}</h3>
+            <p className="text-gray-600">{t('quick_actions.search_cars_desc')}</p>
           </Link>
           <Link
             href="/blog/create"
@@ -448,8 +448,8 @@ export default function NewsPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold mb-2">Create Post</h3>
-            <p className="text-gray-600">Share your automotive insights</p>
+            <h3 className="text-lg font-semibold mb-2">{t('quick_actions.create_post')}</h3>
+            <p className="text-gray-600">{t('quick_actions.create_post_desc')}</p>
           </Link>
           <div className="bg-white p-6 rounded-xl shadow-md">
             <div className="text-blue-600 mb-2">
@@ -457,8 +457,8 @@ export default function NewsPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold mb-2">Contact Us</h3>
-            <p className="text-gray-600">Get in touch with our team</p>
+            <h3 className="text-lg font-semibold mb-2">{t('quick_actions.contact_us')}</h3>
+            <p className="text-gray-600">{t('quick_actions.contact_us_desc')}</p>
           </div>
         </div>
       </div>
@@ -466,27 +466,27 @@ export default function NewsPage() {
       {/* News Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">Latest News</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t('news_grid.title')}</h2>
           <select
             value={selectedLanguage}
             onChange={(e) => setSelectedLanguage(e.target.value as 'en' | 'ar' | 'he-IL')}
             className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="en">English</option>
-            <option value="ar">Arabic</option>
-            <option value="he-IL">Hebrew</option>
+            <option value="en">{t('language_selector.english')}</option>
+            <option value="ar">{t('language_selector.arabic')}</option>
+            <option value="he-IL">{t('language_selector.hebrew')}</option>
           </select>
         </div>
 
         {uploadStatus.error && (
           <div className="mb-4 p-4 bg-red-50 text-red-700 rounded-lg">
-            {uploadStatus.error}
+            {t('error.upload_error')}
           </div>
         )}
 
         {uploadStatus.success && (
           <div className="mb-4 p-4 bg-green-50 text-green-700 rounded-lg">
-            {uploadStatus.success}
+            {t('error.upload_success')}
           </div>
         )}
 
@@ -506,7 +506,6 @@ export default function NewsPage() {
                     height={1024}
                     className="object-cover w-full h-full"
                     onError={async (e) => {
-                      // If image fails to load, try to re-upload it
                       const imgElement = e.target as HTMLImageElement;
                       const response = await fetch(imgElement.src);
                       const blob = await response.blob();
@@ -534,14 +533,14 @@ export default function NewsPage() {
                   {item.description}
                 </p>
                 <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                  <span>{item.author?.data?.name || 'Anonymous'}</span>
+                  <span>{item.author?.data?.name || t('news_grid.anonymous')}</span>
                   <span>{formatDate(item.publishedAt)}</span>
                 </div>
                 <button
                   onClick={() => router.push(`/news/${item.slug}`)}
                   className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  Read More
+                  {t('news_grid.read_more')}
                 </button>
               </div>
             </article>
@@ -550,7 +549,7 @@ export default function NewsPage() {
 
         {filteredNews.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No news articles found.</p>
+            <p className="text-gray-500 text-lg">{t('news_grid.no_articles')}</p>
           </div>
         )}
       </div>
