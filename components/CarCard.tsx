@@ -22,7 +22,7 @@ const Img = dynamic(() => import("./Img").then(mod => ({ default: mod.Img })), {
   src: string;
   alt: string;
   external?: boolean;
-  wslugth: number;
+  width: number;
   height: number;
 }>;
 
