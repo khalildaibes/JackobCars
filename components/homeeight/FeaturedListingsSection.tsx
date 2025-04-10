@@ -32,6 +32,7 @@ interface Listing {
   description: string;
   location?: string;
   features?: string[];
+  slug: string;
 }
 
 // Define the props for the component
@@ -146,6 +147,7 @@ export default function FeaturedListingsSection({
                             key={listing.id} 
                             car={{
                               id: listing.id,
+                              slug: listing.slug,
                               mainImage: listing.mainImage,
                               title: listing.title,
                               price: listing.price,
