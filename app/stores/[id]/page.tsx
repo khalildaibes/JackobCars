@@ -497,6 +497,7 @@ export default function StorePage() {
                     key={product.id} 
                     car={{
                       id: product.id,
+                      slug: product.slug,
                       mainImage: product.details.car.images.main 
                         ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${product.details.car.images.main}`
                         : "/default-car.png",
