@@ -198,6 +198,7 @@ const CarListings: React.FC = () => {
 
             return {
               id: product.id,
+              slug: product.slug,
               mainImage: product.image ? `http://68.183.215.202${product.image[0]?.url}` : "/default-car.png",
               alt: product.name || "Car Image",
               title: product.name,
@@ -284,8 +285,8 @@ const CarListings: React.FC = () => {
     return true;
   });
   
-  const handleViewDetails = (carId: number) => {
-    router.push(`/car-details/${carId}`);
+  const handleViewDetails = (slug: number) => {
+    router.push(`/car-details/${slug}`);
   };
 
   const handleCompareToggle = (car: any) => {
@@ -444,8 +445,13 @@ const CarListings: React.FC = () => {
             <TabsContent value="grid" className="mt-0">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredCars.map((car) => (
-                  <CarCard key={car.id} car={car} />
-
+                  <CarCard 
+                    key={car.slug} 
+                    car={car}
+                    onCompareToggle={() => handleCompareToggle(car)}
+                    isInComparison={isInComparison(car.slug)}
+                    label={isInComparison(car.slug) ? t('remove_from_comparison') : t('add_to_comparison')}
+                  />
                 ))}
               </div>
             </TabsContent>
@@ -453,7 +459,7 @@ const CarListings: React.FC = () => {
             <TabsContent value="list" className="mt-0">
               <div className="space-y-4">
                 {filteredCars.map((car) => (
-                  <CarCard key={car.id} car={car} variant="list" />
+                  <CarCard key={car.slug} car={car} variant="list" />
                 ))}
               </div>
             </TabsContent>

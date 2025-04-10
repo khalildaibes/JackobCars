@@ -22,7 +22,7 @@ const Img = dynamic(() => import("./Img").then(mod => ({ default: mod.Img })), {
   src: string;
   alt: string;
   external?: boolean;
-  width: number;
+  wslugth: number;
   height: number;
 }>;
 
@@ -38,6 +38,7 @@ interface ImgProps {
 interface CarCardProps {
   car: {
     id: string | number;
+    slug: string | number;
     mainImage: string;
     title: string;
     year: number;
@@ -49,7 +50,10 @@ interface CarCardProps {
     location?: string;
     features?: string[];
   };
-  variant?: "grid" | "list";
+  variant?: 'grid' | 'list';
+  onCompareToggle?: () => void;
+  isInComparison?: boolean;
+  label?: string;
 }
 
 // Memoized button components
@@ -110,13 +114,13 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
     e.preventDefault();
     e.stopPropagation();
     setFavorites(prev => {
-      const updated = prev.includes(car.id) 
-        ? prev.filter(favId => favId !== car.id)
-        : [...prev, car.id];
+      const updated = prev.includes(car.slug) 
+        ? prev.filter(favslug => favslug !== car.slug)
+        : [...prev, car.slug];
       localStorage.setItem("favorites", JSON.stringify(updated));
       return updated;
     });
-  }, [car.id]);
+  }, [car.slug]);
 
   const handleContactSeller = useCallback(async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -124,7 +128,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
     try {
       const response = await fetch(`/api/send-email`, {
         method: 'POST',
-        body: JSON.stringify({ id: car.id.toString() }),
+        body: JSON.stringify({ slug: car.slug.toString() }),
       });
       if (response.ok) {
         toast.success(t('email_sent'));
@@ -134,19 +138,19 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
     } catch (error) {
       toast.error(t('email_failed'));
     }
-  }, [car.id, t]);
+  }, [car.slug, t]);
 
   const handleViewDetails = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    router.push(`/car-details/${car.id}`);
-  }, [car.id, router]);
+    router.push(`/car-details/${car.slug}`);
+  }, [car.slug, router]);
 
   const handleCompareToggle = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isInComparison(car.id.toString())) {
-      removeFromComparison(car.id.toString());
+    if (isInComparison(car.slug.toString())) {
+      removeFromComparison(car.slug.toString());
       toast.success(t('removed_from_comparison'));
     } else {
       addToComparison(car);
@@ -159,8 +163,8 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
     
     return (
       <div className="flex flex-wrap gap-2 mb-4">
-        {car.features.slice(0, 3).map((feature, idx) => (
-          <Badge key={idx} variant="outline" className="flex items-center gap-1">
+        {car.features.slice(0, 3).map((feature, index) => (
+          <Badge key={index} variant="outline" className="flex items-center gap-1">
             <Check className="h-3 w-3" />
             {feature}
           </Badge>
@@ -174,8 +178,8 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
     );
   }, [car.features]);
 
-  const gridContent = (
-    <Card className="overflow-hidden h-full flex flex-col hover:shadow-lg transition-shadow duration-300 max-w-[400px] max-h-[650px] min-h-[500px]">
+  const grslugContent = (
+    <Card className="overflow-hslugden h-full flex flex-col hover:shadow-lg transition-shadow duration-300 max-w-[400px] max-h-[650px] min-h-[500px]">
       <div className="relative">
         <Img
           width={1920}
@@ -185,7 +189,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
           alt={car.title}
           className="w-full h-48 object-cover"
         />
-        <FavoriteButton isFavorite={favorites.includes(car.id)} onClick={(e) => handleFavoriteToggle(e)} />
+        <FavoriteButton isFavorite={favorites.includes(car.slug)} onClick={(e) => handleFavoriteToggle(e)} />
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
           <Badge className="bg-blue-500 text-white">{car.year}</Badge>
           <Badge className="bg-blue-800 ml-2 text-white">{car.mileage}</Badge>
@@ -231,7 +235,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   );
 
   const listContent = (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+    <Card className="overflow-hslugden hover:shadow-lg transition-shadow duration-300">
       <div className="flex flex-col md:flex-row">
         <div className="relative md:w-1/3">
           <Img
@@ -242,7 +246,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
             alt={car.title}
             className="w-full h-48 md:h-full object-cover"
           />
-          <FavoriteButton isFavorite={favorites.includes(car.id)} onClick={handleFavoriteToggle} />
+          <FavoriteButton isFavorite={favorites.includes(car.slug)} onClick={handleFavoriteToggle} />
         </div>
         <CardContent className="md:w-2/3 p-4 md:p-6">
           <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4">
@@ -315,7 +319,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
       transition={{ duration: 0.3 }}
       className="w-full"
     >
-      {gridContent}
+      {grslugContent}
     </motion.div>
   );
 });

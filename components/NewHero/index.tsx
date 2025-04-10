@@ -41,7 +41,7 @@ const HeroSection: React.FC = () => {
         ease: [0.6, -0.05, 0.01, 0.99],
         delay: 0.2
       }}
-      className="relative w-full h-[600px] overflow-hidden rounded-2xl shadow-2xl"
+      className="relative w-full h-[550px] overflow-hidden rounded-2xl shadow-2xl"
     >
       {/* Background Image with Overlay */}
       <div 
@@ -108,7 +108,7 @@ const HeroSection: React.FC = () => {
             ease: [0.6, -0.05, 0.01, 0.99],
             delay: 0.7
           }}
-          className="w-full mt-10 md:mt-16 flex flex-col md:flex-row items-center md:items-start"
+          className="w-full md:mt-10 md:mt-16 flex flex-col md:flex-row items-center md:items-start"
         >
           <div className="w-full md:w-2/3 backdrop-blur-sm bg-white/10 rounded-xl p-4 shadow-xl">
             <MobileFilters

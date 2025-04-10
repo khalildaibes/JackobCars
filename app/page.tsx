@@ -382,7 +382,7 @@ function HomeContent() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="flex flex-col w-full overflow-hidden"
+      className="flex flex-col w-full overflow-hidden pt-[10px]"
     >
       {/* 1. Hero Banner Section */}
       <motion.section 
@@ -395,7 +395,7 @@ function HomeContent() {
         }}
         className="w-full relative"
       >
-        <HeroSection />
+        <HeroSection  />
       </motion.section>
 
       {/* 4. Latest News Section - Industry Updates */}
@@ -437,7 +437,7 @@ function HomeContent() {
                   }}
                 >
                   <Link href={`/news/${article.slug}`} className="group block">
-                    <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+                    <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl ">
                       <div className="aspect-[16/9] overflow-hidden">
                         <Img
                           src={`http://68.183.215.202${article.imageUrl}`}

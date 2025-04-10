@@ -1,0 +1,1219 @@
+<div data-layer="details v1" className="w-[1920px] h-[7036.19px] relative bg-white">
+  <div data-layer="Section → Main" className="w-[1920px] h-[6090.59px] left-0 top-[103.75px] absolute">
+    <div data-layer="Background" className="w-[1920px] h-20 left-0 top-0 absolute bg-[#050b20]">
+      <div data-layer="Background" className="w-[1920px] h-20 left-0 top-0 absolute bg-white rounded-tl-[80px] rounded-tr-[80px]" />
+    </div>
+    <div data-layer="Ordered List" className="w-[685px] h-[27.75px] left-[260px] top-[80px] absolute">
+      <div data-layer="Item → Link" className="w-[41px] h-[27.75px] left-0 top-[-0.88px] absolute">
+        <div data-layer="Home" className="w-[41.33px] h-[27.75px] left-0 top-0 absolute justify-center text-[#405ff2] text-[15px] font-normal font-['DM_Sans'] leading-7">Home</div>
+      </div>
+      <div data-layer="Item" className="w-[68.20px] h-[27.75px] left-[41px] top-0 absolute">
+        <div data-layer="/" className="w-[5.81px] h-3.5 left-[5px] top-[6px] absolute justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-[14px]">/</div>
+        <div data-layer="Link" className="w-[52.70px] h-[27.75px] left-[15.50px] top-[-0.88px] absolute">
+          <div data-layer="Listings" className="w-[53.06px] h-[27.75px] left-0 top-0 absolute justify-center text-[#405ff2] text-[15px] font-normal font-['DM_Sans'] leading-7">Listings</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[145.31px] h-[27.75px] left-[109.20px] top-0 absolute">
+        <div data-layer="/" className="w-[5.81px] h-3.5 left-[5px] top-[6px] absolute justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-[14px]">/</div>
+        <div data-layer="Toyota Camry New" className="w-[130.11px] h-[27.75px] left-[15.50px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Toyota Camry New</div>
+      </div>
+    </div>
+    <div data-layer="Heading 2 → Toyota Camry New" className="w-[365.28px] h-12 left-[260px] top-[122.75px] absolute justify-center text-[#050b20] text-[40px] font-bold font-['DM_Sans'] leading-[48px]">Toyota Camry New</div>
+    <div data-layer="3.5 D5 PowerPulse Momentum 5dr AWD Geartronic Estate" className="w-[403.44px] h-[27.75px] left-[260px] top-[180.75px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">3.5 D5 PowerPulse Momentum 5dr AWD Geartronic Estate</div>
+    <div data-layer="Background" className="w-[104.11px] h-[39.75px] left-[260px] top-[233.50px] absolute bg-[#e9f2ff] rounded-[40px]">
+      <div data-layer="Icon" className="size-[18px] left-[20px] top-[9.72px] absolute overflow-hidden">
+        <div data-layer="Vector" className="size-[18px] left-0 top-0 absolute bg-[#405ff2]" />
+      </div>
+      <div data-layer="2023" className="w-[36.42px] h-[27.75px] left-[48px] top-[5.12px] absolute justify-center text-[#405ff2] text-[15px] font-normal font-['DM_Sans'] leading-7">2023</div>
+    </div>
+    <div data-layer="Background" className="w-[127.13px] h-[39.75px] left-[374.11px] top-[233.50px] absolute bg-[#e9f2ff] rounded-[40px]">
+      <div data-layer="Icon" className="size-[18px] left-[20px] top-[9.72px] absolute overflow-hidden">
+        <div data-layer="Vector" className="w-[18px] h-[14.67px] left-0 top-[1.68px] absolute bg-[#405ff2]" />
+      </div>
+      <div data-layer="20 miles" className="w-[59.50px] h-[27.75px] left-[48px] top-[5.12px] absolute justify-center text-[#405ff2] text-[15px] font-normal font-['DM_Sans'] leading-7">20 miles</div>
+    </div>
+    <div data-layer="Background" className="w-[140.34px] h-[39.75px] left-[511.23px] top-[233.50px] absolute bg-[#e9f2ff] rounded-[40px]">
+      <div data-layer="Icon" className="size-[18px] left-[20px] top-[9.72px] absolute overflow-hidden">
+        <div data-layer="Vector" className="w-[16.08px] h-[14.64px] left-[0.96px] top-[1.68px] absolute bg-[#405ff2]" />
+      </div>
+      <div data-layer="Link" className="w-[72.34px] h-[27.75px] left-[48px] top-[5.12px] absolute">
+        <div data-layer="Automatic" className="w-[72.65px] h-[27.75px] left-0 top-0 absolute justify-center text-[#405ff2] text-[15px] font-normal font-['DM_Sans'] leading-7">Automatic</div>
+      </div>
+    </div>
+    <div data-layer="Background" className="w-[107.92px] h-[39.75px] left-[661.58px] top-[233.50px] absolute bg-[#e9f2ff] rounded-[40px]">
+      <div data-layer="Icon" className="size-[18px] left-[20px] top-[9.72px] absolute overflow-hidden">
+        <div data-layer="Vector" className="w-[16.92px] h-[18px] left-[0.54px] top-0 absolute bg-[#405ff2]" />
+      </div>
+      <div data-layer="Link" className="w-[39.92px] h-[27.75px] left-[48px] top-[5.12px] absolute">
+        <div data-layer="Petrol" className="w-[40.24px] h-[27.75px] left-0 top-0 absolute justify-center text-[#405ff2] text-[15px] font-normal font-['DM_Sans'] leading-7">Petrol</div>
+      </div>
+    </div>
+    <div data-layer="Container" className="w-[87.28px] h-9 left-[1343.70px] top-[144.50px] absolute">
+      <div data-layer="Link" className="w-[87.28px] h-5 left-0 top-[9.50px] absolute">
+        <div data-layer="Share" className="w-[43.61px] h-[27.75px] left-0 top-[-3.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Share </div>
+        <div data-layer="Border" className="size-9 left-[51.28px] top-[-9.50px] absolute rounded-[18px] outline outline-1 outline-offset-[-1px] outline-[#e9e9e9]">
+          <div data-layer="Icon" className="size-[13px] left-[11.50px] top-[11.50px] absolute overflow-hidden">
+            <div data-layer="Vector" className="w-[12.05px] h-[13px] left-[0.48px] top-0 absolute bg-[#050b20]" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div data-layer="Link" className="w-[78.64px] h-9 left-[1450.98px] top-[144.50px] absolute">
+      <div data-layer="Save" className="w-[33.04px] h-[27.75px] left-0 top-[4.13px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Save</div>
+      <div data-layer="Background+Border" className="size-9 left-[42.65px] top-0 absolute bg-white rounded-[18px] outline outline-1 outline-offset-[-1px] outline-[#e9e9e9]">
+        <div data-layer="Icon" className="size-3 left-[12px] top-[12px] absolute overflow-hidden">
+          <div data-layer="Vector" className="w-[9.36px] h-3 left-[1.32px] top-0 absolute bg-[#050b20]" />
+        </div>
+      </div>
+    </div>
+    <div data-layer="Link" className="w-[110.38px] h-9 left-[1549.63px] top-[144.50px] absolute">
+      <div data-layer="Compare" className="w-[64.78px] h-[27.75px] left-0 top-[4.13px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Compare</div>
+      <div data-layer="Background+Border" className="size-9 left-[74.37px] top-0 absolute bg-white rounded-[18px] outline outline-1 outline-offset-[-1px] outline-[#e9e9e9]">
+        <div data-layer="Icon" className="size-3 left-[12px] top-[12px] absolute overflow-hidden">
+          <div data-layer="Vector" className="w-[9.60px] h-3 left-[1.20px] top-0 absolute bg-[#050b20]" />
+        </div>
+      </div>
+    </div>
+    <div data-layer="$40,000" className="w-[128.99px] h-[45px] left-[1531.41px] top-[195.50px] absolute justify-center text-[#050b20] text-3xl font-bold font-['DM_Sans'] leading-[45px]">$40,000</div>
+    <div data-layer="Link" className="w-[169.66px] h-5 left-[1490.34px] top-[248.50px] absolute">
+      <div data-layer="Icon" className="size-[18px] left-0 top-[0.72px] absolute overflow-hidden">
+        <div data-layer="Vector" className="w-[16.92px] h-[16.86px] left-[0.54px] top-[0.54px] absolute bg-[#050b20]" />
+      </div>
+      <div data-layer="Make An Offer Price" className="w-[144.08px] h-[27.75px] left-[26px] top-[-3.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7"> Make An Offer Price</div>
+    </div>
+    <div data-layer="Container" className="w-[1400px] h-[550px] left-[260px] top-[293.25px] absolute rounded-2xl overflow-hidden">
+      <div data-layer="Link" className="w-[812.48px] h-[550px] left-0 top-0 absolute">
+        <img data-layer="car8-qgcqjcne9diluefjkeisezftm5aptwpff8w6kr9wn0.jpg" className="w-[812px] h-[550px] left-0 top-0 absolute" src="https://placehold.co/812x550" />
+      </div>
+      <div data-layer="Background" className="w-[89.05px] h-[29.89px] left-[30px] top-[30px] absolute bg-[#405ff2] rounded-[30px]">
+        <div data-layer="Featured" className="w-[59.43px] h-[25.90px] left-[15px] top-[1.05px] absolute justify-center text-white text-sm font-medium font-['DM_Sans'] capitalize leading-relaxed">Featured</div>
+      </div>
+      <div data-layer="Link" className="w-[104.23px] h-[29.89px] left-[30px] top-[30px] absolute bg-[#3d923a] rounded-[30px]">
+        <div data-layer="Great Price" className="w-[74.54px] h-[25.90px] left-[15px] top-[1.05px] absolute justify-center text-white text-sm font-medium font-['DM_Sans'] capitalize leading-relaxed">Great Price</div>
+      </div>
+      <div data-layer="Link" className="w-[102.47px] h-[39.75px] left-[10px] top-[500.25px] absolute bg-white rounded-xl">
+        <div data-layer="Icon" className="size-[17px] left-[20px] top-[10.22px] absolute overflow-hidden">
+          <div data-layer="Vector" className="size-[17px] left-0 top-0 absolute bg-[#050b20]" />
+        </div>
+        <div data-layer="Video" className="w-[40.79px] h-[27.75px] left-[42px] top-[5.12px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Video</div>
+      </div>
+      <div data-layer="Link" className="w-[283.75px] h-[269.75px] left-[822.48px] top-0 absolute">
+        <img data-layer="car3-qgcqjcn7ttjna35nt7h40iewaj7qgu8kef3ibw4wi4.jpg" className="w-[283.75px] h-[269.75px] left-0 top-0 absolute" src="https://placehold.co/284x270" />
+      </div>
+      <div data-layer="Link" className="w-[283.75px] h-[269.75px] left-[1116.23px] top-0 absolute">
+        <img data-layer="car11-qgcqjcn7ttjna35nt7h40iewaj7qgu8kef3ibw4wi4.jpg" className="w-[283.75px] h-[269.75px] left-0 top-0 absolute" src="https://placehold.co/284x270" />
+      </div>
+      <div data-layer="Link" className="w-[283.75px] h-[269.75px] left-[822.48px] top-[279.75px] absolute">
+        <img data-layer="car10-qgcqjcn7ttjna35nt7h40iewaj7qgu8kef3ibw4wi4.jpg" className="w-[283.75px] h-[269.75px] left-0 top-0 absolute" src="https://placehold.co/284x270" />
+      </div>
+      <div data-layer="Link" className="w-[283.75px] h-[269.75px] left-[1116.23px] top-[279.75px] absolute">
+        <img data-layer="car1-qgcqjcn7ttjna35nt7h40iewaj7qgu8kef3ibw4wi4.jpg" className="w-[283.75px] h-[269.75px] left-0 top-0 absolute" src="https://placehold.co/284x270" />
+      </div>
+    </div>
+    <div data-layer="Heading 2 → Car Overview" className="w-[164.29px] h-[26px] left-[260px] top-[893.25px] absolute justify-center text-[#050b20] text-[26px] font-medium font-['DM_Sans'] leading-relaxed">Car Overview</div>
+    <div data-layer="List" className="w-[455.50px] h-[276.50px] left-[260px] top-[951.25px] absolute">
+      <div data-layer="Item" className="w-[455.50px] h-[27.75px] left-0 top-0 absolute overflow-hidden">
+        <div data-layer="Icon" className="size-[18px] left-0 top-0 absolute overflow-hidden">
+          <div data-layer="Vector" className="w-[15.72px] h-[11.28px] left-[1.14px] top-[3.36px] absolute bg-[#050b20]" />
+        </div>
+        <div data-layer="Body" className="w-9 h-[27.75px] left-[30px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Body</div>
+        <div data-layer="Link" className="w-[44.23px] h-[27.75px] left-[227.75px] top-[-0.88px] absolute">
+          <div data-layer="Sedan" className="w-[44.57px] h-[27.75px] left-0 top-0 absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">Sedan</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[455.50px] h-[27.75px] left-0 top-[49.75px] absolute overflow-hidden">
+        <div data-layer="Icon" className="size-[18px] left-0 top-0 absolute overflow-hidden">
+          <div data-layer="Vector" className="w-[18px] h-[14.67px] left-0 top-[1.68px] absolute bg-[#050b20]" />
+        </div>
+        <div data-layer="Mileage" className="w-[53.22px] h-[27.75px] left-[30px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Mileage</div>
+        <div data-layer="20" className="w-[19.19px] h-[27.75px] left-[227.75px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">20</div>
+      </div>
+      <div data-layer="Item" className="w-[455.50px] h-[27.75px] left-0 top-[99.50px] absolute overflow-hidden">
+        <div data-layer="Icon" className="size-[18px] left-0 top-0 absolute overflow-hidden">
+          <div data-layer="Vector" className="w-[16.92px] h-[18px] left-[0.54px] top-0 absolute bg-[#050b20]" />
+        </div>
+        <div data-layer="Fuel Type" className="w-[66.71px] h-[27.75px] left-[30px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Fuel Type</div>
+        <div data-layer="Link" className="w-[41.03px] h-[27.75px] left-[227.75px] top-[-0.88px] absolute">
+          <div data-layer="Petrol" className="w-[41.36px] h-[27.75px] left-0 top-0 absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">Petrol</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[455.50px] h-[27.75px] left-0 top-[149.25px] absolute overflow-hidden">
+        <div data-layer="Icon" className="size-[18px] left-0 top-0 absolute overflow-hidden">
+          <div data-layer="Vector" className="size-[18px] left-0 top-0 absolute bg-[#050b20]" />
+        </div>
+        <div data-layer="Year" className="w-[30.02px] h-[27.75px] left-[30px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Year</div>
+        <div data-layer="2023" className="w-[36.62px] h-[27.75px] left-[227.75px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">2023</div>
+      </div>
+      <div data-layer="Item" className="w-[455.50px] h-[27.75px] left-0 top-[199px] absolute overflow-hidden">
+        <div data-layer="Icon" className="size-[18px] left-0 top-0 absolute overflow-hidden">
+          <div data-layer="Vector" className="w-[16.08px] h-[14.64px] left-[0.96px] top-[1.68px] absolute bg-[#050b20]" />
+        </div>
+        <div data-layer="Transmission" className="w-[90.89px] h-[27.75px] left-[30px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Transmission</div>
+        <div data-layer="Link" className="w-[74.05px] h-[27.75px] left-[227.75px] top-[-0.88px] absolute">
+          <div data-layer="Automatic" className="w-[74.48px] h-[27.75px] left-0 top-0 absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">Automatic</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[455.50px] h-[27.75px] left-0 top-[248.75px] absolute overflow-hidden">
+        <div data-layer="Icon" className="size-[18px] left-0 top-0 absolute overflow-hidden">
+          <div data-layer="Vector" className="size-[18px] left-0 top-0 absolute bg-[#050b20]" />
+        </div>
+        <div data-layer="Drive Type" className="w-[73.76px] h-[27.75px] left-[30px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Drive Type</div>
+        <div data-layer="Link" className="w-[196.47px] h-[27.75px] left-[227.75px] top-[-0.88px] absolute">
+          <div data-layer="All-Wheel Drive (AWD/4WD)" className="w-[197.28px] h-[27.75px] left-0 top-0 absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">All-Wheel Drive (AWD/4WD)</div>
+        </div>
+      </div>
+    </div>
+    <div data-layer="List" className="w-[455.50px] h-[276.50px] left-[735.50px] top-[951.25px] absolute">
+      <div data-layer="Item" className="w-[455.50px] h-[27.75px] left-0 top-0 absolute overflow-hidden">
+        <div data-layer="Icon" className="size-[18px] left-0 top-0 absolute overflow-hidden">
+          <div data-layer="Vector" className="w-[16.80px] h-[18px] left-[0.60px] top-0 absolute bg-[#050b20]" />
+        </div>
+        <div data-layer="Condition" className="w-[68.58px] h-[27.75px] left-[30px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Condition</div>
+        <div data-layer="Link" className="w-[30.66px] h-[27.75px] left-[227.75px] top-[-0.88px] absolute">
+          <div data-layer="New" className="w-[31.05px] h-[27.75px] left-0 top-0 absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">New</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[455.50px] h-[27.75px] left-0 top-[49.75px] absolute overflow-hidden">
+        <div data-layer="Icon" className="size-[18px] left-0 top-0 absolute overflow-hidden">
+          <div data-layer="Vector" className="w-[18px] h-[12.36px] left-0 top-[2.82px] absolute bg-[#050b20]" />
+        </div>
+        <div data-layer="Engine Size" className="w-[78.20px] h-[27.75px] left-[30px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Engine Size</div>
+        <div data-layer="3.5" className="w-[21.71px] h-[27.75px] left-[227.75px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">3.5</div>
+      </div>
+      <div data-layer="Item" className="w-[455.50px] h-[27.75px] left-0 top-[99.50px] absolute overflow-hidden">
+        <div data-layer="Icon" className="size-[18px] left-0 top-0 absolute overflow-hidden">
+          <div data-layer="Vector" className="size-[18px] left-0 top-0 absolute bg-[#050b20]" />
+        </div>
+        <div data-layer="Door" className="w-[33.97px] h-[27.75px] left-[30px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Door</div>
+        <div data-layer="Link" className="w-[54.91px] h-[27.75px] left-[227.75px] top-[-0.88px] absolute">
+          <div data-layer="4 Doors" className="w-[55.28px] h-[27.75px] left-0 top-0 absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">4 Doors</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[455.50px] h-[27.75px] left-0 top-[149.25px] absolute overflow-hidden">
+        <div data-layer="Icon" className="size-[18px] left-0 top-0 absolute overflow-hidden">
+          <div data-layer="Vector" className="size-[18px] left-0 top-0 absolute bg-[#050b20]" />
+        </div>
+        <div data-layer="Cylinder" className="w-[58.52px] h-[27.75px] left-[30px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Cylinder</div>
+        <div data-layer="Link" className="w-[13.56px] h-[27.75px] left-[227.75px] top-[-0.88px] absolute">
+          <div data-layer="12" className="w-[13.92px] h-[27.75px] left-0 top-0 absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">12</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[455.50px] h-[27.75px] left-0 top-[199px] absolute overflow-hidden">
+        <div data-layer="Icon" className="size-[18px] left-0 top-0 absolute overflow-hidden">
+          <div data-layer="Vector" className="size-[18px] left-0 top-0 absolute bg-[#050b20]" />
+        </div>
+        <div data-layer="Color" className="w-[37.76px] h-[27.75px] left-[30px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Color</div>
+        <div data-layer="Link" className="w-[37.78px] h-[27.75px] left-[227.75px] top-[-0.88px] absolute">
+          <div data-layer="Black" className="w-[38.09px] h-[27.75px] left-0 top-0 absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">Black</div>
+        </div>
+        <div data-layer="," className="w-[7.23px] h-[27.75px] left-[265.53px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">, </div>
+        <div data-layer="Link" className="w-[30.27px] h-[27.75px] left-[272.41px] top-[-0.88px] absolute">
+          <div data-layer="Blue" className="w-[30.65px] h-[27.75px] left-0 top-0 absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">Blue</div>
+        </div>
+        <div data-layer="," className="w-[7.23px] h-[27.75px] left-[302.67px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">, </div>
+        <div data-layer="Link" className="w-[41.92px] h-[27.75px] left-[309.55px] top-[-0.88px] absolute">
+          <div data-layer="White" className="w-[42.25px] h-[27.75px] left-0 top-0 absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">White</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[455.50px] h-[27.75px] left-0 top-[248.75px] absolute overflow-hidden">
+        <div data-layer="Icon" className="size-[18px] left-0 top-0 absolute overflow-hidden">
+          <div data-layer="Vector" className="w-[14.40px] h-[18px] left-[1.80px] top-0 absolute bg-[#050b20]" />
+        </div>
+        <div data-layer="VIN" className="w-[24.26px] h-[27.75px] left-[30px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">VIN</div>
+        <div data-layer="MCB123818" className="w-[78.84px] h-[27.75px] left-[227.75px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">MCB123818</div>
+      </div>
+    </div>
+    <div data-layer="Horizontal Divider" className="w-[931px] h-px left-[260px] top-[1277.75px] absolute border-t border-[#e1e1e1]" />
+    <div data-layer="Heading 2 → Description" className="w-[142.56px] h-[26px] left-[260px] top-[1328.75px] absolute justify-center text-[#050b20] text-[26px] font-medium font-['DM_Sans'] leading-relaxed">Description</div>
+    <div data-layer="Quisque imperdiet dignissim enim dictum finibus. Sed consectetutr convallis enim eget laoreet. Aenean vitae nisl mollis, porta risus vel, dapibus lectus. Etiam ac suscipit eros, eget maximus" className="w-[906.42px] h-[55.50px] left-[260px] top-[1385.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Quisque imperdiet dignissim enim dictum finibus. Sed consectetutr convallis enim eget laoreet. Aenean vitae nisl mollis, porta risus<br/>vel, dapibus lectus. Etiam ac suscipit eros, eget maximus</div>
+    <div data-layer="Etiam sit amet ex pharetra, venenatis ante vehicula, gravida sapien. Fusce eleifend vulputate nibh, non cursus augue placerat pellentesque. Sed venenatis risus nec felis mollis, in pharetra urna euismod. Morbi aliquam ut turpis sit amet ultrices. Vestibulum mattis blandit nisl, et tristique elit scelerisque nec. Fusce eleifend laoreet dui eget aliquet. Ut rutrum risus et nunc pretium scelerisque." className="w-[929.59px] h-[83.25px] left-[260px] top-[1461.38px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Etiam sit amet ex pharetra, venenatis ante vehicula, gravida sapien. Fusce eleifend vulputate nibh, non cursus augue placerat<br/>pellentesque. Sed venenatis risus nec felis mollis, in pharetra urna euismod. Morbi aliquam ut turpis sit amet ultrices. Vestibulum<br/>mattis blandit nisl, et tristique elit scelerisque nec. Fusce eleifend laoreet dui eget aliquet. Ut rutrum risus et nunc pretium scelerisque.</div>
+    <div data-layer="Link" className="w-[286.47px] h-[53.75px] left-[260px] top-[1565.50px] absolute bg-[#405ff2]/10 rounded-xl">
+      <div data-layer="Icon" className="size-[22px] left-[40px] top-[14.22px] absolute overflow-hidden">
+        <div data-layer="Vector" className="w-[17.60px] h-[22px] left-[2.20px] top-0 absolute bg-[#405ff2]" />
+      </div>
+      <div data-layer="Schedule-Test-Drive.pdf" className="w-[173.96px] h-[27.75px] left-[72.84px] top-[12.12px] absolute justify-center text-[#405ff2] text-[15px] font-medium font-['DM_Sans'] capitalize leading-7">Schedule-Test-Drive.pdf</div>
+    </div>
+    <div data-layer="Link" className="w-[236.77px] h-[53.75px] left-[561.47px] top-[1565.50px] absolute bg-[#405ff2]/10 rounded-xl">
+      <div data-layer="Icon" className="size-[22px] left-[40px] top-[14.22px] absolute overflow-hidden">
+        <div data-layer="Vector" className="w-[17.60px] h-[22px] left-[2.20px] top-0 absolute bg-[#405ff2]" />
+      </div>
+      <div data-layer="Car-Brochure.pdf" className="w-[124.31px] h-[27.75px] left-[72.84px] top-[12.12px] absolute justify-center text-[#405ff2] text-[15px] font-medium font-['DM_Sans'] capitalize leading-7">Car-Brochure.pdf</div>
+    </div>
+    <div data-layer="Horizontal Divider" className="w-[931px] h-px left-[260px] top-[1679.25px] absolute border-t border-[#e1e1e1]" />
+    <div data-layer="Heading 2 → Features" className="w-[106.94px] h-[26px] left-[260px] top-[1730.25px] absolute justify-center text-[#050b20] text-[26px] font-medium font-['DM_Sans'] leading-relaxed">Features</div>
+    <div data-layer="Interior" className="w-[61.91px] h-[33.30px] left-[260px] top-[1788.25px] absolute justify-center text-[#050b20] text-lg font-medium font-['DM_Sans'] leading-[33.30px]">Interior</div>
+    <div data-layer="List" className="w-[232.75px] h-[254.25px] left-[260px] top-[1826.55px] absolute">
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-0 absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Air Conditioner" className="w-[109.79px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Air Conditioner</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[37.75px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Digital Odometer" className="w-[122.95px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Digital Odometer</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[75.50px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Heater" className="w-[50.77px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Heater</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[113.25px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Leather Seats" className="w-[99.55px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Leather Seats</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[151px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Panoramic Moonroof" className="w-[148.77px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Panoramic Moonroof</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[188.75px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Tachometer" className="w-[87.27px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Tachometer</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[226.50px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Touchscreen Display" className="w-[147.56px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Touchscreen Display</div>
+      </div>
+    </div>
+    <div data-layer="Safety" className="w-[54.67px] h-[33.30px] left-[492.75px] top-[1788.25px] absolute justify-center text-[#050b20] text-lg font-medium font-['DM_Sans'] leading-[33.30px]">Safety</div>
+    <div data-layer="List" className="w-[232.75px] h-[254.25px] left-[492.75px] top-[1826.55px] absolute">
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-0 absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Anti-lock Braking" className="w-[123.81px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Anti-lock Braking</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[37.75px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Brake Assist" className="w-[88.32px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Brake Assist</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[75.50px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Child Safety Locks" className="w-[131.88px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Child Safety Locks</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[113.25px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Driver Air Bag" className="w-[98.08px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Driver Air Bag</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[151px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Power Door Locks" className="w-[127.87px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Power Door Locks</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[188.75px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Stability Control" className="w-[116.93px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Stability Control</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[226.50px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Traction Control" className="w-[116.65px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Traction Control</div>
+      </div>
+    </div>
+    <div data-layer="Exterior" className="w-[66.44px] h-[33.30px] left-[725.50px] top-[1788.25px] absolute justify-center text-[#050b20] text-lg font-medium font-['DM_Sans'] leading-[33.30px]">Exterior</div>
+    <div data-layer="List" className="w-[232.75px] h-[141px] left-[725.50px] top-[1826.55px] absolute">
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-0 absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Fog Lights Front" className="w-[115.60px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Fog Lights Front</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[37.75px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Rain Sensing Wiper" className="w-[136.89px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Rain Sensing Wiper</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[75.50px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Rear Spoiler" className="w-[87.02px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Rear Spoiler</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[113.25px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Windows - Electric" className="w-[136.45px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Windows - Electric</div>
+      </div>
+    </div>
+    <div data-layer="Comfort & Convenience" className="w-[205.27px] h-[33.30px] left-[958.25px] top-[1788.25px] absolute justify-center text-[#050b20] text-lg font-medium font-['DM_Sans'] leading-[33.30px]">Comfort & Convenience</div>
+    <div data-layer="List" className="w-[232.75px] h-[178.75px] left-[958.25px] top-[1826.55px] absolute">
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-0 absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Android Auto" className="w-[96.43px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Android Auto</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[37.75px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Apple CarPlay" className="w-[101.77px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Apple CarPlay</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[75.50px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Bluetooth" className="w-[71.22px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Bluetooth</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[113.25px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="HomeLink" className="w-[72.98px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> HomeLink</div>
+      </div>
+      <div data-layer="Item" className="w-[232.75px] h-[27.75px] left-0 top-[151px] absolute">
+        <div data-layer="Overlay" className="size-[18px] left-0 top-[5.22px] absolute bg-[#405ff2]/5 rounded-[9px]">
+          <div data-layer="Symbol" className="w-[18.31px] h-[18px] left-0 top-0 absolute text-center justify-center text-[#405ff2] text-[8px] font-black font-['Font_Awesome_5_Free'] leading-[18px]"></div>
+        </div>
+        <div data-layer="Power Steering" className="w-[108.01px] h-[27.75px] left-[28px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7"> Power Steering</div>
+      </div>
+    </div>
+    <div data-layer="Horizontal Divider" className="w-[931px] h-px left-[260px] top-[2130.80px] absolute border-t border-[#e1e1e1]" />
+    <div data-layer="Heading 2 → Dimensions & Capacity" className="w-[287.90px] h-[26px] left-[260px] top-[2181.80px] absolute justify-center text-[#050b20] text-[26px] font-medium font-['DM_Sans'] leading-relaxed">Dimensions & Capacity</div>
+    <div data-layer="List" className="w-[546.61px] h-[276.50px] left-[260px] top-[2239.80px] absolute">
+      <div data-layer="Item" className="w-[546.61px] h-[27.75px] left-0 top-0 absolute overflow-hidden">
+        <div data-layer="Length" className="w-12 h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Length</div>
+        <div data-layer="4950mm" className="w-[66.16px] h-[27.75px] left-[327.95px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">4950mm</div>
+      </div>
+      <div data-layer="Item" className="w-[546.61px] h-[27.75px] left-0 top-[49.75px] absolute overflow-hidden">
+        <div data-layer="Height" className="w-[45.56px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Height</div>
+        <div data-layer="1550mm" className="w-[61.48px] h-[27.75px] left-[327.95px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">1550mm</div>
+      </div>
+      <div data-layer="Item" className="w-[546.61px] h-[27.75px] left-0 top-[99.50px] absolute overflow-hidden">
+        <div data-layer="Wheelbase" className="w-[77.48px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Wheelbase</div>
+        <div data-layer="2580mm" className="w-[65.27px] h-[27.75px] left-[327.95px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">2580mm</div>
+      </div>
+      <div data-layer="Item" className="w-[546.61px] h-[27.75px] left-0 top-[149.25px] absolute overflow-hidden">
+        <div data-layer="Height (including roof rails)" className="w-[187.74px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Height (including roof rails)</div>
+        <div data-layer="1850mm" className="w-[61.52px] h-[27.75px] left-[327.95px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">1850mm</div>
+      </div>
+      <div data-layer="Item" className="w-[546.61px] h-[27.75px] left-0 top-[199px] absolute overflow-hidden">
+        <div data-layer="Luggage Capacity (Seats Up - Litres)" className="w-[257.01px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Luggage Capacity (Seats Up - Litres)</div>
+        <div data-layer="480" className="w-[29.29px] h-[27.75px] left-[327.95px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">480</div>
+      </div>
+      <div data-layer="Item" className="w-[546.61px] h-[27.75px] left-0 top-[248.75px] absolute overflow-hidden">
+        <div data-layer="Luggage Capacity (Seats Down - Litres)" className="w-[276.67px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Luggage Capacity (Seats Down - Litres)</div>
+        <div data-layer="850" className="w-[29.20px] h-[27.75px] left-[327.95px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">850</div>
+      </div>
+    </div>
+    <div data-layer="List" className="w-[364.39px] h-[276.50px] left-[826.61px] top-[2239.80px] absolute">
+      <div data-layer="Item" className="w-[364.39px] h-[27.75px] left-0 top-0 absolute overflow-hidden">
+        <div data-layer="Width" className="w-[42.36px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Width</div>
+        <div data-layer="2100mm" className="w-[62.06px] h-[27.75px] left-[218.62px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">2100mm</div>
+      </div>
+      <div data-layer="Item" className="w-[364.39px] h-[27.75px] left-0 top-[49.75px] absolute overflow-hidden">
+        <div data-layer="Width (including mirrors)" className="w-[173.97px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Width (including mirrors)</div>
+        <div data-layer="2140mm" className="w-[60.83px] h-[27.75px] left-[218.62px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">2140mm</div>
+      </div>
+      <div data-layer="Item" className="w-[364.39px] h-[27.75px] left-0 top-[99.50px] absolute overflow-hidden">
+        <div data-layer="Gross Vehicle Weight (kg)" className="w-[179.03px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Gross Vehicle Weight (kg)</div>
+        <div data-layer="1550" className="w-[34px] h-[27.75px] left-[218.62px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">1550</div>
+      </div>
+      <div data-layer="Item" className="w-[364.39px] h-[27.75px] left-0 top-[149.25px] absolute overflow-hidden">
+        <div data-layer="Max. Loading Weight (kg)" className="w-[174px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Max. Loading Weight (kg)</div>
+        <div data-layer="1200" className="w-[34.44px] h-[27.75px] left-[218.62px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">1200</div>
+      </div>
+      <div data-layer="Item" className="w-[364.39px] h-[27.75px] left-0 top-[199px] absolute overflow-hidden">
+        <div data-layer="Max. Roof Load (kg)" className="w-[136.01px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Max. Roof Load (kg)</div>
+        <div data-layer="400" className="w-[30.58px] h-[27.75px] left-[218.62px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">400</div>
+      </div>
+      <div data-layer="Item" className="w-[364.39px] h-[27.75px] left-0 top-[248.75px] absolute overflow-hidden">
+        <div data-layer="No. of Seats" className="w-[83.13px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">No. of Seats</div>
+        <div data-layer="5" className="w-[9.52px] h-[27.75px] left-[218.62px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">5</div>
+      </div>
+    </div>
+    <div data-layer="Horizontal Divider" className="w-[931px] h-px left-[260px] top-[2566.30px] absolute border-t border-[#e1e1e1]" />
+    <div data-layer="Heading 2 → Engine and Transmission" className="w-[302.62px] h-[26px] left-[260px] top-[2617.30px] absolute justify-center text-[#050b20] text-[26px] font-medium font-['DM_Sans'] leading-relaxed">Engine and Transmission</div>
+    <div data-layer="List" className="w-[546.61px] h-[127.25px] left-[260px] top-[2675.30px] absolute">
+      <div data-layer="Item" className="w-[546.61px] h-[27.75px] left-0 top-0 absolute overflow-hidden">
+        <div data-layer="Fuel Tank Capacity (Litres)" className="w-[185.17px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Fuel Tank Capacity (Litres)</div>
+        <div data-layer="80" className="w-[19.93px] h-[27.75px] left-[327.95px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">80</div>
+      </div>
+      <div data-layer="Item" className="w-[546.61px] h-[27.75px] left-0 top-[49.75px] absolute overflow-hidden">
+        <div data-layer="Max. Towing Weight - Braked (kg)" className="w-[230.93px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Max. Towing Weight - Braked (kg)</div>
+        <div data-layer="1000" className="w-[36.51px] h-[27.75px] left-[327.95px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">1000</div>
+      </div>
+      <div data-layer="Item" className="w-[546.61px] h-[27.75px] left-0 top-[99.50px] absolute overflow-hidden">
+        <div data-layer="Max. Towing Weight - Unbraked (kg)" className="w-[249.75px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Max. Towing Weight - Unbraked (kg)</div>
+        <div data-layer="1100" className="w-[30.93px] h-[27.75px] left-[327.95px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">1100</div>
+      </div>
+    </div>
+    <div data-layer="List" className="w-[364.39px] h-[105.25px] left-[826.61px] top-[2675.30px] absolute">
+      <div data-layer="Item" className="w-[364.39px] h-[27.75px] left-0 top-0 absolute overflow-hidden">
+        <div data-layer="Minimum Kerbweight (kg)" className="w-[176.82px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Minimum Kerbweight (kg)</div>
+        <div data-layer="350" className="w-[28.87px] h-[27.75px] left-[218.62px] top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">350</div>
+      </div>
+      <div data-layer="Item" className="w-[364.39px] h-[55.50px] left-0 top-[49.75px] absolute overflow-hidden">
+        <div data-layer="Turning Circle - Kerb to Kerb (m)" className="w-[197.39px] h-[55.50px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Turning Circle - Kerb to Kerb<br/>(m)</div>
+        <div data-layer="6500" className="w-[39.52px] h-[27.75px] left-[218.62px] top-[13px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">6500</div>
+      </div>
+    </div>
+    <div data-layer="Horizontal Divider" className="w-[931px] h-px left-[260px] top-[2852.55px] absolute border-t border-[#e1e1e1]" />
+    <div data-layer="Heading 2 → Location" className="w-[106.55px] h-[26px] left-[260px] top-[2903.55px] absolute justify-center text-[#050b20] text-[26px] font-medium font-['DM_Sans'] leading-relaxed">Location</div>
+    <div data-layer="Link" className="w-[157.97px] h-[27.75px] left-[260px] top-[2960.68px] absolute">
+      <div data-layer="329 Kent Ave, Brooklyn" className="w-[158.29px] h-[27.75px] left-0 top-0 absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">329 Kent Ave, Brooklyn</div>
+    </div>
+    <div data-layer="Link" className="w-[116.58px] h-[27.75px] left-[260px] top-[2999.30px] absolute">
+      <div data-layer="Get Direction" className="w-[92.92px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#405ff2] text-[15px] font-normal font-['DM_Sans'] leading-7">Get Direction</div>
+      <div data-layer="SVG" className="size-3.5 left-[102.58px] top-[7.22px] absolute">
+        <div data-layer="Vector" className="size-3.5 left-0 top-0 absolute bg-[#405ff2]" />
+      </div>
+    </div>
+    <div data-layer="Background" className="w-[931px] h-[450px] left-[260px] top-[3047.05px] absolute bg-[#dddddd] rounded-2xl overflow-hidden">
+      <img data-layer="12319.png" className="size-64 left-[378px] top-[-48px] absolute" src="https://placehold.co/256x256" />
+      <img data-layer="12320.png" className="size-64 left-[378px] top-[208px] absolute" src="https://placehold.co/256x256" />
+      <img data-layer="12319.png" className="size-64 left-[122px] top-[-48px] absolute" src="https://placehold.co/256x256" />
+      <img data-layer="12319.png" className="size-64 left-[634px] top-[-48px] absolute" src="https://placehold.co/256x256" />
+      <img data-layer="12320.png" className="size-64 left-[122px] top-[208px] absolute" src="https://placehold.co/256x256" />
+      <img data-layer="12320.png" className="size-64 left-[634px] top-[208px] absolute" src="https://placehold.co/256x256" />
+      <img data-layer="12319.png" className="size-64 left-[-134px] top-[-48px] absolute" src="https://placehold.co/256x256" />
+      <img data-layer="12319.png" className="size-64 left-[890px] top-[-48px] absolute" src="https://placehold.co/256x256" />
+      <img data-layer="12320.png" className="size-64 left-[-134px] top-[208px] absolute" src="https://placehold.co/256x256" />
+      <img data-layer="12320.png" className="size-64 left-[890px] top-[208px] absolute" src="https://placehold.co/256x256" />
+      <div data-layer="Background+Shadow" className="size-[45px] left-[443.50px] top-[177.50px] absolute bg-[#405ff2] rounded-[22.50px] shadow-[0px_18px_50px_0px_rgba(23,26,33,0.30)]">
+        <div data-layer="Icon" className="size-[16.20px] left-[14.40px] top-[13.05px] absolute overflow-hidden">
+          <div data-layer="Vector" className="w-[12.96px] h-[16.20px] left-[1.62px] top-0 absolute bg-white" />
+        </div>
+      </div>
+      <div data-layer="Border" className="w-[30px] h-[60px] left-[12px] top-[12px] absolute rounded-sm outline outline-2 outline-black/20">
+        <div data-layer="Button - Zoom in" className="size-[30px] left-0 top-0 absolute bg-white rounded-tl-xs rounded-tr-xs border-b border-[#cccccc]">
+          <div data-layer="+" className="w-[13.40px] h-[30px] left-[8.89px] top-0 absolute text-center justify-center text-black text-[22px] font-normal font-['Lucida_Console'] leading-[30px]">+</div>
+        </div>
+        <div data-layer="Button - Zoom out" className="size-[30px] left-0 top-[30px] absolute bg-white rounded-bl-xs rounded-br-xs">
+          <div data-layer="−" className="w-[13.40px] h-[30px] left-[8.89px] top-0 absolute text-center justify-center text-black text-[22px] font-normal font-['Lucida_Console'] leading-[30px]">−</div>
+        </div>
+      </div>
+      <div data-layer="Overlay" className="w-[201.36px] h-[16.75px] left-[729.64px] top-[433.25px] absolute bg-white/70">
+        <div data-layer="Link" className="w-[33.03px] h-[16.50px] left-[5px] top-0 absolute">
+          <div data-layer="Leaflet" className="w-[33.23px] h-[16.50px] left-0 top-0 absolute justify-center text-[#0078a8] text-[10.48px] font-medium font-['Helvetica_Neue'] leading-none">Leaflet</div>
+        </div>
+        <div data-layer="| ©" className="w-[20.34px] h-[16.50px] left-[38.03px] top-0 absolute justify-center text-[#333333] text-[11px] font-medium font-['Helvetica_Neue'] leading-none"> | © </div>
+        <div data-layer="Link" className="w-[77.66px] h-[16.50px] left-[58.17px] top-0 absolute">
+          <div data-layer="OpenStreetMap" className="w-[77.86px] h-[16.50px] left-0 top-0 absolute justify-center text-[#0078a8] text-[10.48px] font-medium font-['Helvetica_Neue'] leading-none">OpenStreetMap</div>
+        </div>
+        <div data-layer="contributors" className="w-[60.73px] h-[16.50px] left-[135.83px] top-0 absolute justify-center text-[#333333] text-[10.66px] font-medium font-['Helvetica_Neue'] leading-none"> contributors</div>
+      </div>
+    </div>
+    <div data-layer="Horizontal Divider" className="w-[931px] h-px left-[260px] top-[3547.05px] absolute border-t border-[#e1e1e1]" />
+    <div data-layer="Heading 2 → Financing Calculator" className="w-[250.59px] h-[26px] left-[260px] top-[3598.05px] absolute justify-center text-[#050b20] text-[26px] font-medium font-['DM_Sans'] leading-relaxed">Financing Calculator</div>
+    <div data-layer="Input" className="w-[448.50px] h-[57.75px] left-[261px] top-[3657.05px] absolute bg-white rounded-xl outline outline-1 outline-[#e9e9e9]">
+      <div data-layer="Container" className="w-[418.50px] h-[27.75px] left-[15px] top-[25px] absolute overflow-hidden">
+        <div data-layer="10000" className="w-[46.21px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">10000</div>
+      </div>
+    </div>
+    <div data-layer="Label → Price ($)" className="w-[51.36px] h-[24.05px] left-[275px] top-[3661.05px] absolute justify-center text-[#818181] text-[13px] font-normal font-['DM_Sans'] leading-normal">Price ($)</div>
+    <div data-layer="Input" className="w-[448.50px] h-[57.75px] left-[741.50px] top-[3657.05px] absolute bg-white rounded-xl outline outline-1 outline-[#e9e9e9]">
+      <div data-layer="Container" className="w-[418.50px] h-[27.75px] left-[15px] top-[25px] absolute overflow-hidden">
+        <div data-layer="10" className="w-[15.32px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">10</div>
+      </div>
+    </div>
+    <div data-layer="Label → Interest Rate" className="w-[76.60px] h-[24.05px] left-[755.50px] top-[3661.05px] absolute justify-center text-[#818181] text-[13px] font-normal font-['DM_Sans'] leading-normal">Interest Rate</div>
+    <div data-layer="Input" className="w-[448.50px] h-[57.75px] left-[261px] top-[3746.80px] absolute bg-white rounded-xl outline outline-1 outline-[#e9e9e9]">
+      <div data-layer="Container" className="w-[418.50px] h-[27.75px] left-[15px] top-[25px] absolute overflow-hidden">
+        <div data-layer="3" className="w-[9.28px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">3</div>
+      </div>
+    </div>
+    <div data-layer="Label → Loan Term (year)" className="w-[101.58px] h-[24.05px] left-[275px] top-[3750.80px] absolute justify-center text-[#818181] text-[13px] font-normal font-['DM_Sans'] leading-normal">Loan Term (year)</div>
+    <div data-layer="Input" className="w-[448.50px] h-[57.75px] left-[741.50px] top-[3746.80px] absolute bg-white rounded-xl outline outline-1 outline-[#e9e9e9]">
+      <div data-layer="Container" className="w-[418.50px] h-[27.75px] left-[15px] top-[25px] absolute overflow-hidden">
+        <div data-layer="5000" className="w-[40.39px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">5000</div>
+      </div>
+    </div>
+    <div data-layer="Label → Down Payment" className="w-[90.47px] h-[24.05px] left-[755.50px] top-[3750.80px] absolute justify-center text-[#818181] text-[13px] font-normal font-['DM_Sans'] leading-normal">Down Payment</div>
+    <div data-layer="Button" className="w-[210px] h-[55.75px] left-[260px] top-[3835.55px] absolute bg-[#405ff2] rounded-2xl outline outline-1 outline-offset-[-1px] outline-[#405ff2]">
+      <div data-layer="Calculate" className="w-[70.76px] h-[27.75px] left-[58.77px] top-[13.12px] absolute text-center justify-center text-white text-[15px] font-medium font-['DM_Sans'] leading-7">Calculate </div>
+      <div data-layer="SVG" className="size-3.5 left-[137.22px] top-[21.22px] absolute">
+        <div data-layer="Vector" className="size-3.5 left-0 top-0 absolute bg-white" />
+      </div>
+    </div>
+    <div data-layer="Horizontal Divider" className="w-[931px] h-px left-[260px] top-[3941.30px] absolute border-t border-[#e1e1e1]" />
+    <div data-layer="Heading 3 → 2 Reviews" className="w-[120.19px] h-[31.20px] left-[260px] top-[3991.70px] absolute justify-center text-[#050b20] text-[26px] font-medium font-['DM_Sans'] leading-loose">2 Reviews</div>
+    <div data-layer="Container" className="w-[220px] h-[235px] left-[260px] top-[4053.48px] absolute">
+      <img data-layer="image" className="size-[220px] left-0 top-0 absolute" src="https://placehold.co/220x220" />
+      <div data-layer="Overral Rating" className="w-[97.74px] h-[27.75px] left-[61.30px] top-[68.25px] absolute text-center justify-center text-[#405ff2] text-[15px] font-normal font-['DM_Sans'] leading-7">Overral Rating</div>
+      <div data-layer="4.5" className="w-[61.36px] h-12 left-[79.52px] top-[96px] absolute text-center justify-center text-[#405ff2] text-[40px] font-bold font-['DM_Sans'] leading-[48px]">4.5</div>
+      <div data-layer="Out of 5" className="w-[58.05px] h-[27.75px] left-[81.16px] top-[144px] absolute text-center justify-center text-[#405ff2] text-[15px] font-medium font-['DM_Sans'] leading-7">Out of 5</div>
+    </div>
+    <div data-layer="Paragraph+HorizontalBorder" className="w-[309.13px] h-[57.50px] left-[522.75px] top-[4069.73px] absolute border-b border-[#e9e9e9]">
+      <div data-layer="Comfort" className="w-[63.48px] h-6 left-0 top-[-0.50px] absolute justify-center text-[#050b20] text-base font-medium font-['DM_Sans'] leading-normal">Comfort</div>
+      <div data-layer="Perfect" className="w-[50.26px] h-[22.50px] left-0 top-[24px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-snug">Perfect</div>
+      <div data-layer="Symbol" className="w-[18.31px] h-4 left-[260.45px] top-[14.46px] absolute justify-center text-[#405ff2] text-base font-black font-['Font_Awesome_5_Free'] leading-none"></div>
+      <div data-layer="5.0" className="w-6 h-[29.60px] left-[285.45px] top-[8.16px] absolute justify-center text-[#050b20] text-base font-medium font-['DM_Sans'] leading-[29.60px]">5.0</div>
+    </div>
+    <div data-layer="Paragraph+HorizontalBorder" className="w-[309.13px] h-[57.50px] left-[881.88px] top-[4069.73px] absolute border-b border-[#e9e9e9]">
+      <div data-layer="Interior Design" className="w-[110.25px] h-6 left-0 top-[-0.50px] absolute justify-center text-[#050b20] text-base font-medium font-['DM_Sans'] leading-normal">Interior Design</div>
+      <div data-layer="Good" className="w-[38.90px] h-[22.50px] left-0 top-[24px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-snug">Good</div>
+      <div data-layer="Symbol" className="w-[18.31px] h-4 left-[260.92px] top-[14.46px] absolute justify-center text-[#405ff2] text-base font-black font-['Font_Awesome_5_Free'] leading-none"></div>
+      <div data-layer="4.5" className="w-[23.54px] h-[29.60px] left-[285.92px] top-[8.16px] absolute justify-center text-[#050b20] text-base font-medium font-['DM_Sans'] leading-[29.60px]">4.5</div>
+    </div>
+    <div data-layer="Paragraph+HorizontalBorder" className="w-[309.13px] h-[57.50px] left-[522.75px] top-[4142.23px] absolute border-b border-[#e9e9e9]">
+      <div data-layer="Exterior Styling" className="w-[114.63px] h-6 left-0 top-[-0.50px] absolute justify-center text-[#050b20] text-base font-medium font-['DM_Sans'] leading-normal">Exterior Styling</div>
+      <div data-layer="Perfect" className="w-[50.26px] h-[22.50px] left-0 top-[24px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-snug">Perfect</div>
+      <div data-layer="Symbol" className="w-[18.31px] h-4 left-[260.45px] top-[14.46px] absolute justify-center text-[#405ff2] text-base font-black font-['Font_Awesome_5_Free'] leading-none"></div>
+      <div data-layer="5.0" className="w-6 h-[29.60px] left-[285.45px] top-[8.16px] absolute justify-center text-[#050b20] text-base font-medium font-['DM_Sans'] leading-[29.60px]">5.0</div>
+    </div>
+    <div data-layer="Paragraph+HorizontalBorder" className="w-[309.13px] h-[57.50px] left-[881.88px] top-[4142.23px] absolute border-b border-[#e9e9e9]">
+      <div data-layer="Value For The Money" className="w-[156.73px] h-6 left-0 top-[-0.50px] absolute justify-center text-[#050b20] text-base font-medium font-['DM_Sans'] leading-normal">Value For The Money</div>
+      <div data-layer="Perfect" className="w-[50.26px] h-[22.50px] left-0 top-[24px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-snug">Perfect</div>
+      <div data-layer="Symbol" className="w-[18.31px] h-4 left-[260.45px] top-[14.46px] absolute justify-center text-[#405ff2] text-base font-black font-['Font_Awesome_5_Free'] leading-none"></div>
+      <div data-layer="5.0" className="w-6 h-[29.60px] left-[285.45px] top-[8.16px] absolute justify-center text-[#050b20] text-base font-medium font-['DM_Sans'] leading-[29.60px]">5.0</div>
+    </div>
+    <div data-layer="Paragraph+HorizontalBorder" className="w-[309.13px] h-[57.50px] left-[522.75px] top-[4214.73px] absolute border-b border-[#e9e9e9]">
+      <div data-layer="Performance" className="w-[97.13px] h-6 left-0 top-[-0.50px] absolute justify-center text-[#050b20] text-base font-medium font-['DM_Sans'] leading-normal">Performance</div>
+      <div data-layer="Perfect" className="w-[50.26px] h-[22.50px] left-0 top-[24px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-snug">Perfect</div>
+      <div data-layer="Symbol" className="w-[18.31px] h-4 left-[260.45px] top-[14.46px] absolute justify-center text-[#405ff2] text-base font-black font-['Font_Awesome_5_Free'] leading-none"></div>
+      <div data-layer="5.0" className="w-6 h-[29.60px] left-[285.45px] top-[8.16px] absolute justify-center text-[#050b20] text-base font-medium font-['DM_Sans'] leading-[29.60px]">5.0</div>
+    </div>
+    <div data-layer="Paragraph+HorizontalBorder" className="w-[309.13px] h-[57.50px] left-[881.88px] top-[4214.73px] absolute border-b border-[#e9e9e9]">
+      <div data-layer="Reliability" className="w-[73.35px] h-6 left-0 top-[-0.50px] absolute justify-center text-[#050b20] text-base font-medium font-['DM_Sans'] leading-normal">Reliability</div>
+      <div data-layer="Good" className="w-[38.90px] h-[22.50px] left-0 top-[24px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-snug">Good</div>
+      <div data-layer="Symbol" className="w-[18.31px] h-4 left-[260.92px] top-[14.46px] absolute justify-center text-[#405ff2] text-base font-black font-['Font_Awesome_5_Free'] leading-none"></div>
+      <div data-layer="4.5" className="w-[23.54px] h-[29.60px] left-[285.92px] top-[8.16px] absolute justify-center text-[#050b20] text-base font-medium font-['DM_Sans'] leading-[29.60px]">4.5</div>
+    </div>
+    <div data-layer="Ordered List" className="w-[931px] h-[310.25px] left-[260px] top-[4328.48px] absolute">
+      <div data-layer="Item" className="w-[931px] h-[149px] left-0 top-0 absolute">
+        <div data-layer="Container" className="size-10 left-0 top-0 absolute overflow-hidden">
+          <img data-layer="team2-150x150.jpg" className="size-10 left-0 top-0 absolute rounded-[20px]" src="https://placehold.co/40x40" />
+        </div>
+        <div data-layer="demo" className="w-[50.53px] h-[33.30px] left-[52px] top-[3.35px] absolute justify-center text-[#050b20] text-lg font-medium font-['DM_Sans'] capitalize leading-[33.30px]">demo</div>
+        <div data-layer="November 30, 2023" className="w-[128.53px] h-[25.90px] left-[117.02px] top-[6.10px] absolute justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-relaxed">November 30, 2023</div>
+        <div data-layer="Container" className="w-[85px] h-[18.50px] left-0 top-[60px] absolute overflow-hidden">
+          <div data-layer="List" className="w-[85px] h-[18.50px] left-0 top-0 absolute overflow-hidden">
+            <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-0 top-[3px] absolute justify-center text-[#e1e1e1] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+            <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-[17.92px] top-[3px] absolute justify-center text-[#e1e1e1] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+            <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-[35.84px] top-[3px] absolute justify-center text-[#e1e1e1] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+            <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-[53.77px] top-[3px] absolute justify-center text-[#e1e1e1] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+            <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-[71.69px] top-[3px] absolute justify-center text-[#e1e1e1] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+          </div>
+          <div data-layer="List" className="w-[79.38px] h-[18.50px] left-0 top-0 absolute overflow-hidden">
+            <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-0 top-[3px] absolute justify-center text-[#405ff2] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+            <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-[17.92px] top-[3px] absolute justify-center text-[#405ff2] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+            <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-[35.84px] top-[3px] absolute justify-center text-[#405ff2] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+            <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-[53.77px] top-[3px] absolute justify-center text-[#405ff2] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+            <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-[71.69px] top-[3px] absolute justify-center text-[#405ff2] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+          </div>
+        </div>
+        <div data-layer="4.7" className="w-5 h-[15px] left-[92px] top-[59.50px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-[15px]">4.7</div>
+        <div data-layer="Etiam sit amet ex pharetra, venenatis ante vehicula, gravida sapien. Fusce eleifend vulputate nibh, non cursus augue placerat pellentesque. Sed venenatis risus nec felis mollis." className="w-[862.45px] h-[55.50px] left-0 top-[92.62px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Etiam sit amet ex pharetra, venenatis ante vehicula, gravida sapien. Fusce eleifend vulputate nibh, non cursus augue placerat<br/>pellentesque. Sed venenatis risus nec felis mollis.</div>
+      </div>
+      <div data-layer="Item" className="w-[931px] h-[121.25px] left-0 top-[189px] absolute">
+        <div data-layer="Container" className="size-10 left-0 top-0 absolute overflow-hidden">
+          <img data-layer="team2-150x150.jpg" className="size-10 left-0 top-0 absolute rounded-[20px]" src="https://placehold.co/40x40" />
+        </div>
+        <div data-layer="demo" className="w-[50.53px] h-[33.30px] left-[52px] top-[3.35px] absolute justify-center text-[#050b20] text-lg font-medium font-['DM_Sans'] capitalize leading-[33.30px]">demo</div>
+        <div data-layer="December 16, 2023" className="w-[125.19px] h-[25.90px] left-[117.02px] top-[6.10px] absolute justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-relaxed">December 16, 2023</div>
+        <div data-layer="List" className="w-[85px] h-[18.50px] left-0 top-[60px] absolute overflow-hidden">
+          <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-0 top-[3px] absolute justify-center text-[#e1e1e1] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+          <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-[17.92px] top-[3px] absolute justify-center text-[#e1e1e1] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+          <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-[35.84px] top-[3px] absolute justify-center text-[#e1e1e1] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+          <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-[53.77px] top-[3px] absolute justify-center text-[#e1e1e1] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+          <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-[71.69px] top-[3px] absolute justify-center text-[#e1e1e1] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+        </div>
+        <div data-layer="List" className="w-[85px] h-[18.50px] left-0 top-[60px] absolute overflow-hidden">
+          <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-0 top-[3px] absolute justify-center text-[#405ff2] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+          <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-[17.92px] top-[3px] absolute justify-center text-[#405ff2] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+          <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-[35.84px] top-[3px] absolute justify-center text-[#405ff2] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+          <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-[53.77px] top-[3px] absolute justify-center text-[#405ff2] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+          <div data-layer="Symbol" className="w-[13.60px] h-2.5 left-[71.69px] top-[3px] absolute justify-center text-[#405ff2] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-widest"></div>
+        </div>
+        <div data-layer="5.0" className="w-[22.13px] h-[15px] left-[92px] top-[59.50px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-[15px]">5.0</div>
+        <div data-layer="qweqeqeq" className="w-[74.65px] h-[27.75px] left-0 top-[93.50px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">qweqeqeq</div>
+      </div>
+    </div>
+    <div data-layer="HorizontalBorder" className="w-[931px] h-[674.72px] left-[260px] top-[4678.73px] absolute border-t border-[#e9e9e9]">
+      <div data-layer="Heading 4 → Add a review" className="w-[157.72px] h-[31.20px] left-0 top-[40.40px] absolute justify-center text-[#050b20] text-[26px] font-medium font-['DM_Sans'] leading-loose">Add a review</div>
+      <div data-layer="Form" className="w-[931px] h-[572.53px] left-0 top-[102.19px] absolute">
+        <div data-layer="Comfort" className="w-[58.52px] h-[27.75px] left-0 top-[0.35px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Comfort</div>
+        <div data-layer="List" className="w-[81.25px] h-[18.50px] left-[204px] top-[4.97px] absolute overflow-hidden">
+          <div data-layer="Symbol" className="w-[81.58px] h-2.5 left-0 top-[3px] absolute justify-center text-[#405ff2] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-[5px]"></div>
+        </div>
+        <div data-layer="Interior Design" className="w-[101.22px] h-[27.75px] left-[480.50px] top-[0.35px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Interior Design</div>
+        <div data-layer="List" className="w-[81.25px] h-[18.50px] left-[684.50px] top-[4.97px] absolute overflow-hidden">
+          <div data-layer="Symbol" className="w-[81.58px] h-2.5 left-0 top-[3px] absolute justify-center text-[#405ff2] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-[5px]"></div>
+        </div>
+        <div data-layer="Exterior Styling" className="w-[104.91px] h-[27.75px] left-0 top-[48.44px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Exterior Styling</div>
+        <div data-layer="List" className="w-[81.25px] h-[18.50px] left-[204px] top-[53.06px] absolute overflow-hidden">
+          <div data-layer="Symbol" className="w-[81.58px] h-2.5 left-0 top-[3px] absolute justify-center text-[#405ff2] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-[5px]"></div>
+        </div>
+        <div data-layer="Value For The Money" className="w-[144.51px] h-[27.75px] left-[480.50px] top-[48.44px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Value For The Money</div>
+        <div data-layer="List" className="w-[81.25px] h-[18.50px] left-[684.50px] top-[53.06px] absolute overflow-hidden">
+          <div data-layer="Symbol" className="w-[81.58px] h-2.5 left-0 top-[3px] absolute justify-center text-[#405ff2] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-[5px]"></div>
+        </div>
+        <div data-layer="Performance" className="w-[89.17px] h-[27.75px] left-0 top-[96.53px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Performance</div>
+        <div data-layer="List" className="w-[81.25px] h-[18.50px] left-[204px] top-[101.16px] absolute overflow-hidden">
+          <div data-layer="Symbol" className="w-[81.58px] h-2.5 left-0 top-[3px] absolute justify-center text-[#405ff2] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-[5px]"></div>
+        </div>
+        <div data-layer="Reliability" className="w-[66.57px] h-[27.75px] left-[480.50px] top-[96.53px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Reliability</div>
+        <div data-layer="List" className="w-[81.25px] h-[18.50px] left-[684.50px] top-[101.16px] absolute overflow-hidden">
+          <div data-layer="Symbol" className="w-[81.58px] h-2.5 left-0 top-[3px] absolute justify-center text-[#405ff2] text-[10px] font-black font-['Font_Awesome_5_Free'] leading-[10px] tracking-[5px]"></div>
+        </div>
+        <div data-layer="Input" className="w-[453.50px] h-[57.75px] left-[1px] top-[160.28px] absolute bg-white rounded-xl outline outline-1 outline-[#e9e9e9]">
+          <div data-layer="Container" className="w-[423.50px] h-5 left-[15px] top-[28px] absolute opacity-70 overflow-hidden">
+            <div data-layer="Ali..." className="w-[26.19px] h-5 left-0 top-0 absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans']">Ali...</div>
+          </div>
+        </div>
+        <div data-layer="Label → Name" className="w-[35.34px] h-[24.05px] left-[15px] top-[164.28px] absolute justify-center text-[#818181] text-[13px] font-normal font-['DM_Sans'] leading-normal">Name</div>
+        <div data-layer="Input" className="w-[453.50px] h-[57.75px] left-[476.50px] top-[160.28px] absolute bg-white rounded-xl outline outline-1 outline-[#e9e9e9]">
+          <div data-layer="Container" className="w-[423.50px] h-5 left-[15px] top-[28px] absolute opacity-70 overflow-hidden">
+            <div data-layer="Example..." className="w-[67.88px] h-5 left-0 top-0 absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans']">Example...</div>
+          </div>
+        </div>
+        <div data-layer="Label → Email" className="w-[32.42px] h-[24.05px] left-[490.50px] top-[164.28px] absolute justify-center text-[#818181] text-[13px] font-normal font-['DM_Sans'] leading-normal">Email</div>
+        <div data-layer="Input" className="size-[13px] left-0 top-[244.03px] absolute bg-white rounded-xs border border-[#767676]" />
+        <div data-layer="Label → Save my name, email, and website in this browser for the next time I comment." className="w-[543.58px] h-[27.75px] left-[24px] top-[238.15px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">Save my name, email, and website in this browser for the next time I comment.</div>
+        <div data-layer="Input" className="w-[165.42px] h-[55.75px] left-0 top-[516.78px] absolute bg-[#405ff2] rounded-2xl outline outline-1 outline-offset-[-1px] outline-[#405ff2]">
+          <div data-layer="Submit Review" className="w-[103.78px] h-[27.75px] left-[31px] top-[13.12px] absolute text-center justify-center text-white text-[15px] font-medium font-['DM_Sans'] leading-7">Submit Review</div>
+        </div>
+        <div data-layer="Textarea" className="w-[929px] h-[198px] left-[1px] top-[287.78px] absolute bg-white rounded-xl outline outline-1 outline-[#e9e9e9]" />
+        <div data-layer="Label → Review" className="w-[41.81px] h-[24.05px] left-[15px] top-[291.78px] absolute justify-center text-[#818181] text-[13px] font-normal font-['DM_Sans'] leading-normal">Review</div>
+      </div>
+    </div>
+    <div data-layer="Border" className="w-[399px] h-[462px] left-[1261px] top-[893.25px] absolute rounded-2xl outline outline-1 outline-offset-[-1px] outline-[#e9e9e9]">
+      <div data-layer="Border" className="size-20 left-[31px] top-[31px] absolute rounded-[40px] outline outline-1 outline-offset-[-1px] outline-[#e9e9e9] overflow-hidden">
+        <div data-layer="Link" className="size-[68px] left-[6px] top-[6px] absolute">
+          <img data-layer="test1-150x150.jpg" className="size-[68px] left-0 top-0 absolute rounded-[34px]" src="https://placehold.co/68x68" />
+        </div>
+      </div>
+      <div data-layer="Heading 3 → Link" className="w-[58.78px] h-[26px] left-[31px] top-[122px] absolute">
+        <div data-layer="admin" className="w-[59.16px] h-6 left-0 top-[1px] absolute justify-center text-[#050b20] text-xl font-medium font-['DM_Sans'] leading-normal">admin</div>
+      </div>
+      <div data-layer="943 Broadway, Brooklyn" className="w-[165.72px] h-[27.75px] left-[31px] top-[152px] absolute justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">943 Broadway, Brooklyn</div>
+      <div data-layer="Overlay" className="size-10 left-[31px] top-[191.75px] absolute bg-[#405ff2]/10 rounded-[20px]">
+        <div data-layer="SVG" className="size-[18px] left-[11px] top-[11px] absolute">
+          <div data-layer="Vector" className="w-[13.12px] h-[14.62px] left-[2.44px] top-[1.69px] absolute bg-[#405ff2]" />
+          <div data-layer="Vector" className="size-[4.88px] left-[6.56px] top-[5.44px] absolute bg-[#405ff2]" />
+        </div>
+      </div>
+      <div data-layer="Link" className="w-[94.42px] h-[28.62px] left-[78px] top-[197.01px] absolute">
+        <div data-layer="Get Direction" className="w-[94.91px] h-[27.75px] left-0 top-0 absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">Get Direction</div>
+      </div>
+      <div data-layer="Overlay" className="size-10 left-[209.53px] top-[191.75px] absolute bg-[#405ff2]/10 rounded-[20px]">
+        <div data-layer="SVG" className="size-[18px] left-[11px] top-[11px] absolute">
+          <div data-layer="Vector" className="w-[6.41px] h-[6.40px] left-[10.44px] top-[1.21px] absolute bg-[#405ff2]" />
+          <div data-layer="Vector" className="size-[3.75px] left-[10.44px] top-[3.87px] absolute bg-[#405ff2]" />
+          <div data-layer="Vector" className="w-[15.39px] h-[15.40px] left-[1.16px] top-[1.40px] absolute bg-[#405ff2]" />
+        </div>
+      </div>
+      <div data-layer="Link" className="w-[111.47px] h-[27.75px] left-[256.53px] top-[197.01px] absolute">
+        <div data-layer="+88-123456789" className="w-[111.84px] h-[27.75px] left-0 top-0 absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">+88-123456789</div>
+      </div>
+      <div data-layer="Link" className="w-[337px] h-[55.75px] left-[31px] top-[261.75px] absolute bg-[#405ff2] rounded-2xl outline outline-1 outline-offset-[-1px] outline-[#405ff2]">
+        <div data-layer="Message Dealer" className="w-28 h-[27.75px] left-[100.80px] top-[13.12px] absolute text-center justify-center text-white text-[15px] font-medium font-['DM_Sans'] leading-7">Message Dealer</div>
+        <div data-layer="SVG" className="size-3.5 left-[222.20px] top-[21.22px] absolute">
+          <div data-layer="Vector" className="size-3.5 left-0 top-0 absolute bg-white" />
+        </div>
+      </div>
+      <div data-layer="Link" className="w-[337px] h-[55.75px] left-[31px] top-[332.50px] absolute bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-[#60c961]">
+        <div data-layer="Chat Via Whatsapp" className="w-[141.06px] h-[27.75px] left-[86.13px] top-[13.12px] absolute text-center justify-center text-[#60c961] text-[15px] font-medium font-['DM_Sans'] leading-7">Chat Via Whatsapp </div>
+        <div data-layer="SVG" className="size-3.5 left-[236.88px] top-[21.22px] absolute">
+          <div data-layer="Vector" className="size-3.5 left-0 top-0 absolute bg-[#60c961]" />
+        </div>
+      </div>
+      <div data-layer="Link" className="w-[214.78px] h-5 left-[92.11px] top-[406.25px] absolute">
+        <div data-layer="View All stock at this dealer" className="w-[191.13px] h-[27.75px] left-0 top-[-3.88px] absolute text-center justify-center text-[#050b20] text-[15px] font-normal font-['DM_Sans'] leading-7">View All stock at this dealer</div>
+        <div data-layer="SVG" className="size-3.5 left-[200.78px] top-[4.22px] absolute">
+          <div data-layer="Vector" className="size-3.5 left-0 top-0 absolute bg-[#050b20]" />
+        </div>
+      </div>
+    </div>
+    <div data-layer="Heading 4 → Related Listings" className="w-[310.82px] h-12 left-[260px] top-[5453.45px] absolute justify-center text-[#050b20] text-[40px] font-bold font-['DM_Sans'] leading-[48px]">Related Listings</div>
+    <div data-layer="Link" className="w-[83.05px] h-5 left-[1576.95px] top-[5466.58px] absolute">
+      <div data-layer="View All" className="w-[59.43px] h-[27.75px] left-0 top-[-3.88px] absolute justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">View All </div>
+      <div data-layer="SVG" className="size-3.5 left-[69.05px] top-[4.22px] absolute">
+        <div data-layer="Vector" className="size-3.5 left-0 top-0 absolute bg-[#050b20]" />
+      </div>
+    </div>
+    <div data-layer="Container" className="w-[1430px] h-[544.14px] left-[245px] top-[5531.45px] absolute overflow-hidden">
+      <div data-layer="Article" className="w-[328px] h-[454.14px] left-[15px] top-0 absolute bg-white rounded-2xl overflow-hidden">
+        <div data-layer="Container" className="w-[328px] h-[218.66px] left-0 top-0 absolute overflow-hidden">
+          <div data-layer="Link" className="w-[328px] h-[218.66px] left-0 top-0 absolute">
+            <img data-layer="car6-660x440.jpg" className="w-[328px] h-[218.66px] left-0 top-0 absolute" src="https://placehold.co/328x219" />
+          </div>
+          <div data-layer="Link" className="w-[104.23px] h-[29.89px] left-[20px] top-[23.05px] absolute bg-[#3d923a] rounded-[30px]">
+            <div data-layer="Great Price" className="w-[74.54px] h-[25.90px] left-[15px] top-[1.05px] absolute justify-center text-white text-sm font-medium font-['DM_Sans'] capitalize leading-relaxed">Great Price</div>
+          </div>
+          <div data-layer="Link" className="size-9 left-[272px] top-[20px] absolute">
+            <div data-layer="Background" className="size-9 left-0 top-0 absolute bg-white rounded-[18px]">
+              <div data-layer="Icon" className="size-3 left-[12px] top-[12px] absolute overflow-hidden">
+                <div data-layer="Vector" className="w-[9.36px] h-3 left-[1.32px] top-0 absolute bg-[#050b20]" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-layer="Border" className="w-[328px] h-[235.48px] left-0 top-[218.66px] absolute rounded-bl-2xl rounded-br-2xl border-l border-r border-b border-[#e9e9e9]">
+          <div data-layer="Heading 2 → Link" className="w-[206.41px] h-6 left-[31px] top-[16px] absolute">
+            <div data-layer="Mercedes-Benz, C Class" className="w-[206.77px] h-[21.60px] left-0 top-[1.20px] absolute justify-center text-[#050b20] text-lg font-medium font-['DM_Sans'] leading-snug">Mercedes-Benz, C Class</div>
+          </div>
+          <div data-layer="Container" className="w-[266px] h-4 left-[31px] top-[44.59px] absolute overflow-hidden">
+            <div data-layer="2.0 D5 PowerPulse Momentum 5dr AW… Geartronic Estate" className="w-[257.26px] h-7 left-0 top-[2px] absolute justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-[14px]">2.0 D5 PowerPulse Momentum 5dr AW…<br/>Geartronic Estate</div>
+          </div>
+          <div data-layer="HorizontalBorder" className="w-[266px] h-[69.29px] left-[31px] top-[65.19px] absolute border-t border-[#e9e9e9]">
+            <div data-layer="Icon" className="size-[18px] left-[21.25px] top-[16px] absolute overflow-hidden">
+              <div data-layer="Vector" className="w-[18px] h-[14.67px] left-0 top-[1.68px] absolute bg-[#050b20]" />
+            </div>
+            <div data-layer="100 Miles" className="w-[60.92px] h-3.5 left-0 top-[45.89px] absolute text-center justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-[14px]">100 Miles</div>
+            <div data-layer="Icon" className="size-[18px] left-[120.48px] top-[16px] absolute overflow-hidden">
+              <div data-layer="Vector" className="w-[16.92px] h-[18px] left-[0.54px] top-0 absolute bg-[#050b20]" />
+            </div>
+            <div data-layer="Petrol" className="w-[37.64px] h-3.5 left-[110.86px] top-[45.89px] absolute text-center justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-[14px]">Petrol</div>
+            <div data-layer="Icon" className="size-[18px] left-[223.23px] top-[16px] absolute overflow-hidden">
+              <div data-layer="Vector" className="w-[16.08px] h-[14.64px] left-[0.96px] top-[1.68px] absolute bg-[#050b20]" />
+            </div>
+            <div data-layer="Automatic" className="w-[67.85px] h-3.5 left-[198.48px] top-[45.89px] absolute text-center justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-[14px]">Automatic</div>
+          </div>
+          <div data-layer="HorizontalBorder" className="w-[266px] h-[77.40px] left-[31px] top-[139.08px] absolute border-t border-[#e9e9e9]">
+            <div data-layer="$40,000" className="w-[57.61px] h-[21px] left-0 top-[15.50px] absolute justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] line-through leading-[21px]">$40,000</div>
+            <div data-layer="$35,000" className="w-[84.10px] h-[30px] left-0 top-[37px] absolute justify-center text-[#050b20] text-xl font-bold font-['DM_Sans'] leading-[30px]">$35,000</div>
+            <div data-layer="Link" className="w-[110.23px] h-[27.75px] left-[155.77px] top-[39.25px] absolute">
+              <div data-layer="View Details" className="w-[86.70px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#405ff2] text-[15px] font-medium font-['DM_Sans'] leading-7">View Details</div>
+              <div data-layer="SVG" className="size-3.5 left-[96.23px] top-[7.22px] absolute">
+                <div data-layer="Vector" className="size-3.5 left-0 top-0 absolute bg-[#405ff2]" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-layer="Article" className="w-[328px] h-[433.14px] left-[373px] top-0 absolute bg-white rounded-2xl overflow-hidden">
+        <div data-layer="Container" className="w-[328px] h-[218.66px] left-0 top-0 absolute overflow-hidden">
+          <div data-layer="Link" className="w-[328px] h-[218.66px] left-0 top-0 absolute">
+            <img data-layer="car3-660x440.jpg" className="w-[328px] h-[218.66px] left-0 top-0 absolute" src="https://placehold.co/328x219" />
+          </div>
+          <div data-layer="Link" className="w-[110.38px] h-[29.89px] left-[20px] top-[23.05px] absolute bg-[#405ff2] rounded-[30px]">
+            <div data-layer="Low Mileage" className="w-[80.70px] h-[25.90px] left-[15px] top-[1.05px] absolute justify-center text-white text-sm font-medium font-['DM_Sans'] capitalize leading-relaxed">Low Mileage</div>
+          </div>
+          <div data-layer="Link" className="size-9 left-[272px] top-[20px] absolute">
+            <div data-layer="Background" className="size-9 left-0 top-0 absolute bg-white rounded-[18px]">
+              <div data-layer="Icon" className="size-3 left-[12px] top-[12px] absolute overflow-hidden">
+                <div data-layer="Vector" className="w-[9.36px] h-3 left-[1.32px] top-0 absolute bg-[#050b20]" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-layer="Border" className="w-[328px] h-[214.48px] left-0 top-[218.66px] absolute rounded-bl-2xl rounded-br-2xl border-l border-r border-b border-[#e9e9e9]">
+          <div data-layer="Heading 2 → Link" className="w-[177.95px] h-6 left-[31px] top-[16px] absolute">
+            <div data-layer="Ranger White – 2022" className="w-[178.29px] h-[21.60px] left-0 top-[1.20px] absolute justify-center text-[#050b20] text-lg font-medium font-['DM_Sans'] leading-snug">Ranger White – 2022</div>
+          </div>
+          <div data-layer="Container" className="w-[266px] h-4 left-[31px] top-[44.59px] absolute overflow-hidden">
+            <div data-layer="2.0 D5 PowerPulse Momentum 5dr AW… Geartronic Estate" className="w-[257.26px] h-7 left-0 top-[2px] absolute justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-[14px]">2.0 D5 PowerPulse Momentum 5dr AW…<br/>Geartronic Estate</div>
+          </div>
+          <div data-layer="HorizontalBorder" className="w-[266px] h-[69.29px] left-[31px] top-[65.19px] absolute border-t border-[#e9e9e9]">
+            <div data-layer="Icon" className="size-[18px] left-[32.78px] top-[16px] absolute overflow-hidden">
+              <div data-layer="Vector" className="w-[18px] h-[14.67px] left-0 top-[1.68px] absolute bg-[#050b20]" />
+            </div>
+            <div data-layer="30000 Miles" className="w-[84.04px] h-3.5 left-0 top-[45.89px] absolute text-center justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-[14px]">30000 Miles</div>
+            <div data-layer="Icon" className="size-[18px] left-[142.67px] top-[16px] absolute overflow-hidden">
+              <div data-layer="Vector" className="w-[16.92px] h-[18px] left-[0.54px] top-0 absolute bg-[#050b20]" />
+            </div>
+            <div data-layer="Diesel" className="w-[39.41px] h-3.5 left-[132.16px] top-[45.89px] absolute text-center justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-[14px]">Diesel</div>
+            <div data-layer="Icon" className="size-[18px] left-[233.89px] top-[16px] absolute overflow-hidden">
+              <div data-layer="Vector" className="w-[16.08px] h-[14.64px] left-[0.96px] top-[1.68px] absolute bg-[#050b20]" />
+            </div>
+            <div data-layer="Manual" className="w-[46.58px] h-3.5 left-[219.80px] top-[45.89px] absolute text-center justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-[14px]">Manual</div>
+          </div>
+          <div data-layer="HorizontalBorder" className="w-[266px] h-[56.40px] left-[31px] top-[139.08px] absolute border-t border-[#e9e9e9]">
+            <div data-layer="$25,000" className="w-[83.56px] h-[30px] left-0 top-[16px] absolute justify-center text-[#050b20] text-xl font-bold font-['DM_Sans'] leading-[30px]">$25,000</div>
+            <div data-layer="Link" className="w-[110.23px] h-[27.75px] left-[155.77px] top-[18.25px] absolute">
+              <div data-layer="View Details" className="w-[86.70px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#405ff2] text-[15px] font-medium font-['DM_Sans'] leading-7">View Details</div>
+              <div data-layer="SVG" className="size-3.5 left-[96.23px] top-[7.22px] absolute">
+                <div data-layer="Vector" className="size-3.5 left-0 top-0 absolute bg-[#405ff2]" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-layer="Article" className="w-[328px] h-[433.14px] left-[731px] top-0 absolute bg-white rounded-2xl overflow-hidden">
+        <div data-layer="Container" className="w-[328px] h-[218.66px] left-0 top-0 absolute overflow-hidden">
+          <div data-layer="Link" className="w-[328px] h-[218.66px] left-0 top-0 absolute">
+            <img data-layer="car9-660x440.jpg" className="w-[328px] h-[218.66px] left-0 top-0 absolute" src="https://placehold.co/328x219" />
+          </div>
+          <div data-layer="Link" className="size-9 left-[272px] top-[20px] absolute">
+            <div data-layer="Background" className="size-9 left-0 top-0 absolute bg-white rounded-[18px]">
+              <div data-layer="Icon" className="size-3 left-[12px] top-[12px] absolute overflow-hidden">
+                <div data-layer="Vector" className="w-[9.36px] h-3 left-[1.32px] top-0 absolute bg-[#050b20]" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-layer="Border" className="w-[328px] h-[214.48px] left-0 top-[218.66px] absolute rounded-bl-2xl rounded-br-2xl border-l border-r border-b border-[#e9e9e9]">
+          <div data-layer="Heading 2 → Link" className="w-[133.08px] h-6 left-[31px] top-[16px] absolute">
+            <div data-layer="T-Cross – 2023" className="w-[133.38px] h-[21.60px] left-0 top-[1.20px] absolute justify-center text-[#050b20] text-lg font-medium font-['DM_Sans'] leading-snug">T-Cross – 2023</div>
+          </div>
+          <div data-layer="Container" className="w-[266px] h-4 left-[31px] top-[44.59px] absolute overflow-hidden">
+            <div data-layer="4.0 D5 PowerPulse Momentum 5dr AW… Geartronic Estate" className="w-[257.70px] h-7 left-0 top-[2px] absolute justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-[14px]">4.0 D5 PowerPulse Momentum 5dr AW…<br/>Geartronic Estate</div>
+          </div>
+          <div data-layer="HorizontalBorder" className="w-[266px] h-[69.29px] left-[31px] top-[65.19px] absolute border-t border-[#e9e9e9]">
+            <div data-layer="Icon" className="size-[18px] left-[15.95px] top-[16px] absolute overflow-hidden">
+              <div data-layer="Vector" className="w-[18px] h-[14.67px] left-0 top-[1.68px] absolute bg-[#050b20]" />
+            </div>
+            <div data-layer="15 Miles" className="w-[50.30px] h-3.5 left-0 top-[45.89px] absolute text-center justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-[14px]">15 Miles</div>
+            <div data-layer="Icon" className="size-[18px] left-[135.31px] top-[16px] absolute overflow-hidden">
+              <div data-layer="Vector" className="w-[16.92px] h-[18px] left-[0.54px] top-0 absolute bg-[#050b20]" />
+            </div>
+            <div data-layer="Petrol" className="w-[37.63px] h-3.5 left-[125.69px] top-[45.89px] absolute text-center justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-[14px]">Petrol</div>
+            <div data-layer="Icon" className="size-[18px] left-[243.36px] top-[16px] absolute overflow-hidden">
+              <div data-layer="Vector" className="w-[16.08px] h-[14.64px] left-[0.96px] top-[1.68px] absolute bg-[#050b20]" />
+            </div>
+            <div data-layer="CVT" className="w-[27.71px] h-3.5 left-[238.73px] top-[45.89px] absolute text-center justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-[14px]">CVT</div>
+          </div>
+          <div data-layer="HorizontalBorder" className="w-[266px] h-[56.40px] left-[31px] top-[139.08px] absolute border-t border-[#e9e9e9]">
+            <div data-layer="$15,000" className="w-[79.30px] h-[30px] left-0 top-[16px] absolute justify-center text-[#050b20] text-xl font-bold font-['DM_Sans'] leading-[30px]">$15,000</div>
+            <div data-layer="Link" className="w-[110.23px] h-[27.75px] left-[155.77px] top-[18.25px] absolute">
+              <div data-layer="View Details" className="w-[86.70px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#405ff2] text-[15px] font-medium font-['DM_Sans'] leading-7">View Details</div>
+              <div data-layer="SVG" className="size-3.5 left-[96.23px] top-[7.22px] absolute">
+                <div data-layer="Vector" className="size-3.5 left-0 top-0 absolute bg-[#405ff2]" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-layer="Article" className="w-[328px] h-[433.14px] left-[1089px] top-0 absolute bg-white rounded-2xl overflow-hidden">
+        <div data-layer="Container" className="w-[328px] h-[218.66px] left-0 top-0 absolute overflow-hidden">
+          <div data-layer="Link" className="w-[328px] h-[218.66px] left-0 top-0 absolute">
+            <img data-layer="car10-660x440.jpg" className="w-[328px] h-[218.66px] left-0 top-0 absolute" src="https://placehold.co/328x219" />
+          </div>
+          <div data-layer="Link" className="w-[104.23px] h-[29.89px] left-[20px] top-[23.05px] absolute bg-[#3d923a] rounded-[30px]">
+            <div data-layer="Great Price" className="w-[74.54px] h-[25.90px] left-[15px] top-[1.05px] absolute justify-center text-white text-sm font-medium font-['DM_Sans'] capitalize leading-relaxed">Great Price</div>
+          </div>
+          <div data-layer="Link" className="size-9 left-[272px] top-[20px] absolute">
+            <div data-layer="Background" className="size-9 left-0 top-0 absolute bg-white rounded-[18px]">
+              <div data-layer="Icon" className="size-3 left-[12px] top-[12px] absolute overflow-hidden">
+                <div data-layer="Vector" className="w-[9.36px] h-3 left-[1.32px] top-0 absolute bg-[#050b20]" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-layer="Border" className="w-[328px] h-[214.48px] left-0 top-[218.66px] absolute rounded-bl-2xl rounded-br-2xl border-l border-r border-b border-[#e9e9e9]">
+          <div data-layer="Heading 2 → Link" className="w-[118.42px] h-6 left-[31px] top-[16px] absolute">
+            <div data-layer="BMW X8 – 5.0" className="w-[118.80px] h-[21.60px] left-0 top-[1.20px] absolute justify-center text-[#050b20] text-lg font-medium font-['DM_Sans'] leading-snug">BMW X8 – 5.0</div>
+          </div>
+          <div data-layer="Container" className="w-[266px] h-4 left-[31px] top-[44.59px] absolute overflow-hidden">
+            <div data-layer="4.0 D5 PowerPulse Momentum 5dr AW… Geartronic Estate" className="w-[257.70px] h-7 left-0 top-[2px] absolute justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-[14px]">4.0 D5 PowerPulse Momentum 5dr AW…<br/>Geartronic Estate</div>
+          </div>
+          <div data-layer="HorizontalBorder" className="w-[266px] h-[69.29px] left-[31px] top-[65.19px] absolute border-t border-[#e9e9e9]">
+            <div data-layer="Icon" className="size-[18px] left-[21.25px] top-[16px] absolute overflow-hidden">
+              <div data-layer="Vector" className="w-[18px] h-[14.67px] left-0 top-[1.68px] absolute bg-[#050b20]" />
+            </div>
+            <div data-layer="100 Miles" className="w-[60.92px] h-3.5 left-0 top-[45.89px] absolute text-center justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-[14px]">100 Miles</div>
+            <div data-layer="Icon" className="size-[18px] left-[140.61px] top-[16px] absolute overflow-hidden">
+              <div data-layer="Vector" className="w-[16.92px] h-[18px] left-[0.54px] top-0 absolute bg-[#050b20]" />
+            </div>
+            <div data-layer="Hybrid" className="w-[43.80px] h-3.5 left-[127.91px] top-[45.89px] absolute text-center justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-[14px]">Hybrid</div>
+            <div data-layer="Icon" className="size-[18px] left-[243.36px] top-[16px] absolute overflow-hidden">
+              <div data-layer="Vector" className="w-[16.08px] h-[14.64px] left-[0.96px] top-[1.68px] absolute bg-[#050b20]" />
+            </div>
+            <div data-layer="CVT" className="w-[27.71px] h-3.5 left-[238.73px] top-[45.89px] absolute text-center justify-center text-[#050b20] text-sm font-normal font-['DM_Sans'] leading-[14px]">CVT</div>
+          </div>
+          <div data-layer="HorizontalBorder" className="w-[266px] h-[56.40px] left-[31px] top-[139.08px] absolute border-t border-[#e9e9e9]">
+            <div data-layer="$12,000" className="w-[78.40px] h-[30px] left-0 top-[16px] absolute justify-center text-[#050b20] text-xl font-bold font-['DM_Sans'] leading-[30px]">$12,000</div>
+            <div data-layer="Link" className="w-[110.23px] h-[27.75px] left-[155.77px] top-[18.25px] absolute">
+              <div data-layer="View Details" className="w-[86.70px] h-[27.75px] left-0 top-[-0.88px] absolute justify-center text-[#405ff2] text-[15px] font-medium font-['DM_Sans'] leading-7">View Details</div>
+              <div data-layer="SVG" className="size-3.5 left-[96.23px] top-[7.22px] absolute">
+                <div data-layer="Vector" className="size-3.5 left-0 top-0 absolute bg-[#405ff2]" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div data-layer="Button" className="w-[60px] h-10 left-[260px] top-[6035.59px] absolute bg-white rounded-[30px] outline outline-1 outline-offset-[-1px] outline-[#e9e9e9]">
+      <div data-layer="Icon" className="size-3 left-[24px] top-[13px] absolute overflow-hidden">
+        <div data-layer="Vector" className="w-[6.88px] h-3 left-[2.56px] top-0 absolute bg-[#050b20]" />
+      </div>
+    </div>
+    <div data-layer="Button" className="w-[60px] h-10 left-[345px] top-[6035.59px] absolute bg-white rounded-[30px] outline outline-1 outline-offset-[-1px] outline-[#e9e9e9]">
+      <div data-layer="Icon" className="size-3 left-[24.02px] top-[13px] absolute overflow-hidden">
+        <div data-layer="Vector" className="w-[6.87px] h-3 left-[2.56px] top-0 absolute bg-[#050b20]" />
+      </div>
+    </div>
+  </div>
+  <div data-layer="Background" className="w-[1920px] h-20 left-0 top-[6194.34px] absolute bg-[#050b20]">
+    <div data-layer="Background" className="w-[1920px] h-20 left-0 top-0 absolute bg-white rounded-bl-[80px] rounded-br-[80px]" />
+  </div>
+  <div data-layer="Background" className="w-[1920px] h-[201.75px] left-0 top-[6274.34px] absolute bg-[#050b20]">
+    <div data-layer="Heading 2 → Join BoxCar" className="w-[167.95px] h-[30px] left-[260px] top-[67px] absolute justify-center text-white text-3xl font-medium font-['DM_Sans'] leading-[30px]">Join BoxCar</div>
+    <div data-layer="Receive pricing updates, shopping tips & more!" className="w-[327.19px] h-[27.75px] left-[260px] top-[107px] absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Receive pricing updates, shopping tips & more!</div>
+    <div data-layer="Form" className="w-[542px] h-[71.75px] left-[1118px] top-[65px] absolute bg-white/10 rounded-[60px]">
+      <div data-layer="Input" className="w-[366.69px] h-5 left-[30px] top-[25px] absolute opacity-70 overflow-hidden">
+        <div data-layer="Your email address" className="w-[131.53px] h-5 left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans']">Your email address</div>
+      </div>
+      <div data-layer="Button" className="w-[115.31px] h-[51.75px] left-[416.69px] top-[10px] absolute bg-[#405ff2] rounded-[60px] outline outline-1 outline-offset-[-1px] outline-[#405ff2]">
+        <div data-layer="Sign Up" className="w-[53.67px] h-[27.75px] left-[31px] top-[11.12px] absolute text-center justify-center text-white text-[15px] font-medium font-['DM_Sans'] leading-7">Sign Up</div>
+      </div>
+    </div>
+  </div>
+  <div data-layer="Horizontal Divider" className="w-[1920px] h-px left-0 top-[6476.09px] absolute bg-[#050b20]">
+    <div data-layer="Horizontal Divider" className="w-[1400px] h-px left-[260px] top-0 absolute bg-white/10" />
+  </div>
+  <div data-layer="Background" className="w-[1920px] h-[460px] left-0 top-[6477.09px] absolute bg-[#050b20]">
+    <div data-layer="Company" className="w-[91.92px] h-6 left-[260px] top-[55px] absolute justify-center text-white text-xl font-medium font-['DM_Sans'] capitalize leading-normal">Company</div>
+    <div data-layer="List" className="w-64 h-[227.38px] left-[260px] top-[98.12px] absolute">
+      <div data-layer="Item" className="w-64 h-[28.62px] left-0 top-0 absolute">
+        <div data-layer="Link" className="w-[64.11px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="About Us" className="w-[64.51px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">About Us</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-64 h-[28.62px] left-0 top-[39.75px] absolute">
+        <div data-layer="Link" className="w-[29.34px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Blog" className="w-[29.72px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Blog</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-64 h-[28.62px] left-0 top-[79.50px] absolute">
+        <div data-layer="Link" className="w-[58.91px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Services" className="w-[59.29px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Services</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-64 h-[28.62px] left-0 top-[119.25px] absolute">
+        <div data-layer="Link" className="w-[35.48px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="FAQs" className="w-[35.79px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">FAQs</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-64 h-[28.62px] left-0 top-[159px] absolute">
+        <div data-layer="Link" className="w-[42.03px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Terms" className="w-[42.36px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Terms</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-64 h-[28.62px] left-0 top-[198.75px] absolute">
+        <div data-layer="Link" className="w-[77.92px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Contact Us" className="w-[78.24px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Contact Us</div>
+        </div>
+      </div>
+    </div>
+    <div data-layer="Quick Links" className="w-[108.41px] h-6 left-[546px] top-[55px] absolute justify-center text-white text-xl font-medium font-['DM_Sans'] capitalize leading-normal">Quick Links</div>
+    <div data-layer="List" className="w-64 h-[147.88px] left-[546px] top-[98.12px] absolute">
+      <div data-layer="Item" className="w-64 h-[28.62px] left-0 top-0 absolute">
+        <div data-layer="Link" className="w-[87.47px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Get in Touch" className="w-[87.81px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Get in Touch</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-64 h-[28.62px] left-0 top-[39.75px] absolute">
+        <div data-layer="Link" className="w-[80.94px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Help center" className="w-[81.26px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Help center</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-64 h-[28.62px] left-0 top-[79.50px] absolute">
+        <div data-layer="Link" className="w-[62.59px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Live chat" className="w-[62.98px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Live chat</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-64 h-[28.62px] left-0 top-[119.25px] absolute">
+        <div data-layer="Link" className="w-[88px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="How it works" className="w-[88.34px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">How it works</div>
+        </div>
+      </div>
+    </div>
+    <div data-layer="Our Brands" className="w-[106.19px] h-6 left-[832px] top-[55px] absolute justify-center text-white text-xl font-medium font-['DM_Sans'] capitalize leading-normal">Our Brands</div>
+    <div data-layer="List" className="w-[284.59px] h-[306.88px] left-[832px] top-[98.12px] absolute">
+      <div data-layer="Item" className="w-[284.59px] h-[28.62px] left-0 top-0 absolute">
+        <div data-layer="Link" className="w-[45.64px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Toyota" className="w-[45.98px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Toyota</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[284.59px] h-[28.62px] left-0 top-[39.75px] absolute">
+        <div data-layer="Link" className="w-14 h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Porsche" className="w-[56.34px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Porsche</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[284.59px] h-[28.62px] left-0 top-[79.50px] absolute">
+        <div data-layer="Link" className="w-[31.41px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Audi" className="w-[31.80px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Audi</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[284.59px] h-[28.62px] left-0 top-[119.25px] absolute">
+        <div data-layer="Link" className="w-[36.20px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="BMW" className="w-[36.51px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">BMW</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[284.59px] h-[28.62px] left-0 top-[159px] absolute">
+        <div data-layer="Link" className="w-[31.28px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Ford" className="w-[31.67px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Ford</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[284.59px] h-[28.62px] left-0 top-[198.75px] absolute">
+        <div data-layer="Link" className="w-[45.80px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Nissan" className="w-[46.14px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Nissan</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[284.59px] h-[28.62px] left-0 top-[238.50px] absolute">
+        <div data-layer="Link" className="w-[56.45px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Peugeot" className="w-[56.82px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Peugeot</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[284.59px] h-[28.62px] left-0 top-[278.25px] absolute">
+        <div data-layer="Link" className="w-[80.22px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Volkswagen" className="w-[80.54px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Volkswagen</div>
+        </div>
+      </div>
+    </div>
+    <div data-layer="Vehicles Type" className="w-[131.03px] h-6 left-[1146.59px] top-[55px] absolute justify-center text-white text-xl font-medium font-['DM_Sans'] capitalize leading-normal">Vehicles Type</div>
+    <div data-layer="List" className="w-[284.59px] h-[306.88px] left-[1146.59px] top-[98.12px] absolute">
+      <div data-layer="Item" className="w-[284.59px] h-[28.62px] left-0 top-0 absolute">
+        <div data-layer="Link" className="w-[43.41px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Sedan" className="w-[43.74px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Sedan</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[284.59px] h-[28.62px] left-0 top-[39.75px] absolute">
+        <div data-layer="Link" className="w-[74.75px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Hatchback" className="w-[75.07px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Hatchback</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[284.59px] h-[28.62px] left-0 top-[79.50px] absolute">
+        <div data-layer="Link" className="w-[28.58px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="SUV" className="w-[28.95px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">SUV</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[284.59px] h-[28.62px] left-0 top-[119.25px] absolute">
+        <div data-layer="Link" className="w-[46.52px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Hybrid" className="w-[46.86px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Hybrid</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[284.59px] h-[28.62px] left-0 top-[159px] absolute">
+        <div data-layer="Link" className="w-[52.33px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Electric" className="w-[52.69px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Electric</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[284.59px] h-[28.62px] left-0 top-[198.75px] absolute">
+        <div data-layer="Link" className="w-[46.17px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Coupe" className="w-[46.51px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Coupe</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[284.59px] h-[28.62px] left-0 top-[238.50px] absolute">
+        <div data-layer="Link" className="w-[37.86px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Truck" className="w-[38.18px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Truck</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[284.59px] h-[28.62px] left-0 top-[278.25px] absolute">
+        <div data-layer="Link" className="w-[80.47px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Convertible" className="w-[80.79px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Convertible</div>
+        </div>
+      </div>
+    </div>
+    <div data-layer="Our Mobile App" className="w-[148.10px] h-5 left-[1461.19px] top-[55px] absolute justify-center text-white text-xl font-medium font-['DM_Sans'] leading-tight">Our Mobile App</div>
+    <div data-layer="Link" className="w-[198.80px] h-[60px] left-[1461.19px] top-[107px] absolute bg-white/5 rounded-2xl">
+      <div data-layer="Symbol" className="w-[19.06px] h-[25px] left-[25px] top-[17px] absolute justify-center text-white text-[25px] font-normal font-['Font_Awesome_5_Brands'] leading-[25px]"></div>
+      <div data-layer="Download on the" className="w-[94.19px] h-3 left-[67px] top-[14px] absolute justify-center text-white text-xs font-normal font-['DM_Sans'] leading-3">Download on the</div>
+      <div data-layer="Apple Store" className="w-[83.52px] h-[15px] left-[67px] top-[31px] absolute justify-center text-white text-[15px] font-medium font-['DM_Sans'] leading-[15px]">Apple Store</div>
+    </div>
+    <div data-layer="Link" className="w-[198.80px] h-[60px] left-[1461.19px] top-[179px] absolute bg-white/5 rounded-2xl">
+      <div data-layer="Symbol" className="w-[25.35px] h-[25px] left-[25px] top-[17px] absolute justify-center text-white text-[25px] font-normal font-['Font_Awesome_5_Brands'] leading-[25px]"></div>
+      <div data-layer="Get in on" className="w-[50.93px] h-3 left-[67px] top-[14px] absolute justify-center text-white text-xs font-normal font-['DM_Sans'] leading-3">Get in on</div>
+      <div data-layer="Google Play" className="w-[83.10px] h-[15px] left-[67px] top-[31px] absolute justify-center text-white text-[15px] font-medium font-['DM_Sans'] leading-[15px]">Google Play</div>
+    </div>
+    <div data-layer="Connect With Us" className="w-[159.86px] h-5 left-[1461.19px] top-[271px] absolute justify-center text-white text-xl font-medium font-['DM_Sans'] leading-tight">Connect With Us</div>
+    <div data-layer="List" className="w-[211.80px] h-10 left-[1448.19px] top-[318px] absolute">
+      <div data-layer="Item → Link" className="size-10 left-0 top-0 absolute rounded-[20px]">
+        <div data-layer="Symbol" className="w-[9.68px] h-[15px] left-[15.31px] top-[12px] absolute text-center justify-center text-white text-[15px] font-normal font-['Font_Awesome_5_Brands'] leading-[15px]"></div>
+      </div>
+      <div data-layer="Item → Link" className="size-10 left-[49px] top-0 absolute rounded-[20px]">
+        <div data-layer="Symbol" className="w-[15.38px] h-[15px] left-[12.50px] top-[12px] absolute text-center justify-center text-white text-[15px] font-normal font-['Font_Awesome_5_Brands'] leading-[15px]"></div>
+      </div>
+      <div data-layer="Item → Link" className="size-10 left-[98px] top-0 absolute rounded-[20px]">
+        <div data-layer="Symbol" className="w-[13.48px] h-[15px] left-[13.44px] top-[12px] absolute text-center justify-center text-white text-[15px] font-normal font-['Font_Awesome_5_Brands'] leading-[15px]"></div>
+      </div>
+      <div data-layer="Item → Link" className="size-10 left-[147px] top-0 absolute rounded-[20px]">
+        <div data-layer="Symbol" className="w-[13.48px] h-[15px] left-[13.44px] top-[12px] absolute text-center justify-center text-white text-[15px] font-normal font-['Font_Awesome_5_Brands'] leading-[15px]"></div>
+      </div>
+    </div>
+  </div>
+  <div data-layer="Background" className="w-[1920px] h-[99.09px] left-0 top-[6937.09px] absolute bg-[#050b20] border-t border-white/10">
+    <div data-layer="© 2024 Boxcars.com. All rights reserved." className="w-[279.65px] h-[27.75px] left-[260px] top-[36.18px] absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">© 2024 Boxcars.com. All rights reserved.</div>
+    <div data-layer="List" className="w-[265.81px] h-[28.62px] left-[1394.19px] top-[35.48px] absolute">
+      <div data-layer="Item" className="w-[136.81px] h-[28.62px] left-0 top-0 absolute">
+        <div data-layer="Link" className="w-[136.81px] h-[28.62px] left-0 top-0 absolute">
+          <div data-layer="Terms & Conditions" className="w-[137.12px] h-[27.75px] left-0 top-0 absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Terms & Conditions</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[125px] h-[27.75px] left-[140.81px] top-[0.88px] absolute">
+        <div data-layer="Link" className="w-[125px] h-[27.75px] left-0 top-0 absolute">
+          <div data-layer="Background" className="size-1 left-[10px] top-[12.22px] absolute bg-white rounded-xs" />
+          <div data-layer="Privacy Notice" className="w-[100.35px] h-[27.75px] left-[25px] top-[-0.88px] absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">Privacy Notice</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div data-layer="Background" className="w-[1920px] h-[103.75px] left-0 top-0 absolute bg-[#050b20]">
+    <div data-layer="Link" className="w-[994.80px] h-[26px] left-[60px] top-[39.22px] absolute">
+      <div data-layer="logo.svg" className="w-[108px] h-[26px] left-0 top-0 absolute overflow-hidden">
+        <div data-layer="logo.svg fill" className="w-[108px] h-[26px] left-0 top-0 absolute overflow-hidden">
+          <div data-layer="logo.svg" className="w-[108px] h-[26px] left-0 top-0 absolute overflow-hidden">
+            <div data-layer="Vector" className="w-[105.33px] h-[25.06px] left-[1.40px] top-[0.22px] absolute bg-white" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div data-layer="Navigation → List" className="w-[480.95px] h-[45.75px] left-[1084.80px] top-[29px] absolute">
+      <div data-layer="Item" className="w-[57.28px] h-[45.75px] left-0 top-0 absolute">
+        <div data-layer="Link" className="w-[57.28px] h-[45.75px] left-0 top-0 absolute">
+          <div data-layer="Home" className="w-[45.81px] h-[27.75px] left-0 top-[8.12px] absolute justify-center text-white text-[15px] font-medium font-['DM_Sans'] capitalize leading-7">Home </div>
+          <div data-layer="Border" className="w-2 h-1 left-[49.28px] top-[19.19px] absolute border-l-4 border-r-4 border-t-4 border-white" />
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[69.72px] h-[45.75px] left-[87.28px] top-0 absolute">
+        <div data-layer="Link" className="w-[69.72px] h-[45.75px] left-0 top-0 absolute">
+          <div data-layer="Listings" className="w-[58.29px] h-[27.75px] left-0 top-[8.12px] absolute justify-center text-white text-[15px] font-medium font-['DM_Sans'] capitalize leading-7">Listings </div>
+          <div data-layer="Border" className="w-2 h-1 left-[61.72px] top-[19.19px] absolute border-l-4 border-r-4 border-t-4 border-white" />
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[45.58px] h-[45.75px] left-[187px] top-0 absolute">
+        <div data-layer="Link" className="w-[45.58px] h-[45.75px] left-0 top-0 absolute">
+          <div data-layer="Blog" className="w-[34.07px] h-[27.75px] left-0 top-[8.12px] absolute justify-center text-white text-[15px] font-medium font-['DM_Sans'] capitalize leading-7">Blog </div>
+          <div data-layer="Border" className="w-2 h-1 left-[37.58px] top-[19.19px] absolute border-l-4 border-r-4 border-t-4 border-white" />
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[57.09px] h-[45.75px] left-[262.58px] top-0 absolute">
+        <div data-layer="Link" className="w-[57.09px] h-[45.75px] left-0 top-0 absolute">
+          <div data-layer="Pages" className="w-[45.62px] h-[27.75px] left-0 top-[8.12px] absolute justify-center text-white text-[15px] font-medium font-['DM_Sans'] capitalize leading-7">Pages </div>
+          <div data-layer="Border" className="w-2 h-1 left-[49.09px] top-[19.19px] absolute border-l-4 border-r-4 border-t-4 border-white" />
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[43.56px] h-[45.75px] left-[349.67px] top-0 absolute">
+        <div data-layer="Link" className="w-[43.56px] h-[45.75px] left-0 top-0 absolute">
+          <div data-layer="About" className="w-[43.89px] h-[27.75px] left-0 top-[8.12px] absolute justify-center text-white text-[15px] font-medium font-['DM_Sans'] capitalize leading-7">About</div>
+        </div>
+      </div>
+      <div data-layer="Item" className="w-[57.72px] h-[45.75px] left-[423.23px] top-0 absolute">
+        <div data-layer="Link" className="w-[57.72px] h-[45.75px] left-0 top-0 absolute">
+          <div data-layer="Contact" className="w-[58.10px] h-[27.75px] left-0 top-[8.12px] absolute justify-center text-white text-[15px] font-medium font-['DM_Sans'] capitalize leading-7">Contact</div>
+        </div>
+      </div>
+    </div>
+    <div data-layer="Container" className="w-[81.39px] h-[27.75px] left-[1595.75px] top-[38px] absolute">
+      <div data-layer="Link" className="w-[71.39px] h-5 left-0 top-[3px] absolute">
+        <div data-layer="Icon" className="size-[15px] left-0 top-0 absolute overflow-hidden">
+          <div data-layer="Vector" className="w-3.5 h-[15px] left-[0.50px] top-0 absolute bg-white" />
+        </div>
+        <div data-layer="Sign in" className="w-[46.73px] h-[27.75px] left-[25px] top-[-3.88px] absolute justify-center text-white text-[15px] font-medium font-['DM_Sans'] leading-7">Sign in</div>
+      </div>
+    </div>
+    <div data-layer="Link" className="w-[152.86px] h-[47.75px] left-[1707.14px] top-[28px] absolute bg-white rounded-[46px] outline outline-1 outline-offset-[-1px] outline-white">
+      <div data-layer="Submit Listing" className="w-[101.22px] h-[27.75px] left-[26px] top-[9.12px] absolute text-center justify-center text-[#050b20] text-[15px] font-medium font-['DM_Sans'] leading-7">Submit Listing</div>
+    </div>
+  </div>
+  <div data-layer="Link" className="size-10 left-[1860px] top-[6976.19px] absolute bg-[#405ff2] rounded-[20px]">
+    <div data-layer="Icon" className="size-[13px] left-[13.50px] top-[12px] absolute overflow-hidden">
+      <div data-layer="Vector" className="w-[11.22px] h-[11.63px] left-[0.89px] top-[0.61px] absolute bg-white" />
+    </div>
+  </div>
+</div>

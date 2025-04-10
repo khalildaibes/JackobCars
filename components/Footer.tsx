@@ -13,17 +13,7 @@ const Footer = () => {
     <footer className="flex flex-col  mt-5 border-t border-gray-100" lang="ar">
       <div className="flex max-md:flex-col flex-wrap justify-between gap-5 sm:px-16 px-6 py-10">
         <div className="flex flex-col justify-start items-start gap-6">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-72 h-72 flex items-center justify-center rounded-full bg-white p-8 transition-all hover:scale-105">
-              <Image
-                src="/logo-transparent-1.png"
-                alt="logo"
-                width={360}
-                height={360}
-                className="object-contain"
-              />
-            </div>
-          </Link>
+        
 
           <p className="text-base text-white">
             K.D Technology Solutions 2025 <br />

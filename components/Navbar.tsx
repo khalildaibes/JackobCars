@@ -11,12 +11,12 @@ import { Menu, X } from "lucide-react";
 import { authService } from "../app/services/authService";
 
 const buttonStyles = {
-  carsMarket: "from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900",
-  findByPlate: "from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700",
-  news: "from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700",
-  afterMarket: "from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700",
-  comparison: "from-blue-400 to-indigo-500 hover:from-blue-500 hover:to-indigo-600",
-  stores: "from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700"
+  carsMarket: "from-blue-600 to-blue-400 hover:from-slate-200 hover:to-slate-400",
+  findByPlate: "from-blue-600 to-blue-400 hover:from-slate-200 hover:to-slate-400", 
+  news: "from-blue-600 to-blue-400 hover:from-slate-200 hover:to-slate-400",
+  afterMarket: "from-blue-600 to-blue-400 hover:from-slate-200 hover:to-slate-400",
+  comparison: "from-blue-600 to-blue-400 hover:from-slate-200 hover:to-slate-400",
+  stores: "from-blue-600 to-blue-400 hover:from-slate-200 hover:to-slate-400"
 };
 
 export default function Navbar() {
@@ -74,19 +74,19 @@ export default function Navbar() {
   );
 
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-gray-100 z-50">
+    <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-gray-100 z-50 ">
       {/* Main Container */}
       <div className="container mx-auto max-w-screen-xl px-4 py-3 flex items-center justify-between gap-6">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2 ">
           <div className="min-w-[80px] h-16 flex items-center justify-center rounded-2xl p-2 transition-all hover:scale-105">
-            <Image src="/logo-transparent-1.png" alt={t("logo_alt")} width={80} height={200} className="object-fill" />
+            <Image src="/logo-transparent-1.png" alt={t("logo_alt")} width={80} height={200} className="object-fill w-[60px] md:w-[80px]" />
           </div>
         </Link>
 
         {/* Mobile Menu Button */}
         <button 
-          className="md:hidden text-gray-700 hover:bg-gray-100 p-2 rounded-full transition-colors"
+          className="md:hidden text-black hover:bg-gray-100 p-2 rounded-full transition-colors"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -100,46 +100,46 @@ export default function Navbar() {
           bg-white/95 md:bg-transparent backdrop-blur-lg md:backdrop-blur-none
           shadow-lg md:shadow-none p-6 md:p-0 
           transition-all duration-300 ease-in-out
-          border-t md:border-t-0 border-gray-100`}
+          border-t md:border-t-0 border-gray-100 text-black`}
         >
           <NavButton href="/car-listing" gradient={buttonStyles.carsMarket}>
-            <span className="relative z-10 text-center line-clamp-2" lang="ar">
+            <span className="relative z-10 text-center line-clamp-2 text-black" lang="ar">
               {t("cars_market")}
             </span>
           </NavButton>
           <NavButton href="/findcarbyplate" gradient={buttonStyles.findByPlate}>
-            <span className="relative z-10 text-center line-clamp-2" lang="ar">
+            <span className="relative z-10 text-center line-clamp-2 text-black" lang="ar">
               {t("find_by_plate")}
             </span>
           </NavButton>
           <NavButton href="/news" gradient={buttonStyles.news}>
-            <span className="relative z-10 text-center line-clamp-2" lang="ar">
+            <span className="relative z-10 text-center line-clamp-2 text-black" lang="ar">
               {t("news")}
             </span>
           </NavButton>
           <NavButton href="/after_market" gradient={buttonStyles.afterMarket}>
-            <span className="relative z-10 text-center line-clamp-2" lang="ar">
+            <span className="relative z-10 text-center line-clamp-2 text-black" lang="ar">
               {t("after_market")}
             </span>
           </NavButton>
           <NavButton href="/comparison" gradient={buttonStyles.comparison}>
-            <span className="relative z-10 text-center line-clamp-2" lang="ar">
+            <span className="relative z-10 text-center line-clamp-2 text-black" lang="ar">
               {t("compare_cars")}
             </span>
           </NavButton>
           <NavButton href="/stores" gradient={buttonStyles.stores}>
-            <span className="relative z-10 text-center line-clamp-2" lang="ar">
+            <span className="relative z-10 text-center line-clamp-2 text-black" lang="ar">
               {t("stores")}
             </span>
           </NavButton>
           
           {/* Add UserMenu or Login Button for Mobile */}
-          <div className="md:hidden w-full mt-4">
+          <div className="md:hidden w-full mt-4 text-black ">
             {user ? (
               <UserMenu user={user} onLogout={handleLogout} isMobile={true} />
             ) : (
               <NavButton href="/login" gradient={buttonStyles.carsMarket}>
-                <span className="relative z-10 text-center line-clamp-2" lang="ar">
+                <span className="relative z-10 text-center line-clamp-2 text-black" lang="ar">
                   {t("login")}
                 </span>
               </NavButton>
@@ -147,18 +147,18 @@ export default function Navbar() {
           </div>
 
           {/* Language Switcher for Mobile */}
-          <div className="md:hidden w-full mt-4">
+          <div className="md:hidden w-full mt-4 text-black">
             <LanguageSwitcher />
           </div>
         </div>
 
         {/* Desktop Right Section */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-4 text-black">
           {user ? (
             <UserMenu user={user} onLogout={handleLogout} />
           ) : (
             <NavButton href="/login" gradient={buttonStyles.carsMarket}>
-              <span className="relative z-10 text-center line-clamp-2" lang="ar">
+              <span className="relative z-10 text-center line-clamp-2 text-black" lang="ar">
                 {t("login")}
               </span>
             </NavButton>

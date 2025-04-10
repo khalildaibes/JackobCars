@@ -47,7 +47,7 @@ export async function GET(
 // PUT /api/articles/[id]
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { slug: string } }
 ) {
   try {
     const formData = await request.formData();
@@ -77,7 +77,7 @@ export async function PUT(
     }
 
     // Update the article
-    const response = await strapiRequest(`/api/articles/${params.id}`, {
+    const response = await strapiRequest(`/api/articles/${params.slug}`, {
       method: 'PUT',
       body: JSON.stringify({
         data: {

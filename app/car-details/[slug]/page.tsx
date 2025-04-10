@@ -37,7 +37,7 @@ import { Toaster } from "react-hot-toast";
 
 interface CarDetailsProps {
   params: {
-    id: string;
+    slug: string;
   };
 }
 
@@ -66,12 +66,12 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
     }
   }, []);
 
-  const add_to_favorites = (id: number) => {
+  const add_to_favorites = (slug: number) => {
     let updatedFavorites;
-    if (favorites.includes(id)) {
-      updatedFavorites = favorites.filter((favId) => favId !== id);
+    if (favorites.includes(slug)) {
+      updatedFavorites = favorites.filter((favslug) => favslug !== slug);
     } else {
-      updatedFavorites = [...favorites, id];
+      updatedFavorites = [...favorites, slug];
     }
 
     setFavorites(updatedFavorites);
@@ -183,6 +183,7 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
             cons: product.details.car.cons,
             fuelType: normalizedFuelType,
             make: normalizedMake,
+            slug: product.slug,
             bodyType: normalizedBodyType,
             description: product.details.car.description,
             features: product.details.car.features.map((feature: any) => feature.value) || [],
@@ -191,9 +192,10 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
         });
 
         setListings(formattedListings);
-
+        console.error("fetching car formattedListings:", formattedListings);
+        console.error("fetching car params.slug:", params.slug);
         // Find the car with matching ID
-        const carData = formattedListings.find(car => car.id.toString() === params.id);
+        const carData = formattedListings.find(car => car.slug.toString() === params.slug);
         if (!carData) throw new Error("Car not found");
 
         setCar(carData);
@@ -205,7 +207,7 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
     };
 
     fetchCarDetails();
-  }, [params.id]);
+  }, [params.slug]);
 
   // Calculate monthly payment when rate or term changes
   useEffect(() => {
@@ -236,7 +238,7 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
         from_name: emailFormData.name,
         message: `${emailFormData.name} has contacted you about ${car.title}. You can reach them at ${emailFormData.phone}`,
         car_title: car.title,
-        car_id: params.id
+        car_slug: params.slug
       };
 
       const response = await emailjs.send(
@@ -579,7 +581,7 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
                 <h3 className="text-xl font-semibold mb-6">{t('similar_vehicles')}</h3>
                 <div className="space-y-4">
                   {listings.filter(c => c.id !== car.id).slice(0, 3).map((similarCar) => (
-                  <Link key={similarCar.id} href={`/car-details/${similarCar.id}`}>
+                  <Link key={similarCar.id} href={`/car-details/${similarCar.slug}`}>
                       <div className="flex space-x-4 group p-3 rounded-lg hover:bg-gray-50 transition-colors">
                         <div className="w-24 h-20 overflow-hidden rounded-lg">
                           <Img

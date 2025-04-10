@@ -59,7 +59,6 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
       );
     }
 
-    // The article data is directly in the article object, not in attributes
     const {
       title,
       description,
@@ -71,53 +70,117 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
       conver,
       categories,
     } = article;
-    console.log('article:', article);
 
     // Get author name from author object
     const authorName = author?.name || author?.email || '';
 
-    const renderBlock = (block: any) => {
-      console.log('Block:', block); // Debug log
+    const renderContent = (content: any[]) => {
+      return content.map((item, index) => {
+        switch (item.type) {
+          case 'heading':
+            const HeadingTag = `h${item.level}` as keyof JSX.IntrinsicElements;
+            return (
+              <HeadingTag key={index} className={`text-${7 - item.level}xl font-bold mb-4`}>
+                {item.children[0].text}
+              </HeadingTag>
+            );
+          case 'paragraph':
+            const text = item.children[0].text;
+            // Split text by newlines and render each line
+            const lines = text.split('\n');
+            return (
+              <p key={index} className="mb-4 whitespace-pre-line">
+                {lines.map((line, lineIndex) => (
+                  <React.Fragment key={lineIndex}>
+                    {line}
+                    {lineIndex < lines.length - 1 && <br />}
+                  </React.Fragment>
+                ))}
+              </p>
+            );
+          default:
+            return null;
+        }
+      });
+    };
 
+    const renderBlock = (block: any) => {
       switch (block.__component) {
         case 'shared.rich-text':
-          // Parse the HTML content to handle headings
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(block.body, 'text/html');
-          
-          // Replace heading elements with proper styling
-          const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
-          headings.forEach(heading => {
-            const level = parseInt(heading.tagName[1]);
-            heading.className = `text-${7 - level}xl font-bold mb-4`;
-          });
-
+          // Split the content by newlines and process each line
+          const lines = block.body.split('\n');
           return (
-            <div key={block.id} className="mb-6">
-              <div dangerouslySetInnerHTML={{ __html: doc.body.innerHTML }} />
+            <div key={block.id} className="mb-6 prose prose-lg max-w-none">
+              {lines.map((line: string, index: number) => {
+                // Check if line is a heading
+                if (line.startsWith('# ')) {
+                  return <h1 key={index} className="text-4xl font-bold mb-4">{line.substring(2)}</h1>;
+                } else if (line.startsWith('## ')) {
+                  return <h2 key={index} className="text-3xl font-bold mb-4">{line.substring(3)}</h2>;
+                } else if (line.startsWith('### ')) {
+                  return <h3 key={index} className="text-2xl font-bold mb-4">{line.substring(4)}</h3>;
+                } else if (line.startsWith('#### ')) {
+                  return <h4 key={index} className="text-xl font-bold mb-4">{line.substring(5)}</h4>;
+                } else if (line.startsWith('##### ')) {
+                  return <h5 key={index} className="text-lg font-bold mb-4">{line.substring(6)}</h5>;
+                } else if (line.startsWith('###### ')) {
+                  return <h6 key={index} className="text-base font-bold mb-4">{line.substring(7)}</h6>;
+                }
+                // Check for bold text
+                const boldRegex = /\*\*(.*?)\*\*/g;
+                const italicRegex = /\*(.*?)\*/g;
+                const linkRegex = /\[(.*?)\]\((.*?)\)/g;
+                
+                let processedLine = line;
+                
+                // Process links
+                processedLine = processedLine.replace(linkRegex, (match, text, url) => {
+                  return `<a href="${url}" class="text-blue-600 hover:text-blue-800 underline">${text}</a>`;
+                });
+                
+                // Process bold text
+                processedLine = processedLine.replace(boldRegex, (match, text) => {
+                  return `<strong class="font-bold">${text}</strong>`;
+                });
+                
+                // Process italic text
+                processedLine = processedLine.replace(italicRegex, (match, text) => {
+                  return `<em class="italic">${text}</em>`;
+                });
+                
+                return (
+                  <div 
+                    key={index} 
+                    className="mb-4 whitespace-pre-line"
+                    dangerouslySetInnerHTML={{ __html: processedLine }}
+                  />
+                );
+              })}
             </div>
           );
         case 'shared.media':
           return (
             <div key={block.id} className="my-8">
-              <Img
-                src={`http://68.183.215.202${block.file?.url}`}
-                alt={block.file?.alternativeText || 'Article image'}
-                external={true}
-                width={1920}
-                height={1080}
-                className="w-full rounded-lg shadow-lg"
-              />
+              {block.media?.url && (
+                <Img
+                  src={`http://68.183.215.202${block.media.url}`}
+                  alt="Media content"
+                  external={true}
+                  width={1920}
+                  height={1080}
+                  className="rounded-lg shadow-lg"
+                />
+              )}
             </div>
           );
         case 'shared.quote':
           return (
             <div key={block.id} className="my-8 p-6 bg-gray-50 border-l-4 border-blue-500">
               <blockquote className="text-xl italic text-gray-700">
-                {block.quote}
+                {block.body}
               </blockquote>
-              {block.author && (
-                <p className="mt-4 text-gray-600">— {block.author}</p>
+              {block.title && (
+                <p className="mt-4 text-gray-600">— {block.title}</p>
               )}
             </div>
           );
@@ -167,7 +230,7 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
         </section>
 
         {/* First Image from Conver */}
-        {conver?.length > 0 && (
+        {/* {conver?.length > 0 && (
           <section className="py-8">
             <div className="container mx-auto px-4">
               <div className="max-w-4xl mx-auto">
@@ -184,15 +247,16 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
               </div>
             </div>
           </section>
-        )}
+        )} */}
 
         {/* Content Blocks */}
         <article className="py-16">
           <div className="container mx-auto px-4 max-w-4xl">
+            {/* {content && renderContent(content)} */}
             {blocks?.map((block: any) => renderBlock(block))}
             
             {/* Show message if no content */}
-            {(!blocks?.length) && (
+            {(!content?.length && !blocks?.length) && (
               <p className="text-center text-gray-500">No content found in this article.</p>
             )}
           </div>
