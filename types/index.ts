@@ -28,6 +28,7 @@ export interface CarProps {
   id: number;
   make: string;
   model: string;
+  slug: string;
   year: number;
   fuel: string;
   city_mpg: number;
@@ -43,6 +44,7 @@ export interface FilterProps {
   manufacturer?: string;
   year?: number;
   model?: string;
+  slug?: string;
   limit?: number;
   fuel?: string;
 }

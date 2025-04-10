@@ -33,6 +33,7 @@ export default function CarSearch() {
           model: selectedModel,
           manufacturer: selectedManufacturer,
           fuel: selectedFuel,
+          slug: "selectedSlug",
           year: selectedYear ? parseInt(selectedYear, 10) : undefined,
           limit: parseInt(selectedLimit, 10),
         });
@@ -148,6 +149,7 @@ export default function CarSearch() {
                   key={car.id}
                   car={{
                     id: car.id,
+                    slug: car.slug,
                     mainImage: car.mainImage,
                     title: car.title,
                     year: car.year,
