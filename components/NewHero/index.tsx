@@ -122,7 +122,7 @@ const HeroSection: React.FC = () => {
         </motion.div>
 
         {/* Bottom Content - Category Buttons with Animation */}
-        <motion.div 
+        {/* <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ 
@@ -164,9 +164,9 @@ const HeroSection: React.FC = () => {
               <span className="ml-2 text-white text-[14px] sm:text-[15px] font-medium">
                 {category.name}
               </span>
-            </motion.div>
+            </motion.div> 
           ))}
-        </motion.div>
+        </motion.div>*/}
       </div>
     </motion.div>
   );
