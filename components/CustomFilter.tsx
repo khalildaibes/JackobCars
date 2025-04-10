@@ -7,7 +7,6 @@ import { Listbox, Transition } from "@headlessui/react";
 import { updateSearchParams } from "../utils";
 interface CustomFilterProps {
   title: string;
-  slug: string;
   options: { title: string; value: string }[];
   selected: string;
   onChange: (value: string) => void;
