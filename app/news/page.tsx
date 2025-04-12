@@ -398,7 +398,7 @@ export default function NewsPage() {
   return (
     <div className="min-h-screen bg-gray-50 mt-[5%]">
       {/* Hero Section with Search */}
-      <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white">
+      {/* <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
             <h1 className="text-4xl font-bold mb-6">{t('welcome')}</h1>
@@ -414,7 +414,7 @@ export default function NewsPage() {
                 />
               </div>
               <Link
-                href="/findcarbyplate"
+                href="/plate-search"
                 className="px-6 py-3 bg-white text-blue-900 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
               >
                 {t('search_by_plate')}
@@ -422,7 +422,7 @@ export default function NewsPage() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Quick Actions */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

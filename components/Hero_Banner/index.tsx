@@ -4,7 +4,7 @@ import React from "react";
 import { Button } from "../Button/index";
 import { Img } from "../Img/index";
 import { Text } from "../Text/index";
-import FindCarByPlate from "../../app/findcarbyplate/FindCarByPlate";
+import plate-search from "../../app/plate-search/plate-search";
 import YearSelectBox from "../../components/homeeight/yearselectbox";
 import { Tabs, TabList, Tab, TabPanel } from "react-tabs";
 import { SeekBar } from "../SeekBar";
@@ -53,7 +53,7 @@ export default function Header({ ...props }: Props) {
               <p className="text-center">
                 {t("explore_car_specs")}
               </p>
-              <FindCarByPlate />
+              <plate-search />
             </div>
           </div>
         </TabPanel>

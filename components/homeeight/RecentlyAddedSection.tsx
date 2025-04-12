@@ -33,12 +33,13 @@ export default function RecentlyAddedSection({
         <div className="flex w-[100%] flex-col gap-6 lg:w-full lg:px-5 md:w-full md:px-5">
         {title && (<div className="container mx-auto px-4">
             <div className="w-[90%] flex flex-col items-center justify-center gap-4 sm:flex-row sm:justify-between">
-              <Heading
-                as="h1"
-                className="text-2xl font-bold text-center sm:text-[40px] sm:font-bold sm:text-left md:text-[34px] lg:text-[34px]"
-              >
+              <h2 className="text-xl font-bold text-white bg-[#050B20] p-2 rounded-lg flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2z" />
+                </svg>
                 {title || t("recently_added")}
-              </Heading>
+              </h2>
               <div className="flex items-center gap-2">
                 <Link href={viewAllLink}>
                   <Text as="p" className="text-base font-medium">

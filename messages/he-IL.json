@@ -42,7 +42,7 @@
     "new_cars": "מכוניות חדשות",
     "used_cars": "מכוניות משומשות",
     "great_price": "מחיר מצוין",
-    "view_details": "צפה בפרטים",
+    "view_details": "פרטים",
     "view_all": "הצג הכל",
     "great_deal": "עסקה מצוינת",
     "sale": "מכירה",
@@ -233,14 +233,46 @@
   },
   "Navbar": {
     "logo_alt": "לוגו AtSpeedLimit",
-    "cars_market": "שוק הרכבים",
-    "find_by_plate": "חיפוש לפי מספר רישוי",
+    "carsMarket": "שוק הרכבים",
+    "findByPlate": "חיפוש לפי מספר לוחית",
     "news": "חדשות",
-    "after_market": "שוק האביזרים",
-    "compare_cars": "השוואת רכבים",
+    "afterMarket": "אחרי השוק",
+    "compareCars": "השוואת רכבים",
     "stores": "חנויות",
     "login": "התחברות",
-    "open_24h": "פתוח 24/7"
+    "dropdown": {
+      "cars_market": {
+        "new_cars": "רכבים חדשים",
+        "used_cars": "רכבים משומשים",
+        "electric_vehicles": "רכבים חשמליים",
+        "luxury_cars": "רכבי יוקרה"
+      },
+      "find_by_plate": {
+        "plate_search": "חיפוש לפי לוחית",
+        "vehicle_history": "היסטוריית רכב",
+        "ownership_check": "בדיקת בעלות"
+      },
+      "news": {
+        "latest_news": "חדשות אחרונות",
+        "car_reviews": "ביקורות רכב",
+        "industry_updates": "עדכוני תעשייה"
+      },
+      "after_market": {
+        "parts_accessories": "חלקים ואביזרים",
+        "service_centers": "מרכזי שירות",
+        "maintenance_tips": "טיפים לתחזוקה"
+      },
+      "comparison": {
+        "compare_models": "השוואת דגמים",
+        "price_comparison": "השוואת מחירים",
+        "feature_comparison": "השוואת תכונות"
+      },
+      "stores": {
+        "find_dealers": "מציאת סוכנים",
+        "service_centers": "מרכזי שירות",
+        "parts_stores": "חנויות חלקים"
+      }
+    }
   },
   "BlogDetailsPage": {
     "breadcrumb": {
@@ -314,7 +346,7 @@
     "grid": "תצוגת רשת",
     "list": "תצוגת רשימה",
     "contact": "צור קשר",
-    "view_details": "צפה בפרטים",
+    "view_details": "פרטים",
     "contact_seller": "צור קשר עם המוכר",
     "features": "תכונות",
     "more_features": "תכונות נוספות",
@@ -712,7 +744,7 @@
     "price": "מחיר",
     "fuel_type": "סוג דלק",
     "transmission": "תיבת הילוכים",
-    "view_details": "הצג פרטים",
+    "view_details": "פרטים",
     "loading_spinner": "טוען...",
     "filter_toggle": "החלף סינון",
     "view_mode_toggle": "החלף מצב תצוגה",
@@ -783,7 +815,7 @@
     "contact": "צור קשר",
     "phone": "טלפון",
     "email": "דוא״ל",
-    "view_details": "הצג פרטים",
+    "view_details": "פרטים",
     "get_directions": "קבל הוראות הגעה",
     "loading": "טוען חנויות...",
     "error": "שגיאה בטעינת החנויות",
@@ -818,6 +850,7 @@
     }
   },
   "NewsPage": {
+    "related_articles": "כתבות קשורות",
     "welcome": "ברוכים הבאים ל-AutoNews",
     "description": "גלה את החדשות והטרנדים האחרונים בעולם הרכב",
     "stay_updated": "הישאר מעודכן עם מצוינות רכב",
@@ -850,10 +883,11 @@
     "news_grid": {
       "title": "חדשות אחרונות",
       "read_more": "קרא עוד",
-      "no_articles": "לא נמצאו מאמרי חדשות",
+      "no_articles": "לא נמצאו כתבות חדשות",
       "author": "מחבר",
       "anonymous": "אנונימי",
-      "published": "פורסם"
+      "published": "פורסם",
+      "related_articles": "כתבות קשורות"
     },
     "language_selector": {
       "english": "אנגלית",

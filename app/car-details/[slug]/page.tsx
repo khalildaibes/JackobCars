@@ -383,10 +383,10 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
           
           {/* Car Tabs */}
           <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="w-full grid grid-cols-3 bg-gray-50 p-1 rounded-lg">
+              <TabsList className="w-full grid grid-cols-1 bg-gray-50 p-1 rounded-lg">
                 <TabsTrigger value="overview" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">{t('overview')}</TabsTrigger>
-                <TabsTrigger value="features" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">{t('features')}</TabsTrigger>
-                <TabsTrigger value="history" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">{t('vehicle_history')}</TabsTrigger>
+                {/* <TabsTrigger value="features" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">{t('features')}</TabsTrigger> */}
+                {/* <TabsTrigger value="history" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">{t('vehicle_history')}</TabsTrigger> */}
             </TabsList>
             
               <TabsContent value="overview" className="mt-6 space-y-6">
@@ -441,6 +441,14 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
                   <h3 className="text-lg font-semibold mb-4">{t('description')}</h3>
                   <p className="text-gray-700 leading-relaxed">{car.description}</p>
               </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {car.features.map((feature: string, index: number) => (
+                    <div key={index} className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl">
+                      <Check className="h-5 w-5 text-green-500" />
+                      <span className="font-medium">{feature}</span>
+                    </div>
+                  ))}
+              </div>
               </TabsContent>
               
               <TabsContent value="features" className="mt-6">
@@ -454,7 +462,7 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
               </div>
             </TabsContent>
             
-              <TabsContent value="history" className="mt-6 space-y-6">
+              {/* <TabsContent value="history" className="mt-6 space-y-6">
                 <div className="bg-green-50 border border-green-200 rounded-xl p-6 flex items-center space-x-4">
                   <div className="p-2 bg-green-100 rounded-lg">
                     <Check className="h-6 w-6 text-green-600" />
@@ -488,7 +496,7 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
                   </div>
                 </div>
               </div>
-            </TabsContent>
+            </TabsContent> */}
           </Tabs>
         </div>
         
@@ -497,24 +505,27 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
            
 
             {/* Contact Seller Section */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              <div className="bg-white rounded-xl p-6 shadow-lg">
-                <h3 className="text-xl font-semibold mb-4">{t('contact_seller')}</h3>
-                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-                      <User className="h-6 w-6 text-gray-600" />
+            <div className=" flex justify-center w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 h-[200px]">
+              <div className="bg-white rounded-xl p-4 sm:p-6 shadow-lg">
+                <h3 className="text-lg sm:text-xl font-semibold mb-4">{t('contact_seller')}</h3>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex items-center space-x-3 sm:space-x-4 w-full sm:w-auto">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                      <User className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">John Doe</p>
-                      <p className="text-sm text-gray-500">{t('or_call')} +1 234 567 890</p>
+                      <p className="font-medium text-gray-900">khalil daibes</p>
+                      <p className="text-xs sm:text-sm text-gray-500">{t('or_call')} 0509977084</p>
                     </div>
                   </div>
-                  <div className="flex space-x-4">
-                    <button onClick={handleContactSeller} className="px-6 py-2 bg-white text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors">
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
+                    <button 
+                      onClick={handleContactSeller} 
+                      className="w-full sm:w-auto px-4 sm:px-6 py-2 bg-white text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors text-sm sm:text-base"
+                    >
                       {t('contact_seller')}
                     </button>
-                    <button className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    <button className="w-full sm:w-auto px-4 sm:px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base">
                       {t('save')}
                     </button>
                   </div>

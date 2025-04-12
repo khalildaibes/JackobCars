@@ -282,7 +282,7 @@ export default function CreateCarListing() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 mt-[10%]  bg-white">
+    <div className="max-w-4xl mx-auto p-6 mt-[10%]  bg-white rounded-lg shadow-md">
       <h1 className="text-3xl font-bold mb-8">Create New Car Listing</h1>
 
       <div className="space-y-6">

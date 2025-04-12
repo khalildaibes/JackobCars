@@ -20,7 +20,7 @@ const PriceDisplay = ({
   
   // Convert price based on locale
   const convertedPrice = locale === 'ar' 
-    ? (numericPrice * 0.99).toFixed(2)  // ILS to AED
+    ? (numericPrice ).toFixed(2)  // ILS
     : locale === 'en'
     ? (numericPrice * 0.27).toFixed(2)  // ILS to USD 
     : numericPrice.toFixed(2);  // Keep as ILS
@@ -39,11 +39,11 @@ const PriceDisplay = ({
       {locale === 'ar' ? (
         <>
           {formattedPrice}
-          {showCurrency && <span className="mr-1">{currencySymbol}</span>}
+          {showCurrency && <span className="mr-1"> {currencySymbol} </span>}
         </>
       ) : (
         <>
-          {showCurrency && <span className="ml-1">{currencySymbol}</span>}
+          {showCurrency && <span className="ml-1"> {currencySymbol} </span>}
           {formattedPrice}
         </>
       )}

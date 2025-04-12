@@ -1,5 +1,6 @@
 {
   "NewsPage": {
+    "related_articles": "مقالات ذات صلة",
     "welcome": "مرحباً بكم في AutoNews",
     "description": "اكتشف أحدث أخبار السيارات والاتجاهات",
     "stay_updated": "ابق على اطلاع بتميز السيارات",
@@ -35,7 +36,8 @@
       "no_articles": "لم يتم العثور على مقالات إخبارية",
       "author": "المؤلف",
       "anonymous": "مجهول",
-      "published": "تم النشر"
+      "published": "تم النشر",
+      "related_articles": "مقالات ذات صلة"
     },
     "language_selector": {
       "english": "الإنجليزية",
@@ -101,7 +103,7 @@
     "new": "سيارات جديدة",
     "used": "سيارات مستعملة",
     "great_price": "سعر ممتاز",
-    "view_details": "عرض التفاصيل",
+    "view_details": "التفاصيل",
     "all": "عرض الكل",
     "great_deal": "صفقة رائعة",
     "sale": "تخفيض",
@@ -354,14 +356,47 @@
   },
   "Navbar": {
     "logo_alt": "شعار AtSpeedLimit",
-    "cars_market": "سوق السيارات",
-    "find_by_plate": "البحث برقم اللوحة",
+    "carsMarket": "سوق السيارات",
+    "findByPlate": "البحث برقم اللوحة",
     "news": "الأخبار",
-    "after_market": "سوق الإكسسوارات",
-    "compare_cars": "مقارنة السيارات",
+    "afterMarket": "ما بعد البيع",
+    "compareCars": "مقارنة السيارات",
     "stores": "المتاجر",
     "login": "تسجيل الدخول",
-    "open_24h": "مفتوح 24/7"
+    "open_24h": "مفتوح 24/7",
+    "dropdown": {
+      "cars_market": {
+        "new_cars": "سيارات جديدة",
+        "used_cars": "سيارات مستعملة",
+        "electric_vehicles": "مركبات كهربائية",
+        "luxury_cars": "سيارات فاخرة"
+      },
+      "find_by_plate": {
+        "plate_search": "بحث برقم اللوحة",
+        "vehicle_history": "تاريخ المركبة",
+        "ownership_check": "فحص الملكية"
+      },
+      "news": {
+        "latest_news": "آخر الأخبار",
+        "car_reviews": "مراجعات السيارات",
+        "industry_updates": "تحديثات الصناعة"
+      },
+      "after_market": {
+        "parts_accessories": "قطع غيار وملحقات",
+        "service_centers": "مراكز الخدمة",
+        "maintenance_tips": "نصائح الصيانة"
+      },
+      "comparison": {
+        "compare_models": "مقارنة الموديلات",
+        "price_comparison": "مقارنة الأسعار",
+        "feature_comparison": "مقارنة المميزات"
+      },
+      "stores": {
+        "find_dealers": "البحث عن الوكالات",
+        "service_centers": "مراكز الخدمة",
+        "parts_stores": "متاجر قطع الغيار"
+      }
+    }
   },
   "SalesAndReviews": {
     "cars_for_sale": "السيارات المعروضة للبيع",
@@ -375,7 +410,7 @@
     "Accessories": "اكسسوارات"
   },
   "CarListing": {
-    "currency_symbol": "د.إ",
+    "currency_symbol": "شيكل",
     "find_perfect_car": "اعثر على سيارتك المثالية",
     "browse_collection": "تصفح مجموعتنا الواسعة من السيارات عالية الجودة واعثر على السيارة المناسبة لك.",
     "search_placeholder": "ابحث حسب الماركة أو الموديل أو الكلمات المفتاحية...",
@@ -391,7 +426,7 @@
     "grid": "شبكة",
     "list": "قائمة",
     "contact": "اتصال",
-    "view_details": "عرض التفاصيل",
+    "view_details": "التفاصيل",
     "contact_seller": "اتصال بالبائع",
     "features": "المميزات",
     "more_features": "مميزات إضافية",
@@ -792,7 +827,7 @@
     "price": "السعر",
     "fuel_type": "نوع الوقود",
     "transmission": "ناقل الحركة",
-    "view_details": "عرض التفاصيل",
+    "view_details": "التفاصيل",
     "loading_spinner": "جاري التحميل...",
     "filter_toggle": "تبديل عوامل التصفية",
     "view_mode_toggle": "تبديل وضع العرض",
@@ -863,7 +898,7 @@
     "contact": "اتصل",
     "phone": "الهاتف",
     "email": "البريد الإلكتروني",
-    "view_details": "عرض التفاصيل",
+    "view_details": "التفاصيل",
     "get_directions": "احصل على الاتجاهات",
     "loading": "جاري التحميل...",
     "error": "خطأ في تحميل المتاجر",

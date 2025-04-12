@@ -10,7 +10,7 @@ import { Car, Fuel, Heart, MessageSquare, Scale, Calendar, Gauge, Check } from "
 import { useRouter } from "next/navigation";
 import { useComparison } from "../app/context/ComparisonContext";
 import { toast } from "react-hot-toast";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import PriceDisplay from "./PriceDisplay";
 
 // Lazy load the Img component
@@ -76,7 +76,7 @@ const ActionButton = memo(({
   label, 
   onClick, 
   variant = "outline",
-  className = "bg-blue-500 text-white"
+  className = "text-black"
 }: { 
   icon: any; 
   label: string; 
@@ -90,7 +90,7 @@ const ActionButton = memo(({
     className={className}
     onClick={onClick}
   >
-    <Icon className="h-4 w-4 mr-2" />
+    <Icon className="h-4 w-4" />
     {label}
   </Button>
 ));
@@ -98,6 +98,8 @@ const ActionButton = memo(({
 const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   const router = useRouter();
   const t = useTranslations("CarListing");
+  const locale = useLocale();
+  const isRTL = locale === 'ar' || locale === 'he-IL';
   const { addToComparison, removeFromComparison, isInComparison } = useComparison();
   const [favorites, setFavorites] = useState<(string | number)[]>([]);
 
@@ -179,7 +181,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   }, [car.features]);
 
   const grslugContent = (
-    <Card className="overflow-hslugden h-full flex flex-col hover:shadow-lg transition-shadow duration-300 max-w-[400px] max-h-[650px] min-h-[500px]">
+    <Card className={`rounded-t-lg overflow-hidden h-full flex flex-col hover:shadow-lg transition-shadow duration-300 max-w-[350px] max-h-[500px] min-h-[450px] ${isRTL ? 'rtl' : 'ltr'}`}>
       <div className="relative">
         <Img
           width={1920}
@@ -187,47 +189,51 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
           external={true}
           src={car.mainImage}
           alt={car.title}
-          className="w-full h-48 object-cover"
+          className="w-full h-48 object-cover rounded-t-lg"
         />
         <FavoriteButton isFavorite={favorites.includes(car.slug)} onClick={(e) => handleFavoriteToggle(e)} />
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
-          <Badge className="bg-blue-500 text-white">{car.year}</Badge>
-          <Badge className="bg-blue-800 ml-2 text-white">{car.mileage}</Badge>
+        <div className={`absolute bottom-0 ${isRTL ? 'right-0' : 'left-0'} p-3`}>
+          <Badge className="bg-gray-700 text-white">{car.year}</Badge>
+          <Badge className={`bg-gray-700 ${isRTL ? 'mr-2' : 'ml-2'} text-white`}>{car.mileage}</Badge>
         </div>
       </div>
-      <CardContent className="flex-grow flex flex-col pt-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-1">{car.title}</h3>
-        <PriceDisplay price={car.price} />
-        <div className="flex items-center text-gray-600 mb-3 text-sm">
-          <Car size={16} className="mr-1" />
-          <span>{car.bodyType}</span>
+      <CardContent className="flex-grow flex flex-col pt-4 px-4">
+        <h3 className="text-lg font-semibold text-black mb-1">{car.title}</h3>
+        <div className="flex items-center text-gray-500 mb-3 text-sm w-full">
+          <div className={`flex items-center gap-2 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <Car size={16} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
+            <span>{car.bodyType}</span>
+          </div>
           <span className="mx-2">•</span>
-          <Fuel size={16} className="mr-1" />
-          <span>{car.fuelType}</span>
+          <div className={`flex items-center gap-2 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <Fuel size={16} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
+            <span>{car.fuelType}</span>
+          </div>
         </div>
-        <p className="text-gray-600 text-sm line-clamp-2 mb-4">{car.description}</p>
-        <div className="mt-auto flex justify-between items-center">
-          {car.location && <span className="text-sm text-gray-700">{car.location}</span>}
-          <div className="flex space-x-2">
+        <p className="text-gray-500 text-sm line-clamp-2 mb-4">{car.description}</p>
+        <PriceDisplay price={car.price} className="text-green-600 text-xl font-bold w-full flex justify-center items-center mb-4" />
+        {car.location && <span className="text-sm text-gray-500 mb-4">{car.location}</span>}
+        <div className="mt-auto flex flex-col w-full space-y-3">
+          <div className="grid grid-cols-2 gap-2 w-full">
             <ActionButton 
               icon={MessageSquare}
               label={t('contact')}
               onClick={handleContactSeller}
+              className="flex items-center justify-center  w-full text-sm"
             />
             <ActionButton 
               icon={Car}
               label={t('view_details')}
               onClick={handleViewDetails}
+              className="flex items-center justify-center w-full text-sm"
             />
           </div>
-        </div>
-        <div className="mt-4 flex justify-between items-center">
           <ActionButton
             icon={Scale}
             label={isInComparison(car.id.toString()) ? t('remove_from_comparison') : t('add_to_comparison')}
             onClick={handleCompareToggle}
             variant={isInComparison(car.id.toString()) ? "destructive" : "outline"}
-            className="flex items-center gap-2"
+            className="flex items-center justify-center gap-2 w-full text-sm"
           />
         </div>
       </CardContent>
@@ -235,7 +241,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   );
 
   const listContent = (
-    <Card className="overflow-hslugden hover:shadow-lg transition-shadow duration-300">
+    <Card className={`overflow-hslugden hover:shadow-lg transition-shadow duration-300 ${isRTL ? 'rtl' : 'ltr'}`}>
       <div className="flex flex-col md:flex-row">
         <div className="relative md:w-1/3">
           <Img
@@ -251,38 +257,40 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
         <CardContent className="md:w-2/3 p-4 md:p-6">
           <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4">
             <div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-1">{car.title}</h3>
-              <div className="flex items-center text-gray-600 mb-2 text-sm">
-                <Car size={16} className="mr-1" />
+              <h3 className="text-xl font-semibold text-black mb-1">{car.title}</h3>
+              <div className="flex items-center text-gray-500 mb-2 text-sm">
+                <Car size={16} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
                 <span>{car.bodyType}</span>
                 <span className="mx-2">•</span>
-                <Calendar size={16} className="mr-1" />
+                <Calendar size={16} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
                 <span>{car.year}</span>
                 <span className="mx-2">•</span>
-                <Gauge size={16} className="mr-1" />
+                <Gauge size={16} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
                 <span>{car.mileage}</span>
                 <span className="mx-2">•</span>
-                <Fuel size={16} className="mr-1" />
+                <Fuel size={16} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
                 <span>{car.fuelType}</span>
               </div>
             </div>
-            <PriceDisplay price={car.price} />
           </div>
-          <p className="text-gray-600 mb-4">{car.description}</p>
+          <p className="text-gray-500 mb-4">{car.description}</p>
           {renderFeatures()}
           <div className="flex items-center justify-between mt-4 w-full">
             {car.location && <span className="text-sm text-gray-500">{car.location}</span>}
-            <div className="flex space-x-3">
-              <ActionButton 
-                icon={MessageSquare}
-                label={t('contact')}
-                onClick={handleContactSeller}
-              />
-              <ActionButton 
-                icon={Car}
-                label={t('view_details')}
-                onClick={handleViewDetails}
-              />
+            <div className={`flex flex-col items-end `}>
+              <PriceDisplay price={car.price} className="text-green-600 text-xl font-bold" />
+              <div className={`flex ${isRTL ? 'space-x-reverse' : 'space-x-3'}`}>
+                <ActionButton 
+                  icon={MessageSquare}
+                  label={t('contact')}
+                  onClick={handleContactSeller}
+                />
+                <ActionButton 
+                  icon={Car}
+                  label={t('view_details')}
+                  onClick={handleViewDetails}
+                />
+              </div>
             </div>
           </div>
           <div className="mt-4 flex justify-between items-center">
@@ -291,7 +299,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
               label={isInComparison(car.id.toString()) ? t('remove_from_comparison') : t('add_to_comparison')}
               onClick={handleCompareToggle}
               variant={isInComparison(car.id.toString()) ? "destructive" : "outline"}
-              className="flex items-center gap-2"
+              className="flex items-center "
             />
           </div>
         </CardContent>

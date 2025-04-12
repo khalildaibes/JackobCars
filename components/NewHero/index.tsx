@@ -32,6 +32,32 @@ const HeroSection: React.FC = () => {
     [router]
   );
 
+  useEffect(() => {
+    window.addEventListener('resize', checkBackgroundColor);
+    return () => {
+      window.removeEventListener('resize', checkBackgroundColor);
+    };
+  }, []);
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      checkBackgroundColor.call(window);
+    });
+
+    observer.observe(document.body, { 
+      attributes: true, 
+      attributeFilter: ['style', 'class'],
+      childList: true,
+      subtree: true 
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  const interval = setInterval(checkBackgroundColor, 1000);
+
   return (
     <motion.div 
       initial={{ opacity: 0, scale: 0.95, y: 50 }}
@@ -71,7 +97,7 @@ const HeroSection: React.FC = () => {
             ease: [0.6, -0.05, 0.01, 0.99],
             delay: 0.4
           }}
-          className="text-center md:text-right mt-20 md:mt-40 max-w-lg"
+          className="text-center md:text-right mt-20 md:mt-40 w-[600px]"
         >
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
@@ -93,7 +119,7 @@ const HeroSection: React.FC = () => {
               ease: [0.6, -0.05, 0.01, 0.99],
               delay: 0.6
             }}
-            className="text-white/90 text-[14px] sm:text-[16px] font-normal leading-[20px] sm:leading-[29.6px] drop-shadow-md"
+            className=" pt-[20px] text-white/90 text-[14px] sm:text-[16px] font-normal leading-[20px] sm:leading-[29.6px] drop-shadow-md"
           >
             {t("hero_subtitle")}
           </motion.p>
@@ -173,3 +199,25 @@ const HeroSection: React.FC = () => {
 };
 
 export default HeroSection;
+function checkBackgroundColor(this: Window, ev: UIEvent) {
+  const nav = document.querySelector('nav');
+  if (!nav) return;
+  const navRect = nav.getBoundingClientRect();
+  
+  const points = [
+    { x: navRect.left + navRect.width / 2, y: navRect.top + navRect.height / 2 },
+    { x: navRect.left + navRect.width / 4, y: navRect.top + navRect.height / 2 },
+    { x: navRect.left + (navRect.width * 3) / 4, y: navRect.top + navRect.height / 2 }
+  ];
+
+  let totalBrightness = 0;
+  let validPoints = 0;
+  // ... calculate brightness for each point ...
+  const averageBrightness = totalBrightness / validPoints;
+
+
+  const textColor = averageBrightness > 128 ? 'text-gray-900' : 'text-white';
+  return textColor;
+}
+
+// const navbarClass = `fixed top-0 left-0 right-0 bg-transparent backdrop-blur-md z-50 ${textColor}`;

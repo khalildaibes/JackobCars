@@ -29,7 +29,7 @@
     "special_offers_sales": "Special Offers & Sales",
     "used_cars": "Used Cars",
     "great_price": "Great Price",
-    "view_details": "View Details",
+    "view_details": "Details",
     "view_all": "View All",
     "great_deal": "Great Deal",
     "sale": "Sale",
@@ -54,7 +54,7 @@
     "sell_your_car_title": "We have over 200,000 daily customers.",
     "recently_added": "Recently Added",
     "view_all": "View All",
-    "view_details": "View Details",
+    "view_details": "Details",
     "bookmark": "Bookmark",
     "arrow_left": "Arrow Left",
     "car_title_1": "T-Cross – 2023",
@@ -200,13 +200,46 @@
   },
   "Navbar": {
     "logo_alt": "AtSpeedLimit Logo",
-    "cars_market": "Cars Market",
-    "find_by_plate": "Find by Plate Number",
+    "carsMarket": "Cars Market",
+    "findByPlate": "Find by Plate Number",
     "news": "News",
-    "after_market": "After Market",
-    "compare_cars": "Compare Cars",
+    "afterMarket": "After Market",
+    "compareCars": "Compare Cars",
     "stores": "Stores",
-    "login": "Login"
+    "login": "Login",
+    "dropdown": {
+      "cars_market": {
+        "new_cars": "New Cars",
+        "used_cars": "Used Cars",
+        "electric_vehicles": "Electric Vehicles",
+        "luxury_cars": "Luxury Cars"
+      },
+      "find_by_plate": {
+        "plate_search": "Plate Search",
+        "vehicle_history": "Vehicle History",
+        "ownership_check": "Ownership Check"
+      },
+      "news": {
+        "latest_news": "Latest News",
+        "car_reviews": "Car Reviews",
+        "industry_updates": "Industry Updates"
+      },
+      "after_market": {
+        "parts_accessories": "Parts & Accessories",
+        "service_centers": "Service Centers",
+        "maintenance_tips": "Maintenance Tips"
+      },
+      "comparison": {
+        "compare_models": "Compare Models",
+        "price_comparison": "Price Comparison",
+        "feature_comparison": "Feature Comparison"
+      },
+      "stores": {
+        "find_dealers": "Find Dealers",
+        "service_centers": "Service Centers",
+        "parts_stores": "Parts Stores"
+      }
+    }
   },
   "SalesAndReviews": {
     "cars_for_sale": "CARS FOR SALE",
@@ -302,7 +335,7 @@
     "grid": "Grid",
     "list": "List",
     "contact": "Contact",
-    "view_details": "View Details",
+    "view_details": "Details",
     "contact_seller": "Contact Seller",
     "features": "Features",
     "more_features": "more features",
@@ -694,7 +727,7 @@
     "price": "Price",
     "fuel_type": "Fuel Type",
     "transmission": "Transmission",
-    "view_details": "View Details",
+    "view_details": "Details",
     "loading_spinner": "Loading...",
     "filter_toggle": "Toggle Filters",
     "view_mode_toggle": "Toggle View Mode",
@@ -753,7 +786,7 @@
     "contact": "Contact",
     "phone": "Phone",
     "email": "Email",
-    "view_details": "View Details",
+    "view_details": "Details",
     "get_directions": "Get Directions",
     "loading": "Loading stores...",
     "error": "Error loading stores",
@@ -808,8 +841,17 @@
     "email_placeholder": "Your email address",
     "privacy_policy": "By subscribing, you agree to our Privacy Policy and consent to receive updates from our company.",
     "loading": "Loading...",
+    "related_articles": "Related Articles",
     "featured_news": "Featured News",
-    "news_grid": "Latest News",
+    "news_grid": {
+      "title": "Latest News",
+      "read_more": "Read More",
+      "no_articles": "No news articles found",
+      "author": "Author",
+      "anonymous": "Anonymous",
+      "published": "Published",
+      "related_articles": "Related Articles"
+    },
     "join_community": "Join our community of car enthusiasts and industry professionals to receive curated content about the automotive world.",
     "latest_news": "Latest News",
     "all_categories": "All Categories",
@@ -829,14 +871,6 @@
       "create_post_desc": "Share your automotive insights",
       "contact_us": "Contact Us",
       "contact_us_desc": "Get in touch with our team"
-    },
-    "news_grid": {
-      "title": "Latest News",
-      "read_more": "Read More",
-      "no_articles": "No news articles found",
-      "author": "Author",
-      "anonymous": "Anonymous",
-      "published": "Published"
     },
     "language_selector": {
       "english": "English",

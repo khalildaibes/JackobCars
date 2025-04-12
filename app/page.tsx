@@ -21,9 +21,11 @@ import ResponsiveNewsLayout from "../components/Responsivenews";
 import SearchBar from "../components/SearchBar";
 import { Img } from "../components/Img";
 import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 // Types
 interface Deal {
+  slug: string;
   id: string;
   image: Array<{ url: string }>;
   name: string;
@@ -81,6 +83,7 @@ interface Listing {
   year: number;
   fuelType: string;
   make: string;
+  slug: string;
   bodyType: string;
   description: string;
   features: string[];
@@ -98,8 +101,8 @@ const fetchHomePageData = async (): Promise<HomePageData> => {
 
 const fetchArticles = async () => {
   const [featuredResponse, newsResponse, storyResponse] = await Promise.all([
-    fetch('/api/articles?limit=3'),
-    fetch('/api/articles?limit=5'),
+    fetch('/api/articles?limit=8'),
+    fetch('/api/articles?limit=8'),
     fetch('/api/articles?limit=8')
   ]);
 
@@ -227,7 +230,7 @@ const normalizeBodyType = (rawBodyType: string): string => {
 };
 
 // Dynamically import components
-const FindCarByPlate = dynamic(() => import("./findcarbyplate/FindCarByPlate"), { ssr: false });
+const   FindCarByPlate = dynamic(() => import("./plate-search/FindCarByPlate"), { ssr: false });
 const HeroSection = dynamic(() => import("../components/NewHero"));
 const LookingForCar = dynamic(() => import("../components/comp"));
 const FeaturedListingsSection = dynamic(() => import("../components/homeeight/FeaturedListingsSection"));
@@ -297,6 +300,7 @@ function HomeContent() {
       mainImage: product.image ? `http://68.183.215.202${product.image[0]?.url}` : "/default-car.png",
       alt: product.name || "Car Image",
       title: product.name,
+      slug: product.slug,
       miles: product.details?.car.miles || "N/A",
       fuel: normalizeFuelType(product.details?.car.fuel || "Unknown"),
       condition: product.details?.car.condition || "Used",
@@ -335,6 +339,36 @@ function HomeContent() {
       blocks: article.blocks || []
     }));
   }, [articlesData]);
+
+  // News slider state and functions
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const itemsPerPage = isMobile ? 1 : 4;
+  const totalSlides = Math.ceil(transformedArticles.filter(article => article.category.includes('featured')).length / itemsPerPage);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % totalSlides);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
+  };
+
+  const visibleArticles = transformedArticles
+    .filter(article => article.category.includes('featured'))
+    .slice(currentSlide * itemsPerPage, (currentSlide + 1) * itemsPerPage);
 
   // Memoized filter change handler
   const handleFilterChange = useCallback((title: string, value: string) => {
@@ -382,7 +416,7 @@ function HomeContent() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="flex flex-col w-full overflow-hidden pt-[10px]"
+      className="flex flex-col w-full overflow-hidden"
     >
       {/* 1. Hero Banner Section */}
       <motion.section 
@@ -393,19 +427,20 @@ function HomeContent() {
           ease: [0.6, -0.05, 0.01, 0.99],
           delay: 0.2
         }}
-        className="w-full relative"
+        className="w-full relative mb-6"
       >
         <HeroSection  />
       </motion.section>
 
-      {/* 4. Latest News Section - Industry Updates */}
-      <motion.section 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="w-full bg-gradient-to-b from-white to-gray-50 py-16"
-      >
-        <div className="container mx-auto px-4">
+      {/* Main Content Container */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        {/* 4. Latest News Section - Industry Updates */}
+        <motion.section 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="w-full bg-gradient-to-b from-white to-gray-50 py-6 mb-6 rounded-2xl"
+        >
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -414,14 +449,38 @@ function HomeContent() {
               ease: [0.6, -0.05, 0.01, 0.99],
               delay: 0.4
             }}
-            className="flex items-center mb-12"
+            className="flex items-center justify-between mb-4 px-4"
           >
-            <div className="w-1 h-12 bg-green-600 mr-4"></div>
-            <h2 className="text-3xl font-bold text-gray-900">{t('other_news')}</h2>
+            <h2 className="text-xl font-bold text-white bg-[#050B20] p-2 rounded-lg flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8H8v7h8V8z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 4v16" />
+              </svg>
+              {t('other_news')}
+            </h2>
+            {totalSlides > 1 && (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={prevSlide}
+                  className="p-2 rounded-full bg-white shadow-md hover:bg-gray-50 transition-colors"
+                  aria-label="Previous slide"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={nextSlide}
+                  className="p-2 rounded-full bg-white shadow-md hover:bg-gray-50 transition-colors"
+                  aria-label="Next slide"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+            )}
           </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {transformedArticles.map((article, index) => (
-              article.category.includes('featured') && (
+          <div className="relative px-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {visibleArticles.map((article, index) => (
                 <motion.div
                   key={article.id}
                   initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -435,10 +494,11 @@ function HomeContent() {
                     scale: 1.02,
                     transition: { duration: 0.2 }
                   }}
+                  className="w-full"
                 >
                   <Link href={`/news/${article.slug}`} className="group block">
-                    <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl ">
-                      <div className="aspect-[16/9] overflow-hidden">
+                    <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl min-h-[250px] max-h-[250px] w-full">
+                      <div className="aspect-[16/9] overflow-hidden h-[140px]">
                         <Img
                           src={`http://68.183.215.202${article.imageUrl}`}
                           alt={article.title}
@@ -448,39 +508,51 @@ function HomeContent() {
                           external={true}
                         />
                       </div>
-                      <div className="p-6">
-                        <div className="flex items-center mb-3">
-                          <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                      <div className="p-3">
+                        <div className="flex items-center mb-1">
+                          <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
                             {article.category}
                           </span>
                           <span className="mx-2 text-gray-400">•</span>
-                          <span className="text-sm text-gray-500">{article.date}</span>
+                          <span className="text-xs text-gray-500">{article.date}</span>
                         </div>
-                        <h2 className="text-xl font-bold mb-3 text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                        <h2 className="text-sm font-bold mb-1 text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
                           {article.title}
                         </h2>
-                        <p className="text-gray-600 line-clamp-3 mb-4">{article.excerpt}</p>
-                        <div className="flex items-center text-sm text-gray-500">
+                        <p className="text-xs text-gray-600 line-clamp-2 mb-2">{article.excerpt}</p>
+                        <div className="flex items-center text-xs text-gray-500">
                           <span className="font-medium">{article.author}</span>
                         </div>
                       </div>
                     </div>
                   </Link>
                 </motion.div>
-              )
-            ))}
+              ))}
+            </div>
+            {totalSlides > 1 && (
+              <div className="flex justify-center mt-4 gap-2">
+                {Array.from({ length: totalSlides }).map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    className={`w-2 h-2 rounded-full transition-colors ${
+                      currentSlide === index ? 'bg-blue-600' : 'bg-gray-300'
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-        </div>
-      </motion.section>
-      
-       {/* 3. Most Searched Section - Popular Cars */}
-       <motion.section 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="w-full bg-white pb-16"
-      >
-        <div className="container mx-auto px-4">
+        </motion.section>
+        
+        {/* 3. Most Searched Section - Popular Cars */}
+        <motion.section 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="w-full bg-white py-6 mb-6 rounded-2xl"
+        >
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -489,7 +561,7 @@ function HomeContent() {
               ease: [0.6, -0.05, 0.01, 0.99],
               delay: 0.6
             }}
-            className="flex items-center mb-12"
+            className="flex items-center mb-4 px-4"
           >
           </motion.div>
           <RecentlyAddedSection 
@@ -497,17 +569,15 @@ function HomeContent() {
             title={t('most_searched_cars')}
             viewAllLink="/cars"
           />
-        </div>
-      </motion.section>
+        </motion.section>
 
-      {/* 5. Sales & Special Offers Section */}
-      <motion.section 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="w-full bg-white py-16"
-      >
-        <div className="container mx-auto px-4">
+        {/* 5. Sales & Special Offers Section */}
+        <motion.section 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="w-full bg-white py-6 mb-6 rounded-2xl"
+        >
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -516,23 +586,27 @@ function HomeContent() {
               ease: [0.6, -0.05, 0.01, 0.99],
               delay: 0.8
             }}
-            className="flex items-center mb-12"
+            className="flex items-center mb-4 px-4"
           >
-            <div className="w-1 h-12 bg-yellow-500 mr-4"></div>
-            <h2 className="text-3xl font-bold text-gray-900">{t('special_offers_sales')}</h2>
+            <h2 className="text-xl font-bold text-white bg-[#050B20] p-2 rounded-lg flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8H8v7h8V8z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 4v16" />
+              </svg>
+              {t('special_offers_sales')}
+            </h2>
           </motion.div>
           <SalesAndReviewsSection />
-        </div>
-      </motion.section>
+        </motion.section>
 
-      {/* 6. Recently Added Section - New Inventory */}
-      <motion.section 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="w-full bg-gradient-to-b from-gray-50 to-white py-16"
-      >
-        <div className="container mx-auto px-4">
+        {/* 6. Recently Added Section - New Inventory */}
+        <motion.section 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="w-full bg-gradient-to-b from-gray-50 to-white py-6 mb-6 rounded-2xl"
+        >
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -541,53 +615,58 @@ function HomeContent() {
               ease: [0.6, -0.05, 0.01, 0.99],
               delay: 1.0
             }}
-            className="flex items-center mb-12"
+            className="flex items-center mb-4 px-4"
           >
-            <div className="w-1 h-12 bg-purple-600 mr-4"></div>
-            <h2 className="text-3xl font-bold text-gray-900">{t('new_arrivals')}</h2>
+            <h2 className="text-xl font-bold text-white bg-[#050B20] p-2 rounded-lg flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              {t('new_arrivals')}
+            </h2>
           </motion.div>
           <RecentlyAddedSection listings={listings} />
-        </div>
-      </motion.section>
+        </motion.section>
 
-      {/* 7. Call to Action Section - Looking for a Car */}
-      <motion.section 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="w-full bg-gradient-to-r from-blue-900 to-blue-800 py-16"
-      >
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-center gap-8">
-            {lookingForCarData.map(({ title, text, buttonColor, backgroundColor, icon, buttonTextColor, textColor }, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ 
-                  duration: 0.6,
-                  ease: [0.6, -0.05, 0.01, 0.99],
-                  delay: 1.2 + (index * 0.1)
-                }}
-                whileHover={{ 
-                  scale: 1.02,
-                  transition: { duration: 0.2 }
-                }}
-              >
-                <LookingForCar
-                  text={text}
-                  title={title}
-                  backgroundColor={backgroundColor}
-                  textColor={textColor}
-                  buttonColor={buttonColor}
-                  buttonTextColor={buttonTextColor}
-                  icon={icon}
-                />
-              </motion.div>
-            ))}
+        {/* 7. Call to Action Section - Looking for a Car */}
+        <motion.section 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="w-full bg-white py-6 rounded-2xl"
+        >
+          <div className="px-4">
+            <div className="flex flex-col md:flex-row justify-center gap-4">
+              {lookingForCarData.map(({ title, text, buttonColor, backgroundColor, icon, buttonTextColor, textColor }, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ 
+                    duration: 0.6,
+                    ease: [0.6, -0.05, 0.01, 0.99],
+                    delay: 1.2 + (index * 0.1)
+                  }}
+                  whileHover={{ 
+                    scale: 1.02,
+                    transition: { duration: 0.2 }
+                  }}
+                >
+                  <LookingForCar
+                    text={text}
+                    title={title}
+                    backgroundColor={backgroundColor}
+                    textColor={textColor}
+                    buttonColor={buttonColor}
+                    buttonTextColor={buttonTextColor}
+                    icon={icon}
+                    variant={index === 0 ? 'buy' : 'sell'}
+                  />
+                </motion.div>
+              ))}
+            </div>
           </div>
-        </div>
-      </motion.section>
+        </motion.section>
+      </div>
     </motion.main>
   );
 }
