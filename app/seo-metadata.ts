@@ -39,7 +39,7 @@ export const seoMetadata = {
     description: 'Browse our extensive collection of aftermarket parts, accessories, and performance upgrades.',
     keywords: 'aftermarket parts, car accessories, performance upgrades, custom parts'
   },
-  plate-search: {
+  plateSearch: {
     title: 'License Plate Lookup',
     description: 'Look up vehicle details and specifications using license plate information.',
     keywords: 'license plate search, vehicle lookup, car details, plate checker'
