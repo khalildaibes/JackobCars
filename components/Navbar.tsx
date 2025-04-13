@@ -113,30 +113,30 @@ export default function Navbar() {
 
   const dropdownItems = {
     carsMarket: [
-      { label: t("dropdown.cars_market.new_cars"), href: "/new-cars" },
-      { label: t("dropdown.cars_market.used_cars"), href: "/used-cars" },
-      { label: t("dropdown.cars_market.electric_vehicles"), href: "/electric-cars" },
-      { label: t("dropdown.cars_market.luxury_cars"), href: "/luxury-cars" }
+      { label: t("dropdown.cars_market.new_cars"), href: "/car-listing" },
+      { label: t("dropdown.cars_market.used_cars"), href: "/car-listing" },
+      { label: t("dropdown.cars_market.electric_vehicles"), href: "/car-listing" },
+      { label: t("dropdown.cars_market.luxury_cars"), href: "/car-listing" }
     ],
     findByPlate: [
       { label: t("dropdown.find_by_plate.plate_search"), href: "/plate-search" },
-      { label: t("dropdown.find_by_plate.vehicle_history"), href: "/vehicle-history" },
-      { label: t("dropdown.find_by_plate.ownership_check"), href: "/ownership-check" }
+      // { label: t("dropdown.find_by_plate.vehicle_history"), href: "/plate-search" },
+      // { label: t("dropdown.find_by_plate.ownership_check"), href: "/plate-search" }
     ],
     news: [
       { label: t("dropdown.news.latest_news"), href: "/news/latest" },
       { label: t("dropdown.news.car_reviews"), href: "/news/reviews" },
       { label: t("dropdown.news.industry_updates"), href: "/news/industry" }
     ],
-    afterMarket: [
-      { label: t("dropdown.after_market.parts_accessories"), href: "/parts" },
-      { label: t("dropdown.after_market.service_centers"), href: "/service-centers" },
-      { label: t("dropdown.after_market.maintenance_tips"), href: "/maintenance-tips" }
+    after_market: [
+      { label: t("dropdown.after_market.parts_accessories"), href: "/after_market?category=parts" },
+      { label: t("dropdown.after_market.service_centers"), href: "/after_market?category=service-centers" },
+      { label: t("dropdown.after_market.maintenance_tips"), href: "/after_market?category=maintenance-tips" }
     ],
     compareCars: [
-      { label: t("dropdown.comparison.compare_models"), href: "/compare/models" },
-      { label: t("dropdown.comparison.price_comparison"), href: "/compare/prices" },
-      { label: t("dropdown.comparison.feature_comparison"), href: "/compare/features" }
+      { label: t("dropdown.comparison.compare_models"), href: "/comparison?category=models" },
+      { label: t("dropdown.comparison.price_comparison"), href: "/comparison?category=prices" },
+      { label: t("dropdown.comparison.feature_comparison"), href: "/comparison?category=features" }
     ],
     stores: [
       { label: t("dropdown.stores.find_dealers"), href: "/dealers" },
@@ -149,7 +149,7 @@ export default function Navbar() {
     carsMarket: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out",
     findByPlate: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out",
     news: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out",
-    afterMarket: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out",
+    after_market: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out",
     compareCars: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out",
     stores: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out"
   };

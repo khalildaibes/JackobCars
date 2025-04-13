@@ -3,12 +3,22 @@ import { Metadata } from "next";
 import Page from ".";
 
 export const metadata: Metadata = {
-  title: "Auto Parts Shop - Find Quality Car Accessories and Kits",
+  title: "after_market Parts & Services | Car Dealer",
   description:
-    "Shop for premium car accessories, body kits, and exterior parts. Discover the latest deals on quality auto parts for your vehicle at our online store.",
-  //ogTitle:'...'
+    "Explore our comprehensive after_market solutions including parts, accessories, service centers, and maintenance tips. Find everything you need for your vehicle.",
+  openGraph: {
+    title: "after_market Parts & Services | Car Dealer",
+    description: "Find quality parts, service centers, and maintenance tips for your vehicle",
+    type: "website",
+  },
 };
 
-export default function ShoppagePage() {
-  return <Page />;
+interface after_marketPageProps {
+  searchParams: {
+    category?: string;
+  };
+}
+
+export default function after_marketPage({ searchParams }: after_marketPageProps) {
+  return <Page initialCategory={searchParams.category} />;
 }

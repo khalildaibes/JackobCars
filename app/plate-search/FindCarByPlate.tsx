@@ -23,6 +23,15 @@ import {
   Key,
   User,
   Truck,
+  GearboxIcon,
+  Cog,
+  Zap,
+  Timer,
+  Disc,
+  Sparkles,
+  Wrench,
+  Activity,
+  ShieldCheck
 } from "lucide-react";
 import { Img } from "../../components/Img";
 import Image from "next/image";
@@ -32,6 +41,32 @@ const ALTERNATE_API_BASE_URL = "https://data.gov.il/api/3/action/datastore_searc
 
 interface CarData {
   [key: string]: string;
+}
+
+interface CarPerformanceData {
+  performance: {
+    acceleration: string;
+    top_speed: string;
+    horsepower: string;
+    torque: string;
+    fuel_consumption_city: string;
+    fuel_consumption_highway: string;
+  };
+  tuning: {
+    tuning_potential: string;
+    tuning_notes: string;
+    common_upgrades: string[];
+  };
+  handling: {
+    handling_rating: string;
+    suspension_type: string;
+    driving_characteristics: string;
+  };
+  reliability: {
+    reliability_rating: string;
+    common_issues: string[];
+    maintenance_cost: string;
+  };
 }
 
 const CarSearch = () => {
@@ -44,8 +79,19 @@ const CarSearch = () => {
   const [carData, setCarData] = useState<CarData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [carImage, setCarImage] = useState<string | null>(null);
+  const [performanceData, setPerformanceData] = useState<CarPerformanceData | null>(null);
+  const [loadingPerformance, setLoadingPerformance] = useState(false);
 
   const iconMap = {
+    transmission: GearboxIcon,
+    drive_type: Cog,
+    engine_type: Gauge,
+    engine_size: Fuel,
+    engine_power: Zap,
+    acceleration: Timer,
+    front_tire: Disc,
+    rear_tire: Disc,
     plate_number: Car,
     year_of_production: Calendar,
     engine_model: Gauge,
@@ -60,6 +106,17 @@ const CarSearch = () => {
     ownership: User,
     chassis: Truck,
   } as const;
+
+  const priorityFields = [
+    'transmission',
+    'drive_type',
+    'engine_type',
+    'engine_size',
+    'engine_power',
+    'acceleration',
+    'front_tire',
+    'rear_tire'
+  ];
 
   const translationMap: Record<string, string> = {
     _id: t("id"),
@@ -112,12 +169,52 @@ const CarSearch = () => {
     setError(null);
   };
 
+  const fetchCarImage = async (manufacturer: string, model: string) => {
+    try {
+      const response = await fetch(`https://api.unsplash.com/search/photos?query=${manufacturer}+${model}+car&client_id=YOUR_UNSPLASH_API_KEY`);
+      const data = await response.json();
+      if (data.results && data.results.length > 0) {
+        setCarImage(data.results[0].urls.regular);
+      }
+    } catch (error) {
+      console.error("Error fetching car image:", error);
+    }
+  };
+
+  const fetchCarPerformanceData = async (manufacturer: string, model: string, year: string) => {
+    try {
+      setLoadingPerformance(true);
+      const response = await fetch('/api/generate-car-information', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          manufacturer,
+          model,
+          year,
+          locale
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch performance data');
+      const data = await response.json();
+      setPerformanceData(data);
+    } catch (error) {
+      console.error('Error fetching performance data:', error);
+      setError(t('error_loading_info'));
+    } finally {
+      setLoadingPerformance(false);
+    }
+  };
+
   const fetchCarData = async () => {
     if (!plateNumber) return;
     // Remove dashes before making the API call
     const cleanPlateNumber = plateNumber.replace(/-/g, '');
     setLoading(true);
     setError(null);
+    setCarImage(null);
     let data = null;
 
     try {
@@ -148,6 +245,17 @@ const CarSearch = () => {
         );
 
         setCarData(translatedData);
+        
+        // Fetch car image and performance data
+        if (record.tozeret_nm && record.kinuy_mishari && record.shnat_yitzur) {
+          await fetchCarImage(String(record.tozeret_nm), String(record.kinuy_mishari));
+          await fetchCarPerformanceData(
+            String(record.tozeret_nm),
+            String(record.kinuy_mishari),
+            String(record.shnat_yitzur)
+          );
+        }
+
         // Scroll to results after data is loaded
         setTimeout(() => {
           resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -162,6 +270,18 @@ const CarSearch = () => {
     }
 
     setLoading(false);
+  };
+
+  const renderRating = (rating: string) => {
+    const numRating = parseInt(rating);
+    return t(`rating_${numRating}`);
+  };
+
+  const isLicenseExpired = (validityDate: string) => {
+    if (!validityDate) return false;
+    const today = new Date();
+    const validity = new Date(validityDate);
+    return validity < today;
   };
 
   return (
@@ -194,24 +314,14 @@ const CarSearch = () => {
                     height={50} 
                     className="object-fill w-[60px] md:w-[80px] p-[2px]" 
                   />
-                  <Button 
-                    onClick={fetchCarData} 
-                    disabled={loading}
-                    className="rounded-full w-12 h-12 hover:bg-blue-700 transition-colors bg-blue-300"
-                  >
-                    {loading ? (
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                    ) : (
-                      <Search className="h-5 w-5" />
-                    )}
-                  </Button>
+
                 </div>
                 <Input
                   type="text"
                   value={plateNumber}
                   onChange={handlePlateNumberChange}
                   placeholder={t("enter_plate")}
-                  className="w-full px-6 py-8 text-4xl md:text-5xl font-black tracking-[0.1em] bg-transparent border-0 focus:ring-0 text-center uppercase"
+                  className="w-full px-4 sm:px-6 py-4 sm:py-8 text-xl sm:text-2xl md:text-3xl font-black tracking-[0.1em] bg-transparent border-0 focus:ring-0 text-center uppercase"
                   maxLength={10}
                   style={{
                     letterSpacing: '0.1em',
@@ -226,9 +336,9 @@ const CarSearch = () => {
             <Button 
                     onClick={fetchCarData} 
                     disabled={loading}
-                    className="rounded-full w-50 text-black   h-12 hover:bg-blue-700 transition-colors bg-[#ffca11]"
+                    className="rounded-full w-50 text-black h-12 hover:bg-blue-700 transition-colors bg-[#ffca11]"
                   >
-                    Search by VIN
+                    {t("search_by_vin")}
                     {loading ? (
                       <Loader2 className="h-5 w-5 animate-spin" />
                     ) : (
@@ -287,23 +397,174 @@ const CarSearch = () => {
         {carData && !loading && (
           <Card>
             <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {Object.entries(carData).map(([key, value]) => (
-                  <div key={key} className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <div className={`flex-shrink-0 ${isRTL ? 'order-2' : 'order-1'}`}>
-                      {iconMap[key as keyof typeof iconMap] ? (
+              {carImage && (
+                <div className="mb-8 rounded-lg overflow-hidden">
+                  <img 
+                    src={carImage} 
+                    alt={`${carData.manufacturer_name} ${carData.model_name}`}
+                    className="w-full h-[400px] object-cover"
+                  />
+                </div>
+              )}
+
+              {/* Performance Data */}
+              {loadingPerformance && (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                  <span className="ml-3 text-lg">{t('loading_info')}</span>
+                </div>
+              )}
+
+              {performanceData && (
+                <div className="mb-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Performance Section */}
+                    <div className="bg-gray-50 rounded-lg p-6">
+                      <div className="flex items-center gap-3 mb-4">
                         <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          {React.createElement(iconMap[key as keyof typeof iconMap], {
-                            className: "h-5 w-5 text-blue-600"
-                          })}
+                          <Gauge className="h-6 w-6 text-blue-600" />
                         </div>
-                      ) : null}
+                        <h3 className="text-xl font-semibold">{t('performance')}</h3>
+                      </div>
+                      <div className="space-y-3">
+                        {Object.entries(performanceData.performance).map(([key, value]) => (
+                          <div key={key} className="flex justify-between">
+                            <span className="text-gray-600">{t(key)}</span>
+                            <span className="font-semibold">{value}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div className={isRTL ? 'order-1 text-right' : 'order-2 text-left'}>
-                      <p className="text-sm font-medium text-gray-500">{t(key)}</p>
-                      <p className="font-semibold text-gray-900">{String(value)}</p>
+
+                    {/* Tuning Section */}
+                    <div className="bg-gray-50 rounded-lg p-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                          <Sparkles className="h-6 w-6 text-blue-600" />
+                        </div>
+                        <h3 className="text-xl font-semibold">{t('tuning')}</h3>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">{t('tuning_potential')}</span>
+                          <span className="font-semibold">{renderRating(performanceData.tuning.tuning_potential)}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">{t('tuning_notes')}</span>
+                          <p className="mt-1 font-semibold">{performanceData.tuning.tuning_notes}</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">{t('common_upgrades')}</span>
+                          <ul className="mt-1 list-disc list-inside">
+                            {performanceData.tuning.common_upgrades.map((upgrade, index) => (
+                              <li key={index} className="font-semibold">{upgrade}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Handling Section */}
+                    <div className="bg-gray-50 rounded-lg p-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                          <Activity className="h-6 w-6 text-blue-600" />
+                        </div>
+                        <h3 className="text-xl font-semibold">{t('handling')}</h3>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">{t('handling_rating')}</span>
+                          <span className="font-semibold">{renderRating(performanceData.handling.handling_rating)}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">{t('suspension_type')}</span>
+                          <p className="mt-1 font-semibold">{performanceData.handling.suspension_type}</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">{t('driving_characteristics')}</span>
+                          <p className="mt-1 font-semibold">{performanceData.handling.driving_characteristics}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Reliability Section */}
+                    <div className="bg-gray-50 rounded-lg p-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                          <ShieldCheck className="h-6 w-6 text-blue-600" />
+                        </div>
+                        <h3 className="text-xl font-semibold">{t('reliability')}</h3>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">{t('reliability_rating')}</span>
+                          <span className="font-semibold">{renderRating(performanceData.reliability.reliability_rating)}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">{t('common_issues')}</span>
+                          <ul className="mt-1 list-disc list-inside">
+                            {performanceData.reliability.common_issues.map((issue, index) => (
+                              <li key={index} className="font-semibold">{issue}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">{t('maintenance_cost')}</span>
+                          <span className="font-semibold">{renderRating(performanceData.reliability.maintenance_cost)}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
+                </div>
+              )}
+              
+              {/* Priority Fields */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                {priorityFields.map((key) => (
+                  carData[key] && (
+                    <div key={key} className="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg">
+                      {iconMap[key as keyof typeof iconMap] && (
+                        <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+                          {React.createElement(iconMap[key as keyof typeof iconMap], {
+                            className: "h-6 w-6 text-blue-600"
+                          })}
+                        </div>
+                      )}
+                      <p className="text-sm font-medium text-gray-500 text-center">{t(key)}</p>
+                      <p className="font-semibold text-gray-900 text-center">{carData[`${key}_value`] || carData[key]}</p>
+                    </div>
+                  )
+                ))}
+              </div>
+
+              {/* Other Fields */}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {Object.entries(carData).map(([key, value]) => (
+                  !priorityFields.includes(key) && !key.endsWith('_value') && (
+                    <div key={key} className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                      <div className={`flex-shrink-0 ${isRTL ? 'order-2' : 'order-1'}`}>
+                        {iconMap[key as keyof typeof iconMap] && (
+                          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                            {React.createElement(iconMap[key as keyof typeof iconMap], {
+                              className: "h-5 w-5 text-blue-600"
+                            })}
+                          </div>
+                        )}
+                      </div>
+                      <div className={isRTL ? 'order-1 text-right' : 'order-2 text-left'}>
+                        <p className="text-sm font-medium text-gray-500">{t(key).split('.').pop()}</p>
+                        <p className={`font-semibold ${key === 'validity_date' && isLicenseExpired(value) ? 'text-red-600' : 'text-gray-900'}`}>
+                          {String(value)}
+                          {key === 'validity_date' && isLicenseExpired(value) && (
+                            <span className="ml-2 text-sm text-red-600 font-normal">
+                              ({t('license_expired')})
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  )
                 ))}
               </div>
             </CardContent>

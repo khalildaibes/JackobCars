@@ -34,10 +34,10 @@ export const seoMetadata = {
     description: 'Stay updated with automotive events, car shows, and industry meetups in your area.',
     keywords: 'car shows, automotive events, industry meetups, car exhibitions'
   },
-  afterMarket: {
-    title: 'Aftermarket Parts & Accessories',
-    description: 'Browse our extensive collection of aftermarket parts, accessories, and performance upgrades.',
-    keywords: 'aftermarket parts, car accessories, performance upgrades, custom parts'
+  after_market: {
+    title: 'after_market Parts & Accessories',
+    description: 'Browse our extensive collection of after_market parts, accessories, and performance upgrades.',
+    keywords: 'after_market parts, car accessories, performance upgrades, custom parts'
   },
   plateSearch: {
     title: 'License Plate Lookup',

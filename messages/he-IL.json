@@ -183,46 +183,98 @@
   },
   "CarSearch": {
     "title": "חיפוש רכב לפי מספר רישוי",
-    "subtitle": "קבל מידע מיידי על פרטי הרכב והיסטוריה באמצעות כלי חיפוש לוחית הרישוי",
-    "enter_plate": "הזן מספר רישוי",
-    "how_it_works": "איך זה עובד",
+    "subtitle": "הזן מספר רישוי לקבלת מידע מפורט על הרכב",
+    "enter_plate": "הכנס מספר רישוי",
+    "search_by_vin": "חפש",
+    "no_car_found": "לא נמצא רכב עם מספר הרישוי שהוזן",
+    "error_fetching": "אירעה שגיאה בעת אחזור הנתונים",
+    "how_it_works": "איך זה עובד?",
     "step1_title": "הזן מספר רישוי",
-    "step1_desc": "הקלד את מספר הרישוי בתיבת החיפוש",
-    "step2_title": "מצא את הרכב",
-    "step2_desc": "קבל גישה מיידית לפרטי הרכב והיסטוריה",
-    "step3_title": "קבל החלטות מושכלות",
-    "step3_desc": "השתמש במידע לקנייה, מכירה או מחקר בביטחון",
-    "loading_data": "טוען...",
-    "error_fetching": "שגיאה בטעינת נתוני הרכב",
-    "no_car_found": "לא נמצא רכב עם מספר רישוי זה",
-    "please_enter_plate": "אנא הזן מספר רישוי",
-    "search_car": "חיפוש",
-    "car_details": "פרטי הרכב",
-    "id": "מזהה",
+    "step1_desc": "הכנס את מספר הרישוי של הרכב",
+    "step2_title": "חפש",
+    "step2_desc": "המערכת תחפש את פרטי הרכב במאגר",
+    "step3_title": "קבל מידע",
+    "step3_desc": "צפה במידע מפורט על הרכב",
+    "logo_alt": "לוגו",
+
+    "transmission": "תיבת הילוכים",
+    "transmission_type": "רובוטי",
+    "transmission_value": "רובוטי",
+    
+    "drive_type": "הנעה",
+    "drive_type_value": "קדמית",
+    
+    "engine_type": "סוג מנוע",
+    "engine_type_value": "בנזין",
+    
+    "engine_size": "נפח מנוע",
+    "engine_size_value": "1.4 ליטר",
+    
+    "engine_power": "הספק מנוע",
+    "engine_power_value": "150 כ״ס",
+    
+    "acceleration": "תאוצה 0-100 קמ״ש",
+    "acceleration_value": "8.2 שניות",
+    
+    "front_tire": "צמיג קדמי",
+    "front_tire_value": "R16 205/55",
+    
+    "rear_tire": "צמיג אחורי",
+    "rear_tire_value": "205/55",
+
     "plate_number": "מספר רישוי",
     "manufacturer_code": "קוד יצרן",
     "model_type": "סוג דגם",
-    "manufacturer_name": "יצרן",
+    "manufacturer_name": "שם יצרן",
     "model_code": "קוד דגם",
-    "model_name": "דגם",
+    "model_name": "שם דגם",
     "trim_level": "רמת גימור",
-    "safety_equipment_level": "ציוד בטיחות",
+    "safety_equipment_level": "רמת אבזור בטיחותי",
     "pollution_group": "קבוצת זיהום",
     "year_of_production": "שנת ייצור",
-    "engine_model": "מנוע",
-    "last_inspection_date": "טסט אחרון",
-    "validity_date": "בתוקף עד",
+    "engine_model": "דגם מנוע",
+    "last_inspection_date": "תאריך טסט אחרון",
+    "validity_date": "תוקף רישיון",
     "ownership": "בעלות",
-    "chassis": "שלדה",
+    "chassis": "מספר שלדה",
     "color_code": "קוד צבע",
-    "car_color": "צבע",
-    "front_tire": "צמיג קדמי",
-    "rear_tire": "צמיג אחורי",
+    "car_color": "צבע רכב",
     "fuel_type": "סוג דלק",
     "registration_order": "הוראת רישום",
-    "road_entry_date": "תאריך עלייה לכביש",
+    "road_entry_date": "מועד עליה לכביש",
     "commercial_nickname": "כינוי מסחרי",
-    "rank": "דירוג"
+    "rank": "דירוג",
+
+    "performance": "ביצועים",
+    "top_speed": "מהירות מרבית",
+    "horsepower": "כוח סוס",
+    "torque": "מומנט",
+    "fuel_consumption_city": "צריכת דלק בעיר",
+    "fuel_consumption_highway": "צריכת דלק בכביש מהיר",
+
+    "tuning": "שיפורי ביצועים",
+    "tuning_potential": "פוטנציאל שיפור",
+    "tuning_notes": "הערות לשיפור",
+    "common_upgrades": "שדרוגים נפוצים",
+
+    "handling": "התנהגות כביש",
+    "handling_rating": "דירוג התנהגות",
+    "suspension_type": "סוג מתלים",
+    "driving_characteristics": "מאפייני נהיגה",
+
+    "reliability": "אמינות",
+    "reliability_rating": "דירוג אמינות",
+    "common_issues": "תקלות נפוצות",
+    "maintenance_cost": "עלות תחזוקה",
+
+    "rating_1": "נמוך מאוד",
+    "rating_2": "נמוך",
+    "rating_3": "בינוני",
+    "rating_4": "גבוה",
+    "rating_5": "גבוה מאוד",
+
+    "loading_info": "טוען מידע נוסף...",
+    "error_loading_info": "שגיאה בטעינת מידע נוסף"
   },
   "SalesAndReviews": {
     "cars_for_sale": "מכוניות למכירה",
@@ -236,7 +288,7 @@
     "carsMarket": "שוק הרכבים",
     "findByPlate": "חיפוש לפי מספר לוחית",
     "news": "חדשות",
-    "afterMarket": "אחרי השוק",
+    "after_market": "אחרי השוק",
     "compareCars": "השוואת רכבים",
     "stores": "חנויות",
     "login": "התחברות",
@@ -486,142 +538,60 @@
     "error": "שגיאה בטעינת פרטי הרכב. אנא נסה שוב מאוחר יותר."
   },
   "CarRecommendations": {
-    "title": "מצא את הרכב המושלם שלך",
-    "subtitle": "ענה על מספר שאלות ונמליץ על רכבים שתואמים את הצרכים וההעדפות שלך.",
-    "question_progress": "שאלה {current} מתוך {total}",
-    "complete": "{percentage}% הושלם",
-    "back": "חזור",
-    "next": "הבא",
-    "get_recommendations": "קבל המלצות",
-    "start_over": "התחל מחדש",
-    "top_matches": "הרכבים המתאימים ביותר עבורך",
-    "matches_description": "תבסס על התשובות שלך, מצאנו את הרכבים האלה שתואמים בצורה הטובה ביותר להעדפות שלך.",
-    "match_percentage": "התאמה של {percentage}%",
-    "based_on_preferences": "תבסס על ההעדפות שלך",
-    "pros": "יתרונות",
-    "cons": "חסרונות",
-    "view_similar": "צפה ברכבים דומים",
-    "find_dealerships": "מצא סוכנויות",
-    "video_reviews": "ביקורות וידאו",
-    "video_reviews_description": "צפה בביקורות וידאו ממומחים על הרכבים המומלצים שלך",
-    "watch_video": "צפה בסרטון",
-    "watch_reel": "צפה ב-ריל",
-    "interior_features": "סיור מהיר: תכונות פנים",
-    "owners_experience": "חווית בעלים: אחרי שנה",
-    "questions": {
-      "budget": {
-        "question": "מה התקציב שלך?",
-        "min": "$10,000",
-        "max": "$100,000+"
-      },
-      "primaryUse": {
-        "question": "מה השימוש העיקרי ברכב שלך?",
-        "options": {
-          "commuting": "נסיעות יומיומיות",
-          "family": "תחבורה משפחתית",
-          "performance": "ביצועים/ספורט",
-          "offroad": "הרפתקאות שטח",
-          "luxury": "יוקרה ונוחות"
-        }
-      },
-      "bodyType": {
-        "question": "איזה סוג גוף אתה מעדיף?",
-        "options": {
-          "sedan": "סדאן",
-          "suv": "SUV/קרוס אובר",
-          "truck": "משאית",
-          "coupe": "קופה",
-          "convertible": "קבריולה",
-          "hatchback": "האצ'בק",
-          "wagon": "סטיישן",
-          "van": "ואן"
-        }
-      },
-      "fuelType": {
-        "question": "איזה סוג דלק אתה מעדיף?",
-        "options": {
-          "gasoline": "בנזין",
-          "diesel": "דיזל",
-          "hybrid": "היברידי",
-          "electric": "חשמלי",
-          "any": "ללא העדפה"
-        }
-      },
-      "passengers": {
-        "question": "כמה נוסעים אתה מעביר בדרך כלל?",
-        "options": {
-          "1-2": "1-2 אנשים",
-          "3-4": "3-4 אנשים",
-          "5-6": "5-6 אנשים",
-          "7+": "7+ אנשים"
-        }
-      },
-      "driving": {
-        "question": "איזה סוג נהיגה אתה בדרך כלל עושה?",
-        "options": {
-          "city": "עיר/עירוני",
-          "highway": "כביש מהיר/נסיעות",
-          "mixed": "מעורב עיר וכביש מהיר",
-          "rural": "כבישים כפריים",
-          "offroad": "שטח"
-        }
-      },
-      "cargoSpace": {
-        "question": "כמה חשוב לך מקום מטען?",
-        "min": "לא חשוב",
-        "max": "חשוב מאוד"
-      },
-      "fuelEfficiency": {
-        "question": "כמה חשובה לך יעילות דלק?",
-        "min": "לא חשוב",
-        "max": "חשוב מאוד"
-      },
-      "luxury": {
-        "question": "כמה חשובות לך תכונות יוקרה?",
-        "min": "לא חשוב",
-        "max": "חשוב מאוד"
-      },
-      "performance": {
-        "question": "כמה חשובים לך ביצועים/תאוצה?",
-        "min": "לא חשוב",
-        "max": "חשוב מאוד"
-      },
-      "safety": {
-        "question": "כמה חשובות לך תכונות בטיחות מתקדמות?",
-        "min": "לא חשוב",
-        "max": "חשוב מאוד"
-      },
-      "tech": {
-        "question": "כמה חשובה לך טכנולוגיה ברכב?",
-        "min": "לא חשוב",
-        "max": "חשוב מאוד"
-      },
-      "reliability": {
-        "question": "כמה חשובה לך אמינות לטווח ארוך?",
-        "min": "לא חשוב",
-        "max": "חשוב מאוד"
-      },
-      "brand": {
-        "question": "האם יש לך העדפות למותגים?",
-        "options": {
-          "toyota": "טויוטה",
-          "honda": "הונדה",
-          "ford": "פורד",
-          "chevrolet": "שברולט",
-          "bmw": "BMW",
-          "mercedes": "מרצדס-בנץ",
-          "audi": "אאודי",
-          "tesla": "טסלה",
-          "lexus": "לקסוס",
-          "subaru": "סובארו",
-          "no_preference": "ללא העדפה"
-        }
-      },
-      "maintenance": {
-        "question": "כמה אתה מודאג מעלויות תחזוקה?",
-        "min": "לא מודאג",
-        "max": "מודאג מאוד"
-      }
+    "title": "המלצות רכב",
+    "subtitle": "מצא את הרכב המושלם עבורך",
+    "search_by_vin": "חיפוש על פי מספר הזינ", 
+    "notInterested": "לא מעוניין",
+    "normal": "רגיל",
+    "interested": "מעוניין",
+    "veryInterested": "מעוניין מאוד",
+    "cargoSpace": {
+      "notInterested": "לא מעוניין בנפח מטען",
+      "normal": "נפח מטען רגיל",
+      "interested": "מעוניין בנפח מטען",
+      "veryInterested": "מעוניין מאוד בנפח מטען"
+    },
+    "fuelEfficiency": {
+      "notImportant": "לא חשוב",
+      "somewhatImportant": "חשוב במידה מסוימת",
+      "important": "חשוב",
+      "veryImportant": "חשוב מאוד"
+    },
+    "luxury": {
+      "notImportant": "לא חשוב",
+      "somewhatImportant": "חשוב במידה מסוימת",
+      "important": "חשוב",
+      "veryImportant": "חשוב מאוד"
+    },
+    "performance": {
+      "notImportant": "לא חשוב",
+      "somewhatImportant": "חשוב במידה מסוימת",
+      "important": "חשוב",
+      "veryImportant": "חשוב מאוד"
+    },
+    "safety": {
+      "notImportant": "לא חשוב",
+      "somewhatImportant": "חשוב במידה מסוימת",
+      "important": "חשוב",
+      "veryImportant": "חשוב מאוד"
+    },
+    "tech": {
+      "notImportant": "לא חשוב",
+      "somewhatImportant": "חשוב במידה מסוימת",
+      "important": "חשוב",
+      "veryImportant": "חשוב מאוד"
+    },
+    "reliability": {
+      "notImportant": "לא חשוב",
+      "somewhatImportant": "חשוב במידה מסוימת",
+      "important": "חשוב",
+      "veryImportant": "חשוב מאוד"
+    },
+    "maintenance": {
+      "notConcerned": "לא מודאג",
+      "somewhatConcerned": "מודאג במידה מסוימת",
+      "concerned": "מודאג",
+      "veryConcerned": "מודאג מאוד"
     }
   },
   "BlogDetails": {

@@ -16,7 +16,7 @@ const PriceDisplay = ({
   const t = useTranslations('CarListing');
 
   // Convert price to number and remove any non-numeric characters
-  const numericPrice = Number(price.toString().replace(/[^0-9.]/g, ''));
+  const numericPrice = parseInt(price.toString().replace(/[^0-9]/g, ''));
   
   // Convert price based on locale
   const convertedPrice = locale === 'ar' 

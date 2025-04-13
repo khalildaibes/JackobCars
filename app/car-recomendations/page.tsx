@@ -11,7 +11,7 @@ import { Label } from "../../components/ui/label";
 import { Progress } from "../../components/ui/progress";
 import { CheckCircle, Car, DollarSign, Fuel, Settings, Users, Heart, Shield, Zap, Truck, Briefcase, ArrowRight, Medal, Clock, Send, ChevronRight, ChevronLeft, Sparkles, Star, ThumbsUp, ThumbsDown, Play, PlayCircle } from "lucide-react";
 import { Badge } from "../../components/ui/badge";
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
 interface Question {
@@ -41,11 +41,13 @@ interface RecommendedCar {
 
 const CarRecommender: React.FC = () => {
   const t = useTranslations('CarRecommendations');
+  const locale = useLocale();
   const router = useRouter();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<{ [key: string]: string | number }>({});
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [recommendations, setRecommendations] = useState<RecommendedCar[]>([]);
+  const isShekelCurrency = locale === 'ar' || locale === 'he-il';
 
 const questions: Question[] = [
   {
@@ -286,6 +288,23 @@ const questions: Question[] = [
 
                 {questions[currentQuestion].type === 'range' ? (
                   <div className="space-y-4">
+                    <div className="text-center text-lg font-semibold text-blue-600">
+                      {questions[currentQuestion].id === 'budget' ? 
+                        (answers[questions[currentQuestion].id] === 100 ? 
+                          (isShekelCurrency ? "₪100,000+" : "$100,000+") : 
+                          (isShekelCurrency ? 
+                            `₪${((Number(answers[questions[currentQuestion].id]) || 50) * 1000).toLocaleString()}` : 
+                            `$${((Number(answers[questions[currentQuestion].id]) || 50) * 1000).toLocaleString()}`)) :
+                       
+                          (() => {
+                            const value = Number(answers[questions[currentQuestion].id]) || 50;
+                            if (value < 25) return t('notInterested');
+                            if (value < 50) return t('normal');
+                            if (value < 75) return t('interested');
+                            return t('veryInterested');
+                          })() 
+                        }
+                    </div>
                     <input
                       type="range"
                       min="0"
@@ -342,9 +361,9 @@ const questions: Question[] = [
             </div>
           </div>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-8  bg-white rounded-lg p-4">
             <div className="flex justify-between items-center">
-              <h2 className="text-3xl font-bold text-gray-900">{t('top_matches')}</h2>
+              <h2 className="text-3xl font-bold text-black">{t('top_matches')}</h2>
               <button
                 onClick={handleStartOver}
                 className="flex items-center px-4 py-2 text-gray-600 hover:text-gray-900"

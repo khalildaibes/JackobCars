@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Img } from "../../components/Img";
 import { useTranslations } from "next-intl";
 import { Link } from "react-alice-carousel";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Filter as FilterIcon, X, ChevronDown, Star, DollarSign, Clock, MapPin } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 interface Category {
   key: string;
@@ -370,8 +371,13 @@ const PRICE_RANGES = ["low", "medium", "high"];
 const RATINGS = [1, 2, 3, 4, 5];
 const AVAILABILITY = ["in_stock", "limited", "out_of_stock"];
 
-const CategoriesPage = () => {
+interface CategoriesPageProps {
+  initialCategory?: string;
+}
+
+const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
   const t = useTranslations("Categories");
+  const searchParams = useSearchParams();
   const [selectedFilter, setSelectedFilter] = useState("parts");
   const [searchQuery, setSearchQuery] = useState("");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -379,6 +385,24 @@ const CategoriesPage = () => {
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
   const [selectedAvailability, setSelectedAvailability] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<string>("relevance");
+
+  // Handle initial category from URL
+  useEffect(() => {
+    const category = searchParams.get("category") || initialCategory;
+    if (category) {
+      // Map URL categories to filter types
+      const categoryMap: Record<string, string> = {
+        "parts": "parts",
+        "service-centers": "services",
+        "maintenance-tips": "stores"
+      };
+      
+      const mappedCategory = categoryMap[category];
+      if (mappedCategory) {
+        setSelectedFilter(mappedCategory);
+      }
+    }
+  }, [searchParams, initialCategory]);
 
   const filteredCategories = categories
     .filter((category) => category.type === selectedFilter)
@@ -419,7 +443,7 @@ const CategoriesPage = () => {
     <div className="min-h-screen  py-12 px-4 sm:px-6 lg:px-8 mt-[5%] ">
       <div className="max-w-7xl mx-auto ">
         {/* Header Section */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -431,7 +455,7 @@ const CategoriesPage = () => {
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             {t("page_description")}
           </p>
-        </motion.div>
+        </motion.div> */}
 
         {/* Search and Filter Section */}
         <div className="mb-8 space-y-6 rounded-lg py-4">

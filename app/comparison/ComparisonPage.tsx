@@ -135,11 +135,11 @@ export default function Comparison() {
   }, [selectedCars]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <div className="mb-6">
-          <Link href="/car-listing" className="text-blue-600 hover:underline flex items-center">
+          <Link href="/car-listing" className="text-white  hover:underline flex items-center">
             <ArrowLeft className="h-4 w-4 mr-1" />
             {t('back_to_listings')}
           </Link>
@@ -154,7 +154,7 @@ export default function Comparison() {
         >
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('compare_cars')}</h1>
+              <h1 className="text-3xl md:text-4xl font-bold text-white">{t('compare_cars')}</h1>
               <p className="text-gray-600 mt-2">{t('compare_description')}</p>
             </div>
             <div className="flex gap-2">
@@ -182,7 +182,7 @@ export default function Comparison() {
             <CardContent className="p-8 text-center">
               <div className="flex flex-col items-center gap-4">
                 <Car className="h-12 w-12 text-gray-400" />
-                <h2 className="text-xl font-semibold text-gray-900">{t('select_cars_prompt')}</h2>
+                <h2 className="text-xl font-semibold text-white">{t('select_cars_prompt')}</h2>
                 <p className="text-gray-600">{t('select_cars_description')}</p>
                 <Button asChild>
                   <Link href="/car-listing">{t('browse_cars')}</Link>
@@ -214,7 +214,7 @@ export default function Comparison() {
                                 />
                               </div>
                               <div className="text-center">
-                                <h3 className="font-semibold text-gray-900">{car.make} {car.model}</h3>
+                                <h3 className="font-semibold text-white">{car.make} {car.model}</h3>
                                 <p className="text-blue-600 font-medium">{car.price}</p>
                               </div>
                             </div>
@@ -232,7 +232,7 @@ export default function Comparison() {
                       </tr>
                       {/* Performance */}
                       <tr>
-                        <td className="p-4 border-t font-medium text-gray-900">Performance</td>
+                        <td className="p-4 border-t font-medium text-white">Performance</td>
                         {selectedCars.map((car, index) => (
                           <td key={`performance-${car.id}`} className="p-4 border-t">
                             {isLoadingAI ? (
@@ -247,7 +247,7 @@ export default function Comparison() {
                       </tr>
                       {/* Safety Features */}
                       <tr>
-                        <td className="p-4 border-t font-medium text-gray-900">Safety Features</td>
+                        <td className="p-4 border-t font-medium text-white">Safety Features</td>
                         {selectedCars.map((car, index) => (
                           <td key={`safety-${car.id}`} className="p-4 border-t">
                             {isLoadingAI ? (
@@ -262,7 +262,7 @@ export default function Comparison() {
                       </tr>
                       {/* Reliability */}
                       <tr>
-                        <td className="p-4 border-t font-medium text-gray-900">Reliability</td>
+                        <td className="p-4 border-t font-medium text-white">Reliability</td>
                         {selectedCars.map((car, index) => (
                           <td key={`reliability-${car.id}`} className="p-4 border-t">
                             {isLoadingAI ? (
@@ -277,7 +277,7 @@ export default function Comparison() {
                       </tr>
                       {/* Value for Money */}
                       <tr>
-                        <td className="p-4 border-t font-medium text-gray-900">Value for Money</td>
+                        <td className="p-4 border-t font-medium text-white">Value for Money</td>
                         {selectedCars.map((car, index) => (
                           <td key={`value-${car.id}`} className="p-4 border-t">
                             {isLoadingAI ? (
@@ -292,7 +292,7 @@ export default function Comparison() {
                       </tr>
                       {/* Environmental Impact */}
                       <tr>
-                        <td className="p-4 border-t font-medium text-gray-900">Environmental Impact</td>
+                        <td className="p-4 border-t font-medium text-white">Environmental Impact</td>
                         {selectedCars.map((car, index) => (
                           <td key={`environmental-${car.id}`} className="p-4 border-t">
                             {isLoadingAI ? (
@@ -307,7 +307,7 @@ export default function Comparison() {
                       </tr>
                       {/* Technology Features */}
                       <tr>
-                        <td className="p-4 border-t font-medium text-gray-900">Technology Features</td>
+                        <td className="p-4 border-t font-medium text-white">Technology Features</td>
                         {selectedCars.map((car, index) => (
                           <td key={`tech-${car.id}`} className="p-4 border-t">
                             {isLoadingAI ? (
@@ -375,18 +375,18 @@ export default function Comparison() {
                       {allFlattenedSpecs.length > 0 &&
                         Object.keys(allFlattenedSpecs[0]).map((key) => {
                           const sectionHeader = key.split(" ")[0];
-                          if (!filters[key] || uniqueSections.has(sectionHeader)) return null;
+                          if (!filters[key] || uniqueSections.has(sectionHeader)|| sectionHeader === "ALT") return null;
                           uniqueSections.add(sectionHeader);
 
                           return (
                             <React.Fragment key={sectionHeader}>
                               <tr 
-                                className="cursor-pointer hover:bg-gray-50 transition-colors"
+                                className="cursor-pointer "
                                 onClick={() => toggleSection(sectionHeader)}
                               >
                                 <td colSpan={selectedCars.length + 1} className="p-4 border-t">
                                   <div className="flex items-center justify-between">
-                                    <span className="font-semibold text-gray-900">{sectionHeader}</span>
+                                    <span className="font-semibold text-white">{sectionHeader}</span>
                                     {collapsedSections[sectionHeader] ? (
                                       <ChevronDown className="h-5 w-5 text-gray-500" />
                                     ) : (
@@ -399,12 +399,12 @@ export default function Comparison() {
                                 Object.keys(allFlattenedSpecs[0])
                                   .filter(k => k.startsWith(sectionHeader))
                                   .map((subKey) => (
-                                    <tr key={subKey} className="hover:bg-gray-50 transition-colors">
+                                    <tr key={subKey} className="">
                                       <td className="p-4 border-t text-sm text-gray-600">
                                         {subKey.replace(`${sectionHeader} `, '')}
                                       </td>
                                       {selectedCars.map((_, index) => (
-                                        <td key={index} className="p-4 border-t text-sm text-gray-900 text-center">
+                                        <td key={index} className="p-4 border-t text-sm text-white text-center">
                                           {allFlattenedSpecs[index][subKey]}
                                         </td>
                                       ))}
