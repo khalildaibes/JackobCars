@@ -20,15 +20,15 @@ const PriceDisplay = ({
   
   // Convert price based on locale
   const convertedPrice = locale === 'ar' 
-    ? (numericPrice ).toFixed(2)  // ILS
+    ? (numericPrice )  // ILS
     : locale === 'en'
-    ? (numericPrice * 0.27).toFixed(2)  // ILS to USD 
-    : numericPrice.toFixed(2);  // Keep as ILS
+    ? (numericPrice * 0.27)  // ILS to USD 
+    : numericPrice;  // Keep as ILS
 
   // Format the number with commas for thousands
   const formattedPrice = Number(convertedPrice).toLocaleString(locale, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
   });
 
   // Get currency symbol from translations
