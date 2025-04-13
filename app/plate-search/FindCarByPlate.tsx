@@ -23,17 +23,14 @@ import {
   Key,
   User,
   Truck,
-  GearboxIcon,
   Cog,
   Zap,
   Timer,
   Disc,
   Sparkles,
-  Wrench,
   Activity,
   ShieldCheck
 } from "lucide-react";
-import { Img } from "../../components/Img";
 import Image from "next/image";
 // Move these to environment variables
 const API_BASE_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&q=";
@@ -84,7 +81,7 @@ const CarSearch = () => {
   const [loadingPerformance, setLoadingPerformance] = useState(false);
 
   const iconMap = {
-    transmission: GearboxIcon,
+    transmission: Cog,
     drive_type: Cog,
     engine_type: Gauge,
     engine_size: Fuel,
