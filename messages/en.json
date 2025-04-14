@@ -253,7 +253,7 @@
   "Navbar": {
     "logo_alt": "AtSpeedLimit Logo",
     "carsMarket": "Cars Market",
-    "findByPlate": "Find by Plate Number",
+    "plate_search": "Find by Plate Number",
     "news": "News",
     "after_market": "After Market",
     "compareCars": "Compare Cars",

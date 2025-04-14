@@ -410,7 +410,7 @@
   "Navbar": {
     "logo_alt": "شعار AtSpeedLimit",
     "carsMarket": "سوق السيارات",
-    "findByPlate": "البحث برقم اللوحة",
+    "plate_search": "البحث برقم اللوحة",
     "news": "الأخبار",
     "after_market": "ما بعد البيع",
     "compareCars": "مقارنة السيارات",

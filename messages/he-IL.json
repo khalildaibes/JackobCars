@@ -286,7 +286,7 @@
   "Navbar": {
     "logo_alt": "לוגו AtSpeedLimit",
     "carsMarket": "שוק הרכבים",
-    "findByPlate": "חיפוש לפי מספר לוחית",
+    "plate_search": "חיפוש לפי מספר לוחית",
     "news": "חדשות",
     "after_market": "אחרי השוק",
     "compareCars": "השוואת רכבים",

@@ -230,7 +230,7 @@ const normalizeBodyType = (rawBodyType: string): string => {
 };
 
 // Dynamically import components
-const   FindCarByPlate = dynamic(() => import("./plate-search/FindCarByPlate"), { ssr: false });
+const   FindCarByPlate = dynamic(() => import("./plate_search/FindCarByPlate"), { ssr: false });
 const HeroSection = dynamic(() => import("../components/NewHero"));
 const LookingForCar = dynamic(() => import("../components/comp"));
 const FeaturedListingsSection = dynamic(() => import("../components/homeeight/FeaturedListingsSection"));

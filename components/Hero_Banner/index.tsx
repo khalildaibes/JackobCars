@@ -4,7 +4,7 @@ import React from "react";
 import { Button } from "../Button/index";
 import { Img } from "../Img/index";
 import { Text } from "../Text/index";
-import FindCarByPlate from "../../app/plate-search/FindCarByPlate";
+import FindCarByPlate from "../../app/plate_search/FindCarByPlate";
 import YearSelectBox from "../../components/homeeight/yearselectbox";
 import { Tabs, TabList, Tab, TabPanel } from "react-tabs";
 import { SeekBar } from "../SeekBar";

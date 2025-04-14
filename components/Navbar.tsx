@@ -118,15 +118,15 @@ export default function Navbar() {
       { label: t("dropdown.cars_market.electric_vehicles"), href: "/car-listing" },
       { label: t("dropdown.cars_market.luxury_cars"), href: "/car-listing" }
     ],
-    findByPlate: [
-      { label: t("dropdown.find_by_plate.plate_search"), href: "/plate-search" },
-      // { label: t("dropdown.find_by_plate.vehicle_history"), href: "/plate-search" },
-      // { label: t("dropdown.find_by_plate.ownership_check"), href: "/plate-search" }
+    plate_search: [
+      { label: t("dropdown.find_by_plate.plate_search"), href: "/plate_search" },
+      // { label: t("dropdown.find_by_plate.vehicle_history"), href: "/plate_search" },
+      // { label: t("dropdown.find_by_plate.ownership_check"), href: "/plate_search" }
     ],
     news: [
-      { label: t("dropdown.news.latest_news"), href: "/news/latest" },
-      { label: t("dropdown.news.car_reviews"), href: "/news/reviews" },
-      { label: t("dropdown.news.industry_updates"), href: "/news/industry" }
+      { label: t("dropdown.news.latest_news"), href: "/news/?category=latest" },
+      { label: t("dropdown.news.car_reviews"), href: "/news/?category=reviews" },
+      { label: t("dropdown.news.industry_updates"), href: "/news/?category=industry" }
     ],
     after_market: [
       { label: t("dropdown.after_market.parts_accessories"), href: "/after_market?category=parts" },
@@ -147,7 +147,7 @@ export default function Navbar() {
 
   const buttonStyles = {
     carsMarket: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out",
-    findByPlate: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out",
+    plate_search: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out",
     news: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out",
     after_market: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out",
     compareCars: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out",
