@@ -314,12 +314,12 @@ export default function NewsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<'en' | 'ar' | 'he-IL'>('en');
-  const [selectedCategory, setSelectedCategory] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [uploadStatus, setUploadStatus] = useState<{ success: string | null; error: string | null }>({
     success: null,
     error: null
   });
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   useEffect(() => {
     fetchNews();
@@ -355,15 +355,15 @@ export default function NewsPage() {
   );
 
   const featuredNews = filteredNews.filter(item => 
-    item.categories?.some(category => category.name === "featured")
+    item.categories?.some(tag => tag.name === "featured")
   );
 
   const latestNews = filteredNews.filter(item => 
-    item.categories?.some(category => category.name === "latest news")
+    item.categories.some(tag => tag.name === "latest news")
   );
 
   const featuredStories = filteredNews.filter(item => 
-    item.categories?.some(category => category.name === "featured stories")
+    item.categories.some(tag => tag.name === "featured stories")
   );
 
   const handleImageUpload = async (file: File, refId: string) => {
@@ -409,38 +409,78 @@ export default function NewsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white md:bg-gray-50 md:mt-[5%] mt-[15%]">
 
 
-      <main className="max-w-7xl mx-auto px-4">
-        <div className="py-6">
-          <h1 className="text-2xl font-bold text-gray-900">News & videos</h1>
-          <p className="mt-2 text-gray-600">
-            The latest car news, videos and expert reviews, from Cars.com's independent automotive journalists
-          </p>
+      <main className="max-w-7xl mx-auto px-4 md:mt-[5%] mt-[15%]">
+        {/* Mobile Title and Category - Only visible on mobile */}
+        <div className="md:hidden">
+          <div className="py-6">
+            <h1 className="text-2xl font-bold text-gray-900">News & videos</h1>
+            <p className="mt-2 text-gray-600">
+              The latest car news, videos and expert reviews, from Cars.com's independent automotive journalists
+            </p>
+          </div>
+
+          <div className="mb-8">
+            <label className="block text-sm font-medium text-gray-700 mb-1">News category</label>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Choose a category</option>
+              <option value="featured">Featured</option>
+              <option value="latest">Latest News</option>
+              <option value="reviews">Expert Reviews</option>
+            </select>
+          </div>
         </div>
 
-        {/* Category Selector */}
-        <div className="mb-8">
-          <label className="block text-sm font-medium text-gray-700 mb-1">News category</label>
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="">Choose a category</option>
-            <option value="featured">Featured</option>
-            <option value="latest">Latest News</option>
-            <option value="reviews">Expert Reviews</option>
-          </select>
+        {/* Featured Banner - Desktop Only */}
+        <div className="hidden md:block">
+          {filteredNews.length > 0 && (
+            <div className="mb-8">
+              <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-xl overflow-hidden relative">
+                <div className="flex items-center p-8">
+                  <div className="w-1/2">
+                    <h1 className="text-4xl font-bold text-white mb-4">
+                      {filteredNews[0].title}
+                    </h1>
+                    <p className="text-white/80 mb-4">
+                      {filteredNews[0].description}
+                    </p>
+                    <button 
+                      onClick={() => router.push(`/news/${filteredNews[0].slug}`)}
+                      className="bg-white text-purple-700 px-6 py-2 rounded-full font-semibold hover:bg-purple-50"
+                    >
+                      Read now
+                    </button>
+                  </div>
+                  <div className="w-1/2 relative h-96">
+                    {filteredNews[0].cover?.url && (
+                      <Img
+                        src={`http://68.183.215.202${filteredNews[0].cover.url}`}
+                        alt={filteredNews[0].title}
+                        external={true}
+                        width={512}
+                        height={512}
+                        className="object-cover w-full h-full rounded-xl"
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Featured News */}
+        {/* Featured News - Different layouts for mobile and desktop */}
         <section className="mb-8">
           <h2 className="text-2xl font-bold mb-4">Featured news</h2>
           {featuredNews.length > 0 && (
-            <div className="space-y-4">
-              {/* Main Featured Article */}
+            <div className="md:hidden space-y-4">
+              {/* Mobile Layout */}
               <article 
                 className="relative rounded-lg overflow-hidden cursor-pointer"
                 onClick={() => router.push(`/news/${featuredNews[0].slug}`)}
@@ -467,7 +507,6 @@ export default function NewsPage() {
                 </div>
               </article>
 
-              {/* Secondary Featured Articles */}
               {featuredNews.slice(1).map((item) => (
                 <article
                   key={item.id}
@@ -494,125 +533,122 @@ export default function NewsPage() {
               ))}
             </div>
           )}
-        </section>
 
-        {/* Latest News */}
-        <section className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">Latest news</h2>
-          <div className="space-y-6">
-            {latestNews.map((item) => (
-              <article
-                key={item.id}
-                className="cursor-pointer"
-                onClick={() => router.push(`/news/${item.slug}`)}
-              >
-                <div className="aspect-[16/9] relative mb-3">
-                  {item.cover?.url && (
-                    <Img
-                      src={`http://68.183.215.202${item.cover.url}`}
-                      alt={item.title}
-                      external={true}
-                      width={800}
-                      height={450}
-                      className="object-cover w-full h-full rounded-lg"
-                    />
-                  )}
-                </div>
-                <div className="text-sm text-gray-600 mb-1">Expert Review</div>
-                <h3 className="font-bold text-gray-900 mb-2">{item.title}</h3>
-                <p className="text-gray-600 text-sm mb-2">{item.description}</p>
-                <div className="text-sm text-gray-600">
-                  By {item.author?.data?.name}
-                  <br />
-                  {item.author?.data?.attributes?.name}
-                </div>
-              </article>
-            ))}
+          {/* Desktop Layout */}
+          <div className="hidden md:block">
+            <div className="grid grid-cols-3 gap-6">
+              {featuredNews.slice(0, 3).map((item) => (
+                <article
+                  key={item.id}
+                  className="bg-white rounded-xl shadow-sm overflow-hidden cursor-pointer"
+                  onClick={() => router.push(`/news/${item.slug}`)}
+                >
+                  <div className="relative h-48">
+                    {item.cover?.url && (
+                      <Img
+                        src={`http://68.183.215.202${item.cover.url}`}
+                        alt={item.title}
+                        external={true}
+                        width={512}
+                        height={512}
+                        className="object-cover w-full h-full"
+                      />
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
+                    <p className="text-gray-600 text-sm">{item.description}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* View More Link */}
-        <div className="text-center mb-8">
+        {/* View More Link - Mobile Only */}
+        <div className="text-center mb-8 md:hidden">
           <a href="#" className="text-blue-600 font-semibold hover:underline">
             View more news articles
           </a>
         </div>
 
-        {/* Featured Stories */}
-        <section className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">Featured stories</h2>
-          <div className="space-y-6">
-            {featuredStories.map((item) => (
-              <article
-                key={item.id}
-                className="cursor-pointer"
-                onClick={() => router.push(`/news/${item.slug}`)}
-              >
-                <div className="flex items-start space-x-4">
-                  <div className="flex-1">
-                    <div className="text-sm text-gray-600 mb-1">Expert Review</div>
-                    <h3 className="font-bold text-gray-900 mb-1">{item.title}</h3>
-                    <div className="text-sm text-gray-600">
-                      By {item.author?.data?.name}
-                      <br />
-                      {item.author?.data?.attributes?.name}
+        {/* Latest News and Featured Stories - Different layouts for mobile and desktop */}
+        <div className="md:grid md:grid-cols-3 md:gap-8">
+          {/* Latest News */}
+          <div className="md:col-span-2">
+            <h2 className="text-2xl font-bold mb-4">Latest news</h2>
+            <div className="space-y-6">
+              {latestNews.map((item) => (
+                <article
+                  key={item.id}
+                  className="md:bg-white md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer"
+                  onClick={() => router.push(`/news/${item.slug}`)}
+                >
+                  <div className="md:flex">
+                    <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
+                      {item.cover?.url && (
+                        <Img
+                          src={`http://68.183.215.202${item.cover.url}`}
+                          alt={item.title}
+                          external={true}
+                          width={512}
+                          height={512}
+                          className="object-cover w-full h-full md:h-48"
+                        />
+                      )}
+                    </div>
+                    <div className="mt-3 md:mt-0 md:w-2/3 md:p-4">
+                      <div className="text-sm text-gray-600 mb-1">Expert Review</div>
+                      <h3 className="font-bold text-gray-900 mb-2">{item.title}</h3>
+                      <p className="text-gray-600 text-sm mb-2">{item.description}</p>
+                      <div className="text-sm text-gray-600">
+                        <span>By {item.author?.data?.name}</span>
+                        <span className="mx-2">•</span>
+                        <span>{formatDate(item.publishedAt)}</span>
+                      </div>
                     </div>
                   </div>
-                  <div className="w-24 h-24 relative flex-shrink-0">
-                    {item.cover?.url && (
-                      <Img
-                        src={`http://68.183.215.202${item.cover.url}`}
-                        alt={item.title}
-                        external={true}
-                        width={96}
-                        height={96}
-                        className="object-cover w-full h-full rounded-lg"
-                      />
-                    )}
-                  </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              ))}
+            </div>
           </div>
-        </section>
 
-        {/* Latest Expert Reviews */}
-        <section>
-          <h2 className="text-2xl font-bold mb-4">Latest expert reviews</h2>
-          <div className="space-y-6">
-            {latestNews.filter(item => item.categories?.some(cat => cat.name === "review")).map((item) => (
-              <article
-                key={item.id}
-                className="cursor-pointer"
-                onClick={() => router.push(`/news/${item.slug}`)}
-              >
-                <div className="flex items-start space-x-4">
-                  <div className="flex-1">
-                    <div className="text-sm text-gray-600 mb-1">Expert Review</div>
-                    <h3 className="font-bold text-gray-900 mb-1">{item.title}</h3>
-                    <div className="text-sm text-gray-600">
-                      By {item.author?.data?.name}
-                      <br />
-                      {item.author?.data?.attributes?.name}
+          {/* Featured Stories */}
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Featured stories</h2>
+            <div className="space-y-6">
+              {featuredStories.map((item) => (
+                <article
+                  key={item.id}
+                  className="md:bg-white md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer"
+                  onClick={() => router.push(`/news/${item.slug}`)}
+                >
+                  <div className="flex items-start space-x-4">
+                    <div className="flex-1">
+                      <div className="text-sm text-gray-600 mb-1">Expert Review</div>
+                      <h3 className="font-bold text-gray-900 mb-1">{item.title}</h3>
+                      <div className="text-sm text-gray-600">
+                        By {item.author?.data?.name}
+                      </div>
+                    </div>
+                    <div className="w-24 h-24 relative flex-shrink-0">
+                      {item.cover?.url && (
+                        <Img
+                          src={`http://68.183.215.202${item.cover.url}`}
+                          alt={item.title}
+                          external={true}
+                          width={96}
+                          height={96}
+                          className="object-cover w-full h-full rounded-lg"
+                        />
+                      )}
                     </div>
                   </div>
-                  <div className="w-24 h-24 relative flex-shrink-0">
-                    {item.cover?.url && (
-                      <Img
-                        src={`http://68.183.215.202${item.cover.url}`}
-                        alt={item.title}
-                        external={true}
-                        width={96}
-                        height={96}
-                        className="object-cover w-full h-full rounded-lg"
-                      />
-                    )}
-                  </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              ))}
+            </div>
           </div>
-        </section>
+        </div>
       </main>
     </div>
   );
