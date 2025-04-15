@@ -184,7 +184,7 @@ export default function StoresPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-blue-50 pt-24">
+    <div className="min-h-screen  pt-24">
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-blue-500 to-sky-600">

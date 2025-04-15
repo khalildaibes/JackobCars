@@ -87,7 +87,7 @@ const HeroSection: React.FC = () => {
       </div>
 
       {/* Content Container */}
-      <div className="relative h-full flex flex-col items-center md:items-start px-4 sm:px-8 md:px-16 lg:px-32 xl:px-40">
+      <div className="relative h-full flex flex-col items-center justify-center px-4 sm:px-8 md:px-16 lg:px-32 xl:px-40">
         {/* Left Content - Text with Animation */}
         <motion.div 
           initial={{ opacity: 0, x: -50 }}
@@ -97,7 +97,7 @@ const HeroSection: React.FC = () => {
             ease: [0.6, -0.05, 0.01, 0.99],
             delay: 0.4
           }}
-          className="text-center md:text-right mt-20 md:mt-40 w-[600px]"
+          className="text-center w-full max-w-[800px]"
         >
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
@@ -119,7 +119,7 @@ const HeroSection: React.FC = () => {
               ease: [0.6, -0.05, 0.01, 0.99],
               delay: 0.6
             }}
-            className=" pt-[20px] text-white/90 text-[14px] sm:text-[16px] font-normal leading-[20px] sm:leading-[29.6px] drop-shadow-md"
+            className="pt-[20px] text-white/90 text-[14px] sm:text-[16px] font-normal leading-[20px] sm:leading-[29.6px] drop-shadow-md"
           >
             {t("hero_subtitle")}
           </motion.p>
@@ -134,9 +134,9 @@ const HeroSection: React.FC = () => {
             ease: [0.6, -0.05, 0.01, 0.99],
             delay: 0.7
           }}
-          className="w-full md:mt-10 md:mt-16 flex flex-col md:flex-row items-center md:items-start"
+          className="w-full max-w-[800px] mt-10 flex flex-col items-center"
         >
-          <div className="w-full md:w-2/3 backdrop-blur-sm bg-white/10 rounded-xl p-4 shadow-xl">
+          <div className="w-full backdrop-blur-sm bg-white/10 rounded-xl p-4 shadow-xl">
             <MobileFilters
               selectedFuel={selectedFuel}
               selectedYear={selectedYear}

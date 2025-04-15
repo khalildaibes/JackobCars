@@ -22,6 +22,8 @@ import SearchBar from "../components/SearchBar";
 import { Img } from "../components/Img";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import ServiceCard from "../components/ServiceCard/page";
+import PartCard from "../components/PartCard/page";
 
 // Types
 interface Deal {
@@ -53,7 +55,14 @@ interface Article {
   cover: { url: string };
   categories: Array<{ name: string }>;
   publishedAt: string;
-  author: string;
+  author: {
+    data: {
+      attributes: {
+        name: string;
+        email: string;
+      };
+    };
+  };
   description: string;
   locale: string;
   slug: string;
@@ -90,6 +99,35 @@ interface Listing {
   category: string[];
 }
 
+interface Part {
+  id: string;
+  slug: string;
+  name: string;
+  image: Array<{ url: string }>;
+  details: {
+    description: string;
+    features: Array<{ value: string }>;
+  };
+  price: number;
+  categories: string;
+  stores: Array<{ id: string; name: string }>;
+  mainImage?: string;
+}
+
+interface Service {
+  id: string;
+  slug: string;
+  name: string;
+  image: Array<{ url: string }>;
+  details: {
+    description: string;
+    features: Array<{ value: string }>;
+  };
+  price: number;
+  categories: string;
+  stores: Array<{ id: string; name: string }>;
+}
+
 // API fetch functions
 const fetchHomePageData = async (): Promise<HomePageData> => {
   const response = await fetch("/api/homepage");
@@ -122,6 +160,22 @@ const fetchArticles = async () => {
 const fetchDeals = async (): Promise<Deal[]> => {
   const response = await fetch('/api/deals');
   if (!response.ok) throw new Error(`Failed to fetch deals: ${response.statusText}`);
+  const data = await response.json();
+  if (!data?.data) throw new Error("Invalid API response structure");
+  return data.data;
+};
+
+const fetchParts = async (): Promise<Part[]> => {
+  const response = await fetch('/api/parts');
+  if (!response.ok) throw new Error(`Failed to fetch parts: ${response.statusText}`);
+  const data = await response.json();
+  if (!data?.data) throw new Error("Invalid API response structure");
+  return data.data;
+};
+
+const fetchServices = async (): Promise<Service[]> => {
+  const response = await fetch('/api/services');
+  if (!response.ok) throw new Error(`Failed to fetch services: ${response.statusText}`);
   const data = await response.json();
   if (!data?.data) throw new Error("Invalid API response structure");
   return data.data;
@@ -276,6 +330,14 @@ function HomeContent() {
       {
         queryKey: ['homepage'],
         queryFn: fetchHomePageData
+      },
+      {
+        queryKey: ['parts'],
+        queryFn: fetchParts
+      },
+      {
+        queryKey: ['services'],
+        queryFn: fetchServices
       }
     ]
   });
@@ -285,7 +347,9 @@ function HomeContent() {
     { data: carsData, isLoading: isLoadingCars },
     { data: dealsData, isLoading: isLoadingDeals },
     { data: articlesData, isLoading: isLoadingArticles },
-    { data: homepageData, isLoading: isLoadingHomepage }
+    { data: homepageData, isLoading: isLoadingHomepage },
+    { data: partsData, isLoading: isLoadingParts },
+    { data: servicesData, isLoading: isLoadingServices }
   ] = queryResults;
 
   // Check if any query is still loading
@@ -308,12 +372,12 @@ function HomeContent() {
       details: product.details?.car.transmission || "Unknown",
       price: `$${product.price.toLocaleString()}`,
       mileage: product.details?.car.miles || "N/A",
-      year: product.details.car.year,
+      year: product.details?.car.year || 2025,
       fuelType: normalizeFuelType(product.details?.car.fuel || "Unknown"),
       make: normalizeMake(product.details?.car.make || "Unknown"),
       bodyType: normalizeBodyType(product.details?.car.body_type || "Unknown"),
-      description: product.details.car.description,
-      features: product.details.car.features.map((feature) => feature.value) || [],
+      description: product.details?.car.description || "Unknown",
+      features: product.details?.car.features.map((feature) => feature.value) || [],
       category: product.categories ? product.categories.split(",").map((c) => c.toLowerCase().trim()) : [],
     }));
   }, [dealsData]);
@@ -329,7 +393,7 @@ function HomeContent() {
       imageUrl: article.cover ? article.cover.url : '',
       category: article.categories?.map((category) => category.name).join(', ') || '',
       date: new Date(article.publishedAt).toLocaleDateString() || '',
-      author: article.author || '',
+      author: article.author?.data?.attributes?.name || 'Unknown Author',
       description: article.description || '',
       cover: article.cover || null,
       categories: article.categories || [],
@@ -402,6 +466,34 @@ function HomeContent() {
       icon: "/icons/car-icon.svg"
     }
   ], [t]);
+
+  // Update the transformedParts transformation
+  const transformedParts = useMemo(() => {
+    if (!partsData) return [];
+    
+    return partsData.map((part: Part) => ({
+      ...part,
+      mainImage: part.image && part.image.length > 0 
+        ? `http://68.183.215.202${part.image[0].url}` 
+        : "/default-part.png",
+    }));
+  }, [partsData]);
+
+  const transformedServices = useMemo(() => {
+    if (!servicesData) return [];
+    
+    return servicesData.map((service: Service) => ({
+      id: parseInt(service.id),
+      mainImage: service.image ? `http://68.183.215.202${service.image[0]?.url}` : "/default-service.png",
+      alt: service.name || "Service Image",
+      title: service.name,
+      slug: service.slug,
+      description: service.details.description,
+      price: `$${service.price.toLocaleString()}`,
+      features: service.details.features.map((feature) => feature.value) || [],
+      category: service.categories ? service.categories.split(",").map((c) => c.toLowerCase().trim()) : [],
+    }));
+  }, [servicesData]);
   
   if (isLoading) {
     return (
@@ -570,6 +662,161 @@ function HomeContent() {
             viewAllLink="/cars"
           />
         </motion.section>
+
+        {/* Popular Categories Section */}
+        <motion.section 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="w-full bg-white py-6 mb-6 rounded-2xl"
+        >
+          <div className="px-4">
+            <h2 className="text-2xl font-bold text-[#050A30] mb-6">{t('popular_categories')}</h2>
+            
+            {/* Categories Scroll */}
+            <div className="relative mb-8">
+              <div className="flex space-x-3 overflow-x-auto pb-4 scrollbar-hide">
+                <button className="px-4 py-2 bg-black text-white rounded-full whitespace-nowrap">{t('electric')}</button>
+                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('suv')}</button>
+                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('sedan')}</button>
+                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('pickup_truck')}</button>
+                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('luxury')}</button>
+                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('crossover')}</button>
+                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('hybrid')}</button>
+                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('diesel')}</button>
+                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('coupe')}</button>
+                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('hatchback')}</button>
+                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('wagon')}</button>
+                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('convertible')}</button>
+              </div>
+              <button className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 bg-white shadow-lg rounded-full flex items-center justify-center">
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Popular Cars Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+
+            </div>
+
+            {/* EV Cars Section */}
+            <div className="mt-8">
+              <h3 className="text-xl font-bold mb-4">{t('electric_vehicles')}</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                
+              {listings
+                .filter(listing => listing.category.includes('popular') && listing.category.includes('electric'))
+                .slice(0, 4)
+                .map((listing) => (
+                  <CarCard key={listing.id} car={listing} />
+                ))}
+                {/* EV Guide Card */}
+                <div className="bg-white rounded-lg p-4 border hover:shadow-lg transition-shadow">
+                  <Image
+                    src="/ev-guide.png"
+                    alt={t('ev_guide')}
+                    width={200}
+                    height={120}
+                    className="w-full h-auto mb-4"
+                  />
+                  <h3 className="font-semibold mb-2">{t('ev_guide_title')}</h3>
+                  <Link href="/ev-guide" className="text-blue-600 hover:underline">
+                    {t('watch_ev101')}
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Luxury Cars Section */}
+            <div className="mt-8">
+              <h3 className="text-xl font-bold mb-4">{t('luxury_cars')}</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              {listings
+                .filter(listing => listing.category.includes('popular') && listing.category.includes('luxury'))
+                .slice(0, 4)
+                .map((listing) => (
+                  <CarCard key={listing.id} car={listing} />
+                ))}
+              </div>
+            </div>
+            
+            {/* Parts Section */}
+            <div className="mt-8">
+              <h3 className="text-xl font-bold mb-4">{t('parts_and_accessories')}</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                {transformedParts
+                  // .filter(part => part.categories?.includes('featured'))
+                  .slice(0, 4)
+                  .map((part) => (
+                    <PartCard 
+                      key={part.id} 
+                      part={{
+                        id: parseInt(part.id),
+                        mainImage: part.mainImage,
+                        title: part.name,
+                        slug: part.slug,
+                        price: part.price.toString(),
+                        description: part.details.description,
+                        features: part.details.features?.map(f => f.value),
+                        category: part.categories?.split(',') || []
+                      }} 
+                    />
+                  ))}
+                {/* Parts Guide Card */}
+                <div className="bg-white rounded-lg p-4 border hover:shadow-lg transition-shadow">
+                  <Image
+                    src="/parts-guide.png"
+                    alt={t('parts_guide')}
+                    width={200}
+                    height={120}
+                    className="w-full h-auto mb-4"
+                  />
+                  <h3 className="font-semibold mb-2">{t('parts_guide_title')}</h3>
+                  <Link href="/parts-guide" className="text-blue-600 hover:underline">
+                    {t('browse_parts_catalog')}
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Services Section */}
+            <div className="mt-8">
+              <h3 className="text-xl font-bold mb-4">{t('automotive_services')}</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                {transformedServices
+                  .filter(service => service.category.includes('featured'))
+                  .slice(0, 4)
+                  .map((service) => (
+                    <ServiceCard key={service.id} service={service} />
+                  ))}
+                {/* Services Guide Card */}
+                <div className="bg-white rounded-lg p-4 border hover:shadow-lg transition-shadow">
+                  <Image
+                    src="/services-guide.png"
+                    alt={t('services_guide')}
+                    width={200}
+                    height={120}
+                    className="w-full h-auto mb-4"
+                  />
+                  <h3 className="font-semibold mb-2">{t('services_guide_title')}</h3>
+                  <Link href="/services-guide" className="text-blue-600 hover:underline">
+                    {t('explore_services')}
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Links */}
+            <div className="flex gap-6 mt-6">
+              <Link href="/electric-vehicles" className="text-blue-600 font-semibold hover:underline">
+                {t('see_more_evs')}
+              </Link>
+              <Link href="/cars" className="text-blue-600 font-semibold hover:underline">
+                {t('shop_all_cars')}
+              </Link>
+            </div>
+          </div>
+        </motion.section> 
 
         {/* 5. Sales & Special Offers Section */}
         <motion.section 

@@ -18,6 +18,7 @@ interface Store {
   id: number;
   name: string;
   phone: string;
+  images: { url: string }[];
   address: string;
   details: string;
   hostname: string;
@@ -113,54 +114,89 @@ export default function StorePage() {
     const fetchStore = async () => {
       try {
         setLoading(true);
-        const storeResponse = await fetch(`/api/articles?slug=${slug}`);
+        const storeResponse = await fetch(`/api/stores?slug=${slug}`);
         if (!storeResponse.ok) throw new Error("Failed to fetch store");
         const storeData = await storeResponse.json();
-        
-        if (!storeData) {
+        console.log('Store Data:', JSON.stringify(storeData, null, 2));
+        if (!storeData || !storeData.data || !Array.isArray(storeData.data) || storeData.data.length === 0) {
           throw new Error("Store not found");
         }
 
         const storeDataItem = storeData.data[0];
+        if (!storeDataItem) {
+          throw new Error("Invalid store data structure");
+        }
+        
         console.log('Store Data:', JSON.stringify(storeDataItem, null, 2));
         
         // Transform the data to match our Store interface
         const storeInstance: Store = {
           id: Number(storeDataItem.id),
-          name: String(storeDataItem.attributes.name || ''),
-          phone: String(storeDataItem.attributes.phone || ''),
-          address: String(storeDataItem.attributes.address || ''),
-          details: String(storeDataItem.attributes.details || ''),
-          hostname: String(storeDataItem.attributes.hostname || ''),
-          visits: Number(storeDataItem.attributes.visits || 0),
-          logo: storeDataItem.attributes.logo?.data || null,
-          tags: String(storeDataItem.attributes.tags || ''),
-          provider: storeDataItem.attributes.provider ? String(storeDataItem.attributes.provider) : undefined,
-          email: storeDataItem.attributes.email ? String(storeDataItem.attributes.email) : undefined,
-          socialMedia: storeDataItem.attributes.socialMedia ? {
-            facebook: storeDataItem.attributes.socialMedia.facebook ? String(storeDataItem.attributes.socialMedia.facebook) : undefined,
-            instagram: storeDataItem.attributes.socialMedia.instagram ? String(storeDataItem.attributes.socialMedia.instagram) : undefined,
-            whatsapp: storeDataItem.attributes.socialMedia.whatsapp ? String(storeDataItem.attributes.socialMedia.whatsapp) : undefined
+          name: String(storeDataItem.name || ''),
+          phone: String(storeDataItem.phone || ''),
+          address: String(storeDataItem.address || ''),
+          details: Array.isArray(storeDataItem.details)
+            ? storeDataItem.details.map(detail => detail.children?.map(child => child.text).join(' ') || ''
+            ).join('\n')
+            : String(storeDataItem.details || ''),
+          hostname: String(storeDataItem.hostname || ''),
+          visits: Number(storeDataItem.visits || 0),
+          logo: storeDataItem.logo?.[0] || null,
+          images: storeDataItem.image || [],
+          tags: String(storeDataItem.tags || ''),
+          provider: storeDataItem.provider ? String(storeDataItem.provider) : undefined,
+          email: storeDataItem.email ? String(storeDataItem.email) : undefined,
+          socialMedia: storeDataItem.socialMedia ? {
+            facebook: storeDataItem.socialMedia.facebook ? String(storeDataItem.socialMedia.facebook) : undefined,
+            instagram: storeDataItem.socialMedia.instagram ? String(storeDataItem.socialMedia.instagram) : undefined,
+            whatsapp: storeDataItem.socialMedia.whatsapp ? String(storeDataItem.socialMedia.whatsapp) : undefined
           } : undefined,
-          location: storeDataItem.attributes.location ? {
-            lat: Number(storeDataItem.attributes.location.lat || 0),
-            lng: Number(storeDataItem.attributes.location.lng || 0)
+          location: storeDataItem.location ? {
+            lat: Number(storeDataItem.location.lat || 0),
+            lng: Number(storeDataItem.location.lng || 0)
           } : undefined,
-          balance: Number(storeDataItem.attributes.balance || 0),
-          openingHours: storeDataItem.attributes.openingHours || defaultOpeningHours,
-          products: storeDataItem.attributes.products?.data?.map((product: any) => ({
-            ...product,
-            categories: product.attributes.categories || "",
+          balance: Number(storeDataItem.balance || 0),
+          openingHours: storeDataItem.openingHours || defaultOpeningHours,
+          products: storeDataItem.products?.map((product: any) => ({
+            id: String(product.id),
+            name: String(product.name || ''),
+            slug: String(product.slug || ''),
+            quantity: Number(product.quantity || 0),
+            price: Number(product.price || 0),
+            categories: product.categories ? product.categories.split(',').map((cat: string) => cat.trim()) : [],
             details: {
               car: {
-                ...product.attributes.details?.car,
+                description: product.details?.car?.description || '',
+                fuelType: product.details?.car?.fuel || '',
+                bodyType: product.details?.car?.body_type || '',
+                cons: [],
+                pros: [],
+                fuel: product.details?.car?.fuel || '',
+                year: Number(product.details?.car?.year || 0),
+                miles: String(product.details?.car?.miles || ''),
+                price: Number(product.details?.car?.price || 0),
+                badges: [],
                 images: {
-                  main: product.attributes.details?.car?.images?.main?.data?.attributes?.url || "",
-                  additional: product.attributes.details?.car?.images?.additional?.data?.map((img: any) => img.attributes.url) || []
-                }
+                  main: product.details?.car?.images?.main || '',
+                  additional: product.details?.car?.images?.additional || []
+                },
+                actions: {
+                  save: { icon: 'bookmark', label: 'Save' },
+                  share: { icon: 'share', label: 'Share' },
+                  compare: { icon: 'compare', label: 'Compare' }
+                },
+                mileage: String(product.details?.car?.miles || ''),
+                features: product.details?.car?.features?.map((feature: any) => ({
+                  icon: '',
+                  label: feature.label,
+                  value: feature.value
+                })) || [],
+                transmission: product.details?.car?.transmission || '',
+                dimensions_capacity: [],
+                engine_transmission_details: []
               }
             }
-          })) || []
+          })) || [],
         };
 
         setStore(storeInstance);
@@ -267,18 +303,24 @@ export default function StorePage() {
         {/* Store Header with Logo */}
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg mb-8">
           <div className="flex flex-col md:flex-row gap-8">
-            {store.logo && (
+            {store.images && store.images.length > 0 ? (
               <div className="relative md:w-[20%] w-[100%] h-[70%] rounded-xl overflow-hidden shadow-lg">
                 <Img
-                  src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${store.logo.attributes.url}`}
-                    alt={store.name}
+                  src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${store.images[0].url}`}
+                  external={true}
+                  alt={store.name}
                   width={1024}
                   height={1024}
-                  external={true}
-                  className="object-fill"
-                  />
+                  className="object-cover w-full h-full"
+                />
+              </div>
+            ) : (
+              <div className="relative md:w-[20%] w-[100%] h-[70%] rounded-xl overflow-hidden shadow-lg bg-gray-100 flex items-center justify-center">
+                <div className="text-gray-400 text-center">
+                  <span>No image available</span>
                 </div>
-              )}
+              </div>
+            )}
             <div className="flex-1">
               <h1 className="text-4xl font-bold text-gray-800 mb-4">{store.name}</h1>
               <p className="text-gray-600 text-lg mb-6">{store.details}</p>
@@ -493,22 +535,26 @@ export default function StorePage() {
               {filteredProducts
                 .filter(product => !product.categories.toString().includes('services-product'))
                 .map((product) => (
+                  console.log(product),
                   <CarCard 
                     key={product.id} 
                     car={{
                       id: product.id,
                       slug: product.slug,
                       mainImage: product.details.car.images.main 
-                        ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${product.details.car.images.main}`
+                        ? `http://68.183.215.202${product.details.car.images.main}`
                         : "/default-car.png",
-                      title: product.name || '',
-                      year: product.details.car.year || 0,
-                      mileage: product.details.car.mileage || '',
-                      bodyType: product.details.car.bodyType || '',
-                      fuelType: product.details.car.fuelType || '',
-                      description: product.details.car.description || '',
-                      price: product.details.car.price.toString() || ''
+                      title: product.name,
+                      year: product.details.car.year,
+                      mileage: product.details.car.miles,
+                      price: product.details.car.price.toString(),
+                      bodyType: product.details.car.bodyType || '',  
+                      fuelType: product.details.car.fuel || '',
+                      description: product.details.car.description,
+                      location: '',
+                      features: product.details.car.features.map(feature => feature.label)
                     }}
+                    variant="grid"
                   />
                 ))}
             </div>

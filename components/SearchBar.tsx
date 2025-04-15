@@ -81,7 +81,7 @@ const SearchBar: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-4 z-10">
+      <div className="flex flex-row items-center justify-center md:justify-start gap-4 z-10">
         <CustomFilter
           title={t("search_fuel_type")}
           options={fuels}

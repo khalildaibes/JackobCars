@@ -240,35 +240,34 @@ const CategoryFilter = ({
 };
 
 interface NewsItem {
-  categories: any;
   id: string;
-    title: string;
-    description: string;
-    content: string;
-    slug: string;
-    createdAt: string;
-    updatedAt: string;
-    publishedAt: string;
-    locale: string;
-    cover: {
-      url: any;
-    };
-    author: {
-      data: {
+  title: string;
+  description: string;
+  content: string;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  locale: string;
+  cover: {
+    url: string;
+  };
+  categories: Array<{ name: string }>;
+  author: {
+    data: {
+      attributes: {
         name: string;
-        attributes: {
-          name: string;
-        };
+        email: string;
       };
     };
-    tags: {
-      data: Array<{
-        attributes: {
-          name: string;
-        };
-      }>;
-    };
-  
+  };
+  tags: {
+    data: Array<{
+      attributes: {
+        name: string;
+      };
+    }>;
+  };
 }
 
 // Add the LinkByUploadAction function
@@ -333,6 +332,7 @@ export default function NewsPage() {
         throw new Error('Failed to fetch news');
       }
       const data = await response.json();
+      console.log(data)
       setNews(data.data || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -407,7 +407,7 @@ export default function NewsPage() {
       </div>
     );
   }
-
+  const featuredNewsbanner = filteredNews.filter(item => item.categories.some(tag => tag.name === "Featured Banner"))[0]
   return (
     <div className="min-h-screen bg-white md:bg-gray-50 md:mt-[5%] mt-[15%]">
 
@@ -445,23 +445,23 @@ export default function NewsPage() {
                 <div className="flex items-center p-8">
                   <div className="w-1/2">
                     <h1 className="text-4xl font-bold text-white mb-4">
-                      {filteredNews[0].title}
+                      {featuredNewsbanner?.title}
                     </h1>
                     <p className="text-white/80 mb-4">
-                      {filteredNews[0].description}
+                    
                     </p>
                     <button 
-                      onClick={() => router.push(`/news/${filteredNews[0].slug}`)}
+                      onClick={() => router.push(`/news/${featuredNewsbanner?.slug}`)}
                       className="bg-white text-purple-700 px-6 py-2 rounded-full font-semibold hover:bg-purple-50"
                     >
                       Read now
                     </button>
                   </div>
                   <div className="w-1/2 relative h-96">
-                    {filteredNews[0].cover?.url && (
+                    {featuredNewsbanner?.cover?.url && (
                       <Img
-                        src={`http://68.183.215.202${filteredNews[0].cover.url}`}
-                        alt={filteredNews[0].title}
+                        src={`http://68.183.215.202${featuredNewsbanner?.cover.url}`}
+                        alt={featuredNewsbanner?.title}
                         external={true}
                         width={512}
                         height={512}
@@ -476,7 +476,7 @@ export default function NewsPage() {
         </div>
 
         {/* Featured News - Different layouts for mobile and desktop */}
-        <section className="mb-8">
+        <section className="mb-8 px-4">
           <h2 className="text-2xl font-bold mb-4">Featured news</h2>
           {featuredNews.length > 0 && (
             <div className="md:hidden space-y-4">
@@ -500,7 +500,7 @@ export default function NewsPage() {
                 <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
                   <h3 className="text-xl font-bold text-white mb-2">{featuredNews[0].title}</h3>
                   <div className="flex items-center text-sm text-white">
-                    <span>{featuredNews[0].author?.data?.name}</span>
+                    <span>{featuredNews[0].author?.data?.attributes?.name || 'Unknown Author'}</span>
                     <span className="mx-2">|</span>
                     <span>{formatDate(featuredNews[0].publishedAt)}</span>
                   </div>
@@ -527,7 +527,7 @@ export default function NewsPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">{item.title}</h3>
-                    <p className="text-sm text-gray-600 mt-1">{item.author?.data?.name}</p>
+                    <p className="text-sm text-gray-600 mt-1">{item.author?.data?.attributes?.name || 'Unknown Author'}</p>
                   </div>
                 </article>
               ))}
@@ -602,7 +602,7 @@ export default function NewsPage() {
                       <h3 className="font-bold text-gray-900 mb-2">{item.title}</h3>
                       <p className="text-gray-600 text-sm mb-2">{item.description}</p>
                       <div className="text-sm text-gray-600">
-                        <span>By {item.author?.data?.name}</span>
+                        <span>By {item.author?.data?.attributes?.name || 'Unknown Author'}</span>
                         <span className="mx-2">•</span>
                         <span>{formatDate(item.publishedAt)}</span>
                       </div>
@@ -620,15 +620,15 @@ export default function NewsPage() {
               {featuredStories.map((item) => (
                 <article
                   key={item.id}
-                  className="md:bg-white md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer"
+                  className="md:bg-white md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer p-4"
                   onClick={() => router.push(`/news/${item.slug}`)}
                 >
-                  <div className="flex items-start space-x-4">
+                  <div className="flex items-start space-x-4 px-4">
                     <div className="flex-1">
                       <div className="text-sm text-gray-600 mb-1">Expert Review</div>
                       <h3 className="font-bold text-gray-900 mb-1">{item.title}</h3>
                       <div className="text-sm text-gray-600">
-                        By {item.author?.data?.name}
+                        By {item.author?.data?.attributes?.name || 'Unknown Author'}
                       </div>
                     </div>
                     <div className="w-24 h-24 relative flex-shrink-0">
@@ -637,8 +637,8 @@ export default function NewsPage() {
                           src={`http://68.183.215.202${item.cover.url}`}
                           alt={item.title}
                           external={true}
-                          width={96}
-                          height={96}
+                          width={500}
+                          height={500}
                           className="object-cover w-full h-full rounded-lg"
                         />
                       )}
