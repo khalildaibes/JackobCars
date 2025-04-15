@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { Img } from "../../components/Img";
+import { Img } from "../../../components/Img";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 

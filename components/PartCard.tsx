@@ -3,11 +3,10 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Img } from "../Img";
 
 interface PartCardProps {
   part: {
-    id: number;
+    id: number | string;
     mainImage: string;
     title: string;
     slug: string;
@@ -28,15 +27,12 @@ const PartCard = ({ part }: PartCardProps) => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="relative w-full aspect-[16/9] overflow-hidden">
-        <Img
+        <img
           src={part.mainImage}
           alt={part.title}
-          width={400}
-          height={300}
           className={`w-full h-full object-cover transform transition-transform duration-300 ${
             isHovered ? "scale-110" : "scale-100"
           }`}
-          external={true}
         />
         {part.category.includes("featured") && (
           <div className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded-md text-xs font-medium">

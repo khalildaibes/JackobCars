@@ -22,8 +22,8 @@ import SearchBar from "../components/SearchBar";
 import { Img } from "../components/Img";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import ServiceCard from "../components/ServiceCard/page";
-import PartCard from "../components/PartCard/page";
+import ServiceCard from "../components/ServiceCard";
+import PartCard from "../components/PartCard";
 
 // Types
 interface Deal {
