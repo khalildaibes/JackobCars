@@ -60,7 +60,7 @@ export default function HomeEightArticle({
         <div className="relative h-[298px] content-center self-stretch rounded-[16px]">
 
             <Img
-              src={`http://68.183.215.202${image}`}
+              src={`http://64.227.112.249${image}`}
               width={446}
             height={298}
             external={true}

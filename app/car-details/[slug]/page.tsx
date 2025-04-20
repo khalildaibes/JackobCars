@@ -56,6 +56,7 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
     name: '',
     phone: ''
   });
+  const [prosAndCons, setProsAndCons] = useState<{ pros: string[], cons: string[], reliability: any } | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -81,10 +82,11 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
   useEffect(() => {
     const fetchCarDetails = async () => {
       try {
-        const response = await fetch(`/api/deals`);
+        const response = await fetch(`/api/deals?store_hostname=64.227.112.249`);
         if (!response.ok) throw new Error(`Failed to fetch car details: ${response.statusText}`);
         
         const data = await response.json();
+        console.log("data:", data);
         if (!data || !data.data) throw new Error("Invalid API response structure");
 
         // Store all listings
@@ -165,10 +167,9 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
           } else if (rawBodyType.toLowerCase().includes("van") || rawBodyType === "ואן" || rawBodyType === "فان") {
             normalizedBodyType = "Van";
           }
-
           return {
             id: product.id,
-            mainImage: product.image ? `http://68.183.215.202${product.image[0]?.url}` : "/default-car.png",
+            mainImage: product.image?.url ? `http://${product.store.hostname}${product.image.url}` : "/default-car.png",
             alt: product.name || "Car Image",
             title: product.name,
             miles: product.details?.car.miles || "N/A",
@@ -199,6 +200,22 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
         if (!carData) throw new Error("Car not found");
 
         setCar(carData);
+
+        // Fetch pros and cons
+        const prosConsResponse = await fetch('/api/prosandcons', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            make: carData.make,
+            model: carData.model,
+            year: carData.year,
+            specs: carData.specs
+          })
+        });
+        const prosConsData = await prosConsResponse.json();
+        setProsAndCons(prosConsData);
       } catch (error) {
         console.error("Error fetching car details:", error);
       } finally {
@@ -337,14 +354,24 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
             <Card className="overflow-hidden border-0 shadow-lg">
               <CardContent className="p-0">
                 <div className="relative">
-                  <Img
+                  {/* <Img
                     external={true}
                     width={1920}
                     height={1080}
-                    src={car.mainImage}
+                    src={car.mainImage[0]}
                 alt={car.title}
                     className="w-full h-[600px] object-cover"
-                  />
+                  /> */}
+                  {car.mainImage && (
+                    <Img
+                      src={car.mainImage}
+                      width={1920}
+                      height={1080}
+                      external={true}
+                      alt={car.title}
+                      className="w-full h-[600px] object-cover"
+                    />
+                  )}
                   <Button 
                     size="icon" 
                     onClick={() => add_to_favorites(car.id)}
@@ -595,14 +622,21 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
                   <Link key={similarCar.id} href={`/car-details/${similarCar.slug}`}>
                       <div className="flex space-x-4 group p-3 rounded-lg hover:bg-gray-50 transition-colors">
                         <div className="w-24 h-20 overflow-hidden rounded-lg">
-                          <Img
+                          {/* <Img
                             external={true}
                             width={96}
                             height={80}
                             src={similarCar.mainImage}
                             alt={similarCar.title}
                             className="w-full h-full object-cover"
-                          />
+                          /> */}
+                          {car.mainImage[0] && (
+                    <img
+                      src={car.mainImage[0]}
+                      alt={car.title}
+                      className="w-full h-[600px] object-cover"
+                    />
+                  )}
                       </div>
                       <div>
                         <h4 className="font-medium text-sm group-hover:text-blue-600 transition-colors">{similarCar.title}</h4>
@@ -629,7 +663,13 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
                     </div>
                     <h4 className="font-medium text-gray-900 text-lg mb-4">{t('pros')}</h4>
                     <ul className="space-y-3 text-gray-600">
-                      {car.pros?.map((pro: string, index: number) => (
+                      {loading ? (
+                        <div className="animate-pulse space-y-3">
+                          {[1, 2, 3].map((i) => (
+                            <li key={i} className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></li>
+                          ))}
+                        </div>
+                      ) : prosAndCons?.pros?.map((pro: string, index: number) => (
                         <li key={index} className="flex items-center justify-center">
                           <span className="mr-2">•</span>
                           {pro}
@@ -660,7 +700,13 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
                     </div>
                     <h4 className="font-medium text-gray-900 text-lg mb-4">{t('cons')}</h4>
                     <ul className="space-y-3 text-gray-600">
-                      {car.cons?.map((con: string, index: number) => (
+                      {loading ? (
+                        <div className="animate-pulse space-y-3">
+                          {[1, 2, 3].map((i) => (
+                            <li key={i} className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></li>
+                          ))}
+                        </div>
+                      ) : prosAndCons?.cons?.map((con: string, index: number) => (
                         <li key={index} className="flex items-center justify-center">
                           <span className="mr-2">•</span>
                           {con}

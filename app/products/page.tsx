@@ -63,11 +63,31 @@ export default function ProductsPage() {
       queryParams.append("maxPrice", filters.priceRange.max.toString());
       if (filters.searchTerm) queryParams.append("search", filters.searchTerm);
 
-      const response = await fetch(`/api/deals?${queryParams}`);
-      const data = await response.json();
-      
-      if (!response.ok) throw new Error(data.message);
-      setProducts(data.data);
+      // First, fetch all stores
+      const storesResponse = await fetch('/api/stores');
+      if (!storesResponse.ok) throw new Error("Failed to fetch stores");
+      const storesData = await storesResponse.json();
+
+      // Fetch products from each store
+      const allProducts = await Promise.all(
+        storesData.data.map(async (store: any) => {
+          const response = await fetch(`/api/deals?store_hostname=${store.hostname}&${queryParams.toString()}`);
+          if (!response.ok) throw new Error(`Failed to fetch products from store ${store.name}`);
+          const data = await response.json();
+          return data.data.map((product: any) => ({
+            ...product,
+            store: {
+              id: store.id,
+              name: store.name,
+              hostname: store.hostname
+            }
+          }));
+        })
+      );
+
+      // Flatten the array of products and set them
+      const flattenedProducts = allProducts.flat();
+      setProducts(flattenedProducts);
     } catch (err) {
       setError(err.message);
     } finally {

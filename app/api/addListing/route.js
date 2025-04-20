@@ -6,7 +6,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://68.183.215.202:1337';
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://64.227.112.249:1337';
 const STRAPI_TOKEN = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
 
 export async function POST(request) {

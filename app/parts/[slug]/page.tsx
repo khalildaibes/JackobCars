@@ -89,7 +89,7 @@ const PartDetails = () => {
         <div className="space-y-4">
           <div className="relative aspect-[16/9] rounded-lg overflow-hidden">
             <Img
-              src={`http://68.183.215.202${part.image[activeImage]?.url || '/default-part.png'}`}
+              src={`http://64.227.112.249${part.image[activeImage]?.url || '/default-part.png'}`}
               alt={part.name}
               width={800}
               height={600}
@@ -108,7 +108,7 @@ const PartDetails = () => {
                   }`}
                 >
                   <Img
-                    src={`http://68.183.215.202${img.url}`}
+                    src={`http://64.227.112.249${img.url}`}
                     alt={`${part.name} view ${index + 1}`}
                     width={100}
                     height={100}

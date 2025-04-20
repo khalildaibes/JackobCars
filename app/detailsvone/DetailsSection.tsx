@@ -38,10 +38,10 @@ export default function DetailsSection() {
         fuel: product.details.car?.fuel || "Unknown",
         transmission: product.details.car?.transmission || "Unknown",
         mainImage: product.image
-          ? `http://68.183.215.202${product.image[0].url}`
+          ? `http://64.227.112.249${product.image[0].url}`
           : "/default-car.png",
         additionalImages: product.details.car?.images?.additional
-        // ? product.details.car.images.additional.map((img: string) => `http://68.183.215.202/${img}`)
+        // ? product.details.car.images.additional.map((img: string) => `http://64.227.112.249/${img}`)
         ? product.details.car.images.additional.map((img: string) => `${img}`)
         : [],
         badges: product.details.car?.badges || [],

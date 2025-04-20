@@ -84,7 +84,7 @@ const StoryViewer = ({ articles, currentIndex, onClose, onNext, onPrevious }: St
         {/* Story content */}
         <div className="relative aspect-[9/16] bg-white rounded-lg overflow-hidden">
           <Image
-            src={`http://68.183.215.202${currentArticle.ImgUrl}`}
+            src={`http://64.227.112.249${currentArticle.ImgUrl}`}
             alt={currentArticle.title}
             fill
             className="w-full h-full object-cover"
@@ -158,7 +158,7 @@ const StoryNews = ({ articles }: { articles: Article[] }) => {
                 <div className="relative">
                   <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-blue-500">
                     <Image
-                      src={`http://68.183.215.202${article.ImgUrl}`}
+                      src={`http://64.227.112.249${article.ImgUrl}`}
                       alt={article.title}
                       className="w-full h-full object-cover"
                       width={100}
@@ -409,62 +409,60 @@ export default function NewsPage() {
   }
   const featuredNewsbanner = filteredNews.filter(item => item.categories.some(tag => tag.name === "Featured Banner"))[0]
   return (
-    <div className="min-h-screen bg-white md:bg-gray-50 md:mt-[5%] mt-[15%]">
-
-
-      <main className="max-w-7xl mx-auto px-4 md:mt-[5%] mt-[15%]">
+    <div className="min-h-screen bg-[#050B20]  md:mt-[5%] mt-[15%] ">
+      <main className="max-w-7xl mx-auto px-4 md:mt-[5%] mt-[15%] min-h-screen pb-[5%]">
         {/* Mobile Title and Category - Only visible on mobile */}
         <div className="md:hidden">
           <div className="py-6">
-            <h1 className="text-2xl font-bold text-gray-900">News & videos</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
             <p className="mt-2 text-gray-600">
-              The latest car news, videos and expert reviews, from Cars.com's independent automotive journalists
+              {t('subtitle')}
             </p>
           </div>
 
           <div className="mb-8">
-            <label className="block text-sm font-medium text-gray-700 mb-1">News category</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('news_category')}</label>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="">Choose a category</option>
-              <option value="featured">Featured</option>
-              <option value="latest">Latest News</option>
-              <option value="reviews">Expert Reviews</option>
+              <option value="">{t('choose_category')}</option>
+              <option value="featured">{t('featured')}</option>
+              <option value="latest">{t('latest')}</option>
+              <option value="reviews">{t('reviews')}</option>
             </select>
           </div>
         </div>
 
         {/* Featured Banner - Desktop Only */}
-        <div className="hidden md:block">
+        <div className="hidden md:block mt-[5%]">
           {filteredNews.length > 0 && (
             <div className="mb-8">
-              <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-xl overflow-hidden relative">
-                <div className="flex items-center p-8">
+              <div className="p-8 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl overflow-hidden relative mt-[5%]">
+                <div className="flex items-center ">
                   <div className="w-1/2">
                     <h1 className="text-4xl font-bold text-white mb-4">
                       {featuredNewsbanner?.title}
                     </h1>
                     <p className="text-white/80 mb-4">
-                    
+                      {featuredNewsbanner?.description}
                     </p>
                     <button 
                       onClick={() => router.push(`/news/${featuredNewsbanner?.slug}`)}
-                      className="bg-white text-purple-700 px-6 py-2 rounded-full font-semibold hover:bg-purple-50"
+                      className="bg-white text-blue-700 px-6 py-2 rounded-full font-semibold hover:bg-blue-50"
                     >
-                      Read now
+                      {t('read_now')}
                     </button>
                   </div>
                   <div className="w-1/2 relative h-96">
                     {featuredNewsbanner?.cover?.url && (
                       <Img
-                        src={`http://68.183.215.202${featuredNewsbanner?.cover.url}`}
+                        src={`http://64.227.112.249${featuredNewsbanner?.cover.url}`}
                         alt={featuredNewsbanner?.title}
                         external={true}
-                        width={512}
-                        height={512}
+                        width={1290}
+                        height={1290}
                         className="object-cover w-full h-full rounded-xl"
                       />
                     )}
@@ -477,7 +475,7 @@ export default function NewsPage() {
 
         {/* Featured News - Different layouts for mobile and desktop */}
         <section className="mb-8 px-4">
-          <h2 className="text-2xl font-bold mb-4">Featured news</h2>
+          <h2 className="text-2xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('featured_news')}</h2>
           {featuredNews.length > 0 && (
             <div className="md:hidden space-y-4">
               {/* Mobile Layout */}
@@ -488,7 +486,7 @@ export default function NewsPage() {
                 <div className="aspect-[16/9] relative">
                   {featuredNews[0].cover?.url && (
                     <Img
-                      src={`http://68.183.215.202${featuredNews[0].cover.url}`}
+                      src={`http://64.227.112.249${featuredNews[0].cover.url}`}
                       alt={featuredNews[0].title}
                       external={true}
                       width={800}
@@ -516,7 +514,7 @@ export default function NewsPage() {
                   <div className="w-24 h-24 relative flex-shrink-0">
                     {item.cover?.url && (
                       <Img
-                        src={`http://68.183.215.202${item.cover.url}`}
+                        src={`http://64.227.112.249${item.cover.url}`}
                         alt={item.title}
                         external={true}
                         width={96}
@@ -546,7 +544,7 @@ export default function NewsPage() {
                   <div className="relative h-48">
                     {item.cover?.url && (
                       <Img
-                        src={`http://68.183.215.202${item.cover.url}`}
+                        src={`http://64.227.112.249${item.cover.url}`}
                         alt={item.title}
                         external={true}
                         width={512}
@@ -567,8 +565,8 @@ export default function NewsPage() {
 
         {/* View More Link - Mobile Only */}
         <div className="text-center mb-8 md:hidden">
-          <a href="#" className="text-blue-600 font-semibold hover:underline">
-            View more news articles
+          <a href="#" className="text-white font-semibold hover:underline">
+            {t('view_more')}
           </a>
         </div>
 
@@ -576,7 +574,7 @@ export default function NewsPage() {
         <div className="md:grid md:grid-cols-3 md:gap-8">
           {/* Latest News */}
           <div className="md:col-span-2">
-            <h2 className="text-2xl font-bold mb-4">Latest news</h2>
+            <h2 className="text-2xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('latest_news')}</h2>
             <div className="space-y-6">
               {latestNews.map((item) => (
                 <article
@@ -588,7 +586,7 @@ export default function NewsPage() {
                     <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
                       {item.cover?.url && (
                         <Img
-                          src={`http://68.183.215.202${item.cover.url}`}
+                          src={`http://64.227.112.249${item.cover.url}`}
                           alt={item.title}
                           external={true}
                           width={512}
@@ -598,11 +596,11 @@ export default function NewsPage() {
                       )}
                     </div>
                     <div className="mt-3 md:mt-0 md:w-2/3 md:p-4">
-                      <div className="text-sm text-gray-600 mb-1">Expert Review</div>
+                      <div className="text-sm text-gray-600 mb-1">{t('expert_review')}</div>
                       <h3 className="font-bold text-gray-900 mb-2">{item.title}</h3>
                       <p className="text-gray-600 text-sm mb-2">{item.description}</p>
                       <div className="text-sm text-gray-600">
-                        <span>By {item.author?.data?.attributes?.name || 'Unknown Author'}</span>
+                        <span>{t('by')} {item.author?.data?.attributes?.name || 'Unknown Author'}</span>
                         <span className="mx-2">•</span>
                         <span>{formatDate(item.publishedAt)}</span>
                       </div>
@@ -615,7 +613,7 @@ export default function NewsPage() {
 
           {/* Featured Stories */}
           <div>
-            <h2 className="text-2xl font-bold mb-4">Featured stories</h2>
+            <h2 className="text-2xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('featured_stories')}</h2>
             <div className="space-y-6">
               {featuredStories.map((item) => (
                 <article
@@ -634,7 +632,7 @@ export default function NewsPage() {
                     <div className="w-24 h-24 relative flex-shrink-0">
                       {item.cover?.url && (
                         <Img
-                          src={`http://68.183.215.202${item.cover.url}`}
+                          src={`http://64.227.112.249${item.cover.url}`}
                           alt={item.title}
                           external={true}
                           width={500}

@@ -49,6 +49,7 @@ interface CarCardProps {
     description: string;
     location?: string;
     features?: string[];
+    isPro?: boolean;
   };
   variant?: 'grid' | 'list';
   onCompareToggle?: () => void;
@@ -192,6 +193,11 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
           className="w-full h-48 object-cover rounded-t-lg"
         />
         <FavoriteButton isFavorite={favorites.includes(car.slug)} onClick={(e) => handleFavoriteToggle(e)} />
+        {car.isPro && (
+          <Badge className="absolute top-2 left-2 bg-blue-600 text-white">
+            Pro
+          </Badge>
+        )}
         <div className={`absolute bottom-0 ${isRTL ? 'right-0' : 'left-0'} p-3`}>
           <Badge className="bg-gray-700 text-white">{car.year}</Badge>
           <Badge className={`bg-gray-700 ${isRTL ? 'mr-2' : 'ml-2'} text-white`}>{car.mileage}</Badge>
@@ -221,20 +227,21 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
               onClick={handleContactSeller}
               className="flex items-center justify-center  w-full text-sm"
             />
-            <ActionButton 
-              icon={Car}
-              label={t('view_details')}
-              onClick={handleViewDetails}
-              className="flex items-center justify-center w-full text-sm"
-            />
-          </div>
-          <ActionButton
+             <ActionButton
             icon={Scale}
             label={isInComparison(car.id.toString()) ? t('remove_from_comparison') : t('add_to_comparison')}
             onClick={handleCompareToggle}
             variant={isInComparison(car.id.toString()) ? "destructive" : "outline"}
             className="flex items-center justify-center gap-2 w-full text-sm"
           />
+          
+          </div>
+          <ActionButton 
+              icon={Car}
+              label={t('view_details')}
+              onClick={handleViewDetails}
+              className="flex items-center justify-center w-full text-sm"
+            />
         </div>
       </CardContent>
     </Card>

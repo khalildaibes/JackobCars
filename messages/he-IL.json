@@ -143,7 +143,11 @@
     "ev_guide_title": "מדריך רכב חשמלי 101",
     "watch_ev101": "צפה במדריך רכב חשמלי",
     "see_more_evs": "ראה עוד רכבים חשמליים",
-    "shop_all_cars": "קנה את כל הרכבים"
+    "shop_all_cars": "קנה את כל הרכבים",
+    "invite_a_friend": "הזמן חבר",
+    "car_alt_1": "רכב T-Cross",
+    "car_alt_2": "רכב טויוטה קאמרי",
+    "car_alt_3": "רכב הונדה אקורד"
   
   },
   "Categories": {
@@ -850,6 +854,17 @@
     }
   },
   "NewsPage": {
+    "title": "חדשות וסרטונים",
+    "read_now": "קרא עכשיו",
+    "news_category": "קטגורית חדשות",
+    "choose_category": "בחר קטגוריה",
+    "featured": "מומלצות",
+    "latest": "אחרונות",
+    "reviews": "מראות",
+    "view_more": "הצג עוד",
+    "featured_news": "חדשות מומלצות",
+    "latest_news": "חדשות אחרונות",
+    "featured_stories": "סיפורים מומלצים",
     "related_articles": "כתבות קשורות",
     "welcome": "ברוכים הבאים ל-AutoNews",
     "description": "גלה את החדשות והטרנדים האחרונים בעולם הרכב",

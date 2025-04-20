@@ -1,100 +1,86 @@
-import { NextResponse } from 'next/server';
+import { getLocale } from "next-intl/server";
+import { getStoreConfig, initializeStoreConfigs } from '../../utils/storeConfig';
 
-async function fetchParts(slug?: string) {
-  try {
-    const url = slug 
-      ? `http://68.183.215.202/api/parts?filters[slug][$eq]=${slug}&populate=*`
-      : `http://68.183.215.202/api/parts?populate=*`;
+export async function GET(req) {
+    try {
+        const locale = await getLocale();
+        console.log("Detected Locale:", locale);
 
-    const response = await fetch(url, {
-      headers: {
-        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
-      },
-    });
+        // Extract query parameters from the request URL
+        const { searchParams } = new URL(req.url);
+        let storeHostname = searchParams.get('store_hostname');
 
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
+        // Define allowed filters
+        const allowedFilters = ["category", "min_price", "max_price", "fuel", "body_type", "year", "mileage", "store"];
+
+        // Build query parameters dynamically
+        const queryParams = new URLSearchParams();
+
+        allowedFilters.forEach((key) => {
+            const value = searchParams.get(key);
+            if (value) {
+                if (key === "category") queryParams.append("filters[categories][$contains]", value);
+                if (key === "min_price") queryParams.append("filters[price][$gte]", value);
+                if (key === "max_price") queryParams.append("filters[price][$lte]", value);
+                if (key === "fuel") queryParams.append("filters[fuel][$contains]", value);
+                if (key === "body_type") queryParams.append("filters[body_type][$contains]", value);
+                if (key === "year") queryParams.append("filters[year][$contains]", value);
+                if (key === "mileage") queryParams.append("filters[mileage][$lte]", value);
+                if (key === "store") queryParams.append("filters[store][$contains]", value);
+            }
+        });
+
+        let baseUrl;
+        let apiToken;
+        console.log("Store Hostname:", storeHostname);
+        if (storeHostname) {
+            // Initialize store configs if not already done
+            await initializeStoreConfigs();
+            
+            // Get store configuration from cache
+            const storeConfig = getStoreConfig(storeHostname);
+            console.log("Store Config:", storeConfig);
+
+            if (storeConfig) {
+                baseUrl = `${storeConfig.hostname}`;
+                apiToken = storeConfig.apiToken;
+                console.log("Base URL:", baseUrl);
+            } else {
+                // Fallback to default values if store config not found
+                baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
+                apiToken = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+            }
+        } else {
+            // Use default values if no store ID provided
+            baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
+            apiToken = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+            storeHostname = '64.227.112.249';
+        }
+        
+        // Construct the final API URL with filters
+        let apiUrl =  storeHostname.includes('64.227.112.249') ? `http://${baseUrl}/api/parts?populate=*` : `http://${baseUrl}/api/partss?populate=*`;
+        if (queryParams.toString()) {
+            apiUrl += `&${queryParams.toString()}`;
+        }
+
+        console.log("Fetching API:", apiUrl);
+
+        // Fetch data from the appropriate store API
+        const response = await fetch(apiUrl, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: storeHostname.includes('64.227.112.249') ? `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}` : `Bearer ${apiToken}`,
+            },
+        });
+
+        if (!response.ok) {
+            return new Response(JSON.stringify({ message: "Failed to fetch parts", error: response.statusText }), { status: response.status });
+        }
+
+        const data = await response.json();
+        return new Response(JSON.stringify(data), { status: 200 });
+    } catch (error) {
+        console.error("API Proxy Error:", error);
+        return new Response(JSON.stringify({ message: "Internal Server Error" }), { status: 500 });
     }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error fetching parts:', error);
-    throw error;
-  }
-}
-
-export async function GET(request: Request) {
-  try {
-    // Get the slug from query parameters
-    const { searchParams } = new URL(request.url);
-    const slug = searchParams.get('slug');
-
-    const data = await fetchParts(slug || undefined);
-
-    if (slug) {
-      // If we're looking for a specific part
-      if (!data.data || data.data.length === 0) {
-        return NextResponse.json(
-          { error: 'Part not found' },
-          { status: 404 }
-        );
-      }
-
-      // Transform single part data
-      const part = data.data[0];
-      const transformedData = {
-        id: part.id,
-        slug: part.slug,
-        name: part.title,
-        image: part.images?.data ? part.images.data.map((img: any) => ({
-          url: img.url
-        })) : [],
-        details: {
-          description: part.description,
-          features: part.details?.features?.map((feature: string) => ({
-            value: feature
-          })) || []
-        },
-        price: part.price,
-        categories: part.categories?.data?.map((cat: any) => cat.name).join(',') || '',
-        stores: part.stores?.data?.map((store: any) => ({
-          id: store.id,
-          name: store.name
-        })) || []
-      };
-
-      return NextResponse.json({ data: transformedData });
-    } else {
-      // Transform list of parts data
-      const transformedData = data.data.map((part: any) => ({
-        id: part.id,
-        slug: part.slug,
-        name: part.title,
-        image: part.images?.data ? part.images.data.map((img: any) => ({
-          url: img.url
-        })) : [],
-        details: {
-          description: part.description,
-          features: part.details?.features?.map((feature: string) => ({
-            value: feature
-          })) || []
-        },
-        price: part.price,
-        categories: part.categories?.data?.map((cat: any) => cat.name).join(',') || '',
-        stores: part.stores?.data?.map((store: any) => ({
-          id: store.id,
-          name: store.name
-        })) || []
-      }));
-
-      return NextResponse.json({ data: transformedData });
-    }
-  } catch (error) {
-    console.error('API Error:', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
-    );
-  }
 } 

@@ -11,7 +11,7 @@ export async function GET(req) {
 
     console.log("Detected Locale:", locale);
 
-    const apiUrl = `http://68.183.215.202/api/homepage?populate=*&locale=${encodeURIComponent(locale)}`;
+    const apiUrl = `http://64.227.112.249/api/homepage?populate=*&locale=${encodeURIComponent(locale)}`;
     
     const response = await fetch(apiUrl, {
       headers: {

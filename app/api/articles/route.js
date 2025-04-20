@@ -26,7 +26,7 @@ export async function GET(req) {
         });
 
         // Construct the final API URL with filters
-        let apiUrl = `http://68.183.215.202/api/articles?populate=*&locale=${locale}`;
+        let apiUrl = `http://64.227.112.249/api/articles?populate=*`;
         if (queryParams.toString()) {
             apiUrl += `&${queryParams.toString()}`;
         }

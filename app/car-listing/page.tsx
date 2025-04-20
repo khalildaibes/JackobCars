@@ -107,7 +107,7 @@ const CarListings: React.FC = () => {
 
     const fetchProducts = async () => {
         try {
-          const response = await fetch(`/api/deals?category=car-listing`);
+          const response = await fetch(`/api/deals?store_hostname=64.227.112.249`);
           if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
       
           const data = await response.json();
@@ -199,7 +199,7 @@ const CarListings: React.FC = () => {
             return {
               id: product.id,
               slug: product.slug,
-              mainImage: product.image ? `http://68.183.215.202${product.image[0]?.url}` : "/default-car.png",
+              mainImage: product.image ? `http://${product.store.hostname}${product.image?.url}` : "/default-car.png",
               alt: product.name || "Car Image",
               title: product.name,
               miles: product.details?.car.miles || "N/A",

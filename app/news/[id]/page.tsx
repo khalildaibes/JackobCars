@@ -14,11 +14,25 @@ interface Params {
   slug: string;
 }
 
+interface Comment {
+  id: number;
+  body: string;
+  date: string;
+  admin_user: {
+    name: string;
+    email: string;
+    };
+  likes: number;
+}
+
 export default function BlogListPage({ params }: { params: { id: string } }) {
     const [article, setArticle] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [relatedArticles, setRelatedArticles] = useState<any[]>([]);
+    const [comments, setComments] = useState<Comment[]>([]);
+    const [newComment, setNewComment] = useState('');
+    const [submittingComment, setSubmittingComment] = useState(false);
     const t = useTranslations('NewsPage');
   
     useEffect(() => {
@@ -34,7 +48,7 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
 
           const article = data.data[0];
           setArticle(article);
-
+          setComments(article.comments);
           // Fetch related articles based on categories
           if (article.categories && article.categories.length > 0) {
             const categoryIds = article.categories.map((cat: any) => cat.id).join(',');
@@ -54,6 +68,62 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
       }
       fetchArticles();
     }, [params.id]);
+
+    const handleCommentSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!newComment.trim()) return;
+
+      setSubmittingComment(true);
+      try {
+        const response = await fetch('/api/comments', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            article_id: article.id,
+            body: newComment,
+            admin_user: 'Guest', // This should be replaced with actual user info when authentication is implemented
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to post comment');
+        }
+
+        const data = await response.json();
+        setComments(prevComments => [...prevComments, data.data]);
+        setNewComment('');
+      } catch (error) {
+        console.error('Error posting comment:', error);
+        // You might want to show an error message to the user
+      } finally {
+        setSubmittingComment(false);
+      }
+    };
+
+    const handleLike = async (commentId: number) => {
+      try {
+        const response = await fetch(`/api/comments/${commentId}/like`, {
+          method: 'POST',
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to like comment');
+        }
+
+        const data = await response.json();
+        setComments(prevComments =>
+          prevComments.map(comment =>
+            comment.id === commentId
+              ? { ...comment, likes: data.likes }
+              : comment
+          )
+        );
+      } catch (error) {
+        console.error('Error liking comment:', error);
+      }
+    };
 
     if (loading) {
       return (
@@ -178,7 +248,7 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
             <div key={block.id} className="my-8">
               {block.media?.url && (
                 <Img
-                  src={`http://68.183.215.202${block.media.url}`}
+                  src={`http://64.227.112.249${block.media.url}`}
                   alt="Media content"
                   external={true}
                   width={1920}
@@ -210,7 +280,7 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
         <section className="relative w-full min-h-[60vh]">
           {cover?.url ? (
             <Img
-              src={`http://68.183.215.202${cover.url}`}
+              src={`http://64.227.112.249${cover.url}`}
               alt={title}
               external={true}
               width={1920}
@@ -317,7 +387,7 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
               <div className="max-w-4xl mx-auto">
                 <div className="relative aspect-[16/9] rounded-xl overflow-hidden shadow-xl">
                   <Img
-                    src={`http://68.183.215.202${conver[0].url}`}
+                    src={`http://64.227.112.249${conver[0].url}`}
                     alt="Featured gallery image"
                     external={true}
                     width={1920}
@@ -343,6 +413,89 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
           </div>
         </article>
 
+        {/* Comments Section */}
+        <section className="py-8 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-2xl font-bold mb-6">{t('comments')} ({comments.length})</h2>
+              
+              {/* Comments List */}
+              <div className="space-y-6 mb-8">
+                {comments.map((comment) => (
+                  <div key={comment.id} className="bg-white p-6 rounded-lg shadow-sm">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex items-center gap-3">
+                        {comment.admin_user && comment.admin_user.name && (
+                          <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                            <span className="text-gray-600 font-medium">
+                              {comment.admin_user.name.toUpperCase()}
+                          </span>
+                        </div>
+                        )}
+                        {comment.admin_user && comment.admin_user.name && (
+                        <div>
+                          <h3 className="font-medium text-gray-900">{comment.admin_user && comment.admin_user.name}</h3>
+                          <p className="text-sm text-gray-500">{new Date(comment.date).toLocaleDateString()}</p>
+                        </div>
+                        )}
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <button 
+                          onClick={() => handleLike(comment.id)}
+                          className="text-gray-500 hover:text-blue-600 transition-colors"
+                          aria-label="Like comment"
+                        >
+                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                          </svg>
+                        </button>
+                        <span className="text-sm text-gray-600">{comment.likes}</span>
+                      </div>
+                    </div>
+                    <p className="text-gray-700">{comment.body}</p>
+                  </div>
+                ))}
+                {comments.length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    {t('no_comments')}
+                  </div>
+                )}
+              </div>
+
+              {/* Add Comment Form */}
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-xl font-semibold mb-4">{t('add_comment')}</h3>
+                <form className="space-y-4" onSubmit={handleCommentSubmit}>
+                  <div>
+                    <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-1">
+                      {t('your_comment')}
+                    </label>
+                    <textarea
+                      id="comment"
+                      rows={4}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder={t('write_comment')}
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      required
+                    ></textarea>
+                  </div>
+                  <div className="flex justify-end">
+                    <button
+                      type="submit"
+                      disabled={submittingComment}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed"
+                    >
+                      {submittingComment ? t('posting_comment') : t('post_comment')}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* View Car on Market Section */}
         {article?.car && (
           <section className="py-8 bg-gray-50">
@@ -354,7 +507,7 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
                     <div className="w-full md:w-1/3">
                       {article.car.images?.main && (
                         <Img
-                          src={`http://68.183.215.202${article.car.images.main}`}
+                          src={`http://64.227.112.249${article.car.images.main}`}
                           alt={article.car.name}
                           external={true}
                           width={300}
@@ -411,7 +564,7 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
                   >
                     {relatedArticle.cover?.url && (
                       <Img
-                        src={`http://68.183.215.202${relatedArticle.cover.url}`}
+                        src={`http://64.227.112.249${relatedArticle.cover.url}`}
                         alt={relatedArticle.title}
                         external={true}
                         width={400}

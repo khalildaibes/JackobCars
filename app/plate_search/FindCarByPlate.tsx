@@ -178,7 +178,7 @@ const CarSearch = () => {
     }
   };
 
-  const fetchCarPerformanceData = async (manufacturer: string, model: string, year: string) => {
+  const fetchCarPerformanceData = async (manufacturer: string, model: string, year: string, trim: string) => {
     try {
       setLoadingPerformance(true);
       const response = await fetch('/api/generate-car-information', {
@@ -190,7 +190,8 @@ const CarSearch = () => {
           manufacturer,
           model,
           year,
-          locale
+          locale,
+          trim
         }),
       });
 
@@ -249,7 +250,8 @@ const CarSearch = () => {
           await fetchCarPerformanceData(
             String(record.tozeret_nm),
             String(record.kinuy_mishari),
-            String(record.shnat_yitzur)
+            String(record.shnat_yitzur),
+            String(record.ramat_gimur)
           );
         }
 

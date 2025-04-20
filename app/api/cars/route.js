@@ -3,7 +3,7 @@
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const category = searchParams.get('category');
-  const apiUrl = `http://68.183.215.202/api/products?populate=*&locale=${locale}`;
+  const apiUrl = `http://64.227.112.249/api/products?populate=*`;
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10000);

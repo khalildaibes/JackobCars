@@ -26,7 +26,6 @@ export default function RecentlyAddedSection({
   const t = useTranslations("HomePage");
   const [sliderState, setSliderState] = React.useState(0);
   const sliderRef = React.useRef<AliceCarousel>(null);
-
   return (
     <>
       <div className="flex justify-end self-stretch">

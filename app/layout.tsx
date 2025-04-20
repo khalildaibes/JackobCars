@@ -13,6 +13,10 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Providers from "./providers";
 import { useEffect } from 'react';
+import { initializeStoreConfigs } from './utils/storeConfig';
+
+// Initialize store configurations
+initializeStoreConfigs().catch(console.error);
 
 export const metadata: Metadata = {
   title: "AtSpeedLimit",

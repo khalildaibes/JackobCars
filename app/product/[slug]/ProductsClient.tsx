@@ -48,7 +48,7 @@ export default function ProductDetailsPage({ product }: { product: { product: st
         body_type: product.details?.car?.body_type || "N/A",
         fuel: product.details?.car?.fuel || "Unknown",
         transmission: product.details?.car?.transmission || "Unknown",
-        mainImage: product.image?.length ? `http://68.183.215.202${product.image[0].url}` : "/default-car.png",
+        mainImage: product.image?.length ? `http://64.227.112.249${product.image[0].url}` : "/default-car.png",
         additionalImages: product.details?.car?.images?.additional || [],
         badges: product.details?.car?.badges || [],
         breadcrumb: product.details?.car?.breadcrumb || [],

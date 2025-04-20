@@ -7,9 +7,9 @@ import { fetchStrapiData } from "../lib/strapiClient";
 
 // Example Car Data with Hostname Added
 const carData = [
-  { id: 1, category: "Sedan", image: "img_background_392x684.png", title: "Toyota Camry 2020", price: 20000, fuel: "Petrol", transmission: "Automatic", hostname: "68.183.215.202" },
+  { id: 1, category: "Sedan", image: "img_background_392x684.png", title: "Toyota Camry 2020", price: 20000, fuel: "Petrol", transmission: "Automatic", hostname: "64.227.112.249" },
   { id: 2, category: "SUV", image: "img_car8_660x440_jpg.png", title: "Honda CR-V 2019", price: 28000, fuel: "Petrol", transmission: "Automatic", hostname: "" },
-  { id: 3, category: "Truck", image: "img_car5_660x440_jpg_1.png", title: "Ford F-150 2021", price: 35000, fuel: "Diesel", transmission: "Manual", hostname: "68.183.215.202" },
+  { id: 3, category: "Truck", image: "img_car5_660x440_jpg_1.png", title: "Ford F-150 2021", price: 35000, fuel: "Diesel", transmission: "Manual", hostname: "64.227.112.249" },
   { id: 4, category: "Coupe", image: "img_car19_660x440_jpg_218x326.png", title: "BMW M4 2022", price: 60000, fuel: "Petrol", transmission: "Automatic", hostname: "" },
   { id: 5, category: "Convertible", image: "img_h10_jpg.png", title: "Mazda MX-5 2021", price: 30000, fuel: "Petrol", transmission: "Manual", hostname: "" },
   { id: 6, category: "SUV", image: "img_h72_jpg.png", title: "Toyota Highlander 2023", price: 45000, fuel: "Hybrid", transmission: "Automatic", hostname: "" },
@@ -47,7 +47,7 @@ export default function ShoppagePage() {
       // Transform the fetched data into the required listings format
       const formattedListings = data.data.map((product: any) => ({
         id: product.id,
-        mainImage: product.image ? `http://68.183.215.202${product.image[0]?.url}` : "/default-car.png",
+        mainImage: product.image ? `http://64.227.112.249${product.image[0]?.url}` : "/default-car.png",
         alt: product.name || "Car Image",
         title: product.name,
         miles: product.details?.miles || "N/A",

@@ -86,7 +86,7 @@ export default function UserMenu({ user, isMobile, onLogout }: UserMenuProps) {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center space-x-2 p-2 rounded-xl hover:bg-gray-100 transition-colors"
       >
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-200 to-blue-800 flex items-center justify-center">
           <User className="w-5 h-5 text-white" />
         </div>
         <span className="text-sm font-medium">{user.username}</span>

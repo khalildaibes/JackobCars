@@ -49,7 +49,7 @@ export default function ProductDetailsPage({ product }: ProductProps) {
       const formattedCars = data.data.map((product: any) => ({
         id: product.id,
         category: product.categories || "Unknown", // ✅ Store categories as a string
-        image: product.image?.length ? `http://68.183.215.202${product.image[0].url}` : "/default-car.png",
+        image: product.image?.length ? `http://64.227.112.249${product.image[0].url}` : "/default-car.png",
         title: product.name || "Unknown Car",
         price: product.price || 0,
         fuel: product.details?.car?.fuel || "Unknown",

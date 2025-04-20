@@ -374,3 +374,7 @@ html[lang="ar"] * {
 .read-the-docs {
   color: #888;
 }
+
+.gradient-bg {
+  background: linear-gradient(135deg, #050B20 0%, #0A1A3A 100%);
+}

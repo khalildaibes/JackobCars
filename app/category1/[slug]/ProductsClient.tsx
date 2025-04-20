@@ -467,7 +467,7 @@ export default function ProductsClient({ products }: ProductsClientProps) {
                           <div className="flex items-center gap-2">
                             {product.details.car.store.logo ? (
                               <img 
-                                src={`http://68.183.215.202${product.details.car.store.logo}`}
+                                src={`http://64.227.112.249${product.details.car.store.logo}`}
                                 alt={product.details.car.store.name}
                                 className="w-4 h-4 object-contain"
                               />

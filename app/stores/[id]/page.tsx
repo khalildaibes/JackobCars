@@ -109,6 +109,9 @@ export default function StorePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [showProProducts, setShowProProducts] = useState(false);
+  const [filteredParts, setFilteredParts] = useState<any[]>([]);
+  const [filteredServices, setFilteredServices] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchStore = async () => {
@@ -129,7 +132,22 @@ export default function StorePage() {
         
         console.log('Store Data:', JSON.stringify(storeDataItem, null, 2));
         
-        // Transform the data to match our Store interface
+        // Fetch products from the store's specific API endpoint
+        const productsResponse = await fetch(`/api/deals?store_hostname=${storeDataItem.hostname}`);
+        if (!productsResponse.ok) throw new Error("Failed to fetch products");
+        const productsData = await productsResponse.json();
+
+        // Fetch parts from the parts API
+        const partsResponse = await fetch(`/api/parts?store_hostname=${storeDataItem.hostname}`);
+        if (!partsResponse.ok) throw new Error("Failed to fetch parts, " + partsResponse.statusText);
+        const partsData = await partsResponse.json();
+
+        // Fetch services from the services API
+        const servicesResponse = await fetch(`/api/services?store_hostname=${storeDataItem.hostname}`);
+        if (!servicesResponse.ok) throw new Error("Failed to fetch services, " + servicesResponse.statusText);
+        const servicesData = await servicesResponse.json();
+        console.log('Services Data:', JSON.stringify(servicesData, null, 2));
+
         const storeInstance: Store = {
           id: Number(storeDataItem.id),
           name: String(storeDataItem.name || ''),
@@ -157,7 +175,7 @@ export default function StorePage() {
           } : undefined,
           balance: Number(storeDataItem.balance || 0),
           openingHours: storeDataItem.openingHours || defaultOpeningHours,
-          products: storeDataItem.products?.map((product: any) => ({
+          products: productsData.data?.map((product: any) => ({
             id: String(product.id),
             name: String(product.name || ''),
             slug: String(product.slug || ''),
@@ -201,6 +219,8 @@ export default function StorePage() {
 
         setStore(storeInstance);
         setFilteredProducts(storeInstance.products);
+        setFilteredParts(partsData.data || []);
+        setFilteredServices(servicesData.data || []);
         setError(null);
       } catch (err) {
         console.error("Error fetching store data:", err);
@@ -306,7 +326,7 @@ export default function StorePage() {
             {store.images && store.images.length > 0 ? (
               <div className="relative md:w-[20%] w-[100%] h-[70%] rounded-xl overflow-hidden shadow-lg">
                 <Img
-                  src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${store.images[0].url}`}
+                  src={`${store.hostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${store.hostname}`}${store.images[0].url}`}
                   external={true}
                   alt={store.name}
                   width={1024}
@@ -474,35 +494,72 @@ export default function StorePage() {
         {/* Products and Services Sections */}
         <div className="space-y-8">
           {/* Services Section */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Services</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts
-                .filter(product => product.categories.toString().includes('services-product'))
-                .map((service) => (
-                  <div
-                    key={service.id}
-                    className="p-6 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 hover:shadow-md transition-all"
+          {filteredServices.length !== 0 && (
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">Services</h2>
+                <div className="flex gap-3">
+                  <button 
+                    onClick={() => setSelectedCategory(null)} 
+                    className={`px-4 py-2 rounded-lg transition-colors ${
+                      !selectedCategory 
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
                   >
-                    <h3 className="text-xl font-semibold text-gray-800 mb-3">{service.name}</h3>
-                    <p className="text-gray-600 mb-4">{service.details.car.description}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-blue-600 font-semibold">
-                        ${service.details.car.price.toLocaleString()}
-                      </span>
-                      <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                        Learn More
-                      </button>
+                    All
+                  </button>
+                  {Array.from(new Set(
+                    filteredServices.flatMap(service => 
+                      service.categories?.split(',').map(cat => cat.trim()) || []
+                    )
+                  )).map(category => (
+                    <button 
+                      key={category} 
+                      onClick={() => setSelectedCategory(category)} 
+                      className={`px-4 py-2 rounded-lg transition-colors ${
+                        selectedCategory === category 
+                          ? 'bg-blue-600 text-white' 
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredServices
+                  .filter(service => 
+                    !selectedCategory || 
+                    service.categories?.split(',').map(cat => cat.trim()).includes(selectedCategory)
+                  )
+                  .map((service) => (
+                    <div
+                      key={service.id}
+                      className="p-6 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 hover:shadow-md transition-all"
+                    >
+                      <h3 className="text-xl font-semibold text-gray-800 mb-3">{service.name}</h3>
+                      <p className="text-gray-600 mb-4 line-clamp-3">{service.details?.description}</p>
+                      <div className="flex justify-between items-center">
+                        <span className="text-blue-600 font-semibold">
+                          ${service.price.toLocaleString()}
+                        </span>
+                        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                          Learn More
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Products Section */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
+          {filteredProducts.length !== 0 && (
+              <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">Products</h2>
+              <h2 className="text-2xl font-bold text-gray-800">Cars</h2>
               <div className="flex gap-3">
                 <button 
                   onClick={() => handleFilterChange(null)} 
@@ -542,7 +599,7 @@ export default function StorePage() {
                       id: product.id,
                       slug: product.slug,
                       mainImage: product.details.car.images.main 
-                        ? `http://68.183.215.202${product.details.car.images.main}`
+                        ? ` ${store.hostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${store.hostname}`}${product.details.car.images.main}`
                         : "/default-car.png",
                       title: product.name,
                       year: product.details.car.year,
@@ -558,7 +615,41 @@ export default function StorePage() {
                   />
                 ))}
             </div>
+            </div>
+          )}
+          {/* Parts Section */}
+          {filteredParts.length !== 0 && (
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Parts</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredParts.map((part) => (
+              <Link href={`/parts/${part.slug}`}>
+
+                <div
+                  key={part.id}
+                  className="p-6 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 hover:shadow-md transition-all"
+                >
+                  <h3 className="text-xl font-semibold text-gray-800 mb-3">{part.name}</h3>
+                  <p className="text-gray-600 mb-4 line-clamp-3">{part.description}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-blue-600 font-semibold">
+                      ${part.price.toLocaleString()}
+                    </span>
+                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                      View Details
+                    </button>
+                  </div>
+                </div>
+                </Link>
+              ))}
+              {filteredParts.length === 0 && (
+                <div className="col-span-full text-center py-8">
+                  <p className="text-gray-500">No parts available at this time.</p>
+                </div>
+              )}
+            </div>
           </div>
+          )}
         </div>
       </div>
     </div>

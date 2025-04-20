@@ -6,7 +6,7 @@ export async function GET(req) {
         const queryParams = new URLSearchParams();
 
         // Construct the final API URL with filters
-        let apiUrl = `http://68.183.215.202/api/authors?populate=*`;
+        let apiUrl = `http://64.227.112.249/api/authors?populate=*`;
 
 
         console.log("Fetching API:", apiUrl);

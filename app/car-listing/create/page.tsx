@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
 // Define STRAPI_URL directly since we can't import from config
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://68.183.215.202:1337';
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://64.227.112.249:1337';
 
 interface CarFormData {
   brand: string;

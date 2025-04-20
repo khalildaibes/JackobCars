@@ -1,12 +1,12 @@
 import axios from 'axios';
-var url= '68.183.215.202' 
+var url= '64.227.112.249' 
 var token = "JWT_TOKEN_HOLDER"
 // Create a Strapi client instance
 export const strapiClient = axios.create({
   baseURL: `http://${url}:1337/api`,
   headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer c815d4a1cdca66d179b6485f3d584486d7ca6bc8024553c07f4df19830c6d3bcbad322af9ce87e7d53ef49624634938ecd44b3d8b63f9222fbf0d1bc2163daf6b59c7df4fa0f71ca103487f80d63b3df9612e33a0f2ebcbe3472d262df2c4021c904186c6a5ad0144052f754d2e0494b83c3210c469ae4fc5673d5fccffc578a`,
+    Authorization: `Bearer 7c2cfb5a04f948f358b043b829a3133b67c49e5d970abf534ed077049363c30f5c5a5487740e616561459f942b72e86ad0a0eebe6ede288159712261bcff28902457d174b3afb886e5682c1564a68969a4a6e2852ebb7e62d40f51341a24bb73ff7216ed1ce2684f8caeef770162f15d09fb57593651639f04d50bff03e359c8`,
   },
 });
 

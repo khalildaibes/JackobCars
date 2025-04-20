@@ -152,7 +152,7 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
             slug: product.slug || product.id,
             quantity: product.quantity || 0,
             price: product.price || 0,
-            images: product.image ? [{ url: `http://68.183.215.202${product.image[0]?.url}` }] : [],
+            images: product.image ? [{ url: `http://64.227.112.249${product.image[0]?.url}` }] : [],
             details: {
               car: {
                 cons: product.details?.car?.cons || [],

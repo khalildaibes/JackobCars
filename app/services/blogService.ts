@@ -90,7 +90,7 @@ export const blogService = {
 
   async getBlogPost(slug: string, locale: string = 'en') {
     try {
-      const response = await fetch(`/api/articles?slug=${slug}&locale=${locale}`);
+      const response = await fetch(`/api/articles?slug=${slug}`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch blog post');

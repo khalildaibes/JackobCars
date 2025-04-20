@@ -6,32 +6,24 @@ const withNextIntl = createNextIntlPlugin();
 /** @type {import('next').NextConfig} */
 import i18next from './next-i18next'
 
+// Get allowed hostnames from environment variable
+const ALLOWED_HOSTNAMES = process.env.NEXT_PUBLIC_ALLOWED_IMAGE_HOSTNAMES?.split(',') || [
+  '64.227.112.249',
+  'cdn.imagin.studio',
+  'images.unsplash.com',
+  'via.placeholder.com'
+];
+
 const nextConfig = {
   images: {
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "cdn.imagin.studio",
-        pathname: "**",
-      },
-      {
-        protocol: "http",
-        hostname: "68.183.215.202",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-        pathname: "**",
-      },
-      {
-        protocol: "https",
-        hostname: "via.placeholder.com",
-        pathname: "**",
-      },
-      
+      ...ALLOWED_HOSTNAMES.map(hostname => ({
+        protocol: hostname.startsWith('cdn.') || hostname.includes('placeholder.com') || hostname.includes('unsplash.com') ? 'https' : 'http',
+        hostname,
+        pathname: '/**',
+      })),
     ],
-    domains: ['firebasestorage.googleapis.com', 'images.unsplash.com'],
+    domains: ['firebasestorage.googleapis.com', 'images.unsplash.com', 'via.placeholder.com'],
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],

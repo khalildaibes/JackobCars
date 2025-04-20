@@ -27,9 +27,10 @@ import PartCard from "../components/PartCard";
 
 // Types
 interface Deal {
+  store: any;
   slug: string;
   id: string;
-  image: Array<{ url: string }>;
+  image: { url: string };
   name: string;
   details: {
     car: {
@@ -129,13 +130,13 @@ interface Service {
 }
 
 // API fetch functions
-const fetchHomePageData = async (): Promise<HomePageData> => {
-  const response = await fetch("/api/homepage");
-  if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
-  const data = await response.json();
-  if (!data?.data) throw new Error("Invalid API response structure");
-  return data.data;
-};
+// const fetchHomePageData = async (): Promise<HomePageData> => {
+//   const response = await fetch("/api/homepage");
+//   if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
+//   const data = await response.json();
+//   if (!data?.data) throw new Error("Invalid API response structure");
+//   return data.data;
+// };
 
 const fetchArticles = async () => {
   const [featuredResponse, newsResponse, storyResponse] = await Promise.all([
@@ -158,15 +159,23 @@ const fetchArticles = async () => {
 };
 
 const fetchDeals = async (): Promise<Deal[]> => {
-  const response = await fetch('/api/deals');
-  if (!response.ok) throw new Error(`Failed to fetch deals: ${response.statusText}`);
+  console.log("Fetching deals...");
+  const response = await fetch('/api/deals?store_hostname=64.227.112.249');
+  if (!response.ok) {
+    console.error("Failed to fetch deals:", response.statusText);
+    throw new Error(`Failed to fetch deals: ${response.statusText}`);
+  }
   const data = await response.json();
-  if (!data?.data) throw new Error("Invalid API response structure");
+  console.log("Deals API Response:", data);
+  if (!data?.data) {
+    console.error("Invalid API response structure:", data);
+    throw new Error("Invalid API response structure");
+  }
   return data.data;
 };
 
 const fetchParts = async (): Promise<Part[]> => {
-  const response = await fetch('/api/parts');
+  const response = await fetch('/api/parts?store_hostname=64.227.112.249');
   if (!response.ok) throw new Error(`Failed to fetch parts: ${response.statusText}`);
   const data = await response.json();
   if (!data?.data) throw new Error("Invalid API response structure");
@@ -174,7 +183,7 @@ const fetchParts = async (): Promise<Part[]> => {
 };
 
 const fetchServices = async (): Promise<Service[]> => {
-  const response = await fetch('/api/services');
+  const response = await fetch('/api/services?store_hostname=64.227.112.249');
   if (!response.ok) throw new Error(`Failed to fetch services: ${response.statusText}`);
   const data = await response.json();
   if (!data?.data) throw new Error("Invalid API response structure");
@@ -327,10 +336,10 @@ function HomeContent() {
         queryKey: ['articles'],
         queryFn: fetchArticles
       },
-      {
-        queryKey: ['homepage'],
-        queryFn: fetchHomePageData
-      },
+      // {
+      //   queryKey: ['homepage'],
+      //   queryFn: fetchHomePageData
+      // },
       {
         queryKey: ['parts'],
         queryFn: fetchParts
@@ -347,7 +356,7 @@ function HomeContent() {
     { data: carsData, isLoading: isLoadingCars },
     { data: dealsData, isLoading: isLoadingDeals },
     { data: articlesData, isLoading: isLoadingArticles },
-    { data: homepageData, isLoading: isLoadingHomepage },
+    // { data: homepageData, isLoading: isLoadingHomepage },
     { data: partsData, isLoading: isLoadingParts },
     { data: servicesData, isLoading: isLoadingServices }
   ] = queryResults;
@@ -357,30 +366,43 @@ function HomeContent() {
 
   // Transform deals data with memoization
   const listings = useMemo(() => {
-    if (!dealsData) return [];
+    console.log("Transforming deals data...");
+    if (isLoadingDeals) {
+      console.log("Deals data is loading...");
+      return [];
+    }
     
-    return dealsData.map((product: Deal): Listing => ({
-      id: parseInt(product.id),
-      mainImage: product.image ? `http://68.183.215.202${product.image[0]?.url}` : "/default-car.png",
-      alt: product.name || "Car Image",
-      title: product.name,
-      slug: product.slug,
-      miles: product.details?.car.miles || "N/A",
-      fuel: normalizeFuelType(product.details?.car.fuel || "Unknown"),
-      condition: product.details?.car.condition || "Used",
-      transmission: product.details?.car.transmission || "Unknown",
-      details: product.details?.car.transmission || "Unknown",
-      price: `$${product.price.toLocaleString()}`,
-      mileage: product.details?.car.miles || "N/A",
-      year: product.details?.car.year || 2025,
-      fuelType: normalizeFuelType(product.details?.car.fuel || "Unknown"),
-      make: normalizeMake(product.details?.car.make || "Unknown"),
-      bodyType: normalizeBodyType(product.details?.car.body_type || "Unknown"),
-      description: product.details?.car.description || "Unknown",
-      features: product.details?.car.features.map((feature) => feature.value) || [],
-      category: product.categories ? product.categories.split(",").map((c) => c.toLowerCase().trim()) : [],
-    }));
-  }, [dealsData]);
+    if (!dealsData) {
+      console.log("No deals data available");
+      return [];
+    }
+    
+    console.log("Raw deals data:", dealsData);
+    return dealsData.map((product: Deal): Listing => {
+      console.log("Processing product:", product);
+      return {
+        id: parseInt(product.id),
+        mainImage: product.image ? `http://${product.store.hostname}${product.image?.url}` : "/default-car.png",
+        alt: product.name || "Car Image",
+        title: product.name,
+        slug: product.slug,
+        miles: product.details?.car.miles || "N/A",
+        fuel: normalizeFuelType(product.details?.car.fuel || "Unknown"),
+        condition: product.details?.car.condition || "Used",
+        transmission: product.details?.car.transmission || "Unknown",
+        details: product.details?.car.transmission || "Unknown",
+        price: `$${product.price.toLocaleString()}`,
+        mileage: product.details?.car.miles || "N/A",
+        year: product.details?.car.year || 2025,
+        fuelType: normalizeFuelType(product.details?.car.fuel || "Unknown"),
+        make: normalizeMake(product.details?.car.make || "Unknown"),
+        bodyType: normalizeBodyType(product.details?.car.body_type || "Unknown"),
+        description: product.details?.car.description || "Unknown",
+        features: product.details?.car.features?.map((feature) => feature.value) || [],
+        category: product.categories ? product.categories.split(",").map((c) => c.toLowerCase().trim()) : [],
+      };
+    });
+  }, [dealsData, isLoadingDeals]);
 
   // Transform articles data with memoization
   const transformedArticles = useMemo(() => {
@@ -474,7 +496,7 @@ function HomeContent() {
     return partsData.map((part: Part) => ({
       ...part,
       mainImage: part.image && part.image.length > 0 
-        ? `http://68.183.215.202${part.image[0].url}` 
+        ? `http://64.227.112.249${part.image[0].url}` 
         : "/default-part.png",
     }));
   }, [partsData]);
@@ -484,7 +506,7 @@ function HomeContent() {
     
     return servicesData.map((service: Service) => ({
       id: parseInt(service.id),
-      mainImage: service.image ? `http://68.183.215.202${service.image[0]?.url}` : "/default-service.png",
+      mainImage: service.image.length > 0 ? `http://64.227.112.249${service.image[0]?.url}` : "/default-service.png",
       alt: service.name || "Service Image",
       title: service.name,
       slug: service.slug,
@@ -497,8 +519,9 @@ function HomeContent() {
   
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex flex-col items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+        <p className="mt-4 text-lg text-gray-600">Loading deals and content...</p>
       </div>
     );
   }
@@ -592,7 +615,7 @@ function HomeContent() {
                     <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl min-h-[250px] max-h-[250px] w-full">
                       <div className="aspect-[16/9] overflow-hidden h-[140px]">
                         <Img
-                          src={`http://68.183.215.202${article.imageUrl}`}
+                          src={`http://64.227.112.249${article.imageUrl}`}
                           alt={article.title}
                           className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
                           width={1290}
@@ -656,11 +679,13 @@ function HomeContent() {
             className="flex items-center mb-4 px-4"
           >
           </motion.div>
-          <RecentlyAddedSection 
-            listings={listings.filter((listing) => listing)} 
-            title={t('most_searched_cars')}
+          
+           <RecentlyAddedSection 
+            listings={listings.filter((listing) => listing.category.includes(t("most_searched_cars")))} 
+            title={t("most_searched_cars")}
             viewAllLink="/cars"
           />
+         
         </motion.section>
 
         {/* Popular Categories Section */}
@@ -702,10 +727,10 @@ function HomeContent() {
             {/* EV Cars Section */}
             <div className="mt-8">
               <h3 className="text-xl font-bold mb-4">{t('electric_vehicles')}</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
                 
               {listings
-                .filter(listing => listing.category.includes('popular') && listing.category.includes('electric'))
+                .filter(listing => listing.category.includes('featured') && listing.category.includes(t('electric_vehicles')))
                 .slice(0, 4)
                 .map((listing) => (
                   <CarCard key={listing.id} car={listing} />
@@ -715,7 +740,7 @@ function HomeContent() {
                   <Image
                     src="/ev-guide.png"
                     alt={t('ev_guide')}
-                    width={200}
+                    width={250}
                     height={120}
                     className="w-full h-auto mb-4"
                   />
@@ -732,7 +757,7 @@ function HomeContent() {
               <h3 className="text-xl font-bold mb-4">{t('luxury_cars')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
               {listings
-                .filter(listing => listing.category.includes('popular') && listing.category.includes('luxury'))
+                .filter(listing => listing.category.includes('featured') && listing.category.includes(t('luxury_cars')))
                 .slice(0, 4)
                 .map((listing) => (
                   <CarCard key={listing.id} car={listing} />
@@ -784,7 +809,7 @@ function HomeContent() {
               <h3 className="text-xl font-bold mb-4">{t('automotive_services')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 {transformedServices
-                  .filter(service => service.category.includes('featured'))
+                  .filter(service => service.category.includes(t('featured')))
                   .slice(0, 4)
                   .map((service) => (
                     <ServiceCard key={service.id} service={service} />
