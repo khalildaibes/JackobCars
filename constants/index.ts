@@ -100,6 +100,22 @@ export const fuels = [
     },
 ];
 
+export const carCategories = [
+  { title: "Category", value: "" },
+  { title: "קטנות", value: "small" },
+  { title: "משפחתיות", value: "family" },
+  { title: "מנהלים", value: "executive" },
+  { title: "שבעה מושבים", value: "seven_seats" },
+  { title: "יוקרה", value: "luxury" },
+  { title: "מיניוואנים", value: "minivan" },
+  { title: "חשמלי", value: "electric" },
+  { title: "היברידי", value: "hybrid" },
+  { title: "פנאי-שטח", value: "suv" },
+  { title: "ספורט", value: "sports" },
+  { title: "טנדרים", value: "pickup" },
+  { title: "מסחריות", value: "commercial" },
+];
+
 export const footerLinks = [
   {
     title: "Company",

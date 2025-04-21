@@ -1,0 +1,377 @@
+# Car Dealer App - Data Management Manual
+
+## Table of Contents
+1. Data Sources and Types
+2. Page Components and Data Requirements
+3. Object Structures
+4. Data Flow and Management
+5. API Integration
+6. State Management
+7. Best Practices
+
+## 1. Data Sources and Types
+
+### API Endpoints
+- Base URL: `https://api.cardealer.com/v1`
+- Authentication: Bearer Token
+
+### Main Data Sources
+1. **Cars API**
+   - Endpoint: `/cars`
+   - Methods: GET, POST, PUT, DELETE
+   - Required Headers: Authorization, Content-Type
+
+2. **News API**
+   - Endpoint: `/news`
+   - Methods: GET, POST
+   - Required Headers: Authorization
+
+3. **Parts API**
+   - Endpoint: `/parts`
+   - Methods: GET, POST, PUT
+   - Required Headers: Authorization
+
+4. **Services API**
+   - Endpoint: `/services`
+   - Methods: GET, POST
+   - Required Headers: Authorization
+
+5. **Users API**
+   - Endpoint: `/users`
+   - Methods: GET, POST, PUT
+   - Required Headers: Authorization
+
+## 2. Page Components and Data Requirements
+
+### Home Page (/)
+1. **Hero Section**
+   - Required Data:
+     ```typescript
+     interface HeroData {
+       featuredCars: Car[];
+       banners: Banner[];
+       promotions: Promotion[];
+     }
+     ```
+   - Data Source: `/api/home/hero`
+   - Update Frequency: Daily
+   - Cache Duration: 1 hour
+
+2. **Featured Cars Section**
+   - Required Data:
+     ```typescript
+     interface FeaturedCars {
+       cars: Car[];
+       total: number;
+       filters: FilterOptions;
+     }
+     ```
+   - Data Source: `/api/cars/featured`
+   - Required Categories: ["featured"]
+   - Display Limit: 6 items
+
+3. **Latest News Section**
+   - Required Data:
+     ```typescript
+     interface NewsSection {
+       articles: Article[];
+       categories: Category[];
+       total: number;
+     }
+     ```
+   - Data Source: `/api/news/latest`
+   - Required Categories: ["news"]
+   - Display Limit: 8 items
+
+### Car Listing Page (/car-listing)
+1. **Search Filters**
+   - Required Data:
+     ```typescript
+     interface FilterData {
+       makes: string[];
+       models: string[];
+       priceRanges: PriceRange[];
+       years: number[];
+       fuelTypes: string[];
+       transmissions: string[];
+     }
+     ```
+   - Data Source: `/api/cars/filters`
+   - Cache Duration: 24 hours
+
+2. **Car Grid**
+   - Required Data:
+     ```typescript
+     interface CarGrid {
+       cars: Car[];
+       total: number;
+       page: number;
+       limit: number;
+     }
+     ```
+   - Data Source: `/api/cars`
+   - Pagination: 12 items per page
+   - Sorting Options: price, date, mileage
+
+### Car Details Page (/car-details/[id])
+1. **Car Information**
+   - Required Data:
+     ```typescript
+     interface CarDetails {
+       car: Car;
+       specifications: Specification[];
+       features: Feature[];
+       images: Image[];
+       similarCars: Car[];
+     }
+     ```
+   - Data Source: `/api/cars/{id}`
+   - Cache Duration: 1 hour
+
+2. **Contact Form**
+   - Required Data:
+     ```typescript
+     interface ContactForm {
+       name: string;
+       email: string;
+       phone: string;
+       message: string;
+       carId: string;
+     }
+     ```
+   - Endpoint: `/api/contact`
+   - Method: POST
+
+### News Page (/news)
+1. **Article List**
+   - Required Data:
+     ```typescript
+     interface ArticleList {
+       articles: Article[];
+       categories: Category[];
+       total: number;
+       page: number;
+     }
+     ```
+   - Data Source: `/api/news`
+   - Pagination: 12 items per page
+
+2. **Article Details**
+   - Required Data:
+     ```typescript
+     interface ArticleDetails {
+       article: Article;
+       relatedArticles: Article[];
+       comments: Comment[];
+     }
+     ```
+   - Data Source: `/api/news/{id}`
+   - Cache Duration: 1 hour
+
+## 3. Object Structures
+
+### Car Object
+```typescript
+interface Car {
+  id: string;
+  make: string;
+  model: string;
+  year: number;
+  price: number;
+  mileage: string;
+  fuelType: string;
+  transmission: string;
+  condition: string;
+  features: string[];
+  images: string[];
+  description: string;
+  location: {
+    latitude: number;
+    longitude: number;
+    address: string;
+  };
+  dealer: {
+    id: string;
+    name: string;
+    contact: string;
+  };
+  specifications: {
+    engine: string;
+    horsepower: number;
+    torque: number;
+    fuelEconomy: string;
+    seating: number;
+    color: string;
+  };
+  categories: string[];
+  tags: string[];
+  status: 'available' | 'sold' | 'reserved';
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+### Article Object
+```typescript
+interface Article {
+  id: string;
+  title: string;
+  content: string;
+  excerpt: string;
+  author: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
+  categories: {
+    id: string;
+    name: string;
+    slug: string;
+  }[];
+  tags: string[];
+  images: {
+    url: string;
+    alt: string;
+    caption: string;
+  }[];
+  publishDate: string;
+  expiryDate: string;
+  status: 'published' | 'draft' | 'archived';
+  seo: {
+    metaTitle: string;
+    metaDescription: string;
+    keywords: string[];
+  };
+  statistics: {
+    views: number;
+    shares: number;
+    comments: number;
+  };
+}
+```
+
+## 4. Data Flow and Management
+
+### Data Fetching Strategy
+1. **Server-Side Rendering (SSR)**
+   - Used for: Initial page load
+   - Pages: Home, Car Listing, News
+   - Benefits: SEO, Performance
+
+2. **Client-Side Rendering (CSR)**
+   - Used for: Dynamic content
+   - Pages: Dashboard, User Profile
+   - Benefits: Interactivity
+
+3. **Static Site Generation (SSG)**
+   - Used for: Content pages
+   - Pages: About, Contact
+   - Benefits: Performance, Caching
+
+### Caching Strategy
+1. **Browser Cache**
+   - Duration: 1 hour
+   - Content: Static assets, API responses
+
+2. **CDN Cache**
+   - Duration: 24 hours
+   - Content: Images, static files
+
+3. **API Cache**
+   - Duration: 5 minutes
+   - Content: Dynamic data
+
+## 5. API Integration
+
+### Authentication
+```typescript
+interface AuthConfig {
+  token: string;
+  refreshToken: string;
+  expiresIn: number;
+}
+```
+
+### Error Handling
+```typescript
+interface ApiError {
+  code: string;
+  message: string;
+  status: number;
+  details?: any;
+}
+```
+
+### Rate Limiting
+- Requests per minute: 60
+- Burst capacity: 100
+- Reset time: 1 minute
+
+## 6. State Management
+
+### Global State
+```typescript
+interface AppState {
+  user: User | null;
+  cart: CartItem[];
+  favorites: string[];
+  filters: FilterState;
+  theme: 'light' | 'dark';
+}
+```
+
+### Local State
+```typescript
+interface PageState {
+  loading: boolean;
+  error: Error | null;
+  data: any;
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+  };
+}
+```
+
+## 7. Best Practices
+
+### Data Management
+1. **Validation**
+   - Use TypeScript interfaces
+   - Implement runtime validation
+   - Sanitize user input
+
+2. **Error Handling**
+   - Implement proper error boundaries
+   - Log errors appropriately
+   - Provide user-friendly messages
+
+3. **Performance**
+   - Implement lazy loading
+   - Use proper caching strategies
+   - Optimize image loading
+
+4. **Security**
+   - Sanitize all inputs
+   - Implement proper authentication
+   - Use HTTPS
+   - Validate all API responses
+
+### Content Management
+1. **Adding Content**
+   - Follow object structures
+   - Include required fields
+   - Set proper categories
+   - Add relevant tags
+
+2. **Updating Content**
+   - Maintain data consistency
+   - Update related content
+   - Clear appropriate caches
+
+3. **Deleting Content**
+   - Handle dependencies
+   - Update related content
+   - Clear caches
+   - Archive if necessary 

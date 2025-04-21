@@ -246,15 +246,19 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
         case 'shared.media':
           return (
             <div key={block.id} className="my-8">
-              {block.media?.url && (
-                <Img
-                  src={`http://64.227.112.249${block.media.url}`}
-                  alt="Media content"
-                  external={true}
-                  width={1920}
-                  height={1080}
-                  className="rounded-lg shadow-lg"
-                />
+              `http://64.227.112.249{block.file?.url}`
+              {block.file && (
+                
+                <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg">
+                  <Img
+                    src={`http://64.227.112.249${block.file.url}`}
+                    alt={block.file.alternativeText || 'Media content'}
+                    external={true}
+                    width={block.file.width || 1920}
+                    height={block.file.height || 1080}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
               )}
             </div>
           );

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Img } from "./Img";
 
 interface ServiceCardProps {
   service: {
@@ -13,7 +14,7 @@ interface ServiceCardProps {
     price: string;
     description: string;
     features?: string[];
-    category: string[];
+    categories: Array<{ name: string }>;
   };
 }
 
@@ -26,15 +27,19 @@ const ServiceCard = ({ service }: ServiceCardProps) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+
       <div className="relative w-full aspect-[16/9] overflow-hidden">
-        <img
+        <Img
+          width={1920}
+          height={1080}
+          external={true}
           src={service.mainImage}
-          alt={service.title}
+          alt={service.mainImage}
           className={`w-full h-full object-cover transform transition-transform duration-300 ${
             isHovered ? "scale-110" : "scale-100"
           }`}
         />
-        {service.category.includes("featured") && (
+        {service.categories?.map(cat => cat.name.includes("featured")) && (
           <div className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded-md text-xs font-medium">
             Featured
           </div>

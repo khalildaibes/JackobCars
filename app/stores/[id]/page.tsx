@@ -121,6 +121,7 @@ export default function StorePage() {
         if (!storeResponse.ok) throw new Error("Failed to fetch store");
         const storeData = await storeResponse.json();
         console.log('Store Data:', JSON.stringify(storeData, null, 2));
+
         if (!storeData || !storeData.data || !Array.isArray(storeData.data) || storeData.data.length === 0) {
           throw new Error("Store not found");
         }
@@ -130,12 +131,12 @@ export default function StorePage() {
           throw new Error("Invalid store data structure");
         }
         
-        console.log('Store Data:', JSON.stringify(storeDataItem, null, 2));
         
         // Fetch products from the store's specific API endpoint
         const productsResponse = await fetch(`/api/deals?store_hostname=${storeDataItem.hostname}`);
         if (!productsResponse.ok) throw new Error("Failed to fetch products");
         const productsData = await productsResponse.json();
+        console.log('productsData ', JSON.stringify(productsData, null, 2));
 
         // Fetch parts from the parts API
         const partsResponse = await fetch(`/api/parts?store_hostname=${storeDataItem.hostname}`);
@@ -159,7 +160,7 @@ export default function StorePage() {
             : String(storeDataItem.details || ''),
           hostname: String(storeDataItem.hostname || ''),
           visits: Number(storeDataItem.visits || 0),
-          logo: storeDataItem.logo?.[0] || null,
+          logo: storeDataItem.logo?.url || null,
           images: storeDataItem.image || [],
           tags: String(storeDataItem.tags || ''),
           provider: storeDataItem.provider ? String(storeDataItem.provider) : undefined,
@@ -318,7 +319,7 @@ export default function StorePage() {
   ));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-blue-50 pt-24">
+    <div className="min-h-screen bg-[#050B20] pt-24">
       <div className="max-w-7xl mx-auto px-4">
         {/* Store Header with Logo */}
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg mb-8">
@@ -539,7 +540,15 @@ export default function StorePage() {
                       key={service.id}
                       className="p-6 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 hover:shadow-md transition-all"
                     >
-                      <h3 className="text-xl font-semibold text-gray-800 mb-3">{service.name}</h3>
+                       <Img
+                          width={1920}
+                          height={1080}
+                          external={true}
+                          src={`${store.hostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${store.hostname}`}${service.image.url}`}
+                          alt={service.title}
+                          className="w-full h-48 object-cover rounded-t-lg"
+                        />
+                      <h3 className="text-xl font-semibold text-gray-800 mb-3">{service.title}</h3>
                       <p className="text-gray-600 mb-4 line-clamp-3">{service.details?.description}</p>
                       <div className="flex justify-between items-center">
                         <span className="text-blue-600 font-semibold">
@@ -624,12 +633,20 @@ export default function StorePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredParts.map((part) => (
               <Link href={`/parts/${part.slug}`}>
-
+                
                 <div
                   key={part.id}
                   className="p-6 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 hover:shadow-md transition-all"
                 >
-                  <h3 className="text-xl font-semibold text-gray-800 mb-3">{part.name}</h3>
+                    <Img
+                          width={1920}
+                          height={1080}
+                          external={true}
+                          src={`${store.hostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${store.hostname}`}${part.images[0].url}`}
+                          alt={part.title}
+                          className="w-full h-48 object-cover rounded-t-lg"
+                        />
+                  <h3 className="text-xl font-semibold text-gray-800 mb-3">{part.title}</h3>
                   <p className="text-gray-600 mb-4 line-clamp-3">{part.description}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-blue-600 font-semibold">

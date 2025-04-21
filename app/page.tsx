@@ -104,13 +104,13 @@ interface Part {
   id: string;
   slug: string;
   name: string;
-  image: Array<{ url: string }>;
+  images: Array<{ url: string }>;
   details: {
     description: string;
     features: Array<{ value: string }>;
   };
   price: number;
-  categories: string;
+  categories: Array<{ name: string }>;
   stores: Array<{ id: string; name: string }>;
   mainImage?: string;
 }
@@ -118,14 +118,14 @@ interface Part {
 interface Service {
   id: string;
   slug: string;
-  name: string;
-  image: Array<{ url: string }>;
+  title: string;
+  image: { url: string };
   details: {
     description: string;
     features: Array<{ value: string }>;
   };
   price: number;
-  categories: string;
+  categories: Array<{ name: string }>;
   stores: Array<{ id: string; name: string }>;
 }
 
@@ -495,8 +495,8 @@ function HomeContent() {
     
     return partsData.map((part: Part) => ({
       ...part,
-      mainImage: part.image && part.image.length > 0 
-        ? `http://64.227.112.249${part.image[0].url}` 
+      mainImage: part.images && part.images.length > 0 
+        ? `http://64.227.112.249${part.images[0].url}` 
         : "/default-part.png",
     }));
   }, [partsData]);
@@ -506,14 +506,14 @@ function HomeContent() {
     
     return servicesData.map((service: Service) => ({
       id: parseInt(service.id),
-      mainImage: service.image.length > 0 ? `http://64.227.112.249${service.image[0]?.url}` : "/default-service.png",
-      alt: service.name || "Service Image",
-      title: service.name,
+      mainImage: service.image ? `http://64.227.112.249${service.image?.url}` : "/default-service.png",
+      alt: service.title || "Service Image",
+      title: service.title,
       slug: service.slug,
       description: service.details.description,
-      price: `$${service.price.toLocaleString()}`,
+      price: `${service.price.toLocaleString()}`,
       features: service.details.features.map((feature) => feature.value) || [],
-      category: service.categories ? service.categories.split(",").map((c) => c.toLowerCase().trim()) : [],
+      categories: service.categories  || [],
     }));
   }, [servicesData]);
   
@@ -612,7 +612,7 @@ function HomeContent() {
                   className="w-full"
                 >
                   <Link href={`/news/${article.slug}`} className="group block">
-                    <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl min-h-[250px] max-h-[250px] w-full">
+                    <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl min-h-[280px] max-h-[280px] w-full">
                       <div className="aspect-[16/9] overflow-hidden h-[140px]">
                         <Img
                           src={`http://64.227.112.249${article.imageUrl}`}
@@ -730,7 +730,7 @@ function HomeContent() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
                 
               {listings
-                .filter(listing => listing.category.includes('featured') && listing.category.includes(t('electric_vehicles')))
+                .filter(listing => listing.category.includes('featured') && listing.category.includes('electric_vehicles'))
                 .slice(0, 4)
                 .map((listing) => (
                   <CarCard key={listing.id} car={listing} />
@@ -770,7 +770,7 @@ function HomeContent() {
               <h3 className="text-xl font-bold mb-4">{t('parts_and_accessories')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 {transformedParts
-                  // .filter(part => part.categories?.includes('featured'))
+                  .filter(part => part.categories?.map(cat => cat.name.includes('featured')))
                   .slice(0, 4)
                   .map((part) => (
                     <PartCard 
@@ -783,7 +783,7 @@ function HomeContent() {
                         price: part.price.toString(),
                         description: part.details.description,
                         features: part.details.features?.map(f => f.value),
-                        category: part.categories?.split(',') || []
+                        category: part.categories?.map(cat => cat.name) || []
                       }} 
                     />
                   ))}
@@ -809,10 +809,15 @@ function HomeContent() {
               <h3 className="text-xl font-bold mb-4">{t('automotive_services')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 {transformedServices
-                  .filter(service => service.category.includes(t('featured')))
+                  .filter(service => service.categories?.map(cat => cat.name.includes('featured')))
                   .slice(0, 4)
                   .map((service) => (
-                    <ServiceCard key={service.id} service={service} />
+                    <ServiceCard 
+                      key={service.id} 
+                      service={{
+                        ...service
+                      }}
+                    />
                   ))}
                 {/* Services Guide Card */}
                 <div className="bg-white rounded-lg p-4 border hover:shadow-lg transition-shadow">

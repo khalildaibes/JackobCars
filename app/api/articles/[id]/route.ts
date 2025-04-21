@@ -31,7 +31,7 @@ export async function GET(
     const locale = searchParams.get('locale') || 'en';
     
     const response = await strapiRequest(
-      `/api/articles/${params.id}?locale=${locale}&populate=*`
+  `/api/articles/${params.id}?locale=${locale}&populate[blocks][populate]=*&populate[cover][populate]=*&populate[categories][populate]=*&populate[comments][populate]=*`
     );
 
     return NextResponse.json(response);

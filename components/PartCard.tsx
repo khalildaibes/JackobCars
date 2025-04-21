@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Img } from "./Img";
 
 interface PartCardProps {
   part: {
@@ -27,7 +28,10 @@ const PartCard = ({ part }: PartCardProps) => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="relative w-full aspect-[16/9] overflow-hidden">
-        <img
+        <Img
+          width={1920}
+          height={1080}
+          external={true}
           src={part.mainImage}
           alt={part.title}
           className={`w-full h-full object-cover transform transition-transform duration-300 ${
