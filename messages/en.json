@@ -1134,5 +1134,19 @@
     "body_type": "Body Type",
     "fuel_type": "Fuel Type",
     "transmission": "Transmission"
+  },
+  "Package": {
+    "nights": "Nights",
+    "rooms": "Rooms",
+    "guests": "Guests",
+    "total_price": "Total Price",
+    "book_now": "Book Now"
+  },
+  "Hero": {
+    "discover_perfect_vacation": "Discover Your Perfect Vacation",
+    "exclusive_deals": "Exclusive deals on flights and hotels packages",
+    "info_line_1": "All prices include taxes and fees",
+    "info_line_2": "Free cancellation up to 24 hours before check-in",
+    "info_line_3": "Best price guarantee - we'll match any lower price"
   }
 }

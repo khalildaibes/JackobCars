@@ -797,6 +797,7 @@ function HomeContent() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
                 
               {
+              window.innerWidth <= 768 ?
               <Slider
               autoPlay
               autoPlayInterval={2000}
@@ -816,11 +817,18 @@ function HomeContent() {
               items={listings.filter(listing => listing.category.includes('featured') && listing.category.includes('electric_vehicles'))
                 .slice(0, 4).map((car) => (
                 <div key={car.id} className="px-0.5">
-                <CarCard key={car.id} car={car} variant={window.innerWidth <= 768 ? "list" : "grid"} />
+                <CarCard key={car.id} car={car} variant="list" />
             </div>
               ))}
               ref={sliderRef}
-            />}
+            /> :
+            listings.filter(listing => listing.category.includes('featured') && listing.category.includes('electric_vehicles')).slice(0, 4).map((car) => (
+              <div key={car.id} className="px-0.5">
+              <CarCard key={car.id} car={car} variant="grid" />
+          </div>
+            ))
+          }
+              
                 {/* EV Guide Card */}
                 <div className="bg-white rounded-lg p-4 border hover:shadow-lg transition-shadow">
                   <Image
@@ -842,33 +850,39 @@ function HomeContent() {
             <div className="mt-8">
               <h3 className="text-xl font-bold mb-1">{t('luxury_cars')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-
-                     
-              <Slider
-              autoPlay
-              autoPlayInterval={2000}
-              responsive={{ 
-                "0": { items: 1 }, 
-                "551": { items: 1 }, 
-                "1051": { items: 2 }, 
-                "1441": { items: 4 } 
-              }}
-              disableDotsControls
-              activeIndex={sliderState}
-              onSlideChanged={(e: EventObject) => {
-                setSliderState(e?.item);
-              }}
-              paddingLeft={10}
-              paddingRight={10}
-              items={listings.filter(listing => listing.category.includes('featured') && listing.category.includes(t('luxury_cars')))
-                .slice(0, 4).map((car) => (
-                <div key={car.id} className="px-0.5">
-                <CarCard key={car.id} car={car} variant={window.innerWidth <= 768 ? "list" : "grid"} />
-            </div>
-              ))}
-              ref={sliderRef}
-            />
-          
+                {window.innerWidth <= 768 ? (
+                  <Slider
+                    autoPlay
+                    autoPlayInterval={2000}
+                    responsive={{ 
+                      "0": { items: 1 }, 
+                      "551": { items: 1 }, 
+                      "1051": { items: 2 }, 
+                      "1441": { items: 4 } 
+                    }}
+                    disableDotsControls
+                    activeIndex={sliderState}
+                    onSlideChanged={(e: EventObject) => {
+                      setSliderState(e?.item);
+                    }}
+                    paddingLeft={10}
+                    paddingRight={10}
+                    items={listings.filter(listing => listing.category.includes('featured') && listing.category.includes(t('luxury_cars')))
+                      .slice(0, 4).map((car) => (
+                      <div key={car.id} className="px-0.5">
+                        <CarCard key={car.id} car={car} variant="list" />
+                      </div>
+                    ))}
+                    ref={sliderRef}
+                  />
+                ) : (
+                  listings.filter(listing => listing.category.includes('featured') && listing.category.includes(t('luxury_cars')))
+                    .slice(0, 4).map((car) => (
+                      <div key={car.id} className="px-0.5">
+                        <CarCard key={car.id} car={car} variant="grid" />
+                      </div>
+                    ))
+                )}
               </div>
             </div>
             
@@ -876,75 +890,63 @@ function HomeContent() {
             <div className="mt-8">
               <h3 className="text-xl font-bold mb-1">{t('parts_and_accessories')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                {/* {transformedParts
-                  .filter(part => part.categories?.map(cat => cat.name.includes('featured')))
-                  .slice(0, 4)
-                  .map((part) => (
-                    <PartCard 
-                      key={part.id} 
-                      part={{
-                        id: parseInt(part.id),
-                        mainImage: part.mainImage,
-                        title: part.name,
-                        slug: part.slug,
-                        price: part.price.toString(),
-                        description: part.details.description,
-                        features: part.details.features?.map(f => f.value),
-                        category: part.categories?.map(cat => cat.name) || []
-                      }} 
-                    />
-                  ))} */}
-
-<Slider
-              autoPlay
-              autoPlayInterval={2000}
-              responsive={{ 
-                "0": { items: 1 }, 
-                "551": { items: 1 }, 
-                "1051": { items: 2 }, 
-                "1441": { items: 4 } 
-              }}
-              disableDotsControls
-              activeIndex={sliderState}
-              onSlideChanged={(e: EventObject) => {
-                setSliderState(e?.item);
-              }}
-              paddingLeft={10}
-              paddingRight={10}
-              items={transformedParts
-                .filter(part => part.categories?.map(cat => cat.name.includes('featured')))
-                .slice(0, 4)
-                .map((part) => (
-                  <PartCard 
-                    key={part.id} 
-                    part={{
-                      id: parseInt(part.id),
-                      mainImage: part.mainImage,
-                      title: part.name,
-                      slug: part.slug,
-                      price: part.price.toString(),
-                      description: part.details.description,
-                      features: part.details.features?.map(f => f.value),
-                      category: part.categories?.map(cat => cat.name) || []
-                    }} 
+                {window.innerWidth <= 768 ? (
+                  <Slider
+                    autoPlay
+                    autoPlayInterval={2000}
+                    responsive={{ 
+                      "0": { items: 1 }, 
+                      "551": { items: 1 }, 
+                      "1051": { items: 2 }, 
+                      "1441": { items: 4 } 
+                    }}
+                    disableDotsControls
+                    activeIndex={sliderState}
+                    onSlideChanged={(e: EventObject) => {
+                      setSliderState(e?.item);
+                    }}
+                    paddingLeft={10}
+                    paddingRight={10}
+                    items={transformedParts
+                      .filter(part => part.categories?.map(cat => cat.name.includes('featured')))
+                      .slice(0, 4)
+                      .map((part) => (
+                        <PartCard 
+                          key={part.id} 
+                          part={{
+                            id: parseInt(part.id),
+                            mainImage: part.mainImage,
+                            title: part.name,
+                            slug: part.slug,
+                            price: part.price.toString(),
+                            description: part.details.description,
+                            features: part.details.features?.map(f => f.value),
+                            category: part.categories?.map(cat => cat.name) || []
+                          }} 
+                        />
+                      ))}
+                    ref={sliderRef}
                   />
-                ))}
-              ref={sliderRef}
-            />
-                {/* Parts Guide Card */}
-                <div className="bg-white rounded-lg p-4 border hover:shadow-lg transition-shadow">
-                  <Image
-                    src="/parts-guide.png"
-                    alt={t('parts_guide')}
-                    width={200}
-                    height={120}
-                    className="w-full h-auto mb-1"
-                  />
-                  <h3 className="font-semibold mb-0.5">{t('parts_guide_title')}</h3>
-                  <Link href="/parts-guide" className="text-blue-600 hover:underline">
-                    {t('browse_parts_catalog')}
-                  </Link>
-                </div>
+                ) : (
+                  transformedParts
+                    .filter(part => part.categories?.map(cat => cat.name.includes('featured')))
+                    .slice(0, 4)
+                    .map((part) => (
+                      <PartCard 
+                        key={part.id} 
+                        part={{
+                          id: parseInt(part.id),
+                          mainImage: part.mainImage,
+                          title: part.name,
+                          slug: part.slug,
+                          price: part.price.toString(),
+                          description: part.details.description,
+                          features: part.details.features?.map(f => f.value),
+                          category: part.categories?.map(cat => cat.name) || []
+                        }} 
+                      />
+                    ))
+                )}
               </div>
             </div>
 
@@ -952,60 +954,49 @@ function HomeContent() {
             <div className="mt-8">
               <h3 className="text-xl font-bold mb-1">{t('automotive_services')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-              <Slider
-              autoPlay
-              autoPlayInterval={2000}
-              responsive={{ 
-                "0": { items: 1 }, 
-                "551": { items: 1 }, 
-                "1051": { items: 2 }, 
-                "1441": { items: 4 } 
-              }}
-              disableDotsControls
-              activeIndex={sliderState}
-              onSlideChanged={(e: EventObject) => {
-                setSliderState(e?.item);
-              }}
-              paddingLeft={10}
-              paddingRight={10}
-              items={transformedServices
-                .filter(service => service.categories?.map(cat => cat.name.includes('featured')))
-                .slice(0, 4)
-                .map((service) => (
-                  <ServiceCard 
-                    key={service.id} 
-                    service={{
-                      ...service
+                {window.innerWidth <= 768 ? (
+                  <Slider
+                    autoPlay
+                    autoPlayInterval={2000}
+                    responsive={{ 
+                      "0": { items: 1 }, 
+                      "551": { items: 1 }, 
+                      "1051": { items: 2 }, 
+                      "1441": { items: 4 } 
                     }}
+                    disableDotsControls
+                    activeIndex={sliderState}
+                    onSlideChanged={(e: EventObject) => {
+                      setSliderState(e?.item);
+                    }}
+                    paddingLeft={10}
+                    paddingRight={10}
+                    items={transformedServices
+                      .filter(service => service.categories?.map(cat => cat.name.includes('featured')))
+                      .slice(0, 4)
+                      .map((service) => (
+                        <ServiceCard 
+                          key={service.id} 
+                          service={{
+                            ...service
+                          }}
+                        />
+                    ))}
+                    ref={sliderRef}
                   />
-              ))}
-              ref={sliderRef}
-            />
-                {/* {transformedServices
-                  .filter(service => service.categories?.map(cat => cat.name.includes('featured')))
-                  .slice(0, 4)
-                  .map((service) => (
-                    <ServiceCard 
-                      key={service.id} 
-                      service={{
-                        ...service
-                      }}
-                    />
-                  ))} */}
-                {/* Services Guide Card */}
-                <div className="bg-white rounded-lg p-4 border hover:shadow-lg transition-shadow">
-                  <Image
-                    src="/services-guide.png"
-                    alt={t('services_guide')}
-                    width={200}
-                    height={120}
-                    className="w-full h-auto mb-1"
-                  />
-                  <h3 className="font-semibold mb-0.5">{t('services_guide_title')}</h3>
-                  <Link href="/services-guide" className="text-blue-600 hover:underline">
-                    {t('explore_services')}
-                  </Link>
-                </div>
+                ) : (
+                  transformedServices
+                    .filter(service => service.categories?.map(cat => cat.name.includes('featured')))
+                    .slice(0, 4)
+                    .map((service) => (
+                      <ServiceCard 
+                        key={service.id} 
+                        service={{
+                          ...service
+                        }}
+                      />
+                    ))
+                )}
               </div>
             </div>
 
