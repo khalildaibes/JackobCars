@@ -398,7 +398,7 @@ const questions: Question[] = [
                         <h4 className="font-medium text-gray-900 mb-2">{t('pros')}</h4>
                         <ul className="space-y-2">
                           {car.pros.map((pro, index) => (
-                            <li key={index} className="flex items-center text-green-600">
+                            <li key={index} className="flex items-center text-blue-600">
                               <ThumbsUp className="w-4 h-4 mr-2" />
                               {pro}
                                 </li>

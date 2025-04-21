@@ -41,7 +41,7 @@ const DashboardPage = () => {
                 <span>{item.title}</span>
               </Link>
             ))}
-            <button className="w-full flex items-center space-x-3 p-3 bg-green-600 rounded-lg hover:bg-green-700 transition-colors mt-4">
+            <button className="w-full flex items-center space-x-3 p-3 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors mt-4">
               <FaPlus className="w-5 h-5" />
               <span>Add New Car/Part</span>
             </button>

@@ -31,7 +31,7 @@ export default function NewsArticleList({
   author3 = "By Ginny Dennis",
   date3 = "Feb. 4, 2023",
   description1 = "&lt;&gt;Romantic cross-European train journeys have long been associated with the Orient Express. But you no longer need to fork out thousands to make this fabled journey. &lt;br /&gt;&lt;br /&gt;From Byway to Tailor Made Rail, companies are cropping up to meet renewed demand for long distance train travel. &lt;br /&gt;&lt;br /&gt;An epic trip with the latter takes you all the way...&lt;/&gt;",
-  headline4 = "More Airports to Use Greener ‘Glide’ Approach to Landing",
+  headline4 = "More Airports to Use blueer ‘Glide’ Approach to Landing",
   author4 = "By Ginny Dennis",
   date4 = "Feb. 4, 2023",
   description2 = "&lt;&gt;Eleven more U.S. airports plan to adopt a new way of landing planes that reduces both emissions and noise — all by having incoming planes turn off their engines and glide down to the tarmac like a paraglider.&lt;br /&gt;&lt;br /&gt;The Federal Aviation Administration announced Monday that planes heading to Orlando, Fla.; Kansas City, Mo.; Omaha, Neb.; Nebraska&#39;s Offutt Air Force Base; Reno, Nev.; and six airports in South Florida soon would make idle descents to...&lt;/&gt;",

@@ -45,7 +45,7 @@ const IndustryStats = () => {
               </div>
               <div className="text-right">
                 <span className={`text-sm font-medium ${
-                  stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
+                  stat.changeType === 'positive' ? 'text-blue-600' : 'text-red-600'
                 }`}>
                   {stat.change}
                 </span>

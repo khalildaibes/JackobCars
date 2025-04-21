@@ -54,7 +54,7 @@ export default function ProsConsComparison({
           }`}
         >
           {prosList.map((pro, idx) => (
-            <Text key={idx} as="p" className="text-sm text-green-700">
+            <Text key={idx} as="p" className="text-sm text-blue-700">
               • {pro}
             </Text>
           ))}

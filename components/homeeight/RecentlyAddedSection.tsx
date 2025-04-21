@@ -29,28 +29,28 @@ export default function RecentlyAddedSection({
   return (
     <>
       <div className="flex justify-end self-stretch">
-        <div className="flex w-[100%] flex-col gap-6 lg:w-full lg:px-5 md:w-full md:px-5">
-        {title && (<div className="container mx-auto px-4">
-            <div className="w-[90%] flex flex-col items-center justify-center gap-4 sm:flex-row sm:justify-between">
-              <h2 className="text-xl font-bold text-white bg-[#050B20] p-2 rounded-lg flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="flex w-[100%] flex-col gap-1 lg:w-full lg:px-1 md:w-full md:px-1">
+        {title && (<div className="container mx-auto px-1">
+            <div className="w-[90%] flex flex-col items-center justify-center gap-2 sm:flex-row sm:justify-between">
+              <h2 className="text-base font-bold text-white bg-[#050B20] p-1 rounded-md flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2z" />
                 </svg>
                 {title || t("recently_added")}
               </h2>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 <Link href={viewAllLink}>
-                  <Text as="p" className="text-base font-medium">
+                  <Text as="p" className="text-xs font-medium">
                     {t("view_all")}
                   </Text>
                 </Link>
                 <Img
                   src="img_arrow_left.svg"
-                  width={14}
-                  height={14}
+                  width={10}
+                  height={10}
                   alt={t("arrow_left")}
-                  className="h-4"
+                  className="h-2.5"
                 />
               </div>
             </div>
@@ -60,8 +60,8 @@ export default function RecentlyAddedSection({
 
           <div>
             <div className="flex flex-col items-start">
-              <div className="container-xs flex flex-col gap-[50px] lg:px-5 md:px-5 rounded-[16px]">
-                <div className="mx-auto flex w-full gap-[30px] md:mx-0 md:flex-col rounded-[16px]">
+              <div className="container-xs flex flex-col gap-1 lg:px-1 md:px-1 rounded-[8px]">
+                <div className="mx-auto flex w-full gap-[10px] md:mx-0 md:flex-col rounded-[8px]">
                   <Slider
                     autoPlay
                     autoPlayInterval={2000}
@@ -76,12 +76,12 @@ export default function RecentlyAddedSection({
                     onSlideChanged={(e: EventObject) => {
                       setSliderState(e?.item);
                     }}
-                    paddingLeft={20}
-                    paddingRight={20}
+                    paddingLeft={10}
+                    paddingRight={10}
                     items={listings.map((car) => (
-                      <div key={car.id} className="px-2">
-                        <CarCard car={car} />
-                      </div>
+                      <div key={car.id} className="px-0.5">
+                      <CarCard key={car.id} car={car} variant={window.innerWidth <= 768 ? "list" : "grid"} />
+                  </div>
                     ))}
                     ref={sliderRef}
                   />

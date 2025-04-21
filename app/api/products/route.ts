@@ -21,7 +21,7 @@ const mockProducts = {
           price: 599.99,
           badges: [
             { color: "bg-blue-100", label: "New Arrival", textColor: "text-blue-800" },
-            { color: "bg-green-100", label: "In Stock", textColor: "text-green-800" }
+            { color: "bg-blue-100", label: "In Stock", textColor: "text-blue-800" }
           ],
           images: {
             main: "/images/bumpers/front-bumper-1.jpg",

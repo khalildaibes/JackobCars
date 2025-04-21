@@ -58,7 +58,7 @@ const ReviewList = () => {
             
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
-                <h4 className="font-medium text-green-600 mb-2">Pros</h4>
+                <h4 className="font-medium text-blue-600 mb-2">Pros</h4>
                 <ul className="list-disc list-inside text-gray-600">
                   {review.pros.map((pro, index) => (
                     <li key={index}>{pro}</li>

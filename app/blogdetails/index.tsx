@@ -211,7 +211,7 @@ export default function BlogDetailsPage() {
               height={60} 
               className="rounded-full ring-2 ring-purple-500 ring-offset-2"
             />
-            <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-white" />
+            <div className="absolute -bottom-1 -right-1 bg-blue-500 w-4 h-4 rounded-full border-2 border-white" />
           </div>
           <div>
             <Text className="font-semibold text-lg flex items-center gap-2">

@@ -43,7 +43,7 @@ export default function HomeThreeArticle({
           <Button
             size="sm"
             shape="round"
-            className="min-w-[104px] rounded-[14px] !bg-green-700 px-3.5 font-medium capitalize !text-white-a700"
+            className="min-w-[104px] rounded-[14px] !bg-blue-700 px-3.5 font-medium capitalize !text-white-a700"
           >
             {link}
           </Button>

@@ -478,7 +478,7 @@ export default function CreateCarListing() {
         )}
         
         {success && (
-          <div className="p-4 bg-green-100 text-green-700 rounded-md">
+          <div className="p-4 bg-blue-100 text-blue-700 rounded-md">
             {success}
           </div>
         )}

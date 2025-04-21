@@ -38,7 +38,7 @@ const ServiceCard = ({ service }: ServiceCardProps) => {
             external={true}
           />
           {service.category.includes("featured") && (
-            <div className="absolute top-2 left-2 bg-green-600 text-white px-2 py-1 rounded-md text-xs font-medium">
+            <div className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded-md text-xs font-medium">
               Featured
             </div>
           )}
@@ -54,10 +54,10 @@ const ServiceCard = ({ service }: ServiceCardProps) => {
           </div>
 
           <div className="flex items-center justify-between">
-            <div className="text-lg font-bold text-green-600">
+            <div className="text-lg font-bold text-blue-600">
               Starting from {service.price}
             </div>
-            <button className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
+            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
               Book Service
             </button>
           </div>

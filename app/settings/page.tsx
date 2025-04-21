@@ -60,7 +60,7 @@ export default function Settings() {
           <div className="text-red-500">{error}</div>
         )}
         {success && (
-          <div className="text-green-500">{success}</div>
+          <div className="text-blue-500">{success}</div>
         )}
 
         <div>

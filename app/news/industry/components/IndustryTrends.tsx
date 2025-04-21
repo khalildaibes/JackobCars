@@ -40,9 +40,9 @@ const IndustryTrends = () => {
                 <p className="text-sm text-gray-600">{trend.description}</p>
               </div>
               <div className="flex items-center">
-                <span className="text-green-600 font-medium">+{trend.percentage}%</span>
+                <span className="text-blue-600 font-medium">+{trend.percentage}%</span>
                 <svg
-                  className="w-5 h-5 text-green-600 ml-1"
+                  className="w-5 h-5 text-blue-600 ml-1"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -59,7 +59,7 @@ const IndustryTrends = () => {
             <div className="mt-2">
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
-                  className="bg-green-600 h-2 rounded-full"
+                  className="bg-blue-600 h-2 rounded-full"
                   style={{ width: `${trend.percentage}%` }}
                 />
               </div>

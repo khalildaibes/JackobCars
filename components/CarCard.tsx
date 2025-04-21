@@ -165,7 +165,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
     if (!car.features?.length) return null;
     
     return (
-      <div className="flex flex-wrap gap-2 mb-4">
+      <div className="flex flex-wrap gap-1 mb-1">
         {car.features.slice(0, 3).map((feature, index) => (
           <Badge key={index} variant="outline" className="flex items-center gap-1">
             <Check className="h-3 w-3" />
@@ -182,132 +182,153 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   }, [car.features]);
 
   const grslugContent = (
-    <Card className={`rounded-t-lg overflow-hidden h-full flex flex-col hover:shadow-lg transition-shadow duration-300 max-w-[350px] max-h-[500px] min-h-[450px] ${isRTL ? 'rtl' : 'ltr'}`}>
-      <div className="relative">
+    <Card onClick={handleViewDetails}
+    className={`rounded-t-lg overflow-hidden flex flex-col hover:shadow-lg transition-shadow duration-300 max-w-[280px] ${isRTL ? 'rtl' : 'ltr'} transition-transform duration-300 hover:scale-105 min-h-[180px]`}>
+      <div className="relative overflow-hidden">
         <Img
           width={1920}
           height={1080}
           external={true}
           src={car.mainImage}
           alt={car.title}
-          className="w-full h-48 object-cover rounded-t-lg"
+          className="w-full h-32 object-cover rounded-t-lg transition-transform duration-300 hover:scale-110"
         />
         <FavoriteButton isFavorite={favorites.includes(car.slug)} onClick={(e) => handleFavoriteToggle(e)} />
         {car.isPro && (
-          <Badge className="absolute top-2 left-2 bg-blue-600 text-white">
+          <Badge className="absolute top-1 left-1 bg-blue-600 text-white text-[10px]">
             Pro
           </Badge>
         )}
-        <div className={`absolute bottom-0 ${isRTL ? 'right-0' : 'left-0'} p-3`}>
-          <Badge className="bg-gray-700 text-white">{car.year}</Badge>
-          <Badge className={`bg-gray-700 ${isRTL ? 'mr-2' : 'ml-2'} text-white`}>{car.mileage}</Badge>
+        <div className={`absolute bottom-0 ${isRTL ? 'right-0' : 'left-0'} p-1`}>
+          <Badge className="bg-gray-700 text-white text-[10px]">{car.year}</Badge>
+          <Badge className={`bg-gray-700 ${isRTL ? 'mr-1' : 'ml-1'} text-white text-[10px]`}>{car.mileage}</Badge>
         </div>
       </div>
-      <CardContent className="flex-grow flex flex-col pt-4 px-4">
-        <h3 className="text-lg font-semibold text-black mb-1">{car.title}</h3>
-        <div className="flex items-center text-gray-500 mb-3 text-sm w-full">
-          <div className={`flex items-center gap-2 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
-            <Car size={16} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
+      <CardContent className="flex flex-col flex-1 p-2 ">
+        <h3 className="text-sm font-semibold text-black line-clamp-1">{car.title}</h3>
+        <div className="flex items-center text-gray-500 text-[10px] w-full mt-1">
+          <div className={`flex items-center gap-1 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <Car size={12} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
             <span>{car.bodyType}</span>
           </div>
-          <span className="mx-2">•</span>
-          <div className={`flex items-center gap-2 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
-            <Fuel size={16} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
+          <span className="mx-1">•</span>
+          <div className={`flex items-center gap-1 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <Fuel size={12} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
             <span>{car.fuelType}</span>
           </div>
         </div>
-        <p className="text-gray-500 text-sm line-clamp-2 mb-4">{car.description}</p>
-        <PriceDisplay price={car.price} className="text-green-600 text-xl font-bold w-full flex justify-center items-center mb-4" />
-        {car.location && <span className="text-sm text-gray-500 mb-4">{car.location}</span>}
-        <div className="mt-auto flex flex-col w-full space-y-3">
-          <div className="grid grid-cols-2 gap-2 w-full">
+        <p className="text-gray-500 text-[10px] line-clamp-2 mt-1 ">{car.description}</p>
+        
+        <div className="mt-2">
+          <PriceDisplay price={car.price} className="text-blue-600 text-base font-bold w-full flex justify-center items-center" />
+          {car.location && <span className="text-[10px] text-gray-500 text-center w-full block mt-0.5">{car.location}</span>}
+        </div>
+
+        <div className="mt-2 flex flex-col gap-1">
+          <div className="grid grid-cols-2 gap-1 w-full">
             <ActionButton 
               icon={MessageSquare}
               label={t('contact')}
               onClick={handleContactSeller}
-              className="flex items-center justify-center  w-full text-sm"
+              className="flex items-center justify-center w-full text-[10px]"
             />
-             <ActionButton
-            icon={Scale}
-            label={isInComparison(car.id.toString()) ? t('remove_from_comparison') : t('add_to_comparison')}
-            onClick={handleCompareToggle}
-            variant={isInComparison(car.id.toString()) ? "destructive" : "outline"}
-            className="flex items-center justify-center gap-2 w-full text-sm"
-          />
-          
+            <ActionButton
+              icon={Scale}
+              label={isInComparison(car.id.toString()) ? t('remove_from_comparison') : t('add_to_comparison')}
+              onClick={handleCompareToggle}
+              variant={isInComparison(car.id.toString()) ? "destructive" : "outline"}
+              className="flex items-center justify-center gap-1 w-full text-[10px]"
+            />
           </div>
           <ActionButton 
-              icon={Car}
-              label={t('view_details')}
-              onClick={handleViewDetails}
-              className="flex items-center justify-center w-full text-sm"
-            />
+            icon={Car}
+            label={t('view_details')}
+            onClick={handleViewDetails}
+            className="flex items-center justify-center w-full text-[10px]"
+          />
         </div>
       </CardContent>
     </Card>
   );
 
   const listContent = (
-    <Card className={`overflow-hslugden hover:shadow-lg transition-shadow duration-300 ${isRTL ? 'rtl' : 'ltr'}`}>
+    <Card className={`overflow-hidden hover:shadow-lg transition-shadow duration-300 ${isRTL ? 'rtl' : 'ltr'}`}>
       <div className="flex flex-col md:flex-row">
-        <div className="relative md:w-1/3">
+        <div className="relative w-full md:w-1/3 overflow-hidden">
           <Img
             external={true}
             width={1920}
             height={1080}
             src={car.mainImage}
             alt={car.title}
-            className="w-full h-48 md:h-full object-cover"
+            className="w-full h-48 md:h-full object-cover transition-transform duration-300 hover:scale-110"
           />
           <FavoriteButton isFavorite={favorites.includes(car.slug)} onClick={handleFavoriteToggle} />
+          {car.isPro && (
+            <Badge className="absolute top-1 left-1 bg-blue-600 text-white text-[10px]">
+              Pro
+            </Badge>
+          )}
+          <div className={`absolute bottom-0 ${isRTL ? 'right-0' : 'left-0'} p-1`}>
+            <Badge className="bg-gray-700 text-white text-[10px]">{car.year}</Badge>
+            <Badge className={`bg-gray-700 ${isRTL ? 'mr-1' : 'ml-1'} text-white text-[10px]`}>{car.mileage}</Badge>
+          </div>
         </div>
-        <CardContent className="md:w-2/3 p-4 md:p-6">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4">
+        <CardContent className="w-full md:w-2/3 p-3 md:p-4">
+          <div className="flex flex-col gap-1 md:gap-2">
             <div>
-              <h3 className="text-xl font-semibold text-black mb-1">{car.title}</h3>
-              <div className="flex items-center text-gray-500 mb-2 text-sm">
-                <Car size={16} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
-                <span>{car.bodyType}</span>
-                <span className="mx-2">•</span>
-                <Calendar size={16} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
-                <span>{car.year}</span>
-                <span className="mx-2">•</span>
-                <Gauge size={16} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
-                <span>{car.mileage}</span>
-                <span className="mx-2">•</span>
-                <Fuel size={16} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
-                <span>{car.fuelType}</span>
+              <h3 className="text-base md:text-xl font-semibold text-black line-clamp-1">{car.title}</h3>
+              <div className="flex flex-wrap items-center text-gray-500 text-xs md:text-sm gap-2 mt-1">
+                <div className="flex items-center">
+                  <Car size={14} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
+                  <span>{car.bodyType}</span>
+                </div>
+                <span>•</span>
+                <div className="flex items-center">
+                  <Calendar size={14} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
+                  <span>{car.year}</span>
+                </div>
+                <span>•</span>
+                <div className="flex items-center">
+                  <Gauge size={14} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
+                  <span>{car.mileage}</span>
+                </div>
+                <span>•</span>
+                <div className="flex items-center">
+                  <Fuel size={14} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
+                  <span>{car.fuelType}</span>
+                </div>
               </div>
             </div>
-          </div>
-          <p className="text-gray-500 mb-4">{car.description}</p>
-          {renderFeatures()}
-          <div className="flex items-center justify-between mt-4 w-full">
-            {car.location && <span className="text-sm text-gray-500">{car.location}</span>}
-            <div className={`flex flex-col items-end `}>
-              <PriceDisplay price={car.price} className="text-green-600 text-xl font-bold" />
-              <div className={`flex ${isRTL ? 'space-x-reverse' : 'space-x-3'}`}>
+            <p className="text-gray-500 text-sm line-clamp-2">{car.description}</p>
+            {renderFeatures()}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mt-1">
+              <div className="flex flex-col w-full sm:w-auto">
+                {car.location && <span className="text-xs md:text-sm text-gray-500">{car.location}</span>}
+                <PriceDisplay price={car.price} className="text-blue-600 text-lg md:text-xl font-bold" />
+              </div>
+              <div className="flex flex-col sm:flex-row gap-1 w-full sm:w-auto">
                 <ActionButton 
                   icon={MessageSquare}
                   label={t('contact')}
                   onClick={handleContactSeller}
+                  className="text-[10px] md:text-xs"
                 />
                 <ActionButton 
                   icon={Car}
                   label={t('view_details')}
                   onClick={handleViewDetails}
+                  className="text-[10px] md:text-xs"
+                />
+                <ActionButton
+                  icon={Scale}
+                  label={isInComparison(car.id.toString()) ? t('remove_from_comparison') : t('add_to_comparison')}
+                  onClick={handleCompareToggle}
+                  variant={isInComparison(car.id.toString()) ? "destructive" : "outline"}
+                  className="text-[10px] md:text-xs"
                 />
               </div>
             </div>
-          </div>
-          <div className="mt-4 flex justify-between items-center">
-            <ActionButton
-              icon={Scale}
-              label={isInComparison(car.id.toString()) ? t('remove_from_comparison') : t('add_to_comparison')}
-              onClick={handleCompareToggle}
-              variant={isInComparison(car.id.toString()) ? "destructive" : "outline"}
-              className="flex items-center "
-            />
           </div>
         </CardContent>
       </div>

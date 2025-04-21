@@ -471,7 +471,7 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {car.features.map((feature: string, index: number) => (
                     <div key={index} className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl">
-                      <Check className="h-5 w-5 text-green-500" />
+                      <Check className="h-5 w-5 text-blue-500" />
                       <span className="font-medium">{feature}</span>
                     </div>
                   ))}
@@ -482,7 +482,7 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {car.features.map((feature: string, index: number) => (
                     <div key={index} className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl">
-                      <Check className="h-5 w-5 text-green-500" />
+                      <Check className="h-5 w-5 text-blue-500" />
                       <span className="font-medium">{feature}</span>
                     </div>
                   ))}
@@ -490,13 +490,13 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
             </TabsContent>
             
               {/* <TabsContent value="history" className="mt-6 space-y-6">
-                <div className="bg-green-50 border border-green-200 rounded-xl p-6 flex items-center space-x-4">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <Check className="h-6 w-6 text-green-600" />
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 flex items-center space-x-4">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <Check className="h-6 w-6 text-blue-600" />
                   </div>
                 <div>
-                    <h3 className="font-medium text-green-800">{t('clean_title')}</h3>
-                    <p className="text-sm text-green-700">{t('clean_title_description')}</p>
+                    <h3 className="font-medium text-blue-800">{t('clean_title')}</h3>
+                    <p className="text-sm text-blue-700">{t('clean_title_description')}</p>
                 </div>
               </div>
               
@@ -658,8 +658,8 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {/* Pros */}
                   <div className="flex flex-col items-center text-center">
-                    <div className="p-3 bg-green-100 rounded-full mb-4">
-                      <Check className="h-6 w-6 text-green-600" />
+                    <div className="p-3 bg-blue-100 rounded-full mb-4">
+                      <Check className="h-6 w-6 text-blue-600" />
                     </div>
                     <h4 className="font-medium text-gray-900 text-lg mb-4">{t('pros')}</h4>
                     <ul className="space-y-3 text-gray-600">

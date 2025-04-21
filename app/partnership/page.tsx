@@ -82,15 +82,15 @@ const PartnershipPage = () => {
             <div className="text-3xl font-bold text-blue-600 mb-6">$499<span className="text-lg text-gray-500">/mo</span></div>
             <ul className="space-y-3 mb-8">
               <li className="flex items-center gap-2">
-                <span className="text-green-500">✓</span>
+                <span className="text-blue-500">✓</span>
                 <span>Basic listing features</span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-green-500">✓</span>
+                <span className="text-blue-500">✓</span>
                 <span>Standard analytics</span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-green-500">✓</span>
+                <span className="text-blue-500">✓</span>
                 <span>Email support</span>
               </li>
             </ul>
@@ -132,19 +132,19 @@ const PartnershipPage = () => {
             <div className="text-3xl font-bold text-blue-600 mb-6">Custom</div>
             <ul className="space-y-3 mb-8">
               <li className="flex items-center gap-2">
-                <span className="text-green-500">✓</span>
+                <span className="text-blue-500">✓</span>
                 <span>All Premium features</span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-green-500">✓</span>
+                <span className="text-blue-500">✓</span>
                 <span>Custom integration</span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-green-500">✓</span>
+                <span className="text-blue-500">✓</span>
                 <span>Dedicated support</span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-green-500">✓</span>
+                <span className="text-blue-500">✓</span>
                 <span>Custom analytics</span>
               </li>
             </ul>

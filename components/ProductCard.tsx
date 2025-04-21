@@ -38,7 +38,7 @@ export default function ProductCard({ product, onDelete, onUpdate }: ProductCard
         <div className="flex justify-between items-center mb-2">
           <span className="font-bold">${product.price}</span>
           <span className={`px-2 py-1 rounded text-sm ${
-            product.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+            product.isActive ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
           }`}>
             {product.isActive ? t("active") : t("inactive")}
           </span>

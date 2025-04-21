@@ -322,9 +322,9 @@ export default function Comparison() {
                       </tr>
 
                       {/* Pros Section */}
-                      <tr className="bg-green-50">
+                      <tr className="bg-blue-50">
                         <td colSpan={selectedCars.length + 1} className="p-2 sm:p-4 border-t">
-                          <h3 className="font-semibold text-green-700 text-xs sm:text-base">PROS</h3>
+                          <h3 className="font-semibold text-blue-700 text-xs sm:text-base">PROS</h3>
                         </td>
                       </tr>
                       <tr>
@@ -337,7 +337,7 @@ export default function Comparison() {
                               <div className="bg-white p-2 sm:p-4 rounded-lg shadow-sm text-xs sm:text-base">
                                 <ul className="list-disc pl-2 space-y-1">
                                   {aiComparisons[car.id]?.pros?.map((pro, idx) => (
-                                    <li key={idx} className="text-green-700">{pro}</li>
+                                    <li key={idx} className="text-blue-700">{pro}</li>
                                   ))}
                                 </ul>
                               </div>

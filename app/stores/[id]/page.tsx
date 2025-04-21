@@ -456,10 +456,10 @@ export default function StorePage() {
             <div className="space-y-4">
               <button
                 onClick={() => handleContact('whatsapp')}
-                className="w-full flex items-center gap-3 p-4 rounded-lg bg-green-50 hover:bg-green-100 transition-colors"
+                className="w-full flex items-center gap-3 p-4 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors"
               >
-                <MessageSquare className="w-5 h-5 text-green-600" />
-                <span className="text-green-700 font-medium">Chat on WhatsApp</span>
+                <MessageSquare className="w-5 h-5 text-blue-600" />
+                <span className="text-blue-700 font-medium">Chat on WhatsApp</span>
               </button>
               
               {/* Navigation Section */}
@@ -512,7 +512,7 @@ export default function StorePage() {
                   </button>
                   {Array.from(new Set(
                     filteredServices.flatMap(service => 
-                      service.categories?.split(',').map(cat => cat.trim()) || []
+                      service.categories?.map(cat => cat.name.trim()) || []
                     )
                   )).map(category => (
                     <button 
@@ -533,7 +533,7 @@ export default function StorePage() {
                 {filteredServices
                   .filter(service => 
                     !selectedCategory || 
-                    service.categories?.split(',').map(cat => cat.trim()).includes(selectedCategory)
+                    service.categories?.map(cat => cat.name.trim()).includes(selectedCategory)
                   )
                   .map((service) => (
                     <div

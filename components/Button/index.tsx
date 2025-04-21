@@ -13,7 +13,7 @@ const variants = {
     gray_50: "bg-gray-50",
     indigo_A400_11: "bg-indigo-a400_11",
     indigo_A400: "bg-indigo-a400 text-white-a700",
-    green_700: "bg-green-700 text-white-a700",
+    blue_700: "bg-blue-700 text-white-a700",
   },
   outline: {
     indigo_A400: "border-indigo-a400 border border-solid text-indigo-a400",

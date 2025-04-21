@@ -58,15 +58,15 @@ html[lang="ar"] * {
 
 /* START: General styles */
 .max-width {
-  @apply max-w-[1440px] mx-auto;
+  @apply max-w-[1200px] mx-auto;
 }
 
 .padding-x {
-  @apply sm:px-16 px-6;
+  @apply sm:px-12 px-4;
 }
 
 .padding-y {
-  @apply py-4;
+  @apply py-3;
 }
 
 .flex-center {
@@ -84,28 +84,27 @@ html[lang="ar"] * {
 
 /* START: Hero styles */
 .hero {
-  @apply flex xl:flex-row flex-col gap-5 relative z-0 max-w-[1440px] mx-auto;
+  @apply flex xl:flex-row flex-col gap-4 relative z-0 max-w-[1200px] mx-auto;
 }
 
 .hero__title {
-  @apply 2xl:text-[30px] sm:text-[30px] text-[30px] font-extrabold leading-[1];
+  @apply 2xl:text-[24px] sm:text-[24px] text-[22px] font-extrabold leading-[1];
 }
 
 .hero__subtitle {
-  @apply text-[24px]  font-light mt-5;
+  @apply text-[18px] font-light mt-4;
 }
 
 .hero__image-container {
-  @apply xl:flex-[1.5] flex justify-end items-end w-full xl:h-screen overflow-hidden;
+  @apply xl:flex-[1.5] flex justify-end items-end w-full xl:h-[80vh] overflow-hidden;
 }
 
 .hero__image {
-  @apply xl:w-full w-[90%] xl:h-full h-[350px] object-cover;
+  @apply xl:w-full w-[85%] xl:h-full h-[300px] object-cover;
 }
 
-
 .hero__image-overlay {
-  @apply absolute xl:-top-24 xl:-right-1/2 -right-1/4  -top-1/4  bg-repeat-round -z-10 w-full xl:h-screen h-[590px] overflow-hidden;
+  @apply absolute xl:-top-20 xl:-right-1/2 -right-1/4 -top-1/4 bg-repeat-round -z-10 w-full xl:h-[80vh] h-[500px] overflow-hidden;
 }
 /* END: Hero styles */
 
@@ -134,7 +133,7 @@ html[lang="ar"] * {
 
 /* START: Car Card styles */
 .car-card {
-  @apply flex flex-col p-6 justify-center items-start   hover:bg-white hover:shadow-md rounded-3xl;
+  @apply flex flex-col p-4 justify-center items-start hover:bg-white hover:shadow-md rounded-2xl;
 }
 
 .car-card__content {
@@ -142,23 +141,23 @@ html[lang="ar"] * {
 }
 
 .car-card__content-title {
-  @apply text-[22px] leading-[26px] font-bold capitalize;
+  @apply text-[18px] leading-[22px] font-bold capitalize;
 }
 
 .car-card__price {
-  @apply flex mt-6 text-[32px] leading-[38px] font-extrabold;
+  @apply flex mt-4 text-[26px] leading-[32px] font-extrabold;
 }
 
 .car-card__price-dollar {
-  @apply self-start text-[14px] leading-[17px] font-semibold;
+  @apply self-start text-[12px] leading-[15px] font-semibold;
 }
 
 .car-card__price-day {
-  @apply self-end text-[14px] leading-[17px] font-medium;
+  @apply self-end text-[12px] leading-[15px] font-medium;
 }
 
 .car-card__image {
-  @apply relative w-full h-40 my-3 object-contain;
+  @apply relative w-full h-32 my-2 object-contain;
 }
 
 .car-card__icon-container {
@@ -170,7 +169,7 @@ html[lang="ar"] * {
 }
 
 .car-card__icon-text {
-  @apply text-[14px] leading-[17px];
+  @apply text-[12px] leading-[15px];
 }
 
 .car-card__btn-container {
@@ -208,7 +207,7 @@ html[lang="ar"] * {
 }
 
 .footer__links-container {
-  @apply flex max-md:flex-col flex-wrap justify-between gap-5 sm:px-16 px-6 py-10;
+  @apply flex max-md:flex-col flex-wrap justify-between gap-4 sm:px-12 px-4 py-8;
 }
 
 .footer__rights {
@@ -220,11 +219,11 @@ html[lang="ar"] * {
 }
 
 .footer__link {
-  @apply flex flex-col gap-6 text-base min-w-[170px];
+  @apply flex flex-col gap-4 text-sm min-w-[150px];
 }
 
 .footer__copyrights {
-  @apply flex justify-between items-center flex-wrap mt-10 border-t border-gray-100 sm:px-16 px-6 py-10;
+  @apply flex justify-between items-center flex-wrap mt-8 border-t border-gray-100 sm:px-12 px-4 py-8;
 }
 
 .footer__copyrights-link {
@@ -234,16 +233,15 @@ html[lang="ar"] * {
 
 /* START: searchbar styles */
 .searchbar {
-  @apply flex items-center justify-start max-sm:flex-col w-full relative max-sm:gap-4 max-w-3xl ;
+  @apply flex items-center justify-start max-sm:flex-col w-full relative max-sm:gap-3 max-w-2xl;
 }
 
 .searchbar__item {
   @apply flex-1 max-sm:w-full flex justify-start items-center rounded-full relative   min-w-[127px] max-w-[550px] ;
 }
 
-
 .searchbar__input {
-  @apply w-full h-[48px] pl-12 p-4  rounded-r-full max-sm:rounded-full outline-none cursor-pointer text-sm  rounded-full bg-white;
+  @apply w-full h-[40px] pl-10 p-3 rounded-r-full max-sm:rounded-full outline-none cursor-pointer text-sm rounded-full bg-white;
 }
 /* END: searchbar styles */
 
@@ -252,7 +250,6 @@ html[lang="ar"] * {
   @apply flex-1 max-sm:w-full flex justify-start items-center rounded-full bg-white;
 }
 
-
 .search-manufacturer__input {
   @apply w-full h-[48px] pl-12 p-4 rounded-full  outline-none cursor-pointer text-sm; 
 }
@@ -260,7 +257,6 @@ html[lang="ar"] * {
 .search-manufacturer__options {
   @apply absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-[9999];
 }
-
 
 .search-manufacturer__option {
   @apply cursor-default select-none py-2 pl-10 pr-4;

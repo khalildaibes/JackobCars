@@ -167,8 +167,8 @@ const FeaturedPage = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1">
-                    <DollarSign size={16} className="text-green-600" />
-                    <span className="text-lg font-semibold text-green-600">
+                    <DollarSign size={16} className="text-blue-600" />
+                    <span className="text-lg font-semibold text-blue-600">
                       {car.price.toLocaleString()}
                     </span>
                   </div>

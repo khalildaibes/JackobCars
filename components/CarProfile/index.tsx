@@ -41,7 +41,7 @@ export default function CarProfile({
         />
         <div className="absolute left-0 right-0 top-5 mx-auto flex flex-1 items-center justify-between gap-5 px-5">
           <Button
-            color="green_700"
+            color="blue_700"
             size="sm"
             shape="round"
             className="min-w-[104px] rounded-[14px] px-3.5 font-medium capitalize"

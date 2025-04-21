@@ -792,7 +792,7 @@ const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
                       {category.availability && (
                         <div className={`text-xs text-center px-2 py-1 rounded-full ${
                           category.availability === "in_stock" 
-                            ? "bg-green-100 text-green-700"
+                            ? "bg-blue-100 text-blue-700"
                             : category.availability === "limited"
                             ? "bg-yellow-100 text-yellow-700"
                             : "bg-red-100 text-red-700"

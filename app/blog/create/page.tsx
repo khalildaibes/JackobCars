@@ -1391,7 +1391,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
                   </select>
                   
                   {isOriginalLanguage && (
-                    <span className="text-sm text-green-600 bg-green-50 px-2 py-1 rounded">
+                    <span className="text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded">
                       {t('original')}
                     </span>
                   )}

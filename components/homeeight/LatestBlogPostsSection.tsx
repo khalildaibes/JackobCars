@@ -35,35 +35,35 @@ export default function LatestBlogPostsSection({
   loadingText = "Loading articles..."
 }: LatestBlogPostsSectionProps) {
   return (
-    <div className=" flex justify-center self-stretch">
-      <div className="container-xs flex justify-center lg:px-5 md:px-5">
-        <div className="flex w-full flex-col gap-6">
+    <div className="flex justify-center self-stretch">
+      <div className="container-xs flex justify-center lg:px-4 md:px-4">
+        <div className="flex w-full flex-col gap-4">
           {/* Section Header */}
           <div className="flex items-center justify-center sm:flex-col">
             <Heading
               as="h1"
-              className="text-[40px] font-bold lg:text-[34px] md:text-[34px] sm:text-[32px]"
+              className="text-[32px] font-bold lg:text-[28px] md:text-[28px] sm:text-[26px]"
             >
               {title}
             </Heading>
-            <div className="mb-4 flex flex-1 items-center justify-end gap-[11px] self-end sm:self-stretch">
+            <div className="mb-3 flex flex-1 items-center justify-end gap-[8px] self-end sm:self-stretch">
               <Link href={viewAllLink}>
-                <Text as="p" className="text-[15px] font-medium">
+                <Text as="p" className="text-[13px] font-medium">
                   {viewAllText}
                 </Text>
               </Link>
               <Img
                 src="img_arrow_left.svg"
-                width={14}
-                height={14}
+                width={12}
+                height={12}
                 alt="View all"
-                className="h-[14px]"
+                className="h-[12px]"
               />
             </div>
           </div>
 
           {/* Blog List */}
-          <div className="flex gap-[30px] overflow-x-auto">
+          <div className="flex gap-[20px] overflow-x-auto">
             <Suspense fallback={<div>{loadingText}</div>}>
               {articles.map((article) => (
                 <div key={article.id}>

@@ -24,6 +24,10 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ServiceCard from "../components/ServiceCard";
 import PartCard from "../components/PartCard";
+import { setCookie, getCookie } from "../utils/cookieUtils";
+import StoriesCarousel from "../components/StoriesCarousel";
+import AliceCarousel, { EventObject } from "react-alice-carousel";
+import { Slider } from "../components/Slider";
 
 // Types
 interface Deal {
@@ -129,16 +133,20 @@ interface Service {
   stores: Array<{ id: string; name: string }>;
 }
 
-// API fetch functions
-// const fetchHomePageData = async (): Promise<HomePageData> => {
-//   const response = await fetch("/api/homepage");
-//   if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
-//   const data = await response.json();
-//   if (!data?.data) throw new Error("Invalid API response structure");
-//   return data.data;
-// };
+interface Story {
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+}
 
+// API fetch functions
 const fetchArticles = async () => {
+  const cachedData = getCookie('articlesData');
+  if (cachedData) {
+    return cachedData;
+  }
+
   const [featuredResponse, newsResponse, storyResponse] = await Promise.all([
     fetch('/api/articles?limit=8'),
     fetch('/api/articles?limit=8'),
@@ -155,10 +163,17 @@ const fetchArticles = async () => {
     throw new Error('Invalid data format received from API');
   }
 
-  return { featuredData, newsData, storyData };
+  const data = { featuredData, newsData, storyData };
+  setCookie('articlesData', data);
+  return data;
 };
 
 const fetchDeals = async (): Promise<Deal[]> => {
+  const cachedData = getCookie('dealsData');
+  if (cachedData) {
+    return cachedData;
+  }
+
   console.log("Fetching deals...");
   const response = await fetch('/api/deals?store_hostname=64.227.112.249');
   if (!response.ok) {
@@ -171,22 +186,49 @@ const fetchDeals = async (): Promise<Deal[]> => {
     console.error("Invalid API response structure:", data);
     throw new Error("Invalid API response structure");
   }
+  setCookie('dealsData', data.data);
   return data.data;
 };
 
 const fetchParts = async (): Promise<Part[]> => {
+  const cachedData = getCookie('partsData');
+  if (cachedData) {
+    return cachedData;
+  }
+
   const response = await fetch('/api/parts?store_hostname=64.227.112.249');
   if (!response.ok) throw new Error(`Failed to fetch parts: ${response.statusText}`);
   const data = await response.json();
   if (!data?.data) throw new Error("Invalid API response structure");
+  setCookie('partsData', data.data);
   return data.data;
 };
 
 const fetchServices = async (): Promise<Service[]> => {
+  const cachedData = getCookie('servicesData');
+  if (cachedData) {
+    return cachedData;
+  }
+
   const response = await fetch('/api/services?store_hostname=64.227.112.249');
   if (!response.ok) throw new Error(`Failed to fetch services: ${response.statusText}`);
   const data = await response.json();
   if (!data?.data) throw new Error("Invalid API response structure");
+  setCookie('servicesData', data.data);
+  return data.data;
+};
+
+const fetchStories = async (): Promise<Story[]> => {
+  const cachedData = getCookie('storiesData');
+  if (cachedData) {
+    return cachedData;
+  }
+
+  const response = await fetch('/api/stories?store_hostname=64.227.112.249');
+  if (!response.ok) throw new Error(`Failed to fetch stories: ${response.statusText}`);
+  const data = await response.json();
+  if (!data?.data) throw new Error("Invalid API response structure");
+  setCookie('storiesData', data.data);
   return data.data;
 };
 
@@ -304,6 +346,8 @@ function HomeContent() {
   const searchParams = useSearchParams();
   const t = useTranslations("HomePage");
   const [activeIndex, setActiveIndex] = useState(0);
+  const [stories, setStories] = useState<Story[]>([]);
+  const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
 
   // Get search params with memoization
   const { selectedFuel, selectedYear, selectedManufacturer, selectedLimit, selectedModel } = useMemo(() => ({
@@ -344,10 +388,15 @@ function HomeContent() {
         queryKey: ['parts'],
         queryFn: fetchParts
       },
+
       {
         queryKey: ['services'],
         queryFn: fetchServices
-      }
+      },
+      {
+        queryKey: ['stories'],
+        queryFn: fetchStories
+      },
     ]
   });
 
@@ -358,12 +407,14 @@ function HomeContent() {
     { data: articlesData, isLoading: isLoadingArticles },
     // { data: homepageData, isLoading: isLoadingHomepage },
     { data: partsData, isLoading: isLoadingParts },
-    { data: servicesData, isLoading: isLoadingServices }
+    { data: servicesData, isLoading: isLoadingServices },
+    { data: storiesData, isLoading: isLoadingStories }
   ] = queryResults;
 
   // Check if any query is still loading
   const isLoading = queryResults.some(result => result.isLoading);
-
+  const [sliderState, setSliderState] = React.useState(0);
+  const sliderRef = React.useRef<AliceCarousel>(null);
   // Transform deals data with memoization
   const listings = useMemo(() => {
     console.log("Transforming deals data...");
@@ -517,6 +568,33 @@ function HomeContent() {
     }));
   }, [servicesData]);
   
+  // Fetch stories
+  useEffect(() => {
+    const fetchStories = async () => {
+      try {
+        const response = await fetch('/api/stories?store_hostname=64.227.112.249');
+        const data = await response.json();
+        setStories(data.data);
+        console.log("Stories:", data.data);
+      } catch (error) {
+        console.error('Error fetching stories:', error);
+      }
+    };
+
+    fetchStories();
+  }, []);
+
+  // Auto-advance stories
+  useEffect(() => {
+    if (stories.length > 0) {
+      const timer = setInterval(() => {
+        setCurrentStoryIndex((prev) => (prev + 1) % stories.length);
+      }, 5000); // Change story every 5 seconds
+
+      return () => clearInterval(timer);
+    }
+  }, [stories?.length]);
+
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -531,30 +609,19 @@ function HomeContent() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="flex flex-col w-full overflow-hidden"
+      className="flex flex-col w-full overflow-hidden mt-[5%]"
     >
       {/* 1. Hero Banner Section */}
-      <motion.section 
-        initial={{ opacity: 0, scale: 0.95, y: 50 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ 
-          duration: 0.8,
-          ease: [0.6, -0.05, 0.01, 0.99],
-          delay: 0.2
-        }}
-        className="w-full relative mb-6"
-      >
-        <HeroSection  />
-      </motion.section>
+      {/* <StoriesCarousel stories={stories} /> */}
 
       {/* Main Content Container */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+      <div className="container mx-auto px-2 sm:px-3 lg:px-4 max-w-7xl">
         {/* 4. Latest News Section - Industry Updates */}
         <motion.section 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="w-full bg-gradient-to-b from-white to-gray-50 py-6 mb-6 rounded-2xl"
+          className="w-full bg-gradient-to-b from-white to-gray-50 py-1 mb-1 rounded-2xl"
         >
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
@@ -564,7 +631,7 @@ function HomeContent() {
               ease: [0.6, -0.05, 0.01, 0.99],
               delay: 0.4
             }}
-            className="flex items-center justify-between mb-4 px-4"
+            className="flex items-center justify-between mb-1 px-2"
           >
             <h2 className="text-xl font-bold text-white bg-[#050B20] p-2 rounded-lg flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -593,7 +660,7 @@ function HomeContent() {
               </div>
             )}
           </motion.div>
-          <div className="relative px-4">
+          <div className="relative px-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {visibleArticles.map((article, index) => (
                 <motion.div
@@ -612,8 +679,8 @@ function HomeContent() {
                   className="w-full"
                 >
                   <Link href={`/news/${article.slug}`} className="group block">
-                    <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl min-h-[280px] max-h-[280px] w-full">
-                      <div className="aspect-[16/9] overflow-hidden h-[140px]">
+                    <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl min-h-[250px] max-h-[250px] w-full">
+                      <div className="overflow-hidden h-[140px]">
                         <Img
                           src={`http://64.227.112.249${article.imageUrl}`}
                           alt={article.title}
@@ -623,19 +690,19 @@ function HomeContent() {
                           external={true}
                         />
                       </div>
-                      <div className="p-3">
-                        <div className="flex items-center mb-1">
-                          <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
+                      <div className="p-3  h-[160px]">
+                        <div className="flex items-center mb-0.5">
+                          <span className="text-xs font-medium text-blue-600 bg-blue-50 px-1 py-0.5 rounded-full">
                             {article.category}
                           </span>
                           <span className="mx-2 text-gray-400">•</span>
                           <span className="text-xs text-gray-500">{article.date}</span>
                         </div>
-                        <h2 className="text-sm font-bold mb-1 text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                        <h2 className="text-sm font-bold mb-0.5 text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
                           {article.title}
                         </h2>
-                        <p className="text-xs text-gray-600 line-clamp-2 mb-2">{article.excerpt}</p>
-                        <div className="flex items-center text-xs text-gray-500">
+                        <p className="text-xs text-gray-600 line-clamp-2 mb-1">{article.excerpt}</p>
+                        <div className="flex items-center mb-1 px-2">
                           <span className="font-medium">{article.author}</span>
                         </div>
                       </div>
@@ -666,7 +733,7 @@ function HomeContent() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="w-full bg-white py-6 mb-6 rounded-2xl"
+          className="w-full bg-white py-1 mb-1 rounded-2xl"
         >
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
@@ -693,26 +760,26 @@ function HomeContent() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="w-full bg-white py-6 mb-6 rounded-2xl"
+          className="w-full bg-white py-1 mb-1 rounded-2xl"
         >
-          <div className="px-4">
-            <h2 className="text-2xl font-bold text-[#050A30] mb-6">{t('popular_categories')}</h2>
+          <div className="px-2">
+            <h2 className="text-2xl font-bold text-[#050A30] mb-1">{t('popular_categories')}</h2>
             
             {/* Categories Scroll */}
-            <div className="relative mb-8">
+            <div className="relative mb-2">
               <div className="flex space-x-3 overflow-x-auto pb-4 scrollbar-hide">
-                <button className="px-4 py-2 bg-black text-white rounded-full whitespace-nowrap">{t('electric')}</button>
-                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('suv')}</button>
-                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('sedan')}</button>
-                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('pickup_truck')}</button>
-                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('luxury')}</button>
-                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('crossover')}</button>
-                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('hybrid')}</button>
-                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('diesel')}</button>
-                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('coupe')}</button>
-                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('hatchback')}</button>
-                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('wagon')}</button>
-                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('convertible')}</button>
+                <button className="px-2 py-1 bg-black text-white rounded-full whitespace-nowrap">{t('electric')}</button>
+                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('suv')}</button>
+                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('sedan')}</button>
+                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('pickup_truck')}</button>
+                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('luxury')}</button>
+                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('crossover')}</button>
+                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('hybrid')}</button>
+                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('diesel')}</button>
+                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('coupe')}</button>
+                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('hatchback')}</button>
+                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('wagon')}</button>
+                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('convertible')}</button>
               </div>
               <button className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 bg-white shadow-lg rounded-full flex items-center justify-center">
                 <ChevronRight className="w-5 h-5" />
@@ -726,15 +793,34 @@ function HomeContent() {
 
             {/* EV Cars Section */}
             <div className="mt-8">
-              <h3 className="text-xl font-bold mb-4">{t('electric_vehicles')}</h3>
+              <h3 className="text-xl font-bold mb-1">{t('electric_vehicles')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
                 
-              {listings
-                .filter(listing => listing.category.includes('featured') && listing.category.includes('electric_vehicles'))
-                .slice(0, 4)
-                .map((listing) => (
-                  <CarCard key={listing.id} car={listing} />
-                ))}
+              {
+              <Slider
+              autoPlay
+              autoPlayInterval={2000}
+              responsive={{ 
+                "0": { items: 1 }, 
+                "551": { items: 1 }, 
+                "1051": { items: 2 }, 
+                "1441": { items: 4 } 
+              }}
+              disableDotsControls
+              activeIndex={sliderState}
+              onSlideChanged={(e: EventObject) => {
+                setSliderState(e?.item);
+              }}
+              paddingLeft={10}
+              paddingRight={10}
+              items={listings.filter(listing => listing.category.includes('featured') && listing.category.includes('electric_vehicles'))
+                .slice(0, 4).map((car) => (
+                <div key={car.id} className="px-0.5">
+                <CarCard key={car.id} car={car} variant={window.innerWidth <= 768 ? "list" : "grid"} />
+            </div>
+              ))}
+              ref={sliderRef}
+            />}
                 {/* EV Guide Card */}
                 <div className="bg-white rounded-lg p-4 border hover:shadow-lg transition-shadow">
                   <Image
@@ -742,9 +828,9 @@ function HomeContent() {
                     alt={t('ev_guide')}
                     width={250}
                     height={120}
-                    className="w-full h-auto mb-4"
+                    className="w-full h-auto mb-1"
                   />
-                  <h3 className="font-semibold mb-2">{t('ev_guide_title')}</h3>
+                  <h3 className="font-semibold mb-0.5">{t('ev_guide_title')}</h3>
                   <Link href="/ev-guide" className="text-blue-600 hover:underline">
                     {t('watch_ev101')}
                   </Link>
@@ -754,22 +840,43 @@ function HomeContent() {
 
             {/* Luxury Cars Section */}
             <div className="mt-8">
-              <h3 className="text-xl font-bold mb-4">{t('luxury_cars')}</h3>
+              <h3 className="text-xl font-bold mb-1">{t('luxury_cars')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-              {listings
-                .filter(listing => listing.category.includes('featured') && listing.category.includes(t('luxury_cars')))
-                .slice(0, 4)
-                .map((listing) => (
-                  <CarCard key={listing.id} car={listing} />
-                ))}
+
+                     
+              <Slider
+              autoPlay
+              autoPlayInterval={2000}
+              responsive={{ 
+                "0": { items: 1 }, 
+                "551": { items: 1 }, 
+                "1051": { items: 2 }, 
+                "1441": { items: 4 } 
+              }}
+              disableDotsControls
+              activeIndex={sliderState}
+              onSlideChanged={(e: EventObject) => {
+                setSliderState(e?.item);
+              }}
+              paddingLeft={10}
+              paddingRight={10}
+              items={listings.filter(listing => listing.category.includes('featured') && listing.category.includes(t('luxury_cars')))
+                .slice(0, 4).map((car) => (
+                <div key={car.id} className="px-0.5">
+                <CarCard key={car.id} car={car} variant={window.innerWidth <= 768 ? "list" : "grid"} />
+            </div>
+              ))}
+              ref={sliderRef}
+            />
+          
               </div>
             </div>
             
             {/* Parts Section */}
             <div className="mt-8">
-              <h3 className="text-xl font-bold mb-4">{t('parts_and_accessories')}</h3>
+              <h3 className="text-xl font-bold mb-1">{t('parts_and_accessories')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                {transformedParts
+                {/* {transformedParts
                   .filter(part => part.categories?.map(cat => cat.name.includes('featured')))
                   .slice(0, 4)
                   .map((part) => (
@@ -786,7 +893,44 @@ function HomeContent() {
                         category: part.categories?.map(cat => cat.name) || []
                       }} 
                     />
-                  ))}
+                  ))} */}
+
+<Slider
+              autoPlay
+              autoPlayInterval={2000}
+              responsive={{ 
+                "0": { items: 1 }, 
+                "551": { items: 1 }, 
+                "1051": { items: 2 }, 
+                "1441": { items: 4 } 
+              }}
+              disableDotsControls
+              activeIndex={sliderState}
+              onSlideChanged={(e: EventObject) => {
+                setSliderState(e?.item);
+              }}
+              paddingLeft={10}
+              paddingRight={10}
+              items={transformedParts
+                .filter(part => part.categories?.map(cat => cat.name.includes('featured')))
+                .slice(0, 4)
+                .map((part) => (
+                  <PartCard 
+                    key={part.id} 
+                    part={{
+                      id: parseInt(part.id),
+                      mainImage: part.mainImage,
+                      title: part.name,
+                      slug: part.slug,
+                      price: part.price.toString(),
+                      description: part.details.description,
+                      features: part.details.features?.map(f => f.value),
+                      category: part.categories?.map(cat => cat.name) || []
+                    }} 
+                  />
+                ))}
+              ref={sliderRef}
+            />
                 {/* Parts Guide Card */}
                 <div className="bg-white rounded-lg p-4 border hover:shadow-lg transition-shadow">
                   <Image
@@ -794,9 +938,9 @@ function HomeContent() {
                     alt={t('parts_guide')}
                     width={200}
                     height={120}
-                    className="w-full h-auto mb-4"
+                    className="w-full h-auto mb-1"
                   />
-                  <h3 className="font-semibold mb-2">{t('parts_guide_title')}</h3>
+                  <h3 className="font-semibold mb-0.5">{t('parts_guide_title')}</h3>
                   <Link href="/parts-guide" className="text-blue-600 hover:underline">
                     {t('browse_parts_catalog')}
                   </Link>
@@ -806,9 +950,38 @@ function HomeContent() {
 
             {/* Services Section */}
             <div className="mt-8">
-              <h3 className="text-xl font-bold mb-4">{t('automotive_services')}</h3>
+              <h3 className="text-xl font-bold mb-1">{t('automotive_services')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                {transformedServices
+              <Slider
+              autoPlay
+              autoPlayInterval={2000}
+              responsive={{ 
+                "0": { items: 1 }, 
+                "551": { items: 1 }, 
+                "1051": { items: 2 }, 
+                "1441": { items: 4 } 
+              }}
+              disableDotsControls
+              activeIndex={sliderState}
+              onSlideChanged={(e: EventObject) => {
+                setSliderState(e?.item);
+              }}
+              paddingLeft={10}
+              paddingRight={10}
+              items={transformedServices
+                .filter(service => service.categories?.map(cat => cat.name.includes('featured')))
+                .slice(0, 4)
+                .map((service) => (
+                  <ServiceCard 
+                    key={service.id} 
+                    service={{
+                      ...service
+                    }}
+                  />
+              ))}
+              ref={sliderRef}
+            />
+                {/* {transformedServices
                   .filter(service => service.categories?.map(cat => cat.name.includes('featured')))
                   .slice(0, 4)
                   .map((service) => (
@@ -818,7 +991,7 @@ function HomeContent() {
                         ...service
                       }}
                     />
-                  ))}
+                  ))} */}
                 {/* Services Guide Card */}
                 <div className="bg-white rounded-lg p-4 border hover:shadow-lg transition-shadow">
                   <Image
@@ -826,9 +999,9 @@ function HomeContent() {
                     alt={t('services_guide')}
                     width={200}
                     height={120}
-                    className="w-full h-auto mb-4"
+                    className="w-full h-auto mb-1"
                   />
-                  <h3 className="font-semibold mb-2">{t('services_guide_title')}</h3>
+                  <h3 className="font-semibold mb-0.5">{t('services_guide_title')}</h3>
                   <Link href="/services-guide" className="text-blue-600 hover:underline">
                     {t('explore_services')}
                   </Link>
@@ -853,7 +1026,7 @@ function HomeContent() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="w-full bg-white py-6 mb-6 rounded-2xl"
+          className="w-full bg-white py-1 mb-1 rounded-2xl"
         >
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
@@ -882,7 +1055,7 @@ function HomeContent() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="w-full bg-gradient-to-b from-gray-50 to-white py-6 mb-6 rounded-2xl"
+          className="w-full bg-gradient-to-b from-gray-50 to-white py-1 mb-1 rounded-2xl"
         >
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
@@ -909,7 +1082,7 @@ function HomeContent() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="w-full bg-white py-6 rounded-2xl"
+          className="w-full bg-white py-1 mb-1 rounded-2xl"
         >
           <div className="px-4">
             <div className="flex flex-col md:flex-row justify-center gap-4">
