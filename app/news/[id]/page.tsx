@@ -246,7 +246,6 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
         case 'shared.media':
           return (
             <div key={block.id} className="my-8">
-              `http://64.227.112.249{block.file?.url}`
               {block.file && (
                 
                 <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg">
