@@ -146,12 +146,12 @@ export default function Navbar() {
   };
 
   const buttonStyles = {
-    carsMarket: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out",
-    plate_search: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out",
-    news: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out",
-    after_market: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out",
-    compareCars: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out",
-    stores: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out"
+    carsMarket: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-gradient-to-r from-blue-500/20 to-purple-500/20",
+    plate_search: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-gradient-to-r from-green-500/20 to-teal-500/20",
+    news: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-gradient-to-r from-red-500/20 to-orange-500/20",
+    after_market: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-gradient-to-r from-yellow-500/20 to-amber-500/20",
+    compareCars: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-gradient-to-r from-indigo-500/20 to-violet-500/20",
+    stores: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-gradient-to-r from-pink-500/20 to-rose-500/20"
   };
 
   const NavButton = ({ href, gradient, children, dropdownKey }: { 
@@ -170,13 +170,13 @@ export default function Navbar() {
     };
 
     return (
-      <div className="relative group">
+      <div className="relative group rounded-xl">
         <Link href={href} className="w-full" onClick={handleClick}>
           <button 
             className={`
               relative group overflow-hidden
               px-4 py-2 rounded-xl
-              font-medium
+              font-medium md:font-bold
               ${gradient}
               transition-all duration-300
               transform hover:scale-[1.02]
@@ -185,10 +185,11 @@ export default function Navbar() {
               active:scale-[0.98]
               w-full
               max-h-[60]
-              min-h-[60px]
+              min-h-[40px]
               flex items-center justify-center gap-2
               text-base md:text-xl lg:text-sm
               leading-tight
+              
             `}
             onMouseEnter={() => !isMobile && setActiveDropdown(dropdownKey)}
             onMouseLeave={() => !isMobile && setActiveDropdown(null)}
@@ -230,14 +231,14 @@ export default function Navbar() {
           onMouseEnter={() => !isMobile && setActiveDropdown(dropdownKey)}
           onMouseLeave={() => !isMobile && setActiveDropdown(null)}
         >
-          <div className={`${isMobile ? 'container mx-auto px-4' : ''}`}>
+          <div className={`${isMobile ? 'container mx-auto px-4 ' : ''}`}>
             {dropdownItems[dropdownKey].map((item, index) => (
               <Link 
                 key={index}
                 href={item.href}
                 className={`
                   block px-4 py-3 
-                  ${textColor} hover:bg-white/20 
+                  ${textColor} hover:bg-white/5/20 
                   transition-all duration-500 ease-in-out
                   ${isMobile ? 'text-lg' : ''}
                   border-b border-white/10 last:border-b-0
@@ -273,7 +274,7 @@ export default function Navbar() {
 
         {/* Mobile Menu Button */}
         <button 
-          className="md:hidden text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all duration-500 ease-in-out"
+          className="md:hidden text-white/80 hover:text-white hover:bg-white/5/10 p-2 rounded-full transition-all duration-500 ease-in-out"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -300,13 +301,13 @@ export default function Navbar() {
               {t(key)}
             </NavButton>
           ))}
-          <div className="md:hidden w-full mt-4">
+          <div className="md:hidden w-full mt-4 ">
             {user ? (
               <UserMenu user={user} onLogout={handleLogout} isMobile={true} />
             ) : (
               <Button 
                 variant="outline" 
-                className="text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out w-full"
+                className="text-white/80  border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out w-full bg-white/5 rounded-xl"
               >
                 {t("login")}
               </Button>
@@ -325,7 +326,7 @@ export default function Navbar() {
           ) : (
             <Button 
               variant="outline" 
-              className="text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out"
+              className="text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-white/5 rounded-xl"
             >
               {t("login")}
             </Button>

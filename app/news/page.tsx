@@ -410,7 +410,7 @@ export default function NewsPage() {
   const featuredNewsbanner = filteredNews.filter(item => item.categories.some(tag => tag.name === "Featured Banner"))[0]
   return (
     <div className="min-h-screen bg-[#050B20]  md:mt-[5%] mt-[15%] ">
-      <main className="max-w-7xl mx-auto px-4 md:mt-[5%] mt-[15%] min-h-screen pb-[5%] bg-white">
+      <main className="max-w-7xl mx-auto px-4 md:mt-[5%] mt-[15%] min-h-screen pb-[5%]">
         {/* Mobile Title and Category - Only visible on mobile */}
         <div className="md:hidden bg-white rounded-lg p-4 ">
           <div className="py-6">
@@ -420,7 +420,7 @@ export default function NewsPage() {
             </p>
           </div>
 
-          <div className="mb-8">
+          <div className="mb-8  bg-white rounded-lg p-4">
             <label className="block text-sm font-medium text-white mb-1">{t('news_category')}</label>
             <select
               value={selectedCategory}
@@ -496,10 +496,10 @@ export default function NewsPage() {
                   )}
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
-                  <h3 className="text-xl font-bold text-white mb-2">{featuredNews[0].title}</h3>
+                  <h3 className="text-xl font-bold text-white mb-2 px-2">{featuredNews[0].title}</h3>
                   <div className="flex items-center text-sm text-white">
                     <span>{featuredNews[0].author?.data?.attributes?.name || 'Unknown Author'}</span>
-                    <span className="mx-2">|</span>
+                    <span className="mx-2 ">|</span>
                     <span>{formatDate(featuredNews[0].publishedAt)}</span>
                   </div>
                 </div>
@@ -554,8 +554,8 @@ export default function NewsPage() {
                     )}
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
-                    <p className="text-gray-600 text-sm">{item.description}</p>
+                    <h3 className="font-semibold text-4xl mb-2">{item.title}</h3>
+                    <p className="text-gray-600 text-2xl">{item.description}</p>
                   </div>
                 </article>
               ))}
@@ -596,10 +596,10 @@ export default function NewsPage() {
                       )}
                     </div>
                     <div className="mt-3 md:mt-0 md:w-2/3 md:p-4">
-                      <div className="text-sm text-gray-600 mb-1">{t('expert_review')}</div>
-                      <h3 className="font-bold text-gray-900 mb-2">{item.title}</h3>
-                      <p className="text-gray-600 text-sm mb-2">{item.description}</p>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-2xl text-gray-600 mb-1">{t('expert_review')}</div>
+                      <h3 className="font-bold text-4xl text-gray-900 mb-2">{item.title}</h3>
+                      <p className="text-gray-600 text-2xl mb-2">{item.description}</p>
+                      <div className="text-2xl text-gray-600">
                         <span>{t('by')} {item.author?.data?.attributes?.name || 'Unknown Author'}</span>
                         <span className="mx-2">•</span>
                         <span>{formatDate(item.publishedAt)}</span>
@@ -623,9 +623,9 @@ export default function NewsPage() {
                 >
                   <div className="flex items-start space-x-4 px-4">
                     <div className="flex-1">
-                      <div className="text-sm text-gray-600 mb-1">Expert Review</div>
-                      <h3 className="font-bold text-gray-900 mb-1">{item.title}</h3>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-2xl text-gray-600 mb-1">Expert Review</div>
+                      <h3 className="font-bold text-4xl text-gray-900 mb-1">{item.title}</h3>
+                      <div className="text-2xl text-gray-600">
                         By {item.author?.data?.attributes?.name || 'Unknown Author'}
                       </div>
                     </div>
