@@ -352,8 +352,8 @@ function HomeContent() {
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string>('electric');
   const [isAdmin, setIsAdmin] = useState(false);
-  const [showads, setShowads] = useState(false);
-  const [showcontrols, setShowcontrols] = useState(false);
+  const [showads, setShowads] = useState(true);
+  const [showcontrols, setShowcontrols] = useState(true);
 
   // Get search params with memoization
   const { selectedFuel, selectedYear, selectedManufacturer, selectedLimit, selectedModel } = useMemo(() => ({

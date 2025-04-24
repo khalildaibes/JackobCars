@@ -146,12 +146,12 @@ export default function Navbar() {
   };
 
   const buttonStyles = {
-    carsMarket: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-gradient-to-r from-blue-500/20 to-purple-500/20",
-    plate_search: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-gradient-to-r from-green-500/20 to-teal-500/20",
-    news: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-gradient-to-r from-red-500/20 to-orange-500/20",
-    after_market: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-gradient-to-r from-yellow-500/20 to-amber-500/20",
-    compareCars: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-gradient-to-r from-indigo-500/20 to-violet-500/20",
-    stores: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-gradient-to-r from-pink-500/20 to-rose-500/20"
+    carsMarket: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-white/5",
+    plate_search: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-white/5",
+    news: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-white/5",
+    after_market: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-white/5",
+    compareCars: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-white/5",
+    stores: "text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-white/5"
   };
 
   const NavButton = ({ href, gradient, children, dropdownKey }: { 
@@ -185,7 +185,8 @@ export default function Navbar() {
               active:scale-[0.98]
               w-full
               max-h-[60]
-              min-h-[40px]
+              min-h-[60px]
+              
               flex items-center justify-center gap-2
               text-base md:text-xl lg:text-sm
               leading-tight
@@ -194,7 +195,7 @@ export default function Navbar() {
             onMouseEnter={() => !isMobile && setActiveDropdown(dropdownKey)}
             onMouseLeave={() => !isMobile && setActiveDropdown(null)}
           >
-            <span className="relative z-10 text-center line-clamp-2">{children}</span>
+            <span className="relative z-10 text-center line-clamp-2 h-[30px]">{children}</span>
             <ChevronDown 
               size={16} 
               className={`transition-transform duration-200 ${
