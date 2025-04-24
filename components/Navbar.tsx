@@ -68,7 +68,7 @@ export default function Navbar() {
       const averageBrightness = totalBrightness / validPoints;
       
       // If background is light, use black text
-      setTextColor(averageBrightness > 128 ? 'text-black/80 hover:text-black' : 'text-white/80 hover:text-white');
+      setTextColor(averageBrightness > 128 ? 'text-white/80 hover:text-white' : 'text-white/80 hover:text-white');
     };
 
     // Initial check

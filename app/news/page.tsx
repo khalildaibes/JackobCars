@@ -410,18 +410,18 @@ export default function NewsPage() {
   const featuredNewsbanner = filteredNews.filter(item => item.categories.some(tag => tag.name === "Featured Banner"))[0]
   return (
     <div className="min-h-screen bg-[#050B20]  md:mt-[5%] mt-[15%] ">
-      <main className="max-w-7xl mx-auto px-4 md:mt-[5%] mt-[15%] min-h-screen pb-[5%]">
+      <main className="max-w-7xl mx-auto px-4 md:mt-[5%] mt-[15%] min-h-screen pb-[5%] bg-white">
         {/* Mobile Title and Category - Only visible on mobile */}
-        <div className="md:hidden">
+        <div className="md:hidden bg-white rounded-lg p-4 ">
           <div className="py-6">
-            <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+            <h1 className="text-2xl font-bold text-white">{t('title')}</h1>
             <p className="mt-2 text-gray-600">
               {t('subtitle')}
             </p>
           </div>
 
           <div className="mb-8">
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('news_category')}</label>
+            <label className="block text-sm font-medium text-white mb-1">{t('news_category')}</label>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
@@ -477,13 +477,13 @@ export default function NewsPage() {
         <section className="mb-8 px-4">
           <h2 className="text-2xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('featured_news')}</h2>
           {featuredNews.length > 0 && (
-            <div className="md:hidden space-y-4">
+            <div className="md:hidden space-y-4 bg-white/10 backdrop-blur-sm rounded-lg p-4">
               {/* Mobile Layout */}
               <article 
-                className="relative rounded-lg overflow-hidden cursor-pointer"
+                className="relative rounded-lg overflow-hidden cursor-pointer "
                 onClick={() => router.push(`/news/${featuredNews[0].slug}`)}
               >
-                <div className="aspect-[16/9] relative">
+                <div className="aspect-[16/9] relative space-y-4 bg-white  rounded-lg p-4">
                   {featuredNews[0].cover?.url && (
                     <Img
                       src={`http://64.227.112.249${featuredNews[0].cover.url}`}
@@ -509,7 +509,7 @@ export default function NewsPage() {
                 <article
                   key={item.id}
                   onClick={() => router.push(`/news/${item.slug}`)}
-                  className="flex items-center space-x-4 cursor-pointer"
+                  className="flex items-center space-x-4 cursor-pointer bg-white rounded-lg p-4"
                 >
                   <div className="w-24 h-24 relative flex-shrink-0">
                     {item.cover?.url && (
@@ -525,7 +525,7 @@ export default function NewsPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">{item.title}</h3>
-                    <p className="text-sm text-gray-600 mt-1">{item.author?.data?.attributes?.name || 'Unknown Author'}</p>
+                    <p className="text-sm text-black mt-1">{item.author?.data?.attributes?.name || 'Unknown Author'}</p>
                   </div>
                 </article>
               ))}
