@@ -13,7 +13,7 @@ const officeLocations = [
       </>
     ),
     mapLinkText: "See on Map",
-    emailAddress: "alisan@boxcars.com",
+    emailAddress: "alisan@Max Speed Limit ",
     phoneNumber: "+88 656 123 456",
   },
   {
@@ -26,7 +26,7 @@ const officeLocations = [
       </>
     ),
     mapLinkText: "See on Map",
-    emailAddress: "alisan@boxcars.com",
+    emailAddress: "alisan@Max Speed Limit ",
     phoneNumber: "+88 656 123 456",
   },
   {
@@ -39,7 +39,7 @@ const officeLocations = [
       </>
     ),
     mapLinkText: "See on Map",
-    emailAddress: "alisan@boxcars.com",
+    emailAddress: "alisan@Max Speed Limit ",
     phoneNumber: "+88 656 123 456",
   },
 ];

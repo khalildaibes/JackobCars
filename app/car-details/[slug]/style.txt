@@ -1138,7 +1138,7 @@
     </div>
   </div>
   <div data-layer="Background" className="w-[1920px] h-[99.09px] left-0 top-[6937.09px] absolute bg-[#050b20] border-t border-white/10">
-    <div data-layer="© 2024 Boxcars.com. All rights reserved." className="w-[279.65px] h-[27.75px] left-[260px] top-[36.18px] absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">© 2024 Boxcars.com. All rights reserved.</div>
+    <div data-layer="© 2024 Max Speed Limit . All rights reserved." className="w-[279.65px] h-[27.75px] left-[260px] top-[36.18px] absolute justify-center text-white text-[15px] font-normal font-['DM_Sans'] leading-7">© 2024 Max Speed Limit . All rights reserved.</div>
     <div data-layer="List" className="w-[265.81px] h-[28.62px] left-[1394.19px] top-[35.48px] absolute">
       <div data-layer="Item" className="w-[136.81px] h-[28.62px] left-0 top-0 absolute">
         <div data-layer="Link" className="w-[136.81px] h-[28.62px] left-0 top-0 absolute">

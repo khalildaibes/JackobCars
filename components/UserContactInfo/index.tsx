@@ -16,7 +16,7 @@ export default function UserContactInfo({
   cityName = "San Francisco",
   address = "&lt;&gt;416 Dewey Blvd, San Francisco,&lt;br /&gt;CA 94116, USA&lt;/&gt;",
   mapLinkText = "See on Map",
-  emailAddress = "alisan@boxcars.com",
+  emailAddress = "alisan@Max Speed Limit ",
   phoneNumber = "+88 656 123 456",
   ...props
 }: Props) {

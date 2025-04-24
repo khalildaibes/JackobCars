@@ -54,7 +54,7 @@ export async function GET(req) {
             // Use default values if no store ID provided
             baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
             apiToken = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
-            storeHostname = '64.227.112.249';
+            storeHostname = 'npm run dev';
         }
         
         // Construct the final API URL with filters

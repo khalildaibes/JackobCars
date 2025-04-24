@@ -21,13 +21,15 @@ import ResponsiveNewsLayout from "../components/Responsivenews";
 import SearchBar from "../components/SearchBar";
 import { Img } from "../components/Img";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Car, Settings, Wrench, Tag, CheckCircle, Shield, Database } from "lucide-react";
 import ServiceCard from "../components/ServiceCard";
 import PartCard from "../components/PartCard";
 import { setCookie, getCookie } from "../utils/cookieUtils";
 import StoriesCarousel from "../components/StoriesCarousel";
 import AliceCarousel, { EventObject } from "react-alice-carousel";
 import { Slider } from "../components/Slider";
+import CategoryButtons from "../components/CategoryButtons";
+import HeroSection from "../components/HeroSection";
 
 // Types
 interface Deal {
@@ -336,10 +338,10 @@ const normalizeBodyType = (rawBodyType: string): string => {
 
 // Dynamically import components
 const   FindCarByPlate = dynamic(() => import("./plate_search/FindCarByPlate"), { ssr: false });
-const HeroSection = dynamic(() => import("../components/NewHero"));
+// const HeroSection = dynamic(() => import("../components/NewHero"));
 const LookingForCar = dynamic(() => import("../components/comp"));
 const FeaturedListingsSection = dynamic(() => import("../components/homeeight/FeaturedListingsSection"));
-const SalesAndReviewsSection = dynamic(() => import("../components/homeeight/SalesAndReviewsSection"));
+// const SalesAndReviewsSection = dynamic(() => import("../components/homeeight/SalesAndReviewsSection"));
 
 function HomeContent() {
   const router = useRouter();
@@ -348,6 +350,10 @@ function HomeContent() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [stories, setStories] = useState<Story[]>([]);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState<string>('electric');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showads, setShowads] = useState(false);
+  const [showcontrols, setShowcontrols] = useState(false);
 
   // Get search params with memoization
   const { selectedFuel, selectedYear, selectedManufacturer, selectedLimit, selectedModel } = useMemo(() => ({
@@ -595,6 +601,23 @@ function HomeContent() {
     }
   }, [stories?.length]);
 
+  // Add handler for category selection
+  const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category);
+    // Update URL with selected category
+    const params = new URLSearchParams(window.location.search);
+    params.set('category', category);
+    router.push(`?${params.toString()}`);
+  };
+
+  // Filter listings based on selected category
+  const filteredListings = useMemo(() => {
+    return listings.filter(listing => 
+      listing.category.includes(selectedCategory) || 
+      listing.category.includes(t(selectedCategory))
+    );
+  }, [listings, selectedCategory, t]);
+
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -605,512 +628,593 @@ function HomeContent() {
   }
   
   return (
-    <motion.main 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.8 }}
-      className="flex flex-col w-full overflow-hidden mt-[5%]"
-    >
-      {/* 1. Hero Banner Section */}
-      {/* <StoriesCarousel stories={stories} /> */}
+    <div className="flex w-full z-70 overflow-x-hidden">
+      {/* Left Dashboard - Hide on mobile */}
+      {showads && (
+        <div className="w-[15%] bg-white/10 mt-[5%] backdrop-blur-sm border-r border-gray-200/20 p-4 hidden lg:block ${!isAdmin ? 'invisible' : ''}">
+          <div className="sticky top-4">
+            <h2 className="text-lg font-semibold text-white mb-4">Quick Links</h2>
+            <nav className="space-y-2">
+              <Link href="/cars" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
+                <Car className="w-4 h-4" />
+                <span>All Cars</span>
+              </Link>
+              <Link href="/services" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
+                <Settings className="w-4 h-4" />
+                <span>Services</span>
+              </Link>
+              <Link href="/parts" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
+                <Wrench className="w-4 h-4" />
+                <span>Parts</span>
+              </Link>
+              <Link href="/deals" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
+                <Tag className="w-4 h-4" />
+                <span>Special Deals</span>
+              </Link>
+            </nav>
 
-      {/* Main Content Container */}
-      <div className="container mx-auto px-2 sm:px-3 lg:px-4 max-w-7xl">
-        {/* 4. Latest News Section - Industry Updates */}
-        <motion.section 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="w-full bg-gradient-to-b from-white to-gray-50 py-1 mb-1 rounded-2xl"
-        >
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ 
-              duration: 0.8,
-              ease: [0.6, -0.05, 0.01, 0.99],
-              delay: 0.4
-            }}
-            className="flex items-center justify-between mb-1 px-2"
-          >
-            <h2 className="text-xl font-bold text-white bg-[#050B20] p-2 rounded-lg flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8H8v7h8V8z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 4v16" />
-              </svg>
-              {t('other_news')}
-            </h2>
-            {totalSlides > 1 && (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={prevSlide}
-                  className="p-2 rounded-full bg-white shadow-md hover:bg-gray-50 transition-colors"
-                  aria-label="Previous slide"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={nextSlide}
-                  className="p-2 rounded-full bg-white shadow-md hover:bg-gray-50 transition-colors"
-                  aria-label="Next slide"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </div>
-            )}
-          </motion.div>
-          <div className="relative px-2">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {visibleArticles.map((article, index) => (
-                <motion.div
-                  key={article.id}
-                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ 
-                    duration: 0.6,
-                    ease: [0.6, -0.05, 0.01, 0.99],
-                    delay: 0.6 + (index * 0.1)
-                  }}
-                  whileHover={{ 
-                    scale: 1.02,
-                    transition: { duration: 0.2 }
-                  }}
-                  className="w-full"
-                >
-                  <Link href={`/news/${article.slug}`} className="group block">
-                    <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl min-h-[250px] max-h-[250px] w-full">
-                      <div className="overflow-hidden h-[140px]">
-                        <Img
-                          src={`http://64.227.112.249${article.imageUrl}`}
-                          alt={article.title}
-                          className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
-                          width={1290}
-                          height={2040}
-                          external={true}
-                        />
-                      </div>
-                      <div className="p-3  h-[160px]">
-                        <div className="flex items-center mb-0.5">
-                          <span className="text-xs font-medium text-blue-600 bg-blue-50 px-1 py-0.5 rounded-full">
-                            {article.category}
-                          </span>
-                          <span className="mx-2 text-gray-400">•</span>
-                          <span className="text-xs text-gray-500">{article.date}</span>
-                        </div>
-                        <h2 className="text-sm font-bold mb-0.5 text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                          {article.title}
-                        </h2>
-                        <p className="text-xs text-gray-600 line-clamp-2 mb-1">{article.excerpt}</p>
-                        <div className="flex items-center mb-1 px-2">
-                          <span className="font-medium">{article.author}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-            {totalSlides > 1 && (
-              <div className="flex justify-center mt-4 gap-2">
-                {Array.from({ length: totalSlides }).map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentSlide(index)}
-                    className={`w-2 h-2 rounded-full transition-colors ${
-                      currentSlide === index ? 'bg-blue-600' : 'bg-gray-300'
-                    }`}
-                    aria-label={`Go to slide ${index + 1}`}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </motion.section>
-        
-        {/* 3. Most Searched Section - Popular Cars */}
-        <motion.section 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="w-full bg-white py-1 mb-1 rounded-2xl"
-        >
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ 
-              duration: 0.8,
-              ease: [0.6, -0.05, 0.01, 0.99],
-              delay: 0.6
-            }}
-            className="flex items-center mb-4 px-4"
-          >
-          </motion.div>
-          
-           <RecentlyAddedSection 
-            listings={listings.filter((listing) => listing.category.includes(t("most_searched_cars")))} 
-            title={t("most_searched_cars")}
-            viewAllLink="/cars"
-          />
-         
-        </motion.section>
-
-        {/* Popular Categories Section */}
-        <motion.section 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="w-full bg-white py-1 mb-1 rounded-2xl"
-        >
-          <div className="px-2">
-            <h2 className="text-2xl font-bold text-[#050A30] mb-1">{t('popular_categories')}</h2>
-            
-            {/* Categories Scroll */}
-            <div className="relative mb-2">
-              <div className="flex space-x-3 overflow-x-auto pb-4 scrollbar-hide">
-                <button className="px-2 py-1 bg-black text-white rounded-full whitespace-nowrap">{t('electric')}</button>
-                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('suv')}</button>
-                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('sedan')}</button>
-                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('pickup_truck')}</button>
-                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('luxury')}</button>
-                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('crossover')}</button>
-                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('hybrid')}</button>
-                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('diesel')}</button>
-                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('coupe')}</button>
-                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('hatchback')}</button>
-                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('wagon')}</button>
-                <button className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full whitespace-nowrap">{t('convertible')}</button>
-              </div>
-              <button className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 bg-white shadow-lg rounded-full flex items-center justify-center">
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Popular Cars Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-
-            </div>
-
-            {/* EV Cars Section */}
             <div className="mt-8">
-              <h3 className="text-xl font-bold mb-1">{t('electric_vehicles')}</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
-                
-              {
-              window.innerWidth <= 768 ?
-              <Slider
-              autoPlay
-              autoPlayInterval={2000}
-              responsive={{ 
-                "0": { items: 1 }, 
-                "551": { items: 1 }, 
-                "1051": { items: 2 }, 
-                "1441": { items: 4 } 
-              }}
-              disableDotsControls
-              activeIndex={sliderState}
-              onSlideChanged={(e: EventObject) => {
-                setSliderState(e?.item);
-              }}
-              paddingLeft={10}
-              paddingRight={10}
-              items={listings.filter(listing => listing.category.includes('featured') && listing.category.includes('electric_vehicles'))
-                .slice(0, 4).map((car) => (
-                <div key={car.id} className="px-0.5">
-                <CarCard key={car.id} car={car} variant="list" />
+              <h2 className="text-lg font-semibold text-white mb-4">Recent Searches</h2>
+              <div className="space-y-2">
+                <button className="w-full text-left px-3 py-2 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
+                  Electric Cars
+                </button>
+                <button className="w-full text-left px-3 py-2 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
+                  Luxury SUVs
+                </button>
+                <button className="w-full text-left px-3 py-2 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
+                  Family Sedans
+                </button>
+              </div>
             </div>
-              ))}
-              ref={sliderRef}
-            /> :
-            listings.filter(listing => listing.category.includes('featured') && listing.category.includes('electric_vehicles')).slice(0, 4).map((car) => (
-              <div key={car.id} className="px-0.5">
-              <CarCard key={car.id} car={car} variant="grid" />
-          </div>
-            ))
-          }
-              
-                {/* EV Guide Card */}
-                <div className="bg-white rounded-lg p-4 border hover:shadow-lg transition-shadow">
-                  <Image
-                    src="/ev-guide.png"
-                    alt={t('ev_guide')}
-                    width={250}
-                    height={120}
-                    className="w-full h-auto mb-1"
-                  />
-                  <h3 className="font-semibold mb-0.5">{t('ev_guide_title')}</h3>
-                  <Link href="/ev-guide" className="text-blue-600 hover:underline">
-                    {t('watch_ev101')}
-                  </Link>
+
+            <div className="mt-8">
+              <h2 className="text-lg font-semibold text-white mb-4">Quick Stats</h2>
+              <div className="space-y-3">
+                <div className="bg-white/5 rounded-lg p-3">
+                  <p className="text-sm text-white/60">Total Listings</p>
+                  <p className="text-xl font-bold text-white">{listings.length}</p>
+                </div>
+                <div className="bg-white/5 rounded-lg p-3">
+                  <p className="text-sm text-white/60">Featured Cars</p>
+                  <p className="text-xl font-bold text-white">{listings.filter(l => l.category.includes('featured')).length}</p>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
 
-            {/* Luxury Cars Section */}
-            <div className="mt-8">
-              <h3 className="text-xl font-bold mb-1">{t('luxury_cars')}</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                {window.innerWidth <= 768 ? (
-                  <Slider
-                    autoPlay
-                    autoPlayInterval={2000}
-                    responsive={{ 
-                      "0": { items: 1 }, 
-                      "551": { items: 1 }, 
-                      "1051": { items: 2 }, 
-                      "1441": { items: 4 } 
-                    }}
-                    disableDotsControls
-                    activeIndex={sliderState}
-                    onSlideChanged={(e: EventObject) => {
-                      setSliderState(e?.item);
-                    }}
-                    paddingLeft={10}
-                    paddingRight={10}
-                    items={listings.filter(listing => listing.category.includes('featured') && listing.category.includes(t('luxury_cars')))
-                      .slice(0, 4).map((car) => (
-                      <div key={car.id} className="px-0.5">
-                        <CarCard key={car.id} car={car} variant="list" />
-                      </div>
+      {/* Main Content */}
+      <div className="flex-1 w-full">
+        <motion.main 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="flex flex-col w-full overflow-hidden mt-[5%] px-2 sm:px-4 md:px-6"
+        >
+          {/* 1. Hero Banner Section */}
+          <HeroSection listings={listings} />
+          {/* <StoriesCarousel stories={stories} /> */} 
+
+          {/* Main Content Container */}
+          <div className="container mx-auto w-full px-2 sm:px-3 lg:px-4 max-w-7xl overflow-x-hidden">
+            {/* 4. Latest News Section - Industry Updates */}
+            <motion.section 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              className="w-full bg-gradient-to-b from-white to-gray-50 py-1 mb-3 rounded-2xl overflow-hidden"
+            >
+              <motion.div 
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ 
+                  duration: 0.8,
+                  ease: [0.6, -0.05, 0.01, 0.99],
+                  delay: 0.4
+                }}
+                className="flex items-center justify-between mb-3 px-2"
+              >
+                <h2 className="text-lg sm:text-xl font-bold text-white bg-[#050B20] p-2 rounded-lg flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8H8v7h8V8z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 4v16" />
+                  </svg>
+                  {t('other_news')}
+                </h2>
+                {totalSlides > 1 && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={prevSlide}
+                      className="p-1 sm:p-2 rounded-full bg-white shadow-md hover:bg-gray-50 transition-colors"
+                      aria-label="Previous slide"
+                    >
+                      <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                    </button>
+                    <button
+                      onClick={nextSlide}
+                      className="p-1 sm:p-2 rounded-full bg-white shadow-md hover:bg-gray-50 transition-colors"
+                      aria-label="Next slide"
+                    >
+                      <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                    </button>
+                  </div>
+                )}
+              </motion.div>
+              <div className="relative px-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
+                  {visibleArticles.map((article, index) => (
+                    <motion.div
+                      key={article.id}
+                      initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      transition={{ 
+                        duration: 0.6,
+                        ease: [0.6, -0.05, 0.01, 0.99],
+                        delay: 0.6 + (index * 0.1)
+                      }}
+                      whileHover={{ 
+                        scale: 1.02,
+                        transition: { duration: 0.2 }
+                      }}
+                      className="w-full"
+                    >
+                      <Link href={`/news/${article.slug}`} className="group block">
+                        <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl min-h-[200px] sm:min-h-[250px] max-h-[250px] w-full">
+                          <div className="overflow-hidden h-[120px] sm:h-[140px]">
+                            <Img
+                              src={`http://64.227.112.249${article.imageUrl}`}
+                              alt={article.title}
+                              className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                              width={1290}
+                              height={2040}
+                              external={true}
+                            />
+                          </div>
+                          <div className="p-2 sm:p-3 h-[160px]">
+                            <div className="flex items-center mb-0.5">
+                              <span className="text-xs font-medium text-blue-600 bg-blue-50 px-1 py-0.5 rounded-full">
+                                {article.category}
+                              </span>
+                              <span className="mx-2 text-gray-400">•</span>
+                              <span className="text-xs text-gray-500">{article.date}</span>
+                            </div>
+                            <h2 className="text-sm font-bold mb-0.5 text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                              {article.title}
+                            </h2>
+                            <p className="text-xs text-gray-600 line-clamp-2 mb-3">{article.excerpt}</p>
+                            <div className="flex items-center mb-3 px-2">
+                              <span className="font-medium">{article.author}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
+                {totalSlides > 1 && (
+                  <div className="flex justify-center mt-4 gap-2">
+                    {Array.from({ length: totalSlides }).map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentSlide(index)}
+                        className={`w-2 h-2 rounded-full transition-colors ${
+                          currentSlide === index ? 'bg-blue-600' : 'bg-gray-300'
+                        }`}
+                        aria-label={`Go to slide ${index + 1}`}
+                      />
                     ))}
-                    ref={sliderRef}
-                  />
-                ) : (
-                  listings.filter(listing => listing.category.includes('featured') && listing.category.includes(t('luxury_cars')))
-                    .slice(0, 4).map((car) => (
-                      <div key={car.id} className="px-0.5">
-                        <CarCard key={car.id} car={car} variant="grid" />
-                      </div>
-                    ))
+                  </div>
                 )}
               </div>
-            </div>
-            
-            {/* Parts Section */}
-            <div className="mt-8">
-              <h3 className="text-xl font-bold mb-1">{t('parts_and_accessories')}</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                {window.innerWidth <= 768 ? (
-                  <Slider
-                    autoPlay
-                    autoPlayInterval={2000}
-                    responsive={{ 
-                      "0": { items: 1 }, 
-                      "551": { items: 1 }, 
-                      "1051": { items: 2 }, 
-                      "1441": { items: 4 } 
-                    }}
-                    disableDotsControls
-                    activeIndex={sliderState}
-                    onSlideChanged={(e: EventObject) => {
-                      setSliderState(e?.item);
-                    }}
-                    paddingLeft={10}
-                    paddingRight={10}
-                    items={transformedParts
-                      .filter(part => part.categories?.map(cat => cat.name.includes('featured')))
+            </motion.section>
+                
+            <CategoryButtons onCategorySelect={handleCategorySelect} />
+
+            {/* 3. Most Searched Section - Popular Cars */}
+            <motion.section 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              className="w-full bg-white mb-3 rounded-2xl"
+            >
+              <motion.div 
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ 
+                  duration: 0.8,
+                  ease: [0.6, -0.05, 0.01, 0.99],
+                  delay: 0.6
+                }}
+                className="flex items-center mb-4 px-4"
+              >
+
+              </motion.div>
+              
+              <RecentlyAddedSection 
+                listings={listings.filter((listing) => listing.category.includes(t("most_searched_cars")))} 
+                title={t(selectedCategory)}
+                viewAllLink="/cars"
+              />
+              
+            </motion.section>
+            {/* Ads Section */}
+            <motion.section
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              className="w-full bg-white mb-3 rounded-2xl p-6"
+            >
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{
+                  duration: 0.8,
+                  ease: [0.6, -0.05, 0.01, 0.99],
+                  delay: 0.6
+                }}
+                className="mb-6"
+              >
+                <h3 className="text-2xl font-bold text-gray-900">{t('عروض مميزة')}</h3>
+                <p className="text-gray-600 mt-1">عروض خاصة من شركائنا</p>
+              </motion.div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Ad Card 1 */}
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 shadow-sm">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full">إعلان</span>
+                    <span className="text-blue-600 font-semibold">عرض محدود</span>
+                  </div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-2">عرض الصيف للصيانة</h4>
+                  <p className="text-gray-600 mb-4">باقة صيانة كاملة تشمل تغيير الزيت، تبديل الإطارات، وفحص شامل للسيارة</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold text-blue-600">٧٤٩ شيكل</span>
+                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                      اعرف المزيد
+                    </button>
+                  </div>
+                </div>
+
+                {/* Ad Card 2 */}
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 shadow-sm">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="bg-green-600 text-white text-sm px-3 py-1 rounded-full">جديد</span>
+                    <span className="text-green-600 font-semibold">مميز</span>
+                  </div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-2">باقة شحن السيارات الكهربائية</h4>
+                  <p className="text-gray-600 mb-4">تركيب محطة شحن منزلية مع ضمان لمدة سنتين ودعم فني على مدار الساعة</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold text-green-600">٣,٣٧٥ شيكل</span>
+                    <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                      احصل على العرض
+                    </button>
+                  </div>
+                </div>
+
+                {/* Ad Card 3 */}
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 shadow-sm">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="bg-purple-600 text-white text-sm px-3 py-1 rounded-full">فاخر</span>
+                    <span className="text-purple-600 font-semibold">حصري</span>
+                  </div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-2">تأجير سيارات فاخرة</h4>
+                  <p className="text-gray-600 mb-4">تجربة قيادة السيارات الفاخرة لعطلة نهاية الأسبوع مع تغطية تأمينية كاملة وخدمة كونسيرج</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold text-purple-600">١,٨٧٥ شيكل/يوم</span>
+                    <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                      احجز الآن
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.section>
+            {/* Popular Categories Section */}
+            <motion.section 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              className="w-full py-1 mb-3 rounded-2xl overflow-hidden"
+            >
+
+                {/* EV Cars Section - Tesla-inspired */}
+                <div className="mt-4 sm:mt-8 w-full bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 shadow-lg mb-8">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="text-2xl font-bold text-gray-900">{t('electric_vehicles')}</h3>
+                      <p className="text-gray-600 mt-1">Discover the future of mobility</p>
+                    </div>
+                    <div className="hidden sm:block">
+                      <div className="flex gap-2">
+                        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                          View All
+                        </button>
+                        <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                          Compare
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="w-full overflow-x-hidden">
+                    {window.innerWidth <= 768 ? (
+                      <Slider
+                        autoPlay
+                        autoPlayInterval={3000}
+                        responsive={{ 
+                          "0": { items: 1 }, 
+                          "551": { items: 1 }, 
+                          "1051": { items: 2 }, 
+                          "1441": { items: 4 } 
+                        }}
+                        disableDotsControls
+                        activeIndex={sliderState}
+                        onSlideChanged={(e: EventObject) => {
+                          setSliderState(e?.item);
+                        }}
+                        paddingLeft={10}
+                        paddingRight={10}
+                        items={listings.filter(listing => listing.category.includes('featured') && listing.category.includes('electric_vehicles'))
+                          .slice(0, 4).map((car) => (
+                          <div key={car.id} className="px-0.5 w-full">
+                            <CarCard key={car.id} car={car} variant="list" />
+                          </div>
+                        ))}
+                        ref={sliderRef}
+                      />
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {listings.filter(listing => listing.category.includes('featured') && listing.category.includes('electric_vehicles'))
+                          .slice(0, 4).map((car) => (
+                            <div key={car.id} className="transform hover:scale-105 transition-transform duration-300">
+                              <CarCard key={car.id} car={car} variant="grid" />
+                            </div>
+                          ))
+                        }
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Parts Section - Performance-focused */}
+                <div className="mt-4 sm:mt-8 w-full bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 shadow-lg mb-8">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="text-2xl font-bold text-white">{t('parts_and_accessories')}</h3>
+                      <p className="text-gray-300 mt-1">Premium performance parts for your vehicle</p>
+                    </div>
+                    <div className="hidden sm:block">
+                      <div className="flex gap-2">
+                        <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                          Shop Now
+                        </button>
+                        <button className="px-4 py-2 border border-gray-600 text-white rounded-lg hover:bg-gray-800 transition-colors">
+                          Browse Categories
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {transformedParts
+                      .filter(part => part.categories?.some(cat => cat.name.includes('featured')))
                       .slice(0, 4)
                       .map((part) => (
-                        <PartCard 
-                          key={part.id} 
-                          part={{
-                            id: parseInt(part.id),
-                            mainImage: part.mainImage,
-                            title: part.name,
-                            slug: part.slug,
-                            price: part.price.toString(),
-                            description: part.details.description,
-                            features: part.details.features?.map(f => f.value),
-                            category: part.categories?.map(cat => cat.name) || []
-                          }} 
-                        />
-                      ))}
-                    ref={sliderRef}
-                  />
-                ) : (
-                  transformedParts
-                    .filter(part => part.categories?.map(cat => cat.name.includes('featured')))
-                    .slice(0, 4)
-                    .map((part) => (
-                      <PartCard 
-                        key={part.id} 
-                        part={{
-                          id: parseInt(part.id),
-                          mainImage: part.mainImage,
-                          title: part.name,
-                          slug: part.slug,
-                          price: part.price.toString(),
-                          description: part.details.description,
-                          features: part.details.features?.map(f => f.value),
-                          category: part.categories?.map(cat => cat.name) || []
-                        }} 
-                      />
-                    ))
-                )}
-              </div>
-            </div>
+                        <div key={part.id} className="transform hover:scale-105 transition-transform duration-300">
+                          <PartCard 
+                            key={part.id} 
+                            part={{
+                              id: parseInt(part.id),
+                              mainImage: part.mainImage,
+                              title: part.name,
+                              slug: part.slug,
+                              price: part.price.toString(),
+                              description: part.details.description,
+                              features: part.details.features?.map(f => f.value),
+                              category: part.categories?.map(cat => cat.name) || []
+                            }} 
+                          />
+                        </div>
+                      ))
+                    }
+                  </div>
+                </div>
 
-            {/* Services Section */}
-            <div className="mt-8">
-              <h3 className="text-xl font-bold mb-1">{t('automotive_services')}</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                {window.innerWidth <= 768 ? (
-                  <Slider
-                    autoPlay
-                    autoPlayInterval={2000}
-                    responsive={{ 
-                      "0": { items: 1 }, 
-                      "551": { items: 1 }, 
-                      "1051": { items: 2 }, 
-                      "1441": { items: 4 } 
-                    }}
-                    disableDotsControls
-                    activeIndex={sliderState}
-                    onSlideChanged={(e: EventObject) => {
-                      setSliderState(e?.item);
-                    }}
-                    paddingLeft={10}
-                    paddingRight={10}
-                    items={transformedServices
-                      .filter(service => service.categories?.map(cat => cat.name.includes('featured')))
+                {/* Services Section - Professional */}
+                <div className="mt-4 sm:mt-8 w-full bg-gradient-to-br from-blue-50 to-white rounded-2xl p-6 shadow-lg">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="text-2xl font-bold text-gray-900">{t('automotive_services')}</h3>
+                      <p className="text-gray-600 mt-1">Expert care for your vehicle</p>
+                    </div>
+                    <div className="hidden sm:block">
+                      <div className="flex gap-2">
+                        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                          Book Service
+                        </button>
+                        <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                          View Packages
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {transformedServices
+                      .filter(service => service.categories?.some(cat => cat.name.includes('featured')))
                       .slice(0, 4)
                       .map((service) => (
-                        <ServiceCard 
-                          key={service.id} 
-                          service={{
-                            ...service
-                          }}
-                        />
-                    ))}
-                    ref={sliderRef}
-                  />
-                ) : (
-                  transformedServices
-                    .filter(service => service.categories?.map(cat => cat.name.includes('featured')))
-                    .slice(0, 4)
-                    .map((service) => (
-                      <ServiceCard 
-                        key={service.id} 
-                        service={{
-                          ...service
-                        }}
+                        <div key={service.id} className="transform hover:scale-105 transition-transform duration-300">
+                          <ServiceCard 
+                            key={service.id} 
+                            service={{
+                              ...service
+                            }}
+                          />
+                        </div>
+                      ))
+                    }
+                  </div>
+                </div>
+            </motion.section>
+
+            {/* Search Car by Plate Number Section */}
+            <motion.section 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              className="w-full bg-gradient-to-b from-white to-gray-50 py-6 mb-3 rounded-2xl overflow-hidden"
+            >
+              <motion.div 
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ 
+                  duration: 0.8,
+                  ease: [0.6, -0.05, 0.01, 0.99],
+                  delay: 0.4
+                }}
+                className="flex flex-col items-center px-4 text-center"
+              >
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+                  {t('search_by_plate')}
+                </h2>
+                <p className="text-gray-600 mb-6 max-w-2xl">
+                  {t('plate_search_description')}
+                </p>
+                
+                <div className="w-full max-w-xl">
+                  <FindCarByPlate />
+                </div>
+
+                <div className="mt-8 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span>{t('instant_results')}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-5 h-5 text-blue-500" />
+                    <span>{t('secure_search')}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Database className="w-5 h-5 text-purple-500" />
+                    <span>{t('comprehensive_data')}</span>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.section>
+
+            {/* 7. Call to Action Section - Looking for a Car */}
+            <motion.section 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              className="w-full bg-white py-1 mb-3 rounded-2xl"
+            >
+              <div className="px-4">
+                <div className="flex flex-col md:flex-row justify-center gap-4">
+                  {lookingForCarData.map(({ title, text, buttonColor, backgroundColor, icon, buttonTextColor, textColor }, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      transition={{ 
+                        duration: 0.6,
+                        ease: [0.6, -0.05, 0.01, 0.99],
+                        delay: 1.2 + (index * 0.1)
+                      }}
+                      whileHover={{ 
+                        scale: 1.02,
+                        transition: { duration: 0.2 }
+                      }}
+                    >
+                      <LookingForCar
+                        text={text}
+                        title={title}
+                        backgroundColor={backgroundColor}
+                        textColor={textColor}
+                        buttonColor={buttonColor}
+                        buttonTextColor={buttonTextColor}
+                        icon={icon}
+                        variant={index === 0 ? 'buy' : 'sell'}
                       />
-                    ))
-                )}
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </motion.section>
+          </div>
+        </motion.main>
+      </div>
+
+      {/* Right Ads Section - Hide on mobile */}
+      {showcontrols && (
+        <div className="w-[15%] bg-white/10 mt-[5%] backdrop-blur-sm border-l border-gray-200/20 p-4 hidden lg:block">
+          <div className="sticky top-4">
+            <h2 className="text-lg font-semibold text-white mb-4">Featured Ads</h2>
+            <div className="space-y-4">
+              <div className="bg-white/5 rounded-lg overflow-hidden">
+                <div className="aspect-video relative">
+                  <Img
+                    src="/images/ad1.jpg"
+                    alt="Car Insurance Ad"
+                    width={256}
+                    height={144}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <div className="p-3">
+                  <h3 className="text-white font-medium">Get 20% Off Car Insurance</h3>
+                  <p className="text-sm text-white/60 mt-1">Limited time offer for new customers</p>
+                  <button className="mt-2 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                    Learn More
+                  </button>
+                </div>
+              </div>
+
+              <div className="bg-white/5 rounded-lg overflow-hidden">
+                <div className="aspect-video relative">
+                  <Img
+                    src="/images/ad2.jpg"
+                    alt="Car Loan Ad"
+                    width={256}
+                    height={144}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <div className="p-3">
+                  <h3 className="text-white font-medium">Low Interest Car Loans</h3>
+                  <p className="text-sm text-white/60 mt-1">Starting from 2.9% APR</p>
+                  <button className="mt-2 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                    Apply Now
+                  </button>
+                </div>
+              </div>
+
+              <div className="bg-white/5 rounded-lg overflow-hidden">
+                <div className="aspect-video relative">
+                  <Img
+                    src="/images/ad3.jpg"
+                    alt="Car Service Ad"
+                    width={256}
+                    height={144}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <div className="p-3">
+                  <h3 className="text-white font-medium">Premium Car Service</h3>
+                  <p className="text-sm text-white/60 mt-1">Free inspection with every service</p>
+                  <button className="mt-2 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                    Book Now
+                  </button>
+                </div>
               </div>
             </div>
-
-            {/* Bottom Links */}
-            <div className="flex gap-6 mt-6">
-              <Link href="/electric-vehicles" className="text-blue-600 font-semibold hover:underline">
-                {t('see_more_evs')}
-              </Link>
-              <Link href="/cars" className="text-blue-600 font-semibold hover:underline">
-                {t('shop_all_cars')}
-              </Link>
-            </div>
           </div>
-        </motion.section> 
-
-        {/* 5. Sales & Special Offers Section */}
-        <motion.section 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="w-full bg-white py-1 mb-1 rounded-2xl"
-        >
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ 
-              duration: 0.8,
-              ease: [0.6, -0.05, 0.01, 0.99],
-              delay: 0.8
-            }}
-            className="flex items-center mb-4 px-4"
-          >
-            <h2 className="text-xl font-bold text-white bg-[#050B20] p-2 rounded-lg flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8H8v7h8V8z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 4v16" />
-              </svg>
-              {t('special_offers_sales')}
-            </h2>
-          </motion.div>
-          <SalesAndReviewsSection />
-        </motion.section>
-
-        {/* 6. Recently Added Section - New Inventory */}
-        <motion.section 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="w-full bg-gradient-to-b from-gray-50 to-white py-1 mb-1 rounded-2xl"
-        >
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ 
-              duration: 0.8,
-              ease: [0.6, -0.05, 0.01, 0.99],
-              delay: 1.0
-            }}
-            className="flex items-center mb-4 px-4"
-          >
-            <h2 className="text-xl font-bold text-white bg-[#050B20] p-2 rounded-lg flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              {t('new_arrivals')}
-            </h2>
-          </motion.div>
-          <RecentlyAddedSection listings={listings} />
-        </motion.section>
-
-        {/* 7. Call to Action Section - Looking for a Car */}
-        <motion.section 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="w-full bg-white py-1 mb-1 rounded-2xl"
-        >
-          <div className="px-4">
-            <div className="flex flex-col md:flex-row justify-center gap-4">
-              {lookingForCarData.map(({ title, text, buttonColor, backgroundColor, icon, buttonTextColor, textColor }, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ 
-                    duration: 0.6,
-                    ease: [0.6, -0.05, 0.01, 0.99],
-                    delay: 1.2 + (index * 0.1)
-                  }}
-                  whileHover={{ 
-                    scale: 1.02,
-                    transition: { duration: 0.2 }
-                  }}
-                >
-                  <LookingForCar
-                    text={text}
-                    title={title}
-                    backgroundColor={backgroundColor}
-                    textColor={textColor}
-                    buttonColor={buttonColor}
-                    buttonTextColor={buttonTextColor}
-                    icon={icon}
-                    variant={index === 0 ? 'buy' : 'sell'}
-                  />
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </motion.section>
-      </div>
-    </motion.main>
+        </div>
+      )}
+    </div>
   );
 }
+
 
 export default function HomePage() {
   return (

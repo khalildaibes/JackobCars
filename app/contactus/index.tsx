@@ -27,7 +27,7 @@ const contactDetails = [
       </>
     ),
   },
-  { pinImage: "img_mail_1_svg.svg", addressHeading: "Email", addressText: "ali@boxcars.com" },
+  { pinImage: "img_mail_1_svg.svg", addressHeading: "Email", addressText: "ali@Max Speed Limit " },
   { pinImage: "img_phone_1_svg.svg", addressHeading: "Phone", addressText: "+76 956 123 456" },
 ];
 
