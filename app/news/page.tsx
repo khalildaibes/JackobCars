@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Img } from '../../components/Img';
+import AdBanner from '../../components/AdBanner';
 
 interface Article {
   id: number;
@@ -76,7 +77,7 @@ const StoryViewer = ({ articles, currentIndex, onClose, onNext, onPrevious }: St
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-white text-2xl hover:text-gray-300"
+          className="absolute top-4 right-4 text-white text-xl hover:text-gray-300"
         >
           ×
         </button>
@@ -103,14 +104,14 @@ const StoryViewer = ({ articles, currentIndex, onClose, onNext, onPrevious }: St
         <button
           onClick={onPrevious}
           disabled={currentIndex === 0}
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-white text-2xl hover:text-gray-300 disabled:opacity-50"
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-white text-xl hover:text-gray-300 disabled:opacity-50"
         >
           ‹
         </button>
         <button
           onClick={onNext}
           disabled={currentIndex === articles.length - 1}
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-2xl hover:text-gray-300 disabled:opacity-50"
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-xl hover:text-gray-300 disabled:opacity-50"
         >
           ›
         </button>
@@ -306,6 +307,38 @@ async function LinkByUploadAction(prevState: any, formData: FormData) {
   }
 }
 
+// Update mock ads data with proper images and structure
+const mockAds = [
+  {
+    id: 1,
+    imageUrl: 'https://images.unsplash.com/photo-1601584115197-04ecc82c6b87?ixlib=rb-4.0.3',
+    link: 'https://example.com/ad1',
+    alt: 'Advertisement 1',
+    position: 'left'
+  },
+  {
+    id: 2,
+    imageUrl: 'https://images.unsplash.com/photo-1601584115197-04ecc82c6b87?ixlib=rb-4.0.3',
+    link: 'https://example.com/ad2',
+    alt: 'Advertisement 2',
+    position: 'right'
+  },
+  {
+    id: 3,
+    imageUrl: 'https://images.unsplash.com/photo-1601584115197-04ecc82c6b87?ixlib=rb-4.0.3',
+    link: 'https://example.com/ad3',
+    alt: 'Advertisement 3',
+    position: 'left'
+  },
+  {
+    id: 4,
+    imageUrl: 'https://images.unsplash.com/photo-1601584115197-04ecc82c6b87?ixlib=rb-4.0.3',
+    link: 'https://example.com/ad4',
+    alt: 'Advertisement 4',
+    position: 'right'
+  }
+];
+
 export default function NewsPage() {
   const router = useRouter();
   const t = useTranslations('NewsPage');
@@ -409,181 +442,169 @@ export default function NewsPage() {
   }
   const featuredNewsbanner = filteredNews.filter(item => item.categories.some(tag => tag.name === "Featured Banner"))[0]
   return (
-    <div className="min-h-screen bg-[#050B20]  md:mt-[5%] mt-[15%] ">
-      <main className="max-w-7xl mx-auto px-4 md:mt-[5%] mt-[15%] min-h-screen pb-[5%]">
-        {/* Mobile Title and Category - Only visible on mobile */}
-        <div className="md:hidden bg-white rounded-lg p-4 ">
-          <div className="py-6">
-            <h1 className="text-2xl font-bold text-white">{t('title')}</h1>
-            <p className="mt-2 text-gray-600">
-              {t('subtitle')}
-            </p>
-          </div>
-
-          <div className="mb-8  bg-white rounded-lg p-4">
-            <label className="block text-sm font-medium text-white mb-1">{t('news_category')}</label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">{t('choose_category')}</option>
-              <option value="featured">{t('featured')}</option>
-              <option value="latest">{t('latest')}</option>
-              <option value="reviews">{t('reviews')}</option>
-            </select>
+    <div className="min-h-screen bg-[#050B20]">
+      <div className="flex flex-col lg:flex-row relative">
+        {/* Left Ad Section - Desktop */}
+        <div className="hidden lg:block w-[180px] fixed left-0 top-0 h-screen p-4 overflow-x-hidden md:mt-[5%]">
+          <div className="sticky top-4 space-y-6">
+            {mockAds
+              .filter(ad => ad.position === 'left')
+              .map((ad) => (
+                <AdBanner
+                  key={ad.id}
+                  imageUrl={ad.imageUrl}
+                  link={ad.link}
+                  alt={ad.alt}
+                />
+              ))}
           </div>
         </div>
 
-        {/* Featured Banner - Desktop Only */}
-        <div className="hidden md:block mt-[5%]">
-          {filteredNews.length > 0 && (
-            <div className="mb-8">
-              <div className="p-8 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl overflow-hidden relative mt-[5%]">
-                <div className="flex items-center ">
-                  <div className="w-1/2">
-                    <h1 className="text-4xl font-bold text-white mb-4">
-                      {featuredNewsbanner?.title}
-                    </h1>
-                    <p className="text-white/80 mb-4">
-                      {featuredNewsbanner?.description}
-                    </p>
-                    <button 
-                      onClick={() => router.push(`/news/${featuredNewsbanner?.slug}`)}
-                      className="bg-white text-blue-700 px-6 py-2 rounded-full font-semibold hover:bg-blue-50"
-                    >
-                      {t('read_now')}
-                    </button>
-                  </div>
-                  <div className="w-1/2 relative h-96">
-                    {featuredNewsbanner?.cover?.url && (
-                      <Img
-                        src={`http://64.227.112.249${featuredNewsbanner?.cover.url}`}
-                        alt={featuredNewsbanner?.title}
-                        external={true}
-                        width={1290}
-                        height={1290}
-                        className="object-cover w-full h-full rounded-xl"
-                      />
-                    )}
+        {/* Main Content */}
+        <main className="flex-1 w-full max-w-[1400px] mx-auto px-8  min-h-screen pb-[5%] lg:px-[200px]">
+          {/* Mobile Ads - Top */}
+          <div className="lg:hidden grid grid-cols-2 gap-4 mb-8">
+            {mockAds.slice(0, 2).map((ad) => (
+              <AdBanner
+                key={ad.id}
+                imageUrl={ad.imageUrl}
+                link={ad.link}
+                alt={ad.alt}
+              />
+            ))}
+          </div>
+
+          {/* Mobile Title and Category */}
+          <div className="md:hidden bg-white rounded-lg px-4 mb-8">
+            <div className="py-6">
+              <h1 className="text-xl font-bold text-white">{t('title')}</h1>
+              <p className="mt-2 text-gray-600">
+                {t('subtitle')}
+              </p>
+            </div>
+
+            <div className="mb-8  bg-white rounded-lg p-4">
+              <label className="block text-sm font-medium text-white mb-1">{t('news_category')}</label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">{t('choose_category')}</option>
+                <option value="featured">{t('featured')}</option>
+                <option value="latest">{t('latest')}</option>
+                <option value="reviews">{t('reviews')}</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Featured Banner - Desktop Only */}
+          <div className="hidden md:block mt-[5%]">
+            {filteredNews.length > 0 && (
+              <div className="mb-8">
+                <div className="p-8 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl overflow-hidden relative mt-[5%]">
+                  <div className="flex items-center ">
+                    <div className="w-1/2 px-2">
+                      <h1 className="text-4xl font-bold text-white mb-4">
+                        {featuredNewsbanner?.title}
+                      </h1>
+                      <p className="text-white/80 mb-4 text-base">
+                        {featuredNewsbanner?.description}
+                      </p>
+                      <button 
+                        onClick={() => router.push(`/news/${featuredNewsbanner?.slug}`)}
+                        className="bg-white text-blue-700 px-6 py-2 rounded-full font-semibold hover:bg-blue-50"
+                      >
+                        {t('read_now')}
+                      </button>
+                    </div>
+                    <div className="w-1/2 relative h-96">
+                      {featuredNewsbanner?.cover?.url && (
+                        <Img
+                          src={`http://64.227.112.249${featuredNewsbanner?.cover.url}`}
+                          alt={featuredNewsbanner?.title}
+                          external={true}
+                          width={1290}
+                          height={1290}
+                          className="object-cover w-full h-full rounded-xl"
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
 
-        {/* Featured News - Different layouts for mobile and desktop */}
-        <section className="mb-8 px-4">
-          <h2 className="text-2xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('featured_news')}</h2>
-          {featuredNews.length > 0 && (
-            <div className="md:hidden space-y-4 bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              {/* Mobile Layout */}
-              <article 
-                className="relative rounded-lg overflow-hidden cursor-pointer "
-                onClick={() => router.push(`/news/${featuredNews[0].slug}`)}
-              >
-                <div className="aspect-[16/9] relative space-y-4 bg-white  rounded-lg p-4">
-                  {featuredNews[0].cover?.url && (
-                    <Img
-                      src={`http://64.227.112.249${featuredNews[0].cover.url}`}
-                      alt={featuredNews[0].title}
-                      external={true}
-                      width={800}
-                      height={450}
-                      className="object-cover w-full h-full"
-                    />
-                  )}
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
-                  <h3 className="text-xl font-bold text-white mb-2 px-2">{featuredNews[0].title}</h3>
-                  <div className="flex items-center text-sm text-white">
-                    <span>{featuredNews[0].author?.data?.attributes?.name || 'Unknown Author'}</span>
-                    <span className="mx-2 ">|</span>
-                    <span>{formatDate(featuredNews[0].publishedAt)}</span>
-                  </div>
-                </div>
-              </article>
-
-              {featuredNews.slice(1).map((item) => (
-                <article
-                  key={item.id}
-                  onClick={() => router.push(`/news/${item.slug}`)}
-                  className="flex items-center space-x-4 cursor-pointer bg-white rounded-lg p-4"
+          {/* Featured News - Different layouts for mobile and desktop */}
+          <section className="mb-8 px-4 ">
+            <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('featured_news')}</h2>
+            {featuredNews.length > 0 && (
+              <div className="md:hidden space-y-4 bg-white/10 backdrop-blur-sm rounded-lg p-4 ">
+                {/* Mobile Layout */}
+                <article 
+                  className="relative rounded-lg overflow-hidden cursor-pointer "
+                  onClick={() => router.push(`/news/${featuredNews[0].slug}`)}
                 >
-                  <div className="w-24 h-24 relative flex-shrink-0">
-                    {item.cover?.url && (
+                  <div className="aspect-[16/9] relative space-y-4 bg-white  rounded-lg p-4">
+                    {featuredNews[0].cover?.url && (
                       <Img
-                        src={`http://64.227.112.249${item.cover.url}`}
-                        alt={item.title}
+                        src={`http://64.227.112.249${featuredNews[0].cover.url}`}
+                        alt={featuredNews[0].title}
                         external={true}
-                        width={96}
-                        height={96}
-                        className="object-cover w-full h-full rounded-lg"
-                      />
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900">{item.title}</h3>
-                    <p className="text-sm text-black mt-1">{item.author?.data?.attributes?.name || 'Unknown Author'}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
-
-          {/* Desktop Layout */}
-          <div className="hidden md:block">
-            <div className="grid grid-cols-3 gap-6">
-              {featuredNews.slice(0, 3).map((item) => (
-                <article
-                  key={item.id}
-                  className="bg-white rounded-xl shadow-sm overflow-hidden cursor-pointer"
-                  onClick={() => router.push(`/news/${item.slug}`)}
-                >
-                  <div className="relative h-48">
-                    {item.cover?.url && (
-                      <Img
-                        src={`http://64.227.112.249${item.cover.url}`}
-                        alt={item.title}
-                        external={true}
-                        width={512}
-                        height={512}
+                        width={800}
+                        height={450}
                         className="object-cover w-full h-full"
                       />
                     )}
                   </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-4xl mb-2">{item.title}</h3>
-                    <p className="text-gray-600 text-2xl">{item.description}</p>
+                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
+                    <h3 className="text-xl font-bold text-white mb-2 px-2">{featuredNews[0].title}</h3>
+                    <div className="flex items-center text-sm text-white">
+                      <span>{featuredNews[0].author?.data?.attributes?.name || 'Unknown Author'}</span>
+                      <span className="mx-2 ">|</span>
+                      <span>{formatDate(featuredNews[0].publishedAt)}</span>
+                    </div>
                   </div>
                 </article>
-              ))}
-            </div>
-          </div>
-        </section>
 
-        {/* View More Link - Mobile Only */}
-        <div className="text-center mb-8 md:hidden">
-          <a href="#" className="text-white font-semibold hover:underline">
-            {t('view_more')}
-          </a>
-        </div>
+                {featuredNews.slice(1).map((item) => (
+                  <article
+                    key={item.id}
+                    onClick={() => router.push(`/news/${item.slug}`)}
+                    className="flex items-center space-x-4 cursor-pointer bg-white rounded-lg p-4"
+                  >
+                    <div className="w-24 h-24 relative flex-shrink-0">
+                      {item.cover?.url && (
+                        <Img
+                          src={`http://64.227.112.249${item.cover.url}`}
+                          alt={item.title}
+                          external={true}
+                          width={96}
+                          height={96}
+                          className="object-cover w-full h-full rounded-lg"
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 px-2">{item.title}</h3>
+                      <p className="text-sm text-black mt-1 px-2">{item.author?.data?.attributes?.name || 'Unknown Author'}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
 
-        {/* Latest News and Featured Stories - Different layouts for mobile and desktop */}
-        <div className="md:grid md:grid-cols-3 md:gap-8">
-          {/* Latest News */}
-          <div className="md:col-span-2">
-            <h2 className="text-2xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('latest_news')}</h2>
-            <div className="space-y-6">
-              {latestNews.map((item) => (
-                <article
-                  key={item.id}
-                  className="md:bg-white md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer"
-                  onClick={() => router.push(`/news/${item.slug}`)}
-                >
-                  <div className="md:flex">
-                    <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
+            {/* Desktop Layout */}
+            <div className="hidden md:block">
+              <div className="grid grid-cols-3 gap-6 mb-8">
+                {featuredNews.slice(0, 3).map((item) => (
+                  <article
+                    key={item.id}
+                    className="bg-white rounded-xl shadow-sm overflow-hidden cursor-pointer"
+                    onClick={() => router.push(`/news/${item.slug}`)}
+                  >
+                    <div className="relative h-48">
                       {item.cover?.url && (
                         <Img
                           src={`http://64.227.112.249${item.cover.url}`}
@@ -591,63 +612,134 @@ export default function NewsPage() {
                           external={true}
                           width={512}
                           height={512}
-                          className="object-cover w-full h-full md:h-48"
+                          className="object-cover w-full h-full"
                         />
                       )}
                     </div>
-                    <div className="mt-3 md:mt-0 md:w-2/3 md:p-4">
-                      <div className="text-2xl text-gray-600 mb-1">{t('expert_review')}</div>
-                      <h3 className="font-bold text-4xl text-gray-900 mb-2">{item.title}</h3>
-                      <p className="text-gray-600 text-2xl mb-2">{item.description}</p>
-                      <div className="text-2xl text-gray-600">
-                        <span>{t('by')} {item.author?.data?.attributes?.name || 'Unknown Author'}</span>
-                        <span className="mx-2">•</span>
-                        <span>{formatDate(item.publishedAt)}</span>
-                      </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-2xl mb-2 px-2">{item.title}</h3>
+                      <p className="text-gray-600 text-base px-2">{item.description}</p>
                     </div>
-                  </div>
-                </article>
-              ))}
+                  </article>
+                ))}
+              </div>
             </div>
+          </section>
+
+          {/* View More Link - Mobile Only */}
+          <div className="text-center mb-8 md:hidden">
+            <a href="#" className="text-white font-semibold hover:underline">
+              {t('view_more')}
+            </a>
           </div>
 
-          {/* Featured Stories */}
-          <div>
-            <h2 className="text-2xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('featured_stories')}</h2>
-            <div className="space-y-6">
-              {featuredStories.map((item) => (
-                <article
-                  key={item.id}
-                  className="md:bg-white md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer p-4"
-                  onClick={() => router.push(`/news/${item.slug}`)}
-                >
-                  <div className="flex items-start space-x-4 px-4">
-                    <div className="flex-1">
-                      <div className="text-2xl text-gray-600 mb-1">Expert Review</div>
-                      <h3 className="font-bold text-4xl text-gray-900 mb-1">{item.title}</h3>
-                      <div className="text-2xl text-gray-600">
-                        By {item.author?.data?.attributes?.name || 'Unknown Author'}
+          {/* Latest News and Featured Stories - Different layouts for mobile and desktop */}
+          <div className="md:grid md:grid-cols-3 md:gap-8 ">
+            {/* Latest News */}
+            <div className="md:col-span-2">
+              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('latest_news')}</h2>
+              <div className="space-y-6  mb-8">
+                {latestNews.map((item) => (
+                  <article
+                    key={item.id}
+                    className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
+                    onClick={() => router.push(`/news/${item.slug}`)}
+                  >
+                    <div className="md:flex bg-white rounded-xl">
+                      <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
+                        {item.cover?.url && (
+                          <Img
+                            src={`http://64.227.112.249${item.cover.url}`}
+                            alt={item.title}
+                            external={true}
+                            width={512}
+                            height={512}
+                            className="object-cover w-full h-full md:h-48"
+                          />
+                        )}
+                      </div>
+                      <div className="mt-3 md:mt-0 md:w-2/3 md:p-4">
+                        <div className="text-sm text-gray-600 mb-1">{t('expert_review')}</div>
+                        <h3 className="font-bold text-lg text-gray-900 mb-2 px-2">{item.title}</h3>
+                        <p className="text-gray-600 text-sm mb-2 px-2">{item.description}</p>
+                        <div className="text-sm text-gray-600 px-2">
+                          <span>{t('by')} {item.author?.data?.attributes?.name || 'Unknown Author'}</span>
+                          <span className="mx-2">•</span>
+                          <span>{formatDate(item.publishedAt)}</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="w-24 h-24 relative flex-shrink-0">
+                  </article>
+                ))}
+              </div>
+            </div>
+
+            {/* Featured Stories */}
+            <div className="md:min-h-[600px]">
+              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('featured_stories')}</h2>
+              <div className="space-y-6  mb-8">
+                {featuredStories.map((item) => (
+                  <article
+                    key={item.id}
+                    className="md:rounded-xl overflow-hidden cursor-pointer group relative rounded-xl"
+                    onClick={() => router.push(`/news/${item.slug}`)}
+                  >
+                    <div className="relative h-[200px] md:h-[280px] w-full">
                       {item.cover?.url && (
                         <Img
                           src={`http://64.227.112.249${item.cover.url}`}
                           alt={item.title}
                           external={true}
-                          width={500}
-                          height={500}
-                          className="object-cover w-full h-full rounded-lg"
+                          width={1200}
+                          height={1200}
+                          className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
                         />
                       )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                        <div className="absolute bottom-0 left-0 right-0 p-6">
+                          <div className="text-xs text-white mb-1 font-bold uppercase tracking-wider bg-white/5 rounded-full px-2 py-1 inline-block px-2">{t('expert_review')}</div>
+                          <h3 className="font-bold text-lg text-white mb-2 line-clamp-2 px-2">{item.title}</h3>
+                          <div className="text-sm text-gray-300 px-2">
+                            By {item.author?.data?.attributes?.name || 'Unknown Author'}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </article>
-              ))}
+                  </article>
+                ))}
+              </div>
             </div>
           </div>
+
+          {/* Mobile Ads - Bottom */}
+          <div className="lg:hidden grid grid-cols-2 gap-4 mt-8">
+            {mockAds.slice(2).map((ad) => (
+              <AdBanner
+                key={ad.id}
+                imageUrl={ad.imageUrl}
+                link={ad.link}
+                alt={ad.alt}
+              />
+            ))}
+          </div>
+        </main>
+
+        {/* Right Ad Section - Desktop */}
+        <div className="hidden lg:block w-[180px] fixed right-0 top-0 h-screen p-4 overflow-x-hidden mt-[5%]">
+          <div className="sticky top-4 space-y-6">
+            {mockAds
+              .filter(ad => ad.position === 'right')
+              .map((ad) => (
+                <AdBanner
+                  key={ad.id}
+                  imageUrl={ad.imageUrl}
+                  link={ad.link}
+                  alt={ad.alt}
+                />
+              ))}
+          </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
