@@ -5,7 +5,6 @@ import "../app/styles/index.css";
 import "../app/styles/tailwind.css";
 import "../app/styles/font.css";
 import { NextIntlClientProvider } from 'next-intl';
-import { ComparisonProvider } from './context/ComparisonContext';
 import { Toaster } from 'react-hot-toast';
 import { getLocale, getMessages } from 'next-intl/server';
 import TranslateChildren from "../components/TransltedChildren";
@@ -15,6 +14,7 @@ import Providers from "./providers";
 import { useEffect } from 'react';
 import { initializeStoreConfigs } from './utils/storeConfig';
 import ChatPopup from '../components/ChatPopup';
+import { ComparisonProvider } from "../context/ComparisonContext";
 
 // Initialize store configurations
 initializeStoreConfigs().catch(console.error);

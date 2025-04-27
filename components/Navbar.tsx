@@ -8,9 +8,9 @@ import { useRouter } from "next/navigation";
 import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
 import UserMenu from "./UserMenu";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { authService } from "../app/services/authService";
 import { Button } from "./ui/button";
 import AccessibilityControls from "./AccessibilityControls";
+import { authService } from "../services/authService";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
