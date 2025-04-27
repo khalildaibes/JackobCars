@@ -1,5 +1,5 @@
-import { Heading } from "../../components/Heading";
-import SpecialFinancingOffers from "../../components/SpecialFinancingOffers";
+import { Heading } from "../Heading";
+import SpecialFinancingOffers from "../SpecialFinancingOffers";
 import React, { Suspense } from "react";
 
 const financeOffersList = [
