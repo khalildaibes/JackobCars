@@ -14,6 +14,7 @@ import Footer from "../components/Footer";
 import Providers from "./providers";
 import { useEffect } from 'react';
 import { initializeStoreConfigs } from './utils/storeConfig';
+import ChatPopup from '../components/ChatPopup';
 
 // Initialize store configurations
 initializeStoreConfigs().catch(console.error);
@@ -42,6 +43,7 @@ export default async function RootLayout({
               <Analytics />
               <Footer />
               <Toaster />
+              <ChatPopup />
             </ComparisonProvider>
           </NextIntlClientProvider>
         </Providers>

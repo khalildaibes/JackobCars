@@ -15,7 +15,7 @@ import { fetchStrapiData } from '../lib/strapiClient';
 import { Img } from '../../components/Img';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useComparison } from '../context/ComparisonContext';
+import { useComparison } from '../../context/ComparisonContext';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import CarCard from '../../components/CarCard';
