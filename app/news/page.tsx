@@ -494,9 +494,9 @@ export default function NewsPage() {
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 w-full max-w-[1400px] mx-auto px-8  min-h-screen pb-[5%] lg:px-[200px]">
+        <main className="flex-1 w-full max-w-[1400px] mx-auto px-8 mt-[25%] md:mt-[5%]  min-h-screen pb-[5%] lg:px-[200px]">
           {/* Mobile Ads - Top */}
-          <div className="lg:hidden grid grid-cols-2 gap-4 mb-8">
+          <div className="lg:hidden grid grid-cols-2 gap-4 mb-8 ">
             {topMobileAds.map((ad) => (
               <AdBanner
                 key={ad.id}
@@ -721,7 +721,7 @@ export default function NewsPage() {
             </div>
 
             {/* Mobile Ads - Top */}
-            <div className="lg:hidden grid grid-cols-2 gap-4 mb-8">
+            <div className="lg:hidden grid grid-cols-2 gap-4 mb-8 mt-[15%]">
               {topMobileAds.map((ad) => (
                 <AdBanner
                   key={ad.id}
@@ -736,9 +736,11 @@ export default function NewsPage() {
 
             {/* Latest News - takes 2 columns */}
             <div className="flex flex-col md:col-span-2">
-              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('latest_news')}</h2>
+              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">featured news</h2>
               <div className="space-y-6 mb-8">
-                {latestNews.map((item) => (
+                {latestNews
+                .filter(item => item.categories.some(tag => tag.name === "interior"))
+                .map((item) => (
                   <article
                     key={item.id}
                     className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
@@ -826,7 +828,7 @@ export default function NewsPage() {
              
 
             {/* Mobile Ads - Bottom */}
-            <div className="lg:hidden grid grid-cols-2 gap-4 mt-8">
+            <div className="lg:hidden grid grid-cols-2 gap-4 mt-8 mt-[15%]">
               {bottomMobileAds.map((ad) => (
                 <AdBanner
                   key={ad.id}
