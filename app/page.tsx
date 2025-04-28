@@ -352,8 +352,8 @@ function HomeContent() {
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string>('electric');
   const [isAdmin, setIsAdmin] = useState(false);
-  const [showads, setShowads] = useState(true);
-  const [showcontrols, setShowcontrols] = useState(true);
+  const [showads, setShowads] = useState(false);
+  const [showcontrols, setShowcontrols] = useState(false);
 
   // Get search params with memoization
   const { selectedFuel, selectedYear, selectedManufacturer, selectedLimit, selectedModel } = useMemo(() => ({
@@ -635,7 +635,7 @@ function HomeContent() {
           <div className="sticky top-4">
             <h2 className="text-lg font-semibold text-white mb-4">Quick Links</h2>
             <nav className="space-y-2">
-              <Link href="/cars" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
+              <Link href="/car-listings" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
                 <Car className="w-4 h-4" />
                 <span>All Cars</span>
               </Link>
@@ -647,14 +647,14 @@ function HomeContent() {
                 <Wrench className="w-4 h-4" />
                 <span>Parts</span>
               </Link>
-              <Link href="/deals" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
+              <Link href="/car-listings" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
                 <Tag className="w-4 h-4" />
                 <span>Special Deals</span>
               </Link>
             </nav>
 
             <div className="mt-8">
-              <h2 className="text-lg font-semibold text-white mb-4">Recent Searches</h2>
+              <h2 className="text-lg font-semibold text-white mb-4">Recent Watched Cars</h2>
               <div className="space-y-2">
                 <button className="w-full text-left px-3 py-2 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
                   Electric Cars
@@ -1102,7 +1102,7 @@ function HomeContent() {
               </motion.div>
             </motion.section>
 
-            {/* 7. Call to Action Section - Looking for a Car */}
+            {/* 7. Call to Action Section - Looking for a Car
             <motion.section 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -1140,7 +1140,7 @@ function HomeContent() {
                   ))}
                 </div>
               </div>
-            </motion.section>
+            </motion.section> */}
           </div>
         </motion.main>
       </div>

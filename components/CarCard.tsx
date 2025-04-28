@@ -8,10 +8,10 @@ import { Badge } from "./ui/badge";
 import dynamic from 'next/dynamic';
 import { Car, Fuel, Heart, MessageSquare, Scale, Calendar, Gauge, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useComparison } from "../app/context/ComparisonContext";
 import { toast } from "react-hot-toast";
 import { useTranslations, useLocale } from "next-intl";
 import PriceDisplay from "./PriceDisplay";
+import { useComparison } from "../context/ComparisonContext";
 
 // Lazy load the Img component
 const Img = dynamic(() => import("./Img").then(mod => ({ default: mod.Img })), {
@@ -183,7 +183,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
 
   const grslugContent = (
     <Card onClick={handleViewDetails}
-    className={`rounded-t-lg overflow-hidden flex flex-col hover:shadow-lg transition-shadow duration-300 max-w-[280px] ${isRTL ? 'rtl' : 'ltr'} transition-transform duration-300 hover:scale-105 min-h-[180px]`}>
+    className={`rounded-t-lg overflow-hidden flex flex-col hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-shadow duration-300 max-w-[280px] ${isRTL ? 'rtl' : 'ltr'} transition-transform duration-300 hover:scale-105 min-h-[180px] shadow-[0_4px_12px_rgb(0,0,0,0.05)]`}>
       <div className="relative overflow-hidden">
         <Img
           width={1920}
@@ -252,7 +252,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   );
 
   const listContent = (
-    <Card className={`overflow-hidden hover:shadow-lg transition-shadow duration-300 ${isRTL ? 'rtl' : 'ltr'}`}>
+    <Card className={`overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-shadow duration-300 ${isRTL ? 'rtl' : 'ltr'} shadow-[0_4px_12px_rgb(0,0,0,0.05)]`}>
       <div className="flex flex-col md:flex-row">
         <div className="relative w-full md:w-1/3 overflow-hidden">
           <Img
