@@ -9,9 +9,10 @@ import { Button } from "../../components/ui/button";
 import { ChevronDown, ChevronUp, ArrowLeft, Car, Share2, Plus, Minus } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useComparison } from "../context/ComparisonContext";
+
 import { toast } from "react-hot-toast";
-import { allCars } from "../../app/src/data";
+import { allCars } from "../src/data";
+import { useComparison } from "../../context/ComparisonContext";
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },

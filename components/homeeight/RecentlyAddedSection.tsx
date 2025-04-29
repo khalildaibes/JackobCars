@@ -61,7 +61,7 @@ export default function RecentlyAddedSection({
           <div>
             <div className="flex flex-col items-start">
               <div className="container-xs flex flex-col gap-1 lg:px-1 md:px-1 rounded-[8px]">
-                <div className="mx-auto flex w-full gap-[10px] md:mx-0 md:flex-col rounded-[8px]">
+                <div className="mx-auto flex w-full gap-[10px] md:mx-0 md:flex-col rounded-[8px] ">
                   <Slider
                     autoPlay
                     autoPlayInterval={2000}
@@ -79,7 +79,7 @@ export default function RecentlyAddedSection({
                     paddingLeft={10}
                     paddingRight={10}
                     items={listings.map((car) => (
-                      <div key={car.id} className="px-0.5">
+                      <div key={car.id} className="px-2 ">
                       <CarCard key={car.id} car={car} variant={window.innerWidth <= 768 ? "list" : "grid"} />
                   </div>
                     ))}

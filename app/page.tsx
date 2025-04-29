@@ -30,6 +30,7 @@ import AliceCarousel, { EventObject } from "react-alice-carousel";
 import { Slider } from "../components/Slider";
 import CategoryButtons from "../components/CategoryButtons";
 import HeroSection from "../components/HeroSection";
+import StorePromotion from "../components/StorePromotion";
 
 // Types
 interface Deal {
@@ -686,7 +687,7 @@ function HomeContent() {
       )}
 
       {/* Main Content */}
-      <div className="flex-1 w-full">
+      <div className="flex-1 w-full md:mt-[0%] mt-[15%]">
         <motion.main 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -810,7 +811,8 @@ function HomeContent() {
                 )}
               </div>
             </motion.section>
-                
+            {/* add here a section to promo5t one store */}
+            <StorePromotion />
             <CategoryButtons onCategorySelect={handleCategorySelect} />
 
             {/* 3. Most Searched Section - Popular Cars */}
@@ -818,7 +820,7 @@ function HomeContent() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
-              className="w-full bg-white mb-3 rounded-2xl"
+              className="w-full mb-3 rounded-2xl"
             >
               <motion.div 
                 initial={{ opacity: 0, x: -50 }}

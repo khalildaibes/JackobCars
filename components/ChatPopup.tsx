@@ -22,25 +22,24 @@ const ChatPopup = () => {
       setIsLoading(true);
 
       try {
-        const response = await fetch('http://64.227.112.249:5678/webhook/cfdce0db-04e5-4f9a-9d23-df65829955a0', {
+        const response = await fetch('/api/chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            message: userMessage,
+            message: userMessage
           }),
         });
 
         if (!response.ok) {
-            console.log(`Failed to get response from chat service with ${response}`);
           throw new Error('Failed to get response from chat service');
         }
-        console.error('Chat data:', response);
+
         const data = await response.json();
-        console.error('Chat data:', data);
+        if (!data?.message  ) throw new Error("Invalid API response structure");
         setMessages(prev => [...prev, { 
-          text: data.response , 
+          text: data.message || "Sorry, I couldn't process your request", 
           sender: 'bot' 
         }]);
       } catch (error) {

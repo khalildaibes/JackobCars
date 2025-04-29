@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { AdjustmentsHorizontalIcon, XMarkIcon, ArrowsPointingOutIcon, ArrowsPointingInIcon } from '@heroicons/react/24/outline';
+import { BiHandicap } from 'react-icons/bi';
 
 interface AccessibilitySettings {
   fontSize: number;
@@ -54,7 +55,7 @@ const AccessibilityControls: React.FC = () => {
         className="bg-blue-600 text-white p-3 rounded-full shadow-lg hover:scale-110 transition-transform"
         aria-label="Accessibility Controls"
       >
-        <AdjustmentsHorizontalIcon className="h-6 w-6" />
+        <BiHandicap className="h-6 w-6" />
       </button>
 
       {isOpen && (

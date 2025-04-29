@@ -135,14 +135,14 @@ export default function Navbar() {
       { label: t("dropdown.after_market.maintenance_tips"), href: "/after_market?category=maintenance-tips" }
     ],
     compareCars: [
-      { label: t("dropdown.comparison.compare_models"), href: "/comparison?category=models" },
-      { label: t("dropdown.comparison.price_comparison"), href: "/comparison?category=prices" },
-      { label: t("dropdown.comparison.feature_comparison"), href: "/comparison?category=features" }
+      { label: t("dropdown.comparison.compare_models"), href: "/compareCars?category=models" },
+      { label: t("dropdown.comparison.price_comparison"), href: "/compareCars?category=prices" },
+      { label: t("dropdown.comparison.feature_comparison"), href: "/compareCars?category=features" }
     ],
     stores: [
-      { label: t("dropdown.stores.find_dealers"), href: "/dealers" },
-      { label: t("dropdown.stores.service_centers"), href: "/service-centers" },
-      { label: t("dropdown.stores.parts_stores"), href: "/parts-stores" }
+      { label: t("dropdown.stores.find_dealers"), href: "/stores" },
+      { label: t("dropdown.stores.service_centers"), href: "/stores?category=service-centers" },
+      { label: t("dropdown.stores.parts_stores"), href: "/stores?category=parts-stores" }
     ]
   };
 
