@@ -1,91 +1,97 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Img } from "./Img";
 
 interface ServiceCardProps {
-  service: {
-    id: number | string;
-    mainImage: string;
-    title: string;
-    slug: string;
-    price: string;
-    description: string;
-    features?: string[];
-    categories: Array<{ name: string }>;
-  };
+  id: string;
+  title: string;
+  description?: string;
+  price: number;
+  stores: {
+    hostname: string;
+  }[];
+  image: {
+    url: string;
+  }[];
+  slug: string;
+  hostname: string;
+  onClick?: () => void;
 }
 
-const ServiceCard = ({ service }: ServiceCardProps) => {
-  const [isHovered, setIsHovered] = useState(false);
-
+export const ServiceCard = ({
+  id,
+  title,
+  description,
+  price,
+  image,
+  stores,
+  slug,
+  hostname,
+  onClick,
+}: ServiceCardProps) => {
   return (
+    <Link href={`/services/${slug}?store_hostname=${hostname ?? stores[0]?.hostname ?? ""}`}>  
     <div
-      className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      key={id}
+      className="relative rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group"
     >
-
-      <div className="relative w-full aspect-[16/9] overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0">
         <Img
           width={1920}
           height={1080}
           external={true}
-          src={service.mainImage}
-          alt={service.mainImage}
-          className={`w-full h-full object-cover transform transition-transform duration-300 ${
-            isHovered ? "scale-110" : "scale-100"
-          }`}
+          src={`${
+            hostname === "64.227.112.249"
+              ? process.env.NEXT_PUBLIC_STRAPI_URL
+              : `http://${hostname}`
+          }${image?.[0]?.url || '/default-service.png'}`}
+          alt={title}
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
         />
-        {service.categories?.map(cat => cat.name.includes("featured")) && (
-          <div className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded-md text-xs font-medium">
-            Featured
-          </div>
-        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
       </div>
 
-      <div className="p-4">
-        <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-1">
-          {service.title}
-        </h3>
+      {/* Content Overlay */}
+      <div className="relative p-6 h-full min-h-[300px] flex flex-col justify-end">
+        <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 space-y-3">
+          <h3 className="text-xl font-semibold text-white line-clamp-1">
+            {title}
+          </h3>
+          
+          {description && (
+            <p className="text-white/80 text-sm line-clamp-2">{description}</p>
+          )}
 
-        <div className="mb-3">
-          <p className="text-sm text-gray-600 line-clamp-2">{service.description}</p>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div className="text-lg font-bold text-blue-600">{service.price}</div>
-          <Link
-            href={`/services/${service.slug}`}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
-          >
-            View Details
-          </Link>
-        </div>
-
-        {service.features && service.features.length > 0 && (
-          <div className="mt-3 border-t pt-3">
-            <div className="flex flex-wrap gap-2">
-              {service.features.slice(0, 3).map((feature, index) => (
-                <span
-                  key={index}
-                  className="bg-gray-100 text-gray-600 px-2 py-1 rounded-md text-xs"
-                >
-                  {feature}
-                </span>
-              ))}
-              {service.features.length > 3 && (
-                <span className="text-gray-500 text-xs">
-                  +{service.features.length - 3} more
-                </span>
-              )}
-            </div>
+          <div className="flex items-center justify-between pt-2">
+            <span className="text-lg font-bold text-white">
+              ${price.toLocaleString()}
+            </span>
+            <button
+              onClick={onClick}
+              className="bg-white/10 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-white/20 transition-colors flex items-center gap-2 backdrop-blur-sm"
+            >
+              View Details
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
           </div>
-        )}
+        </div>
       </div>
     </div>
+    </Link>
   );
 };
 

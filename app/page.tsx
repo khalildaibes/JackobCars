@@ -111,29 +111,31 @@ interface Part {
   id: string;
   slug: string;
   name: string;
-  images: Array<{ url: string }>;
   details: {
     description: string;
     features: Array<{ value: string }>;
   };
   price: number;
   categories: Array<{ name: string }>;
-  stores: Array<{ id: string; name: string }>;
-  mainImage?: string;
+  stores: Array<{
+    hostname: string; id: string; name: string 
+}>;
+  images: Array<{ url: string }>;
 }
 
 interface Service {
+  description: any;
   id: string;
   slug: string;
   title: string;
-  image: { url: string };
+  image: Array<{ url: string }>;
   details: {
     description: string;
     features: Array<{ value: string }>;
   };
   price: number;
   categories: Array<{ name: string }>;
-  stores: Array<{ id: string; name: string }>;
+  stores: Array<{ id: string; name: string, hostname: string }>;
 }
 
 interface Story {
@@ -194,14 +196,15 @@ const fetchDeals = async (): Promise<Deal[]> => {
 };
 
 const fetchParts = async (): Promise<Part[]> => {
-  const cachedData = getCookie('partsData');
-  if (cachedData) {
-    return cachedData;
-  }
+  // const cachedData = getCookie('partsData');
+  // if (cachedData) {
+  //   return cachedData;
+  // }
 
   const response = await fetch('/api/parts?store_hostname=64.227.112.249');
   if (!response.ok) throw new Error(`Failed to fetch parts: ${response.statusText}`);
   const data = await response.json();
+  console.log("Parts API Response:", data);
   if (!data?.data) throw new Error("Invalid API response structure");
   setCookie('partsData', data.data);
   return data.data;
@@ -553,9 +556,6 @@ function HomeContent() {
     
     return partsData.map((part: Part) => ({
       ...part,
-      mainImage: part.images && part.images.length > 0 
-        ? `http://64.227.112.249${part.images[0].url}` 
-        : "/default-part.png",
     }));
   }, [partsData]);
 
@@ -564,14 +564,19 @@ function HomeContent() {
     
     return servicesData.map((service: Service) => ({
       id: parseInt(service.id),
-      mainImage: service.image ? `http://64.227.112.249${service.image?.url}` : "/default-service.png",
+      mainImage: service.image && service.image.length > 0 
+        ? `http://${service.stores[0].hostname}${service.image[0].url}` 
+        : "/default-service.png",
       alt: service.title || "Service Image",
       title: service.title,
-      slug: service.slug,
-      description: service.details.description,
-      price: `${service.price.toLocaleString()}`,
-      features: service.details.features.map((feature) => feature.value) || [],
-      categories: service.categories  || [],
+      slug: service.slug, 
+      description: service.details?.description || "",
+      price: service.price,
+      features: service.details ? service.details.features.map((feature) => feature.value) || [] : [],
+      categories: service.categories || [],
+      stores: service.stores || [],
+      hostname: service.stores?.[0]?.hostname || "",
+      image: service.image || []
     }));
   }, [servicesData]);
   
@@ -813,35 +818,9 @@ function HomeContent() {
             </motion.section>
             {/* add here a section to promo5t one store */}
             <StorePromotion />
-            <CategoryButtons onCategorySelect={handleCategorySelect} />
+           
 
-            {/* 3. Most Searched Section - Popular Cars */}
-            <motion.section 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
-              className="w-full mb-3 rounded-2xl"
-            >
-              <motion.div 
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ 
-                  duration: 0.8,
-                  ease: [0.6, -0.05, 0.01, 0.99],
-                  delay: 0.6
-                }}
-                className="flex items-center mb-4 px-4"
-              >
-
-              </motion.div>
-              
-              <RecentlyAddedSection 
-                listings={listings.filter((listing) => listing.category.includes(t("most_searched_cars")))} 
-                title={t(selectedCategory)}
-                viewAllLink="/cars"
-              />
-              
-            </motion.section>
+           
             {/* Ads Section */}
             <motion.section
               initial={{ opacity: 0 }}
@@ -914,6 +893,33 @@ function HomeContent() {
               </div>
             </motion.section>
             {/* Popular Categories Section */}
+             {/* 3. Most Searched Section - Popular Cars */}
+             <motion.section 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              className="w-full mb-3 rounded-2xl"
+            >
+              <motion.div 
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ 
+                  duration: 0.8,
+                  ease: [0.6, -0.05, 0.01, 0.99],
+                  delay: 0.6
+                }}
+                className="flex items-center mb-4 px-4"
+              >
+
+              </motion.div>
+              <CategoryButtons onCategorySelect={handleCategorySelect} />
+              <RecentlyAddedSection 
+                listings={listings.filter((listing) => listing.category.includes(t("most_searched_cars")))} 
+                title={t(selectedCategory)}
+                viewAllLink="/cars"
+              />
+              
+            </motion.section>
             <motion.section 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -939,7 +945,7 @@ function HomeContent() {
                       </div>
                     </div>
                   </div>
-                  <div className="w-full overflow-x-hidden">
+                  <div className="w-full overflow-x-hidden h-[400px] items-center justify-center">
                     {window.innerWidth <= 768 ? (
                       <Slider
                         autoPlay
@@ -957,6 +963,7 @@ function HomeContent() {
                         }}
                         paddingLeft={10}
                         paddingRight={10}
+                        className="items-center justify-center"
                         items={listings.filter(listing => listing.category.includes('featured') && listing.category.includes('electric_vehicles'))
                           .slice(0, 4).map((car) => (
                           <div key={car.id} className="px-0.5 w-full">
@@ -1007,13 +1014,14 @@ function HomeContent() {
                             key={part.id} 
                             part={{
                               id: parseInt(part.id),
-                              mainImage: part.mainImage,
+                              images: part.images ? [{ url: part.images[0].url }] : [],
                               title: part.name,
                               slug: part.slug,
                               price: part.price.toString(),
                               description: part.details.description,
                               features: part.details.features?.map(f => f.value),
-                              category: part.categories?.map(cat => cat.name) || []
+                              category: part.categories?.map(cat => cat.name) || [],
+                              store: { hostname: part.stores[0].hostname }
                             }} 
                           />
                         </div>
@@ -1048,9 +1056,14 @@ function HomeContent() {
                         <div key={service.id} className="transform hover:scale-105 transition-transform duration-300">
                           <ServiceCard 
                             key={service.id} 
-                            service={{
-                              ...service
-                            }}
+                            slug={service.slug}
+                            id={service.id.toString()}
+                            title={service.title}
+                            description={service.description}
+                            price={service.price}
+                            image={service.image.map(image => ({ url: image.url }))}
+                            stores={service.stores}
+                            hostname={service.hostname}
                           />
                         </div>
                       ))

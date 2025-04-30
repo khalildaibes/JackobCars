@@ -255,14 +255,14 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   const listContent = (
     <Card className={` bg-white  overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-shadow duration-300 ${isRTL ? 'rtl' : 'ltr'} shadow-[0_4px_12px_rgb(0,0,0,0.05)]`}>
       <div className="flex flex-col md:flex-row">
-        <div className="relative w-full md:w-1/3 overflow-hidden">
+        <div className="relative w-full md:w-1/3 overflow-hidden  h-[250px]">
           <Img
             external={true}
             width={1920}
             height={1080}
             src={car.mainImage}
             alt={car.title}
-            className="w-full h-48 md:h-full object-cover transition-transform duration-300 hover:scale-110"
+            className="w-full  md:h-full object-cover transition-transform duration-300 hover:scale-110"
           />
           <FavoriteButton isFavorite={favorites.includes(car.slug)} onClick={handleFavoriteToggle} />
           {car.isPro && (

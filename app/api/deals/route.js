@@ -12,7 +12,7 @@ export async function GET(req) {
         console.log("Store Hostname:", storeHostname);
 
         // Define allowed filters
-        const allowedFilters = ["category", "min_price", "max_price", "fuel", "body_type", "year", "mileage", "store"];
+        const allowedFilters = ["category", "min_price", "max_price", "fuel", "body_type", "year", "mileage", "store", "slug"];
 
         // Build query parameters dynamically
         const queryParams = new URLSearchParams();
@@ -28,6 +28,7 @@ export async function GET(req) {
                 if (key === "year") queryParams.append("filters[year][$contains]", value);
                 if (key === "mileage") queryParams.append("filters[mileage][$lte]", value);
                 if (key === "store") queryParams.append("filters[store][$contains]", value);
+                if (key === "slug") queryParams.append("filters[slug][$contains]", value);
             }
         });
 
@@ -58,7 +59,7 @@ export async function GET(req) {
         }
         
         // Construct the final API URL with filters
-        let apiUrl = storeHostname.includes('64.227.112.249') ? `http://${baseUrl}/api/products?populate=*` : `http://${baseUrl}/api/products?populate=*`;
+        let apiUrl = storeHostname.includes('64.227.112.249') ? `http://${baseUrl}/api/partss?populate=*` : `http://${baseUrl}/api/partss?populate=*`;
         if (queryParams.toString()) {
             apiUrl += `&${queryParams.toString()}`;
         }

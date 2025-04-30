@@ -28,6 +28,7 @@ export async function GET(req) {
                 if (key === "body_type") queryParams.append("filters[body_type][$contains]", value);
                 if (key === "year") queryParams.append("filters[year][$contains]", value);
                 if (key === "mileage") queryParams.append("filters[mileage][$lte]", value);
+                if (key === "slug") queryParams.append("filters[slug][$contains]", value);
             }
         });
 

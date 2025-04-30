@@ -9,7 +9,6 @@ import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
 import UserMenu from "./UserMenu";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "./ui/button";
-import AccessibilityControls from "./AccessibilityControls";
 import { authService } from "../services/authService";
 
 export default function Navbar() {
@@ -266,22 +265,26 @@ export default function Navbar() {
 
   return (
     <nav className={navbarClass}>
-      <AccessibilityControls />
       <div className="container mx-auto max-w-screen-xl px-4 py-3 flex items-center justify-between gap-6">
         {/* Logo */}
+        
         <Link href="/" className="flex items-center gap-2">
           <div className="min-w-[80px] h-16 flex items-center justify-center rounded-2xl p-2 transition-all hover:scale-105 bg-white">
             <Image src="/logo-transparent-1.png" alt={t("logo_alt")} width={80} height={200} className="object-fill w-[60px] md:w-[80px] p-[2px]" />
           </div>
         </Link>
 
-        {/* Mobile Menu Button */}
-        <button 
-          className="md:hidden text-white/80 hover:text-white hover:bg-white/5/10 p-2 rounded-full transition-all duration-500 ease-in-out"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+       
+        {/* Mobile Menu & Accessibility Controls */}
+        <div className="flex items-center gap-2 md:hidden">
+          
+          <button 
+            className="text-white/80 hover:text-white hover:bg-white/5/10 p-2 rounded-full transition-all duration-500 ease-in-out"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
 
         {/* Nav Links (Responsive) */}
         <div
@@ -335,6 +338,7 @@ export default function Navbar() {
             </Button>
           )}
           <LanguageSwitcher />
+         
         </div>
       </div>
     </nav>

@@ -8,13 +8,16 @@ import { Img } from "./Img";
 interface PartCardProps {
   part: {
     id: number | string;
-    mainImage: string;
+    images?: Array<{ url: string }>;
     title: string;
     slug: string;
     price: string;
     description: string;
     features?: string[];
     category: string[];
+    store?: {
+      hostname: string;
+    };
   };
 }
 
@@ -32,7 +35,7 @@ const PartCard = ({ part }: PartCardProps) => {
           width={1920}
           height={1080}
           external={true}
-          src={part.mainImage}
+          src={part.images && part.images.length > 0 ? `http://${part.store?.hostname}${part.images[0].url}` : "/default-part.png"}
           alt={part.title}
           className={`w-full h-full object-cover transform transition-transform duration-300 ${
             isHovered ? "scale-110" : "scale-100"
@@ -57,7 +60,7 @@ const PartCard = ({ part }: PartCardProps) => {
         <div className="flex items-center justify-between">
           <div className="text-lg font-bold text-blue-600">{part.price}</div>
           <Link
-            href={`/parts/${part.slug}`}
+            href={`/parts/${part.slug}?storehostname=${part.store?.hostname || '64.227.112.249'}`}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
           >
             View Details

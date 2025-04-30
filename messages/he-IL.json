@@ -147,8 +147,26 @@
     "invite_a_friend": "הזמן חבר",
     "car_alt_1": "רכב T-Cross",
     "car_alt_2": "רכב טויוטה קאמרי",
-    "car_alt_3": "רכב הונדה אקורד"
-  
+    "car_alt_3": "רכב הונדה אקורד",
+    "detailing_kits": "ערכות דיטיילינג",
+    "detailing_kits_desc": "ערכות דיטיילינג מקצועיות לטיפול מקיף ברכב",
+    "wrap_and_ppf": "עיטוף וסרט הגנה",
+    "wrap_and_ppf_desc": "שירותי סרט הגנה ועטיפת ויניל",
+    "nano_ceramic": "ציפוי ננו קרמי",
+    "nano_ceramic_desc": "ציפוי קרמי מתקדם להגנה ארוכת טווח",
+    "clippers_paint": "צביעת מכסחות",
+    "clippers_paint_desc": "שירותי צביעה מקצועיים למכסחות ומגלחים",
+    "wheels_paint": "צביעת גלגלים",
+    "wheels_paint_desc": "צביעה והשחזת גלגלים מותאמת אישית",
+    "polish_wax": "פוליש ושעווה",
+    "polish_wax_desc": "שירותי פוליש ושעווה מקצועיים",
+    "nano_protection": "הגנת ננו",
+    "nano_protection_desc": "הגנת ננו מתקדמת לרכב שלך",
+    "our_services": "השירותים שלנו",
+    "learn_more": "למידע נוסף",
+    "book_now": "הזמן עכשיו",
+    "open_7_days": "פתוח 7 ימים בשבוע",
+    "special_offer": "הצעה מיוחדת"
   },
   "Categories": {
     "air_intake_systems": "מערכות יניקת אוויר",

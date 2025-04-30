@@ -21,12 +21,12 @@ export default function ProductCard({ product, onDelete, onUpdate }: ProductCard
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
       <div className="relative h-48">
-        {/* <Image
-          src={product.cover.data[0]?.url || "/placeholder.png"}
+        <Image
+          src={product?.images[0]?.url || "/placeholder.png"}
           alt={product.name}
           fill
           className="object-cover"
-        /> */}
+        />
       </div>
       
       <div className="p-4">

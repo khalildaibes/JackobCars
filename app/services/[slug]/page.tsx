@@ -31,20 +31,19 @@ import { Textarea } from "../../../components/ui/textarea";
 import { Toaster } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 
-interface Part {
+interface Service {
   id: string;
   slug: string;
   name: string;
-  title?: string;
   images?: Array<{ url: string }>;
   details: {
     description: string;
-    features: Array<{ value: string }>;
-    specifications: Array<{ key: string; value: string }>;
+    duration: string;
+    price: number;
     warranty: string;
-    compatibility: Array<{ make: string; model: string; year: string }>;
+    features: Array<{ value: string }>;
+    requirements: Array<{ value: string }>;
   };
-  price: number;
   categories: string;
   stores: Array<{ 
     id: string; 
@@ -53,7 +52,7 @@ interface Part {
     rating: number;
     reviews: number;
   }>;
-  similarParts: Array<{
+  similarServices: Array<{
     id: string;
     name: string;
     images: Array<{ url: string }>;
@@ -61,7 +60,7 @@ interface Part {
   }>;
 }
 
-const PartDetails = () => {
+const ServiceDetails = () => {
   const { slug } = useParams();
   const searchParams = useSearchParams();
   const storehostname = searchParams.get('storehostname');
@@ -73,13 +72,13 @@ const PartDetails = () => {
     phone: '',
     message: ''
   });
-  const t = useTranslations("PartDetails");
+  const t = useTranslations("ServiceDetails");
 
-  const { data: partData, isLoading } = useQuery({
-    queryKey: ["part", slug, storehostname],
+  const { data: serviceData, isLoading } = useQuery({
+    queryKey: ["service", slug, storehostname],
     queryFn: async () => {
-      const response = await fetch(`/api/parts?slug=${slug}&storehostname=${storehostname}`);
-      if (!response.ok) throw new Error('Part not found');
+      const response = await fetch(`/api/services?slug=${slug}&storehostname=${storehostname}`);
+      if (!response.ok) throw new Error('Service not found');
       const data = await response.json();
       console.log('Response:', data);
       return data;
@@ -109,18 +108,18 @@ const PartDetails = () => {
     );
   }
 
-  if (!partData?.data?.[0]) {
+  if (!serviceData?.data?.[0]) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Part not found</h1>
-          <p className="text-gray-600 mt-2">The part you're looking for doesn't exist.</p>
+          <h1 className="text-2xl font-bold text-gray-900">Service not found</h1>
+          <p className="text-gray-600 mt-2">The service you're looking for doesn't exist.</p>
         </div>
       </div>
     );
   }
 
-  const currentPart = partData.data[0];
+  const currentService = serviceData.data[0];
 
   return (
     <motion.div
@@ -131,14 +130,14 @@ const PartDetails = () => {
     >
       {/* Back Button */}
       <Link
-        href="/parts"
+        href="/services"
         className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6"
       >
         <ChevronLeft className="w-5 h-5 mr-1" />
-        Back to Parts
+        Back to Services
       </Link>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg mt-[5%] md:mt-[15%]">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Image Gallery */}
         <div className="space-y-4">
           <div 
@@ -147,8 +146,8 @@ const PartDetails = () => {
           >
             <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
               <Img
-                src={`http://${storehostname}${currentPart.images?.[activeImage]?.url || '/default-part.png'}`}
-                alt={currentPart.name}
+                src={`http://${storehostname}${currentService.images?.[activeImage]?.url || '/default-service.png'}`}
+                alt={currentService.name}
                 width={800}
                 height={800}
                 external={true}
@@ -156,9 +155,9 @@ const PartDetails = () => {
               />
             </div>
           </div>
-          {currentPart.images && currentPart.images.length > 1 && (
+          {currentService.images && currentService.images.length > 1 && (
             <div className="grid grid-cols-4 gap-2">
-              {currentPart.images.map((img, index) => (
+              {currentService.images.map((img, index) => (
                 <button
                   key={index}
                   onClick={() => setActiveImage(index)}
@@ -169,7 +168,7 @@ const PartDetails = () => {
                   <div className="relative w-full h-full">
                     <Img
                       src={`http://${storehostname}${img.url}`}
-                      alt={`${currentPart.name} view ${index + 1}`}
+                      alt={`${currentService.name} view ${index + 1}`}
                       width={200}
                       height={200}
                       external={true}
@@ -182,27 +181,27 @@ const PartDetails = () => {
           )}
         </div>
 
-        {/* Part Details */}
-        <div className="space-y-6 ">
+        {/* Service Details */}
+        <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">{currentPart.name}</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{currentService.name}</h1>
             <div className="flex items-center gap-2">
-              {currentPart.categories.map((category, index) => (
+              {currentService.categories.split(',').map((category, index) => (
                 <Badge key={index} variant="secondary">
-                  {category.name.trim()}
+                  {category.trim()}
                 </Badge>
               ))}
             </div>
           </div>
 
           <div className="text-3xl font-bold text-blue-600">
-            ${currentPart.price.toLocaleString()}
+            ${currentService.details.price.toLocaleString()}
           </div>
 
-          <div className="flex gap-4 ">
+          <div className="flex gap-4">
             <Button className="flex-1" size="lg">
               <ShoppingCart className="w-5 h-5 mr-2" />
-              Add to Cart
+              Book Now
             </Button>
             <Button variant="outline" className="flex-1" size="lg" onClick={() => setIsEmailDialogOpen(true)}>
               <MessageSquare className="w-5 h-5 mr-2" />
@@ -213,46 +212,43 @@ const PartDetails = () => {
           <Tabs defaultValue="description" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="description">Description</TabsTrigger>
-              <TabsTrigger value="specifications">Specifications</TabsTrigger>
-              <TabsTrigger value="compatibility">Compatibility</TabsTrigger>
+              <TabsTrigger value="features">Features</TabsTrigger>
+              <TabsTrigger value="requirements">Requirements</TabsTrigger>
             </TabsList>
 
             <TabsContent value="description" className="mt-4">
               <div className="space-y-4">
-                <p className="text-gray-600 whitespace-pre-line">{currentPart.details.description}</p>
-                {currentPart.details.features && currentPart.details.features.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Features</h3>
-                    <ul className="space-y-2">
-                      {currentPart.details.features.map((feature, index) => (
-                        <li key={index} className="flex items-center gap-2">
-                          <Check className="w-5 h-5 text-green-500" />
-                          <span>{feature.value}</span>
-                        </li>
-                      ))}
-                    </ul>
+                <p className="text-gray-600 whitespace-pre-line">{currentService.details.description}</p>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-5 h-5 text-gray-500" />
+                    <span>{currentService.details.duration}</span>
                   </div>
-                )}
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-5 h-5 text-gray-500" />
+                    <span>{currentService.details.warranty}</span>
+                  </div>
+                </div>
               </div>
             </TabsContent>
 
-            <TabsContent value="specifications" className="mt-4">
+            <TabsContent value="features" className="mt-4">
               <div className="space-y-4">
-                {currentPart.details && currentPart.details.specifications && currentPart.details.specifications.map((spec, index) => (
-                  <div key={index} className="flex justify-between py-2 border-b">
-                    <span className="text-gray-600">{spec.key}</span>
-                    <span className="font-medium">{spec.value}</span>
+                {currentService.details.features.map((feature, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <Check className="w-5 h-5 text-green-500" />
+                    <span>{feature.value}</span>
                   </div>
                 ))}
               </div>
             </TabsContent>
 
-            <TabsContent value="compatibility" className="mt-4">
+            <TabsContent value="requirements" className="mt-4">
               <div className="space-y-4">
-                {currentPart.details && currentPart.details.compatibility && currentPart.details.compatibility.map((comp, index) => (
-                  <div key={index} className="flex justify-between py-2 border-b">
-                    <span className="text-gray-600">{comp.make} {comp.model}</span>
-                    <span className="font-medium">{comp.year}</span>
+                {currentService.details.requirements.map((requirement, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <Check className="w-5 h-5 text-green-500" />
+                    <span>{requirement.value}</span>
                   </div>
                 ))}
               </div>
@@ -263,7 +259,7 @@ const PartDetails = () => {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Available at</h3>
             <div className="space-y-4">
-              {currentPart.stores.map((store) => (
+              {currentService.stores.map((store) => (
                 <Card key={store.id}>
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
@@ -289,23 +285,23 @@ const PartDetails = () => {
         </div>
       </div>
 
-      {/* Similar Parts Section */}
+      {/* Similar Services Section */}
       <div className="mt-12">
-        <h2 className="text-2xl font-bold mb-6">Similar Parts</h2>
+        <h2 className="text-2xl font-bold mb-6">Similar Services</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {currentPart.similarParts && currentPart.similarParts.map((similarPart) => (
-            <Card key={similarPart.id} className="overflow-hidden">
+          {currentService.similarServices.map((similarService) => (
+            <Card key={similarService.id} className="overflow-hidden">
               <div className="relative aspect-video">
                 <Img
-                  src={`http://${storehostname}${similarPart.images[0]?.url || '/default-part.png'}`}
-                  alt={similarPart.name}
+                  src={`http://${storehostname}${similarService.images[0]?.url || '/default-service.png'}`}
+                  alt={similarService.name}
                   className="w-full h-full object-cover"
                 />
               </div>
               <CardContent className="p-4">
-                <h3 className="font-semibold">{similarPart.name}</h3>
+                <h3 className="font-semibold">{similarService.name}</h3>
                 <p className="text-lg font-bold text-blue-600 mt-2">
-                  ${similarPart.price.toLocaleString()}
+                  ${similarService.price.toLocaleString()}
                 </p>
               </CardContent>
             </Card>
@@ -320,8 +316,8 @@ const PartDetails = () => {
             <div className="relative w-full h-full flex items-center justify-center">
               <div className="max-w-full max-h-full p-4">
                 <Img
-                  src={`http://${storehostname}${currentPart.images?.[activeImage]?.url || '/default-part.png'}`}
-                  alt={currentPart.name}
+                  src={`http://${storehostname}${currentService.images?.[activeImage]?.url || '/default-service.png'}`}
+                  alt={currentService.name}
                   width={1920}
                   height={1080}
                   external={true}
@@ -330,7 +326,7 @@ const PartDetails = () => {
               </div>
             </div>
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-              {currentPart.images && currentPart.images.map((_, index) => (
+              {currentService.images && currentService.images.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setActiveImage(index)}
@@ -346,7 +342,7 @@ const PartDetails = () => {
 
       {/* Email Dialog */}
       <Dialog open={isEmailDialogOpen} onOpenChange={setIsEmailDialogOpen}>
-        <DialogContent className="bg-white p-4 rounded-lg">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Contact Store</DialogTitle>
           </DialogHeader>
@@ -390,4 +386,4 @@ const PartDetails = () => {
   );
 };
 
-export default PartDetails; 
+export default ServiceDetails; 

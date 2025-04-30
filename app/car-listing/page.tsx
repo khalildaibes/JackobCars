@@ -79,7 +79,7 @@ const CarListings: React.FC = () => {
   const [bodyTypeFilter, setBodyTypeFilter] = useState<string>("Any");
   const [fuelTypeFilter, setFuelTypeFilter] = useState<string>("Any");
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [viewType, setViewType] = useState<string>("grid");
+  const [viewType, setViewType] = useState<string>("list");
     const [listings, setListings] = useState([]);
   const [favorites, setFavorites] = useState<number[]>([]);
   
@@ -304,7 +304,7 @@ const CarListings: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl mt-[5%] bg-white rounded-lg">
+    <div className="container mx-auto px-4 py-8 max-w-7xl mt-[15%] md:mt-[5%] bg-white rounded-lg">
       <div className="space-y-6">
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
@@ -477,7 +477,7 @@ const CarListings: React.FC = () => {
           className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50"
         >
           <Card className="bg-white shadow-lg border-0">
-            <CardContent className="p-4 flex items-center gap-4">
+            <CardContent className="p-4 flex items-center gap-4 ">
               <div className="text-sm text-gray-600">
                 {selectedCars.length} {t('cars_selected')}
               </div>

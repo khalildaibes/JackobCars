@@ -15,6 +15,7 @@ import { useEffect } from 'react';
 import { initializeStoreConfigs } from './utils/storeConfig';
 import ChatPopup from '../components/ChatPopup';
 import { ComparisonProvider } from "../context/ComparisonContext";
+import AccessibilityControls from "../components/AccessibilityControls";
 
 // Initialize store configurations
 initializeStoreConfigs().catch(console.error);
@@ -44,6 +45,17 @@ export default async function RootLayout({
               <Footer />
               <Toaster />
               <ChatPopup />
+              <div
+                className="
+                  fixed z-50
+                  left-4
+                  bottom-24
+                  sm:bottom-6
+                  flex flex-col items-start
+                "
+              >
+                <AccessibilityControls />
+              </div>
             </ComparisonProvider>
           </NextIntlClientProvider>
         </Providers>

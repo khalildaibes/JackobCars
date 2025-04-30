@@ -13,6 +13,7 @@ import Image from "next/image";
 import { Img} from "../../../components/Img";
 import  CarCard  from "../../../components/CarCard";
 import axios from 'axios';
+import { ServiceCard } from "../../../components/ServiceCard";
 
 interface Store {
   id: number;
@@ -497,7 +498,7 @@ export default function StorePage() {
           {/* Services Section */}
           {filteredServices.length !== 0 && (
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex justify-between items-center mb-6 overflow-hidden">
                 <h2 className="text-2xl font-bold text-gray-800">Services</h2>
                 <div className="flex gap-3">
                   <button 
@@ -536,29 +537,19 @@ export default function StorePage() {
                     service.categories?.map(cat => cat.name.trim()).includes(selectedCategory)
                   )
                   .map((service) => (
-                    <div
+                    <ServiceCard
                       key={service.id}
-                      className="p-6 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 hover:shadow-md transition-all"
-                    >
-                       <Img
-                          width={1920}
-                          height={1080}
-                          external={true}
-                          src={`${store.hostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${store.hostname}`}${service.image.url}`}
-                          alt={service.title}
-                          className="w-full h-48 object-cover rounded-t-lg"
-                        />
-                      <h3 className="text-xl font-semibold text-gray-800 mb-3">{service.title}</h3>
-                      <p className="text-gray-600 mb-4 line-clamp-3">{service.details?.description}</p>
-                      <div className="flex justify-between items-center">
-                        <span className="text-blue-600 font-semibold">
-                          ${service.price.toLocaleString()}
-                        </span>
-                        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                          Learn More
-                        </button>
-                      </div>
-                    </div>
+                      id={service.id}
+                      title={service.title}
+                      description={service.description}
+                      price={service.price ? service.price : 0}
+                      image={service.image ? service.image : ''}
+                      hostname={store.hostname}
+                      onClick={() => {
+                        // Add your navigation logic here
+                        console.log('Service clicked:', service.id);
+                      }}
+                    />
                   ))}
               </div>
             </div>
@@ -567,7 +558,7 @@ export default function StorePage() {
           {/* Products Section */}
           {filteredProducts.length !== 0 && (
               <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-6 overflow-x-auto">
               <h2 className="text-2xl font-bold text-gray-800">Cars</h2>
               <div className="flex gap-3">
                 <button 
@@ -597,7 +588,7 @@ export default function StorePage() {
                   ))}
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 overflow-hidden">
               {filteredProducts
                 .filter(product => !product.categories.toString().includes('services-product'))
                 .map((product) => (
@@ -632,7 +623,7 @@ export default function StorePage() {
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Parts</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredParts.map((part) => (
-              <Link href={`/parts/${part.slug}`}>
+              <Link href={`/parts/${part.slug}?storehostname=${store.hostname}`}>
                 
                 <div
                   key={part.id}

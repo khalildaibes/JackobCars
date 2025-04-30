@@ -9,12 +9,16 @@ import { Img } from "../../../components/Img";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Filter, ChevronDown, Star, Tag, Clock, Grid, List, X, MapPin } from "lucide-react";
+import ProductCard from "../../../components/ProductCard";
+import ServiceCard from "../../../components/ServiceCard";
+import PartCard from "../../../components/PartCard";
+import CarCard from "../../../components/CarCard";
 
 interface Product {
-  store: any;
   id: string;
   name: string;
   slug: string;
+  store: any;
   quantity: number;
   price: number;
   images: { url: string }[];
@@ -33,8 +37,6 @@ interface Product {
         rating: number;
         location: string;
       } | null;
-      make: string;
-      body_type: string;
       badges: { color: string; label: string; textColor: string }[];
       images: {
         main: string;
@@ -50,15 +52,59 @@ interface Product {
       transmission: string;
       dimensions_capacity: { label: string; value: string }[];
       engine_transmission_details: { label: string; value: string }[];
+      make: string;
+      body_type: string;
     };
   };
   video?: { url: string }[];
   colors?: { name: string; quantity: number }[];
   categories: string | string[];
+  type: 'product';
 }
 
+interface Service {
+  id: string;
+  name: string;
+  slug: string;
+  store: any;
+  price: number;
+  images: { url: string }[];
+  description: string;
+  duration: string;
+  categories: string | string[];
+  type: 'service';
+}
+
+interface Part {
+  id: string;
+  name: string;
+  slug: string;
+  store: any;
+  quantity: number;
+  price: number;
+  images: { url: string }[];
+  description: string;
+  compatibility: string[];
+  categories: string | string[];
+  type: 'part';
+}
+
+type Item = Product | Service | Part;
+
 interface ProductsClientProps {
-  products: Product[];
+  products: Item[];
+}
+
+function isProduct(item: Item): item is Product {
+  return item.type === 'product';
+}
+
+function isService(item: Item): item is Service {
+  return item.type === 'service';
+}
+
+function isPart(item: Item): item is Part {
+  return item.type === 'part';
 }
 
 export default function ProductsClient({ products }: ProductsClientProps) {
@@ -84,49 +130,44 @@ export default function ProductsClient({ products }: ProductsClientProps) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Get unique categories
-  const categories = React.useMemo(() => {
-    const categorySet = new Set<string>();
-    products.forEach(product => {
-      const cats = product.categories;
-      if (typeof cats === 'string') {
-        cats.split(',').forEach(cat => {
-          const trimmedCat = cat.trim();
-          if (trimmedCat) categorySet.add(trimmedCat);
-        });
-      } else if (Array.isArray(cats)) {
-        cats.forEach(cat => {
-          if (cat) categorySet.add(cat.trim());
-        });
-      }
-    });
-    return Array.from(categorySet).sort();
-  }, [products]);
-
   // Filter and sort products
   const filteredProducts = React.useMemo(() => {
     let filtered = [...products];
-
+    
     // Apply search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(product => {
-        const cats = product.categories;
-        return (
-          product.name.toLowerCase().includes(query) ||
-          product.details.car.fuel.toLowerCase().includes(query) ||
-          product.details.car.transmission.toLowerCase().includes(query) ||
-          (typeof cats === 'string' 
-            ? cats.toLowerCase().includes(query)
-            : Array.isArray(cats) && cats.some(cat => cat.toLowerCase().includes(query)))
-        );
+      filtered = filtered.filter(item => {
+        const cats = item.categories;
+        const nameMatch = item.name.toLowerCase().includes(query);
+        const categoryMatch = typeof cats === 'string' 
+          ? cats.toLowerCase().includes(query)
+          : Array.isArray(cats) && cats.some(cat => cat.toLowerCase().includes(query));
+
+        if (isProduct(item)) {
+          return nameMatch || 
+                 categoryMatch ||
+                 item.details.car.fuel.toLowerCase().includes(query) ||
+                 item.details.car.transmission.toLowerCase().includes(query);
+        } else if (isService(item)) {
+          return nameMatch || 
+                 categoryMatch ||
+                 item.duration.toLowerCase().includes(query) ||
+                 item.description.toLowerCase().includes(query);
+        } else if (isPart(item)) {
+          return nameMatch || 
+                 categoryMatch ||
+                 item.description.toLowerCase().includes(query) ||
+                 item.compatibility.some(comp => comp.toLowerCase().includes(query));
+        }
+        return nameMatch || categoryMatch;
       });
     }
 
     // Apply category filter
     if (selectedCategory !== "All") {
-      filtered = filtered.filter(product => {
-        const cats = product.categories;
+      filtered = filtered.filter(item => {
+        const cats = item.categories;
         if (typeof cats === 'string') {
           return cats
             .split(',')
@@ -151,6 +192,32 @@ export default function ProductsClient({ products }: ProductsClientProps) {
     return filtered;
   }, [products, selectedCategory, selectedSort, searchQuery]);
 
+  // Get unique categories
+  const categories = React.useMemo(() => {
+    const categorySet = new Set<string>();
+    products.forEach(product => {
+      const cats = product.categories;
+      if (typeof cats === 'string') {
+        cats.split(',').forEach(cat => {
+          const trimmedCat = cat?.toString().trim();
+          if (trimmedCat) categorySet.add(trimmedCat);
+        });
+      } else if (Array.isArray(cats)) {
+        cats.forEach(cat => {
+          const trimmedCat = cat?.toString().trim();
+          if (trimmedCat) categorySet.add(trimmedCat);
+        });
+      }
+    });
+    return Array.from(categorySet).sort();
+  }, [products]);
+
+  // Debug logging
+  React.useEffect(() => {
+    console.log('Products:', products);
+    console.log('Filtered Products:', filteredProducts);
+  }, [products, filteredProducts]);
+
   const clearFilters = () => {
     setSelectedCategory("All");
     setSelectedSort("latest");
@@ -173,7 +240,100 @@ export default function ProductsClient({ products }: ProductsClientProps) {
       transition: { duration: 0.3 }
     }
   };
-  console.log(products);
+
+  const renderProductDetails = (item: Product) => (
+    <>
+      <div className="mt-2 flex items-center gap-2 text-gray-600">
+        <Clock size={16} />
+        <span>{item.details.car.miles}</span>
+        <span className="mx-2">•</span>
+        <span>{item.details.car.fuel}</span>
+        <span className="mx-2">•</span>
+        <div className="flex items-center gap-1">
+          {item.store && (
+            <div className="flex items-center gap-2">
+              {item.details.car.store.logo && (
+                <img 
+                  src={`http://64.227.112.249${item.details.car.store.logo}`}
+                  alt={item.details.car.store.name}
+                  className="w-4 h-4 object-contain"
+                />
+              )}
+              <div className="flex flex-col">
+                <span className="font-medium text-sm">
+                  {item.details.car.store.name}
+                </span>
+                <div className="flex items-center gap-1 text-xs text-gray-500">
+                  <Star size={12} className="text-yellow-400 fill-yellow-400" />
+                  <span>{item.details.car.store.rating}</span>
+                  <span className="mx-1">•</span>
+                  <MapPin size={12} />
+                  <span>{item.details.car.store.location}</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="mt-4 flex items-center justify-between">
+        <span className="text-2xl font-bold text-blue-600">
+          ${item.price.toLocaleString()}
+        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-600">
+            {item.details.car.transmission}
+          </span>
+        </div>
+      </div>
+    </>
+  );
+
+  const renderServiceDetails = (item: Service) => (
+    <div className="mt-2 text-gray-600">
+      <p>{item.duration}</p>
+      <p className="line-clamp-2">{item.description}</p>
+      <div className="mt-4">
+        <span className="text-2xl font-bold text-blue-600">
+          ${item.price.toLocaleString()}
+        </span>
+      </div>
+    </div>
+  );
+
+  const renderPartDetails = (item: Part) => (
+    <div className="mt-2 text-gray-600">
+      <p>Compatibility: {item.compatibility?.join(', ')}</p>
+      <p className="line-clamp-2">{item.description}</p>
+      <div className="mt-4 flex items-center justify-between">
+        <span className="text-2xl font-bold text-blue-600">
+          ${item.price.toLocaleString()}
+        </span>
+        <span className="text-sm text-gray-600">
+          {item.quantity} in stock
+        </span>
+      </div>
+    </div>
+  );
+
+  const renderBadges = (item: Item) => {
+    if (!isProduct(item)) return null;
+    const product = item as Product;
+    if (!product.details?.car?.badges) return null;
+    
+    return product.details.car.badges.map((badge, index) => (
+      <span
+        key={index}
+        className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium`}
+        style={{
+          backgroundColor: badge.color,
+          color: badge.textColor
+        }}
+      >
+        {badge.label}
+      </span>
+    ));
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-blue-50 pt-[5%]">
       {/* Header */}
@@ -413,100 +573,83 @@ export default function ProductsClient({ products }: ProductsClientProps) {
 
           {/* Products Display */}
           <motion.div
-            variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className={viewMode === 'grid' 
-              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-              : "space-y-6"
-            }
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.1
+                }
+              }
+            }}
+            className={`grid ${
+              viewMode === 'grid'
+                ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+                : 'grid-cols-1'
+            } gap-6`}
           >
-            {filteredProducts.map((product) => (
+            {filteredProducts.map((item) => (
               <motion.div
-                key={product.id}
+                key={item.id}
                 variants={itemVariants}
                 className={`bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 ${
                   viewMode === 'list' ? 'flex gap-6' : ''
                 }`}
               >
-                <Link href={`/product/${product.id}`} className="block w-full">
-                  <div className={`relative ${viewMode === 'list' ? 'w-48' : 'w-full'}`}>
-                    <Img
-                      src={product.images?.[0]?.url || "/default-product.png"}
-                      alt={product.name}
-                      external={true}
-                      width={viewMode === 'list' ? 192 : 384}
-                      height={viewMode === 'list' ? 192 : 384}
-                      className="w-full h-48 object-cover rounded-t-2xl"
-                    />
-                    {product.details.car.badges?.map((badge, index) => (
-                      <span
-                        key={index}
-                        className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium`}
-                        style={{
-                          backgroundColor: badge.color || '#4B5563',
-                          color: badge.textColor || '#FFFFFF'
-                        }}
-                      >
-                        {badge.label}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
-                      {product.name}
-                    </h3>
-                    <div className="mt-2 flex items-center gap-2 text-gray-600">
-                      <Clock size={16} />
-                      <span>{product.details.car.miles}</span>
-                      <span className="mx-2">•</span>
-                      <span>{product.details.car.fuel}</span>
-                      <span className="mx-2">•</span>
-                      <div className="flex items-center gap-1">
-                        {product.details.car.store ? (
-                          <div className="flex items-center gap-2">
-                            {product.details.car.store.logo ? (
-                              <img 
-                                src={`http://64.227.112.249${product.details.car.store.logo}`}
-                                alt={product.details.car.store.name}
-                                className="w-4 h-4 object-contain"
-                              />
-                            ) : (
-                              <Tag size={16} className="text-blue-500" />
-                            )}
-                            <div className="flex flex-col">
-                              <span className="font-medium text-sm">
-                                {product.details.car.store.name}
-                              </span>
-                              <div className="flex items-center gap-1 text-xs text-gray-500">
-                                <Star size={12} className="text-yellow-400 fill-yellow-400" />
-                                <span>{product.details.car.store.rating}</span>
-                                <span className="mx-1">•</span>
-                                <MapPin size={12} />
-                                <span>{product.details.car.store.location}</span>
-                              </div>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-1">
-                            <Tag size={16} className="text-blue-500" />
-                            <span className="font-medium">Unknown Store</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="mt-4 flex items-center justify-between">
-                      <span className="text-2xl font-bold text-blue-600">
-                        ${product.price.toLocaleString()}
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-600">
-                          {product.details.car.transmission}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
+                {isProduct(item) && (
+                  <CarCard 
+                    key={item.id} 
+                    car={{
+                      id: item.id,
+                      slug: item.slug,
+                      mainImage: item.images?.[0]?.url || "/default-product.png",
+                      title: item.name,
+                      year: item.details?.car?.year || new Date().getFullYear(),
+                      mileage: item.details?.car?.miles || "N/A",
+                      price: `$${item.price.toLocaleString()}`,
+                      bodyType: item.details?.car?.body_type || "Unknown",
+                      fuelType: item.details?.car?.fuel || "Unknown",
+                      description: item.details?.car?.features?.map(f => f.value).join(", ") || "",
+                      location: item.store?.location,
+                      features: item.details?.car?.features?.map(f => f.value) || [],
+                      isPro: item.store?.isPro
+                    }} 
+                    variant={viewMode === 'list' ? 'list' : 'grid'}
+                  />
+                )}
+                {isService(item) && (
+                  <ServiceCard 
+                    key={item.id} 
+                    slug={item.slug}
+                    id={item.id.toString()}
+                    title={item.name}
+                    description={item.description}
+                    price={item.price}
+                    image={item.images}
+                    stores={[item.store]}
+                    hostname={item.store?.hostname}
+                  />
+                )}
+                {isPart(item) && (
+                  <PartCard 
+                    key={item.id} 
+                    part={{
+                      id: parseInt(item.id),
+                      images: item.images,
+                      title: item.name,
+                      slug: item.slug,
+                      price: `$${item.price.toLocaleString()}`,
+                      description: item.description,
+                      features: item.compatibility,
+                      category: typeof item.categories === 'string' 
+                        ? [item.categories] 
+                        : item.categories || [],
+                      store: { 
+                        hostname: item.store?.hostname || '' 
+                      }
+                    }} 
+                  />
+                )}
               </motion.div>
             ))}
           </motion.div>

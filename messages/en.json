@@ -168,7 +168,21 @@
     "ceramic_coating": "Ceramic Coating",
     "ceramic_coating_desc": "Premium ceramic coating for long-lasting protection and shine",
     "learn_more": "Learn more",
-    "book_now": "Book Now"
+    "book_now": "Book Now",
+    "detailing_kits": "Detailing Kits",
+    "detailing_kits_desc": "Professional detailing kits for comprehensive car care",
+    "wrap_and_ppf": "Wrap and PPF",
+    "wrap_and_ppf_desc": "Paint protection film and vinyl wrapping services",
+    "nano_ceramic": "Nano Ceramic",
+    "nano_ceramic_desc": "Advanced ceramic coating for long-lasting protection",
+    "clippers_paint": "Clippers Paint",
+    "clippers_paint_desc": "Professional paint services for clippers and trimmers",
+    "wheels_paint": "Wheels Paint",
+    "wheels_paint_desc": "Custom wheel painting and refinishing",
+    "polish_wax": "Polish & Wax",
+    "polish_wax_desc": "Professional polishing and waxing services",
+    "nano_protection": "Nano Protection",
+    "nano_protection_desc": "Advanced nano protection for your vehicle"
   },
   "Categories": {
     "air_intake_systems": "Air Intake Systems",
