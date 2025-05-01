@@ -3,9 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { Dialog } from '@headlessui/react';
-import { blogService } from '../../../app/services/blogService';
 import { useTranslations } from 'next-intl';
 
 // Define STRAPI_URL directly since we can't import from config
