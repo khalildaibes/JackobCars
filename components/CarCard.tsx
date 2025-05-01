@@ -12,6 +12,10 @@ import { toast } from "react-hot-toast";
 import { useTranslations, useLocale } from "next-intl";
 import PriceDisplay from "./PriceDisplay";
 import { useComparison } from "../context/ComparisonContext";
+import emailjs from 'emailjs-com';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
 
 
 // Lazy load the Img component
@@ -104,6 +108,12 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   const isRTL = locale === 'ar' || locale === 'he-IL';
   const { addToComparison, removeFromComparison, isInComparison } = useComparison();
   const [favorites, setFavorites] = useState<(string | number)[]>([]);
+  const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
+  const [emailFormData, setEmailFormData] = useState({
+    name: '',
+    phone: '',
+    message: ''
+  });
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -126,23 +136,56 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
     });
   }, [car.slug]);
 
-  const handleContactSeller = useCallback(async (e: React.MouseEvent) => {
+  const handleEmailInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setEmailFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSendEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-    e.stopPropagation();
     try {
-      const response = await fetch(`/api/send-email`, {
-        method: 'POST',
-        body: JSON.stringify({ slug: car.slug.toString() }),
-      });
-      if (response.ok) {
+      const templateParams = {
+        title: `Car Inquiry for ${car.title}`,
+        name: emailFormData.name,
+        phone: emailFormData.phone,
+        time: new Date().toLocaleString(),
+        message: emailFormData.message,
+        email: "blacklife4ever93@gmail.com"
+      };
+
+      const result = await emailjs.send(
+        'service_fiv09zs',
+        'template_o7riedx',
+        templateParams,
+        'XNc8KcHCQwchLLHG5'
+      );
+
+      if (result.status === 200) {
+        setIsEmailDialogOpen(false);
         toast.success(t('email_sent'));
+        // Clear form
+        setEmailFormData({
+          name: '',
+          phone: '',
+          message: ''
+        });
       } else {
-        toast.error(t('email_failed'));
+        throw new Error('Failed to send email');
       }
     } catch (error) {
+      console.error('Error sending email:', error);
       toast.error(t('email_failed'));
     }
-  }, [car.slug, t]);
+  };
+
+  const handleContactSeller = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsEmailDialogOpen(true);
+  }, []);
 
   const handleViewDetails = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -194,7 +237,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
           alt={car.title}
           className="w-full h-32 object-cover rounded-t-lg transition-transform duration-300 hover:scale-110"
         />
-        <FavoriteButton isFavorite={favorites.includes(car.slug)} onClick={(e) => handleFavoriteToggle(e)} />
+        <FavoriteButton isFavorite={favorites.includes(car.slug)} onClick={handleFavoriteToggle} />
         {car.isPro && (
           <Badge className="absolute top-1 left-1 bg-blue-600 text-white text-[10px]">
             Pro
@@ -338,26 +381,112 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
 
   if (variant === "list") {
     return (
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.3 }}
-        className="w-full"
-      >
-        {listContent}
-      </motion.div>
+      <>
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3 }}
+          className="w-full"
+        >
+          {listContent}
+        </motion.div>
+        
+        {/* Email Dialog */}
+        <Dialog open={isEmailDialogOpen} onOpenChange={setIsEmailDialogOpen}>
+          <DialogContent className="bg-white p-4 rounded-lg">
+            <DialogHeader>
+              <DialogTitle>Contact About {car.title}</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleSendEmail} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Name</label>
+                <Input
+                  name="name"
+                  value={emailFormData.name}
+                  onChange={handleEmailInputChange}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Phone</label>
+                <Input
+                  name="phone"
+                  value={emailFormData.phone}
+                  onChange={handleEmailInputChange}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Message</label>
+                <Textarea
+                  name="message"
+                  value={emailFormData.message}
+                  onChange={handleEmailInputChange}
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full">
+                Send Message
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3 }}
-      className="w-full"
-    >
-      {grslugContent}
-    </motion.div>
+    <>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3 }}
+        className="w-full"
+      >
+        {grslugContent}
+      </motion.div>
+      
+      {/* Email Dialog */}
+      <Dialog open={isEmailDialogOpen} onOpenChange={setIsEmailDialogOpen}>
+        <DialogContent className="bg-white p-4 rounded-lg">
+          <DialogHeader>
+            <DialogTitle>Contact About {car.title}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSendEmail} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Name</label>
+              <Input
+                name="name"
+                value={emailFormData.name}
+                onChange={handleEmailInputChange}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Phone</label>
+              <Input
+                name="phone"
+                value={emailFormData.phone}
+                onChange={handleEmailInputChange}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Message</label>
+              <Textarea
+                name="message"
+                value={emailFormData.message}
+                onChange={handleEmailInputChange}
+                required
+              />
+            </div>
+            <Button type="submit" className="w-full">
+              Send Message
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 });
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
@@ -30,6 +30,10 @@ import { Input } from "../../../components/ui/input";
 import { Textarea } from "../../../components/ui/textarea";
 import { Toaster } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
+import emailjs from 'emailjs-com';
+
+// Initialize EmailJS
+emailjs.init("XNc8KcHCQwchLLHG5");
 
 interface Part {
   id: string;
@@ -77,6 +81,12 @@ const PartDetails = () => {
   const t = useTranslations("PartDetails");
   console.log(`slug ${slug}`);
   console.log(`storehostname ${storehostname}`);
+
+  // Add useEffect to initialize EmailJS
+  useEffect(() => {
+    emailjs.init("XNc8KcHCQwchLLHG5");
+  }, []);
+
   const { data: partData, isLoading } = useQuery({
     queryKey: ["part", slug, storehostname],
     queryFn: async () => {
@@ -98,9 +108,33 @@ const PartDetails = () => {
 
   const handleSendEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Implement email sending logic here
-    setIsEmailDialogOpen(false);
-    toast.success('Message sent successfully!');
+    try {
+      const templateParams = {
+        title: `Part Request for ${partData.data[0]?.title}`,
+        name: emailFormData.name,
+        phone: emailFormData.phone,
+        time: new Date().toLocaleString(),
+        message: emailFormData.message,
+        email: "blacklife4ever93@gmail.com"
+      };
+
+      const result = await emailjs.send(
+        'service_fiv09zs',
+        'template_o7riedx',
+        templateParams,
+        'XNc8KcHCQwchLLHG5'
+      );
+
+      if (result.status === 200) {
+        setIsEmailDialogOpen(false);
+        toast.success('Message sent successfully!');
+      } else {
+        throw new Error('Failed to send email');
+      }
+    } catch (error) {
+      console.error('Error sending email:', error);
+      toast.error('Failed to send message. Please try again.');
+    }
   };
 
   if (isLoading) {
@@ -187,7 +221,7 @@ const PartDetails = () => {
         {/* Part Details */}
         <div className="space-y-6 ">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">{currentPart.name}</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{currentPart.title}</h1>
             <div className="flex items-center gap-2">
               {currentPart.categories.map((category, index) => (
                 <Badge key={index} variant="secondary">
@@ -221,12 +255,12 @@ const PartDetails = () => {
 
             <TabsContent value="description" className="mt-4">
               <div className="space-y-4">
-                <p className="text-gray-600 whitespace-pre-line">{currentPart.details.description}</p>
-                {currentPart.details.features && currentPart.details.features.length > 0 && (
+                <p className="text-gray-600 whitespace-pre-line">{currentPart.details?.description}</p>
+                {currentPart.details?.features && currentPart.details?.features.length > 0 && (
                   <div>
                     <h3 className="text-lg font-semibold mb-2">Features</h3>
                     <ul className="space-y-2">
-                      {currentPart.details.features.map((feature, index) => (
+                      {currentPart.details?.features.map((feature, index) => (
                         <li key={index} className="flex items-center gap-2">
                           <Check className="w-5 h-5 text-green-500" />
                           <span>{feature.value}</span>
@@ -240,7 +274,7 @@ const PartDetails = () => {
 
             <TabsContent value="specifications" className="mt-4">
               <div className="space-y-4">
-                {currentPart.details && currentPart.details.specifications && currentPart.details.specifications.map((spec, index) => (
+                {currentPart.details && currentPart.details?.specifications && currentPart.details?.specifications.map((spec, index) => (
                   <div key={index} className="flex justify-between py-2 border-b">
                     <span className="text-gray-600">{spec.key}</span>
                     <span className="font-medium">{spec.value}</span>
@@ -251,7 +285,7 @@ const PartDetails = () => {
 
             <TabsContent value="compatibility" className="mt-4">
               <div className="space-y-4">
-                {currentPart.details && currentPart.details.compatibility && currentPart.details.compatibility.map((comp, index) => (
+                {currentPart.details && currentPart.details?.compatibility && currentPart.details?.compatibility.map((comp, index) => (
                   <div key={index} className="flex justify-between py-2 border-b">
                     <span className="text-gray-600">{comp.make} {comp.model}</span>
                     <span className="font-medium">{comp.year}</span>
@@ -273,7 +307,7 @@ const PartDetails = () => {
                         <Store className="w-5 h-5 text-gray-500" />
                         <div>
                           <h4 className="font-medium">{store.name}</h4>
-                          <p className="text-sm text-gray-500">{store.location}</p>
+                          <p className="text-sm text-gray-500">{store?.location}</p>
                         </div>
                       </div>
                       <div className="text-right">
