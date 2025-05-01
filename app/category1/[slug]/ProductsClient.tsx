@@ -641,9 +641,11 @@ export default function ProductsClient({ products }: ProductsClientProps) {
                       price: `$${item.price.toLocaleString()}`,
                       description: item.description,
                       features: item.compatibility,
-                      category: typeof item.categories === 'string' 
-                        ? [item.categories] 
-                        : item.categories || [],
+                      categories: Array.isArray(item.categories) 
+                        ? item.categories.map(cat => ({ name: cat }))
+                        : typeof item.categories === 'string' 
+                          ? [{ name: item.categories }] 
+                          : [],
                       store: { 
                         hostname: item.store?.hostname || '' 
                       }

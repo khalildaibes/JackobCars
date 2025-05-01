@@ -59,7 +59,7 @@ export async function GET(req) {
         }
         
         // Construct the final API URL with filters
-        let apiUrl = storeHostname.includes('64.227.112.249') ? `http://${baseUrl}/api/partss?populate=*` : `http://${baseUrl}/api/partss?populate=*`;
+        let apiUrl = storeHostname.includes('64.227.112.249') ? `http://${baseUrl}/api/products?populate=*` : `http://${baseUrl}/api/products?populate=*`;
         if (queryParams.toString()) {
             apiUrl += `&${queryParams.toString()}`;
         }

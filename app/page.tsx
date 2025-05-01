@@ -53,7 +53,7 @@ interface Deal {
     };
   };
   price: number;
-  categories: string;
+  categories: string | string[] | Array<{ name: string }>;
 }
 
 interface Article {
@@ -105,6 +105,7 @@ interface Listing {
   description: string;
   features: string[];
   category: string[];
+  categories?: Array<{ name: string }>;
 }
 
 interface Part {
@@ -119,16 +120,19 @@ interface Part {
   categories: Array<{ name: string }>;
   stores: Array<{
     hostname: string; id: string; name: string 
-}>;
+  }>;
   images: Array<{ url: string }>;
 }
 
+interface ServiceImage {
+  url: string;
+}
+
 interface Service {
-  description: any;
   id: string;
   slug: string;
   title: string;
-  image: Array<{ url: string }>;
+  image: ServiceImage[] | ServiceImage | null;
   details: {
     description: string;
     features: Array<{ value: string }>;
@@ -143,6 +147,50 @@ interface Story {
   title: string;
   description: string;
   url: string;
+}
+
+interface CarDetails {
+  miles?: string;
+  fuel?: string;
+  condition?: string;
+  transmission?: string;
+  year?: number;
+  make?: string;
+  body_type?: string;
+  description?: string;
+  features?: Array<{ value: string }>;
+}
+
+interface PartCardProps {
+  part: {
+    id: string;
+    images: Array<{ url: string }>;
+    title: string;
+    slug: string;
+    price: string;
+    description: string;
+    features: string[];
+    categories: Array<{ name: string }>;
+    store: { hostname: string };
+  };
+}
+
+interface TransformedPart {
+  features: any;
+  description: string;
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  details: {
+    description: string;
+    features: Array<{ value: string }>;
+  };
+  categories: Array<{ name: string }>;
+  stores: Array<{
+    hostname: string; id: string; name: string 
+  }>;
+  images: Array<{ url: string }>;
 }
 
 // API fetch functions
@@ -174,10 +222,10 @@ const fetchArticles = async () => {
 };
 
 const fetchDeals = async (): Promise<Deal[]> => {
-  const cachedData = getCookie('dealsData');
-  if (cachedData) {
-    return cachedData;
-  }
+  // const cachedData = getCookie('dealsData');
+  // if (cachedData) {
+  //   return cachedData;
+  // }
 
   console.log("Fetching deals...");
   const response = await fetch('/api/deals?store_hostname=64.227.112.249');
@@ -193,6 +241,12 @@ const fetchDeals = async (): Promise<Deal[]> => {
   }
   setCookie('dealsData', data.data);
   return data.data;
+};
+const fetchHomePageData = async (): Promise<HomePageData> => {
+  const response = await fetch('/api/homepage?store_hostname=64.227.112.249');
+  if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
+  const data = await response.json();
+  return data;
 };
 
 const fetchParts = async (): Promise<Part[]> => {
@@ -390,15 +444,11 @@ function HomeContent() {
         queryKey: ['articles'],
         queryFn: fetchArticles
       },
-      // {
-      //   queryKey: ['homepage'],
-      //   queryFn: fetchHomePageData
-      // },
+
       {
         queryKey: ['parts'],
         queryFn: fetchParts
       },
-
       {
         queryKey: ['services'],
         queryFn: fetchServices
@@ -415,12 +465,10 @@ function HomeContent() {
     { data: carsData, isLoading: isLoadingCars },
     { data: dealsData, isLoading: isLoadingDeals },
     { data: articlesData, isLoading: isLoadingArticles },
-    // { data: homepageData, isLoading: isLoadingHomepage },
     { data: partsData, isLoading: isLoadingParts },
     { data: servicesData, isLoading: isLoadingServices },
     { data: storiesData, isLoading: isLoadingStories }
   ] = queryResults;
-
   // Check if any query is still loading
   const isLoading = queryResults.some(result => result.isLoading);
   const [sliderState, setSliderState] = React.useState(0);
@@ -441,6 +489,21 @@ function HomeContent() {
     console.log("Raw deals data:", dealsData);
     return dealsData.map((product: Deal): Listing => {
       console.log("Processing product:", product);
+      let categories: string[] = [];
+      
+      if (!product.categories) {
+        categories = [];
+      } else if (typeof product.categories === 'string') {
+        categories = product.categories.split(",").map(c => c.toLowerCase().trim());
+      } else if (Array.isArray(product.categories)) {
+        categories = product.categories.map(cat => {
+          if (typeof cat === 'string') {
+            return cat.toLowerCase().trim();
+          }
+          return cat.name.toLowerCase().trim();
+        });
+      }
+
       return {
         id: parseInt(product.id),
         mainImage: product.image ? `http://${product.store.hostname}${product.image?.url}` : "/default-car.png",
@@ -460,7 +523,8 @@ function HomeContent() {
         bodyType: normalizeBodyType(product.details?.car.body_type || "Unknown"),
         description: product.details?.car.description || "Unknown",
         features: product.details?.car.features?.map((feature) => feature.value) || [],
-        category: product.categories ? product.categories.split(",").map((c) => c.toLowerCase().trim()) : [],
+        category: categories,
+        categories: categories.map(cat => ({ name: cat }))
       };
     });
   }, [dealsData, isLoadingDeals]);
@@ -550,34 +614,81 @@ function HomeContent() {
     }
   ], [t]);
 
-  // Update the transformedParts transformation
+  // Transform parts data
   const transformedParts = useMemo(() => {
     if (!partsData) return [];
     
-    return partsData.map((part: Part) => ({
-      ...part,
+    return partsData.map((part: Part): TransformedPart => ({
+      id: part.id,
+      name: part.name,
+      slug: part.slug,
+      price: part.price,
+      details: part.details,
+      categories: part.categories,
+      stores: part.stores,
+      images: part.images,
+      features: undefined,
+      description: ""
     }));
   }, [partsData]);
 
+  // Filter listings based on selected category
+  const filteredListings = useMemo(() => {
+    if (!selectedCategory) return listings;
+    return listings.filter(listing => {
+      return listing;
+    });
+  }, [listings, selectedCategory, t]);
+
+  // Filter parts based on featured category
+  const filteredParts = useMemo(() => {
+    return transformedParts.filter((part: TransformedPart) => {
+      return part.categories?.some(cat => 
+        cat.name.toLowerCase().includes('featured')
+      ) ?? false;
+    });
+  }, [transformedParts]);
+
+  // Filter listings for EV section
+  const evListings = useMemo(() => {
+    return filteredListings.filter(listing => 
+      listing.category.some(cat => cat.toLowerCase().includes('featured')) && 
+      listing.category.some(cat => cat.toLowerCase().includes('electric_vehicles'))
+    );
+  }, [filteredListings]);
+
+  // Transform services data
   const transformedServices = useMemo(() => {
     if (!servicesData) return [];
     
-    return servicesData.map((service: Service) => ({
-      id: parseInt(service.id),
-      mainImage: service.image && service.image.length > 0 
-        ? `http://${service.stores[0].hostname}${service.image[0].url}` 
-        : "/default-service.png",
-      alt: service.title || "Service Image",
-      title: service.title,
-      slug: service.slug, 
-      description: service.details?.description || "",
-      price: service.price,
-      features: service.details ? service.details.features.map((feature) => feature.value) || [] : [],
-      categories: service.categories || [],
-      stores: service.stores || [],
-      hostname: service.stores?.[0]?.hostname || "",
-      image: service.image || []
-    }));
+    return servicesData.map((service: Service) => {
+      const imageUrl = service.image 
+        ? Array.isArray(service.image)
+          ? service.image[0]?.url
+          : service.image.url
+        : null;
+
+      return {
+        id: parseInt(service.id),
+        mainImage: imageUrl 
+          ? `http://${service.stores[0].hostname}${imageUrl}`
+          : "/default-service.png",
+        alt: service.title || "Service Image",
+        title: service.title,
+        slug: service.slug, 
+        description: service.details?.description || "",
+        price: service.price,
+        features: service.details ? service.details.features.map((feature) => feature.value) || [] : [],
+        categories: service.categories || [],
+        stores: service.stores || [],
+        hostname: service.stores?.[0]?.hostname || "",
+        image: Array.isArray(service.image) 
+          ? service.image.map(image => ({ url: image.url }))
+          : service.image 
+            ? [{ url: service.image.url }]
+            : []
+      };
+    });
   }, [servicesData]);
   
   // Fetch stories
@@ -616,23 +727,6 @@ function HomeContent() {
     router.push(`?${params.toString()}`);
   };
 
-  // Filter listings based on selected category
-  const filteredListings = useMemo(() => {
-    return listings.filter(listing => 
-      listing.category.includes(selectedCategory) || 
-      listing.category.includes(t(selectedCategory))
-    );
-  }, [listings, selectedCategory, t]);
-
-  if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
-        <p className="mt-4 text-lg text-gray-600">Loading deals and content...</p>
-      </div>
-    );
-  }
-  
   return (
     <div className="flex w-full z-70 overflow-x-hidden">
       {/* Left Dashboard - Hide on mobile */}
@@ -683,7 +777,7 @@ function HomeContent() {
                 </div>
                 <div className="bg-white/5 rounded-lg p-3">
                   <p className="text-sm text-white/60">Featured Cars</p>
-                  <p className="text-xl font-bold text-white">{listings.filter(l => l.category.includes('featured')).length}</p>
+                  <p className="text-xl font-bold text-white">{listings.filter(l => l.category.some(cat => cat.toLowerCase().includes('featured'))).length}</p>
                 </div>
               </div>
             </div>
@@ -964,7 +1058,11 @@ function HomeContent() {
                         paddingLeft={10}
                         paddingRight={10}
                         className="items-center justify-center"
-                        items={listings.filter(listing => listing.category.includes('featured') && listing.category.includes('electric_vehicles'))
+                        items={filteredListings.filter(listing => 
+                          listing.category.includes('featured') && 
+                          listing.category.includes('electric_vehicles')
+                          )
+                        
                           .slice(0, 4).map((car) => (
                           <div key={car.id} className="px-0.5 w-full">
                             <CarCard key={car.id} car={car} variant="list" />
@@ -973,15 +1071,35 @@ function HomeContent() {
                         ref={sliderRef}
                       />
                     ) : (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {listings.filter(listing => listing.category.includes('featured') && listing.category.includes('electric_vehicles'))
+                      <Slider
+                        autoPlay
+                        autoPlayInterval={3000}
+                        responsive={{ 
+                          "0": { items: 1 }, 
+                          "551": { items: 1 }, 
+                          "1051": { items: 2 }, 
+                          "1441": { items: 4 } 
+                        }}
+                        disableDotsControls
+                        activeIndex={sliderState}
+                        onSlideChanged={(e: EventObject) => {
+                          setSliderState(e?.item);
+                        }}
+                        paddingLeft={10}
+                        paddingRight={10}
+                        className="items-center justify-center"
+                        items={filteredListings.filter(listing => 
+                          listing.category.includes('featured') && 
+                          listing.category.includes('electric_vehicles')
+                          )
+                        
                           .slice(0, 4).map((car) => (
-                            <div key={car.id} className="transform hover:scale-105 transition-transform duration-300">
-                              <CarCard key={car.id} car={car} variant="grid" />
-                            </div>
-                          ))
-                        }
-                      </div>
+                          <div key={car.id} className="px-0.5 w-full">
+                            <CarCard key={car.id} car={car} variant="grid" />
+                          </div>
+                        ))}
+                        ref={sliderRef}
+                      />
                     )}
                   </div>
                 </div>
@@ -1005,28 +1123,24 @@ function HomeContent() {
                     </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {transformedParts
-                      .filter(part => part.categories?.some(cat => cat.name.includes('featured')))
-                      .slice(0, 4)
-                      .map((part) => (
-                        <div key={part.id} className="transform hover:scale-105 transition-transform duration-300">
-                          <PartCard 
-                            key={part.id} 
-                            part={{
-                              id: parseInt(part.id),
-                              images: part.images ? [{ url: part.images[0].url }] : [],
-                              title: part.name,
-                              slug: part.slug,
-                              price: part.price.toString(),
-                              description: part.details.description,
-                              features: part.details.features?.map(f => f.value),
-                              category: part.categories?.map(cat => cat.name) || [],
-                              store: { hostname: part.stores[0].hostname }
-                            }} 
-                          />
-                        </div>
-                      ))
-                    }
+                    {filteredParts.slice(0, 4).map((part) => (
+                      <div key={part.id} className="transform hover:scale-105 transition-transform duration-300">
+                        <PartCard 
+                          key={part.id} 
+                          part={{
+                            id: part.id,
+                            images: part.images,
+                            title: part.name,
+                            slug: part.slug,
+                            price: part.price.toString(),
+                            description: part?.description || "",
+                            features: part?.features?.map(f => f.value) || [],
+                            categories: part.categories || [],
+                            store: { hostname: part.stores[0]?.hostname || "" }
+                          }} 
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
 
@@ -1061,7 +1175,7 @@ function HomeContent() {
                             title={service.title}
                             description={service.description}
                             price={service.price}
-                            image={service.image.map(image => ({ url: image.url }))}
+                            image={service.image}
                             stores={service.stores}
                             hostname={service.hostname}
                           />

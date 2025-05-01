@@ -14,7 +14,9 @@ interface PartCardProps {
     price: string;
     description: string;
     features?: string[];
-    category: string[];
+    categories: Array<{
+      name: string;
+    }>;
     store?: {
       hostname: string;
     };
@@ -41,7 +43,7 @@ const PartCard = ({ part }: PartCardProps) => {
             isHovered ? "scale-110" : "scale-100"
           }`}
         />
-        {part.category.includes("featured") && (
+        {part.categories?.some(cat => typeof cat?.name === 'string' && cat.name.toLowerCase().includes("featured")) && (
           <div className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded-md text-xs font-medium">
             Featured
           </div>
@@ -60,7 +62,7 @@ const PartCard = ({ part }: PartCardProps) => {
         <div className="flex items-center justify-between">
           <div className="text-lg font-bold text-blue-600">{part.price}</div>
           <Link
-            href={`/parts/${part.slug}?storehostname=${part.store?.hostname || '64.227.112.249'}`}
+            href={`/parts/${part.slug}?slug=${part.slug}&storehostname=${part.store?.hostname || '64.227.112.249'}`}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
           >
             View Details

@@ -201,6 +201,7 @@ export default function ProductsPage() {
               name: product.attributes.name,
               description: product.attributes.description,
               price: product.attributes.price,
+              images: product.attributes.images || [],
               isActive: product.attributes.isActive
             }}
             onDelete={() => handleDelete(product.id)}

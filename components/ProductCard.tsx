@@ -2,6 +2,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 
 interface Product {
+  images: any;
   id: string;
   name: string;
   description: string;

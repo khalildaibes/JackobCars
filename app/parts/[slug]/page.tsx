@@ -62,9 +62,10 @@ interface Part {
 }
 
 const PartDetails = () => {
-  const { slug } = useParams();
+  let { slug } = useParams();
   const searchParams = useSearchParams();
   const storehostname = searchParams.get('storehostname');
+  slug = searchParams.get('slug');
   const [activeImage, setActiveImage] = useState(0);
   const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
   const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
@@ -74,11 +75,12 @@ const PartDetails = () => {
     message: ''
   });
   const t = useTranslations("PartDetails");
-
+  console.log(`slug ${slug}`);
+  console.log(`storehostname ${storehostname}`);
   const { data: partData, isLoading } = useQuery({
     queryKey: ["part", slug, storehostname],
     queryFn: async () => {
-      const response = await fetch(`/api/parts?slug=${slug}&storehostname=${storehostname}`);
+      const response = await fetch(`/api/parts?slug=${slug}&store_hostname=${storehostname}`);
       if (!response.ok) throw new Error('Part not found');
       const data = await response.json();
       console.log('Response:', data);
