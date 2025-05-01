@@ -5,12 +5,7 @@ import { Img } from "../../../components/Img";
 import { Heading } from "../../../components/Heading";
 import { Text } from "../../../components/Text";
 import { useParams } from "next/navigation";
-import DetailsSection from "../../../app/detailsvone/DetailsSection";
-import DetailsVOneItem from "../../../components/DetailsVOneItem";
-import DetailsSection1 from "../../../app/detailsvone/DetailsSection1";
-import LocationDetailsSection from "../../../app/detailsvone/LocationDetailsSection";
-import FinancingCalculatorSection from "../../../app/detailsvone/FinancingCalculatorSection";
-import RelatedListingsSection from "../../../app/detailsvone/RelatedListingsSection";
+
 
 const featureList = [
   { feature: "Android Auto" },
