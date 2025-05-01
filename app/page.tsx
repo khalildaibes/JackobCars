@@ -256,18 +256,18 @@ const fetchParts = async (): Promise<Part[]> => {
   const cacheKey = 'parts:all';
   
   // Try to get cached data first
-  const cachedData = await getCachedData(cacheKey);
-  if (cachedData) {
+  const cachedData = await getCachedData<Part[]>(cacheKey);
+  if (cachedData && Array.isArray(cachedData)) {
     return cachedData;
   }
 
   const response = await fetch('/api/parts?store_hostname=64.227.112.249');
   if (!response.ok) throw new Error(`Failed to fetch parts: ${response.statusText}`);
   const data = await response.json();
-  if (!data?.data) throw new Error("Invalid API response structure");
+  if (!data?.data || !Array.isArray(data.data)) throw new Error("Invalid API response structure");
   
   // Cache the result for 1 hour
-  await setCachedData(cacheKey, data.data, 60 * 60);
+  await setCachedData<Part[]>(cacheKey, data.data, 60 * 60);
   
   return data.data;
 };
@@ -276,18 +276,18 @@ const fetchServices = async (): Promise<Service[]> => {
   const cacheKey = 'services:all';
   
   // Try to get cached data first
-  const cachedData = await getCachedData(cacheKey);
-  if (cachedData) {
+  const cachedData = await getCachedData<Service[]>(cacheKey);
+  if (cachedData && Array.isArray(cachedData)) {
     return cachedData;
   }
 
   const response = await fetch('/api/services?store_hostname=64.227.112.249');
   if (!response.ok) throw new Error(`Failed to fetch services: ${response.statusText}`);
   const data = await response.json();
-  if (!data?.data) throw new Error("Invalid API response structure");
+  if (!data?.data || !Array.isArray(data.data)) throw new Error("Invalid API response structure");
   
   // Cache the result for 1 hour
-  await setCachedData(cacheKey, data.data, 60 * 60);
+  await setCachedData<Service[]>(cacheKey, data.data, 60 * 60);
   
   return data.data;
 };
