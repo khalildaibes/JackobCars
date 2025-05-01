@@ -548,8 +548,7 @@ export default function StorePage() {
                       onClick={() => {
                         // Add your navigation logic here
                         console.log('Service clicked:', service.id);
-                      }}
-                    />
+                      } } stores={[]} slug={""}                    />
                   ))}
               </div>
             </div>
