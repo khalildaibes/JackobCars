@@ -133,7 +133,9 @@ interface Service {
   id: string;
   slug: string;
   title: string;
-  image: ServiceImage[] | ServiceImage | null;
+  image: {
+    url: string;
+  };
   details: {
     description: string;
     features: Array<{ value: string }>;
@@ -687,11 +689,7 @@ function HomeContent() {
     if (!servicesData) return [];
     
     return servicesData.map((service: Service) => {
-      const imageUrl = service.image 
-        ? Array.isArray(service.image)
-          ? service.image[0]?.url
-          : service.image.url
-        : null;
+      const imageUrl = service.image?.url || null;
 
       return {
         id: parseInt(service.id),
@@ -707,11 +705,7 @@ function HomeContent() {
         categories: service.categories || [],
         stores: service.stores || [],
         hostname: service.stores?.[0]?.hostname || "",
-        image: Array.isArray(service.image) 
-          ? service.image.map(image => ({ url: image.url }))
-          : service.image 
-            ? [{ url: service.image.url }]
-            : []
+        image: service.image || { url: "/default-service.png" }
       };
     });
   }, [servicesData]);
@@ -1064,7 +1058,7 @@ function HomeContent() {
                       </div>
                     </div>
                   </div>
-                  <div className="w-full overflow-x-hidden h-[400px] items-center justify-center">
+                  <div className="w-full overflow-x-hidden items-center justify-center">
                     {window.innerWidth <= 768 ? (
                       <Slider
                         autoPlay

@@ -68,7 +68,7 @@ interface Service {
   slug: string;
   store: any;
   price: number;
-  images: { url: string }[];
+  images: { url: string };
   description: string;
   duration: string;
   categories: string | string[];

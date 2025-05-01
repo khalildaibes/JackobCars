@@ -11,9 +11,9 @@ interface ServiceCardProps {
   stores: {
     hostname: string;
   }[];
-  image: {
-    url: string;
-  }[];
+    image: {
+      url: string;
+    } ;
   slug: string;
   hostname: string;
   onClick?: () => void;
@@ -46,7 +46,7 @@ export const ServiceCard = ({
             hostname === "64.227.112.249"
               ? process.env.NEXT_PUBLIC_STRAPI_URL
               : `http://${hostname}`
-          }${image?.[0]?.url || '/default-service.png'}`}
+          }${image?.url || '/default-service.png'}`}
           alt={title}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
         />
