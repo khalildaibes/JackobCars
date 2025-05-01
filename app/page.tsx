@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useQuery, useQueries } from "@tanstack/react-query";
+import { useQuery, useQueries, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import CarCard from "../components/CarCard";
 import ShowMore from "../components/ShowMore";
 import Hero from "../components/Hero";
@@ -31,6 +31,7 @@ import { Slider } from "../components/Slider";
 import CategoryButtons from "../components/CategoryButtons";
 import HeroSection from "../components/HeroSection";
 import StorePromotion from "../components/StorePromotion";
+import { getCachedData, setCachedData } from "../utils/cacheUtils";
 
 // Types
 interface Deal {
@@ -250,22 +251,30 @@ const fetchHomePageData = async (): Promise<HomePageData> => {
 };
 
 const fetchParts = async (): Promise<Part[]> => {
-  // const cachedData = getCookie('partsData');
-  // if (cachedData) {
-  //   return cachedData;
-  // }
+  const cacheKey = 'parts:all';
+  
+  // Try to get cached data first
+  const cachedData = await getCachedData(cacheKey);
+  if (cachedData) {
+    return cachedData;
+  }
 
   const response = await fetch('/api/parts?store_hostname=64.227.112.249');
   if (!response.ok) throw new Error(`Failed to fetch parts: ${response.statusText}`);
   const data = await response.json();
-  console.log("Parts API Response:", data);
   if (!data?.data) throw new Error("Invalid API response structure");
-  setCookie('partsData', data.data);
+  
+  // Cache the result for 1 hour
+  await setCachedData(cacheKey, data.data, 60 * 60);
+  
   return data.data;
 };
 
 const fetchServices = async (): Promise<Service[]> => {
-  const cachedData = getCookie('servicesData');
+  const cacheKey = 'services:all';
+  
+  // Try to get cached data first
+  const cachedData = await getCachedData(cacheKey);
   if (cachedData) {
     return cachedData;
   }
@@ -274,7 +283,10 @@ const fetchServices = async (): Promise<Service[]> => {
   if (!response.ok) throw new Error(`Failed to fetch services: ${response.statusText}`);
   const data = await response.json();
   if (!data?.data) throw new Error("Invalid API response structure");
-  setCookie('servicesData', data.data);
+  
+  // Cache the result for 1 hour
+  await setCachedData(cacheKey, data.data, 60 * 60);
+  
   return data.data;
 };
 
@@ -400,6 +412,19 @@ const   FindCarByPlate = dynamic(() => import("./plate_search/FindCarByPlate"), 
 const LookingForCar = dynamic(() => import("../components/comp"));
 const FeaturedListingsSection = dynamic(() => import("../components/homeeight/FeaturedListingsSection"));
 // const SalesAndReviewsSection = dynamic(() => import("../components/homeeight/SalesAndReviewsSection"));
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 30 * 60 * 1000, // 30 minutes
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      retry: 1
+    },
+  },
+})
 
 function HomeContent() {
   const router = useRouter();
@@ -1347,6 +1372,8 @@ function HomeContent() {
 
 export default function HomePage() {
   return (
+    <QueryClientProvider client={queryClient}>
       <HomeContent />
+    </QueryClientProvider>
   );
 }
