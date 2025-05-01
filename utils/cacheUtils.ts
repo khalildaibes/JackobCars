@@ -1,21 +1,14 @@
-import { Cache } from 'react-native-cache';
+import { LRUCache } from 'lru-cache';
 
-// Create a cache instance
-const cache = new Cache({
-  namespace: 'car-dealer-app',
-  policy: {
-    maxEntries: 100,
-    stdTTL: 60 * 60 * 24, // 24 hours
-  },
+// Create a cache instance with LRU (Least Recently Used) strategy
+const cache = new LRUCache({
+  max: 100, // Maximum number of items
+  ttl: 1000 * 60 * 60 * 24, // 24 hours in milliseconds
 });
 
 export const getCachedData = async (key: string) => {
   try {
-    const cached = await cache.get(key);
-    if (cached) {
-      return JSON.parse(cached);
-    }
-    return null;
+    return cache.get(key);
   } catch (error) {
     console.error('Cache read error:', error);
     return null;
@@ -24,7 +17,7 @@ export const getCachedData = async (key: string) => {
 
 export const setCachedData = async (key: string, data: any, ttl?: number) => {
   try {
-    await cache.set(key, JSON.stringify(data), ttl);
+    cache.set(key, data, { ttl: ttl ? ttl * 1000 : undefined });
   } catch (error) {
     console.error('Cache write error:', error);
   }
@@ -32,7 +25,7 @@ export const setCachedData = async (key: string, data: any, ttl?: number) => {
 
 export const clearCache = async () => {
   try {
-    await cache.clearAll();
+    cache.clear();
   } catch (error) {
     console.error('Cache clear error:', error);
   }
