@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { authService } from '../services/authService';
+import { authService } from '../../services/authService';
 
 export default function Settings() {
   const router = useRouter();
