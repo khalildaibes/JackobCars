@@ -626,7 +626,7 @@ export default function StorePage() {
                 
                 <div
                   key={part.id}
-                  className="p-6 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 hover:shadow-md transition-all"
+                  className="p-6 rounded-xl bg-gradient-to-br from-blue-800 to-blue-50 hover:shadow-md transition-all"
                 >
                     <Img
                           width={1920}
