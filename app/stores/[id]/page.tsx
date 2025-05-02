@@ -483,7 +483,7 @@ export default function StorePage() {
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-800">Featured Services</h2>
-                <Link href={`/stores/${store.id}/services`} className="text-blue-600 hover:text-blue-700 font-medium">
+                <Link href={`/stores/${store.id}/services?store_hostname=${store.hostname}`} className="text-blue-600 hover:text-blue-700 font-medium">
                   View All Services →
                 </Link>
               </div>
@@ -520,7 +520,7 @@ export default function StorePage() {
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-800">Featured Cars</h2>
-                <Link href={`/stores/${store.id}/listings`} className="text-blue-600 hover:text-blue-700 font-medium">
+                <Link href={`/stores/${store.id}/listings?store_hostname=${store.hostname}`} className="text-blue-600 hover:text-blue-700 font-medium">
                   View All Cars →
                 </Link>
               </div>
@@ -564,7 +564,7 @@ export default function StorePage() {
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-800">Featured Parts</h2>
-                <Link href={`/stores/${store.id}/parts`} className="text-blue-600 hover:text-blue-700 font-medium">
+                <Link href={`/stores/${store.id}/parts?store_hostname=${store.hostname}`} className="text-blue-600 hover:text-blue-700 font-medium">
                   View All Parts →
                 </Link>
               </div>

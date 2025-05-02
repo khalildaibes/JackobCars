@@ -60,7 +60,8 @@ export async function GET(req) {
         }
 
         console.log("Fetching API:", apiUrl);
-
+        console.log("Store Hostname:", storeHostname);
+        console.log("API Token:", apiToken);
         // Fetch data from the appropriate store API
         const response = await fetch(apiUrl, {
             headers: {
@@ -68,7 +69,7 @@ export async function GET(req) {
                 Authorization: storeHostname.includes('64.227.112.249') ? `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}` : `Bearer ${apiToken}`,
             },
         });
-
+        console.log("Response:", response);
         if (!response.ok) {
             return new Response(JSON.stringify({ message: "Failed to fetch services", error: response.statusText }), { status: response.status });
         }

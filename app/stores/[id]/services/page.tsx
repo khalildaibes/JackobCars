@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import { ServiceCard } from "../../../../components/ServiceCard";
 
@@ -11,14 +11,15 @@ interface Service {
   title: string;
   description: string;
   price: number;
-  image: string;
-  hostname: string;
+  image: { url: string };
+  stores: { hostname: string }[];
   slug: string;
 }
 
 export default function StoreServicesPage() {
   const params = useParams();
-  const storeId = params?.id as string;
+  const searchParams = useSearchParams();
+  const storeHostname = searchParams.get('store_hostname') || '';
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -27,8 +28,10 @@ export default function StoreServicesPage() {
 
   useEffect(() => {
     const fetchServices = async () => {
+      if (!storeHostname) return;
+      
       try {
-        const response = await fetch(`/api/services?store_hostname=${storeId}`);
+        const response = await fetch(`/api/services?store_hostname=${storeHostname}`);
         if (!response.ok) throw new Error('Failed to fetch services');
         const data = await response.json();
         
@@ -49,7 +52,7 @@ export default function StoreServicesPage() {
     };
 
     fetchServices();
-  }, [storeId]);
+  }, [storeHostname]);
 
   const filteredServices = services.filter(service => {
     const matchesSearch = service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -123,8 +126,8 @@ export default function StoreServicesPage() {
                 title={service.title}
                 description={service.description}
                 price={service.price}
-                image={{ url: service.image }}
-                hostname={service.hostname}
+                image={service.image}
+                hostname={service.stores[0]?.hostname}
                 onClick={() => {
                   console.log('Service clicked:', service.id);
                 }}

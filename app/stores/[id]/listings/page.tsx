@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import CarCard from "../../../../components/CarCard";
 
@@ -29,7 +29,8 @@ interface Car {
 
 export default function StoreListingsPage() {
   const params = useParams();
-  const storeId = params?.id as string;
+  const searchParams = useSearchParams();
+  const storeHostname = searchParams.get('store_hostname') || '';
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -40,8 +41,10 @@ export default function StoreListingsPage() {
 
   useEffect(() => {
     const fetchCars = async () => {
+      if (!storeHostname) return;
+      
       try {
-        const response = await fetch(`/api/deals?store_hostname=${storeId}`);
+        const response = await fetch(`/api/deals?store_hostname=${storeHostname}`);
         if (!response.ok) throw new Error('Failed to fetch cars');
         const data = await response.json();
         
@@ -65,7 +68,7 @@ export default function StoreListingsPage() {
     };
 
     fetchCars();
-  }, [storeId]);
+  }, [storeHostname]);
 
   const filteredCars = cars.filter(car => {
     const matchesSearch = car.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -166,7 +169,7 @@ export default function StoreListingsPage() {
                   id: car.id,
                   slug: car.slug,
                   mainImage: car.details.car.images.main
-                    ? `${storeId === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${storeId}`}${car.details.car.images.main}`
+                    ? `${storeHostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${storeHostname}`}${car.details.car.images.main}`
                     : "/default-car.png",
                   title: car.name,
                   year: car.details.car.year,

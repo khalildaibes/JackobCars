@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import Link from "next/link";
-import { Img } from "../../../components/Img";
+import { Img } from "../../../../components/Img";
 
 interface Part {
   id: string;
@@ -13,13 +13,14 @@ interface Part {
   price: number;
   images: { url: string }[];
   categories: { name: string }[];
-  hostname: string;
+  stores: { hostname: string }[];
   slug: string;
 }
 
 export default function StorePartsPage() {
   const params = useParams();
-  const storeId = params?.id as string;
+  const searchParams = useSearchParams();
+  const storeHostname = searchParams.get('store_hostname') || '';
   const [parts, setParts] = useState<Part[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -28,8 +29,10 @@ export default function StorePartsPage() {
 
   useEffect(() => {
     const fetchParts = async () => {
+      if (!storeHostname) return;
+      
       try {
-        const response = await fetch(`/api/parts?store_hostname=${storeId}`);
+        const response = await fetch(`/api/parts?store_hostname=${storeHostname}`);
         if (!response.ok) throw new Error('Failed to fetch parts');
         const data = await response.json();
         
@@ -50,7 +53,7 @@ export default function StorePartsPage() {
     };
 
     fetchParts();
-  }, [storeId]);
+  }, [storeHostname]);
 
   const filteredParts = parts.filter(part => {
     const matchesSearch = part.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -118,13 +121,13 @@ export default function StorePartsPage() {
           {/* Parts Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredParts.map((part) => (
-              <Link href={`/parts/${part.slug}?storehostname=${part.hostname}`} key={part.id}>
+              <Link href={`/parts/${part.slug}?storehostname=${part.stores[0]?.hostname}`} key={part.id}>
                 <div className="p-6 rounded-xl bg-gradient-to-br from-blue-800 to-blue-50 hover:shadow-md transition-all">
                   <Img
                     width={1920}
                     height={1080}
                     external={true}
-                    src={`${part.hostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${part.hostname}`}${part.images[0]?.url}`}
+                    src={`${part.stores[0]?.hostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${part.stores[0]?.hostname}`}${part.images[0]?.url}`}
                     alt={part.title}
                     className="w-full h-48 object-cover rounded-t-lg"
                   />
