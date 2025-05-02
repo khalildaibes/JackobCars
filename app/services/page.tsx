@@ -36,7 +36,7 @@ export default function ServicesPage() {
           data.data.flatMap((service: Service) => 
             service.categories?.map(cat => cat.name.trim()) || []
           )
-        ));
+        )) as string[];
         setCategories(uniqueCategories);
       } catch (error) {
         console.error('Error fetching services:', error);
