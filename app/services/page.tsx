@@ -10,9 +10,10 @@ interface Service {
   title: string;
   description: string;
   price: number;
-  image: string;
+  image: { url: string };
   categories: { name: string }[];
-  hostname: string;
+  stores: { hostname: string }[];
+  slug: string;
 }
 
 export default function ServicesPage() {
@@ -121,13 +122,12 @@ export default function ServicesPage() {
                 description={service.description}
                 price={service.price}
                 image={service.image}
-                hostname={service.hostname}
+                hostname={service.stores[0]?.hostname}
                 onClick={() => {
-                  // Add navigation logic here
                   console.log('Service clicked:', service.id);
                 }}
-                stores={[]}
-                slug={""}
+                stores={service.stores}
+                slug={service.slug}
               />
             ))}
           </div>
