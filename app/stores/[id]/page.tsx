@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { 
   Loader2, MapPin, Phone, Mail, Globe, Clock, Tag, 
   Facebook, Instagram, Navigation, ChevronDown,
-  MessageSquare, Search, Navigation2
+  MessageSquare, Search, Navigation2, X
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -360,47 +360,104 @@ export default function StorePage() {
           </div>
           </div>
 
-        {/* Info Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {/* Contact Information Card */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
-            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-gray-800">
-              <Phone className="w-5 h-5 text-blue-600" />
-              Contact Information
-            </h2>
-            <div className="space-y-4">
-              <a href={`tel:${store.phone}`} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                <Phone className="w-5 h-5 text-blue-600" />
+        {/* Compact Info Section */}
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-lg mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {/* Contact Info */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 mb-2">
+                <Phone className="w-4 h-4 text-blue-600" />
+                <h3 className="text-sm font-medium text-gray-800">Contact</h3>
               </div>
-                <span className="text-gray-600">{store.phone}</span>
+              <a href={`tel:${store.phone}`} className="block text-sm text-gray-600 hover:text-blue-600">
+                {store.phone}
               </a>
               {store.email && (
-                <a href={`mailto:${store.email}`} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                  <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                  <Mail className="w-5 h-5 text-blue-600" />
-                </div>
-                  <span className="text-gray-600">{store.email}</span>
+                <a href={`mailto:${store.email}`} className="block text-sm text-gray-600 hover:text-blue-600">
+                  {store.email}
                 </a>
               )}
-              <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                <MapPin className="w-5 h-5 text-blue-600" />
-                </div>
-                <span className="text-gray-600">{store.address}</span>
+            </div>
+
+            {/* Address */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 mb-2">
+                <MapPin className="w-4 h-4 text-blue-600" />
+                <h3 className="text-sm font-medium text-gray-800">Address</h3>
               </div>
+              <p className="text-sm text-gray-600">{store.address}</p>
+            </div>
+
+            {/* Hours */}
+            <div className="space-y-2">
+              <button 
+                onClick={() => setShowHours(!showHours)}
+                className="w-full flex items-center justify-between gap-2 mb-2"
+              >
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-blue-600" />
+                  <h3 className="text-sm font-medium text-gray-800">Hours</h3>
+                </div>
+                <ChevronDown className={`w-4 h-4 transition-transform ${showHours ? 'rotate-180' : ''}`} />
+              </button>
+              {showHours && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-1"
+                >
+                  {Object.entries(openingHours).map(([day, hours]) => (
+                    <div key={day} className="flex justify-between items-center text-sm">
+                      <span className="capitalize text-gray-700">{day}</span>
+                      <span className="text-gray-600">{hours}</span>
+                    </div>
+                  ))}
+                </motion.div>
+              )}
+            </div>
+
+            {/* Quick Actions */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 mb-2">
+                <Navigation className="w-4 h-4 text-blue-600" />
+                <h3 className="text-sm font-medium text-gray-800">Actions</h3>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => handleContact('whatsapp')}
+                  className="px-2 py-1 text-xs rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+                >
+                  WhatsApp
+                </button>
+                {store.address && (
+                  <>
+                    <button
+                      onClick={() => handleNavigation('google')}
+                      className="px-2 py-1 text-xs rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+                    >
+                      Maps
+                    </button>
+                    <button
+                      onClick={() => handleNavigation('waze')}
+                      className="px-2 py-1 text-xs rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 transition-colors"
+                    >
+                      Waze
+                    </button>
+                  </>
+                )}
               </div>
               {store.socialMedia && (
-              <div className="mt-6 pt-6 border-t border-gray-100">
-                <div className="flex gap-4 justify-center">
+                <div className="flex gap-2 pt-1">
                   {store.socialMedia.facebook && (
                     <a
                       href={store.socialMedia.facebook}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors"
+                      className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors"
                     >
-                      <Facebook className="w-5 h-5 text-blue-600" />
+                      <Facebook className="w-3 h-3 text-blue-600" />
                     </a>
                   )}
                   {store.socialMedia.instagram && (
@@ -408,87 +465,13 @@ export default function StorePage() {
                       href={store.socialMedia.instagram}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors"
+                      className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors"
                     >
-                      <Instagram className="w-5 h-5 text-blue-600" />
+                      <Instagram className="w-3 h-3 text-blue-600" />
                     </a>
                   )}
                 </div>
-                </div>
               )}
-            </div>
-
-          {/* Opening Hours Card */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
-              <button
-                onClick={() => setShowHours(!showHours)}
-              className="w-full flex items-center justify-between text-xl font-semibold mb-6 text-gray-800"
-              >
-              <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-blue-600" />
-                <span>Opening Hours</span>
-              </div>
-              <ChevronDown className={`w-5 h-5 transition-transform ${showHours ? 'rotate-180' : ''}`} />
-              </button>
-              
-              {showHours && (
-                <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="space-y-3"
-                >
-                  {Object.entries(openingHours).map(([day, hours]) => (
-                  <div key={day} className="flex justify-between items-center p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                    <span className="capitalize font-medium text-gray-700">{day}</span>
-                    <span className="text-gray-600">{hours}</span>
-                    </div>
-                  ))}
-                </motion.div>
-              )}
-          </div>
-
-          {/* Quick Actions Card */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
-            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-gray-800">
-              <Navigation className="w-5 h-5 text-blue-600" />
-              Quick Actions
-            </h2>
-            <div className="space-y-4">
-              <button
-                onClick={() => handleContact('whatsapp')}
-                className="w-full flex items-center gap-3 p-4 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors"
-              >
-                <MessageSquare className="w-5 h-5 text-blue-600" />
-                <span className="text-blue-700 font-medium">Chat on WhatsApp</span>
-              </button>
-              
-              {/* Navigation Section */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium text-gray-700 mb-2">Get Directions</h3>
-                {store.address ? (
-                  <div className="grid grid-cols-2 gap-4">
-                    <button
-                      onClick={() => handleNavigation('google')}
-                      className="flex items-center justify-center gap-3 p-4 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors"
-                    >
-                      <Navigation className="w-5 h-5 text-blue-600" />
-                      <span className="text-blue-700 font-medium">Google Maps</span>
-                    </button>
-                    <button
-                      onClick={() => handleNavigation('waze')}
-                      className="flex items-center justify-center gap-3 p-4 rounded-lg bg-purple-50 hover:bg-purple-100 transition-colors"
-                    >
-                      <Navigation2 className="w-5 h-5 text-purple-600" />
-                      <span className="text-purple-700 font-medium">Waze</span>
-                    </button>
-                  </div>
-                ) : (
-                  <div className="text-gray-500 text-sm italic">
-                    Location data not available for this store
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         </div>
@@ -498,164 +481,128 @@ export default function StorePage() {
           {/* Services Section */}
           {filteredServices.length !== 0 && (
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
-              <div className="flex justify-between items-center mb-6 overflow-hidden">
-                <h2 className="text-2xl font-bold text-gray-800">Services</h2>
-                <div className="flex gap-3">
-                  <button 
-                    onClick={() => setSelectedCategory(null)} 
-                    className={`px-4 py-2 rounded-lg transition-colors ${
-                      !selectedCategory 
-                        ? 'bg-blue-600 text-white' 
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    All
-                  </button>
-                  {Array.from(new Set(
-                    filteredServices.flatMap(service => 
-                      service.categories?.map(cat => cat.name.trim()) || []
-                    )
-                  )).map(category => (
-                    <button 
-                      key={category} 
-                      onClick={() => setSelectedCategory(category)} 
-                      className={`px-4 py-2 rounded-lg transition-colors ${
-                        selectedCategory === category 
-                          ? 'bg-blue-600 text-white' 
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      {category}
-                    </button>
-                  ))}
-                </div>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">Featured Services</h2>
+                <Link href="/services" className="text-blue-600 hover:text-blue-700 font-medium">
+                  View All Services →
+                </Link>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredServices
-                  .filter(service => 
-                    !selectedCategory || 
-                    service.categories?.map(cat => cat.name.trim()).includes(selectedCategory)
-                  )
-                  .map((service) => (
-                    <ServiceCard
-                      key={service.id}
-                      id={service.id}
-                      title={service.title}
-                      description={service.description}
-                      price={service.price ? service.price : 0}
-                      image={service.image ? service.image : ''}
-                      hostname={store.hostname}
-                      onClick={() => {
-                        // Add your navigation logic here
-                        console.log('Service clicked:', service.id);
-                      } } stores={[]} slug={""}                    />
-                  ))}
+              <div className="relative">
+                <div className="overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">
+                  <div className="flex gap-6 min-w-max">
+                    {filteredServices
+                      .slice(0, 3)
+                      .map((service) => (
+                        <div key={service.id} className="w-[280px] flex-shrink-0 snap-start">
+                          <ServiceCard
+                            id={service.id}
+                            title={service.title}
+                            description={service.description}
+                            price={service.price ? service.price : 0}
+                            image={service.image ? service.image : ''}
+                            hostname={store.hostname}
+                            onClick={() => {
+                              console.log('Service clicked:', service.id);
+                            }}
+                            stores={[]}
+                            slug={""}
+                          />
+                        </div>
+                      ))}
+                  </div>
+                </div>
               </div>
             </div>
           )}
 
           {/* Products Section */}
           {filteredProducts.length !== 0 && (
-              <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
-            <div className="flex justify-between items-center mb-6 overflow-x-auto">
-              <h2 className="text-2xl font-bold text-gray-800">Cars</h2>
-              <div className="flex gap-3">
-                <button 
-                  onClick={() => handleFilterChange(null)} 
-                  className={`px-4 py-2 rounded-lg transition-colors ${
-                    !selectedCategory 
-                      ? 'bg-blue-600 text-white' 
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  All
-                </button>
-                {categories
-                  .filter(cat => cat !== 'services-product')
-                  .map(category => (
-                    <button 
-                      key={category} 
-                      onClick={() => handleFilterChange(category)} 
-                      className={`px-4 py-2 rounded-lg transition-colors ${
-                        selectedCategory === category 
-                          ? 'bg-blue-600 text-white' 
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      {category}
-                    </button>
-                  ))}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">Featured Cars</h2>
+                <Link href="/listings" className="text-blue-600 hover:text-blue-700 font-medium">
+                  View All Cars →
+                </Link>
               </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 overflow-hidden">
-              {filteredProducts
-                .filter(product => !product.categories.toString().includes('services-product'))
-                .map((product) => (
-                  console.log(product),
-                  <CarCard 
-                    key={product.id} 
-                    car={{
-                      id: product.id,
-                      slug: product.slug,
-                      mainImage: product.details.car.images.main 
-                        ? ` ${store.hostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${store.hostname}`}${product.details.car.images.main}`
-                        : "/default-car.png",
-                      title: product.name,
-                      year: product.details.car.year,
-                      mileage: product.details.car.miles,
-                      price: product.details.car.price.toString(),
-                      bodyType: product.details.car.bodyType || '',  
-                      fuelType: product.details.car.fuel || '',
-                      description: product.details.car.description,
-                      location: '',
-                      features: product.details.car.features.map(feature => feature.label)
-                    }}
-                    variant="grid"
-                  />
-                ))}
-            </div>
-            </div>
-          )}
-          {/* Parts Section */}
-          {filteredParts.length !== 0 && (
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Parts</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredParts.map((part) => (
-              <Link href={`/parts/${part.slug}?storehostname=${store.hostname}`}>
-                
-                <div
-                  key={part.id}
-                  className="p-6 rounded-xl bg-gradient-to-br from-blue-800 to-blue-50 hover:shadow-md transition-all"
-                >
-                    <Img
-                          width={1920}
-                          height={1080}
-                          external={true}
-                          src={`${store.hostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${store.hostname}`}${part.images[0].url}`}
-                          alt={part.title}
-                          className="w-full h-48 object-cover rounded-t-lg"
-                        />
-                  <h3 className="text-xl font-semibold text-gray-800 mb-3">{part.title}</h3>
-                  <p className="text-gray-600 mb-4 line-clamp-3">{part.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-blue-600 font-semibold">
-                      ${part.price.toLocaleString()}
-                    </span>
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                      View Details
-                    </button>
+              <div className="relative">
+                <div className="overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">
+                  <div className="flex gap-6 min-w-max">
+                    {filteredProducts
+                      .filter(product => !product.categories.toString().includes('services-product'))
+                      .slice(0, 3)
+                      .map((product) => (
+                        <div key={product.id} className="w-[280px] flex-shrink-0 snap-start">
+                          <CarCard
+                            car={{
+                              id: product.id,
+                              slug: product.slug,
+                              mainImage: product.details.car.images.main
+                                ? `${store.hostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${store.hostname}`}${product.details.car.images.main}`
+                                : "/default-car.png",
+                              title: product.name,
+                              year: product.details.car.year,
+                              mileage: product.details.car.miles,
+                              price: product.details.car.price.toString(),
+                              bodyType: product.details.car.bodyType || '',
+                              fuelType: product.details.car.fuel || '',
+                              description: product.details.car.description,
+                              location: '',
+                              features: product.details.car.features.map(feature => feature.label)
+                            }}
+                            variant="grid"
+                          />
+                        </div>
+                      ))}
                   </div>
                 </div>
-                </Link>
-              ))}
-              {filteredParts.length === 0 && (
-                <div className="col-span-full text-center py-8">
-                  <p className="text-gray-500">No parts available at this time.</p>
-                </div>
-              )}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Parts Section */}
+          {filteredParts.length !== 0 && (
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">Featured Parts</h2>
+                <Link href="/parts" className="text-blue-600 hover:text-blue-700 font-medium">
+                  View All Parts →
+                </Link>
+              </div>
+              <div className="relative">
+                <div className="overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">
+                  <div className="flex gap-6 min-w-max">
+                    {filteredParts
+                      .slice(0, 3)
+                      .map((part) => (
+                        <div key={part.id} className="w-[280px] flex-shrink-0 snap-start">
+                          <Link href={`/parts/${part.slug}?storehostname=${store.hostname}`}>
+                            <div className="p-6 rounded-xl bg-gradient-to-br from-blue-800 to-blue-50 hover:shadow-md transition-all">
+                              <Img
+                                width={1920}
+                                height={1080}
+                                external={true}
+                                src={`${store.hostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${store.hostname}`}${part.images[0].url}`}
+                                alt={part.title}
+                                className="w-full h-48 object-cover rounded-t-lg"
+                              />
+                              <h3 className="text-xl font-semibold text-gray-800 mb-3">{part.title}</h3>
+                              <p className="text-gray-600 mb-4 line-clamp-3">{part.description}</p>
+                              <div className="flex justify-between items-center">
+                                <span className="text-blue-600 font-semibold">
+                                  ${part.price.toLocaleString()}
+                                </span>
+                                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                  View Details
+                                </button>
+                              </div>
+                            </div>
+                          </Link>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </div>

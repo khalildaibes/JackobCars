@@ -110,6 +110,7 @@ interface Listing {
 }
 
 interface Part {
+  title: string;
   id: string;
   slug: string;
   name: string;
@@ -182,7 +183,7 @@ interface TransformedPart {
   features: any;
   description: string;
   id: string;
-  name: string;
+  title: string;
   slug: string;
   price: number;
   details: {
@@ -647,7 +648,7 @@ function HomeContent() {
     
     return partsData.map((part: Part): TransformedPart => ({
       id: part.id,
-      name: part.name,
+      title: part.title,
       slug: part.slug,
       price: part.price,
       details: part.details,
@@ -1149,7 +1150,7 @@ function HomeContent() {
                           part={{
                             id: part.id,
                             images: part.images,
-                            title: part.name,
+                            title: part.title,
                             slug: part.slug,
                             price: part.price.toString(),
                             description: part?.description || "",
@@ -1196,7 +1197,7 @@ function HomeContent() {
                             price={service.price}
                             image={service.image}
                             stores={service.stores}
-                            hostname={service.hostname}
+                            hostname={service.stores[0]?.hostname}
                           />
                         </div>
                       ))
