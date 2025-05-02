@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import { Search } from "lucide-react";
 import Link from "next/link";
-import { Img } from "../../components/Img";
+import { Img } from "../../../components/Img";
 
 interface Part {
   id: string;
@@ -16,7 +17,9 @@ interface Part {
   slug: string;
 }
 
-export default function PartsPage() {
+export default function StorePartsPage() {
+  const params = useParams();
+  const storeId = params?.id as string;
   const [parts, setParts] = useState<Part[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,7 +29,7 @@ export default function PartsPage() {
   useEffect(() => {
     const fetchParts = async () => {
       try {
-        const response = await fetch('/api/parts');
+        const response = await fetch(`/api/parts?store_hostname=${storeId}`);
         if (!response.ok) throw new Error('Failed to fetch parts');
         const data = await response.json();
         
@@ -47,7 +50,7 @@ export default function PartsPage() {
     };
 
     fetchParts();
-  }, []);
+  }, [storeId]);
 
   const filteredParts = parts.filter(part => {
     const matchesSearch = part.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -69,7 +72,7 @@ export default function PartsPage() {
     <div className="min-h-screen bg-[#050B20] pt-24">
       <div className="max-w-7xl mx-auto px-4">
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
-          <h1 className="text-3xl font-bold text-gray-800 mb-8">All Parts</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-8">Store Parts</h1>
           
           {/* Search and Filter Section */}
           <div className="mb-8">
