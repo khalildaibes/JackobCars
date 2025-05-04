@@ -15,6 +15,7 @@ import  CarCard  from "../../../components/CarCard";
 import axios from 'axios';
 import { ServiceCard } from "../../../components/ServiceCard";
 import { useTranslations } from "use-intl";
+import ChatPopup from '../../../components/ChatPopup';
 
 interface Store {
   id: number;
@@ -24,6 +25,7 @@ interface Store {
   address: string;
   details: string;
   hostname: string;
+  additional: any;
   visits: number;
   tags: string;
   products: Product[];
@@ -101,6 +103,12 @@ interface Product {
   colors?: { name: string; quantity: number }[];
 }
 
+interface ChatPopupProps {
+  storeName?: string;
+  chatUrl?: string;
+  variant?: 'inline' | 'popup';
+}
+
 export default function StorePage() {
   const params = useParams();
   const slug = params?.id as string;
@@ -165,6 +173,7 @@ export default function StorePage() {
           visits: Number(storeDataItem.visits || 0),
           logo: storeDataItem.logo ? storeDataItem.logo : null,
           images: storeDataItem.image || [],
+          additional: storeDataItem.additional || [],
           tags: String(storeDataItem.tags || ''),
           provider: storeDataItem.provider ? String(storeDataItem.provider) : undefined,
           email: storeDataItem.email ? String(storeDataItem.email) : undefined,
@@ -292,7 +301,7 @@ export default function StorePage() {
           className="flex items-center gap-2 text-gray-700"
         >
           <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-          <span>Loading store details...</span>
+          <span>{t("loading_store_details")}</span>
         </motion.div>
       </div>
     );
@@ -365,6 +374,15 @@ export default function StorePage() {
         {/* Compact Info Section */}
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-lg mb-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {/* Chat */}
+            {store && (
+              <ChatPopup
+                storeName={store.name}
+                chatUrl={store.additional?.storechatassistant?.url}
+                variant="inline"
+              />
+            )}
+
             {/* Contact Info */}
             <div className="space-y-2">
               <div className="flex items-center gap-2 mb-2">
@@ -493,7 +511,7 @@ export default function StorePage() {
                 <div className="overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">
                   <div className="flex gap-6 min-w-max">
                     {filteredServices
-                      .slice(0, 3)
+                      .slice(0, 4)
                       .map((service) => (
                         <div key={service.id} className="w-[280px] flex-shrink-0 snap-start">
                           <ServiceCard
@@ -531,7 +549,7 @@ export default function StorePage() {
                   <div className="flex gap-6 min-w-max">
                     {filteredProducts
                       .filter(product => !product.categories.toString().includes('services-product'))
-                      .slice(0, 3)
+                      .slice(0, 4)
                       .map((product) => (
                         <div key={product.id} className="w-[280px] flex-shrink-0 snap-start">
                           <CarCard
@@ -574,28 +592,34 @@ export default function StorePage() {
                 <div className="overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">
                   <div className="flex gap-6 min-w-max">
                     {filteredParts
-                      .slice(0, 3)
+                      .slice(0, 4)
                       .map((part) => (
                         <div key={part.id} className="w-[280px] flex-shrink-0 snap-start">
                           <Link href={`/parts/${part.slug}?storehostname=${store.hostname}`}>
-                            <div className="p-6 rounded-xl bg-white hover:shadow-md transition-all">
+                            <div className="p-6 rounded-xl bg-white hover:shadow-md transition-all border border-gray-200 h-[450px] flex flex-col">
                               <Img
                                 width={1920}
                                 height={1080}
                                 external={true}
                                 src={`${store.hostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${store.hostname}`}${part.images[0].url}`}
                                 alt={part.title}
-                                className="w-full h-48 object-cover rounded-t-lg"
+                                className="w-full h-48 object-cover rounded-t-lg flex-shrink-0"
                               />
-                              <h3 className="text-xl font-semibold text-gray-800 mb-3">{t("features")}</h3>
-                              <p className="text-gray-600 mb-4 line-clamp-3">{t("description")}</p>
-                              <div className="flex justify-between items-center">
-                                <span className="text-blue-600 font-semibold">
-                                  {t("price")}: {part.price.toLocaleString()}
-                                </span>
-                                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                                  {t("view_details")}
-                                </button>
+                              <div className="flex flex-col flex-grow">
+                                <div className="h-[60px]">
+                                  <h3 className="text-xl font-semibold text-gray-800 line-clamp-2">{part.title}</h3>
+                                </div>
+                                <div className="h-[72px]">
+                                  <p className="text-gray-600 line-clamp-3">{t("description")}: {part.description}</p>
+                                </div>
+                                <div className="flex justify-between items-center mt-auto">
+                                  <span className="text-blue-600 font-semibold">
+                                    {t("price")}: {part.price.toLocaleString()}
+                                  </span>
+                                  <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                    {t("view_details")}
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </Link>

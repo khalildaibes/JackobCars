@@ -226,8 +226,14 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   }, [car.features]);
 
   const grslugContent = (
-    <Card onClick={handleViewDetails}
-    className={`bg-white rounded-t-lg overflow-hidden flex flex-col hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-shadow duration-300 max-w-[280px] ${isRTL ? 'rtl' : 'ltr'} transition-transform duration-300 hover:scale-105 min-h-[180px] shadow-[0_4px_12px_rgb(0,0,0,0.05)]`}>
+    <Card 
+      onClick={(e) => {
+        // Only trigger if the click wasn't on a button or its children
+        if (!(e.target as HTMLElement).closest('button')) {
+          handleViewDetails(e);
+        }
+      }}
+      className={`bg-white rounded-t-lg overflow-hidden flex flex-col hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-shadow duration-300 max-w-[280px] ${isRTL ? 'rtl' : 'ltr'} transition-transform duration-300 hover:scale-105 min-h-[180px] shadow-[0_4px_12px_rgb(0,0,0,0.05)] cursor-pointer`}>
       <div className="relative overflow-hidden">
         <Img
           width={1920}
@@ -235,7 +241,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
           external={true}
           src={car.mainImage}
           alt={car.title}
-          className="w-full h-32 object-cover rounded-t-lg transition-transform duration-300 hover:scale-110"
+          className="w-full h-48 object-cover rounded-t-lg transition-transform duration-300 hover:scale-110"
         />
         <FavoriteButton isFavorite={favorites.includes(car.slug)} onClick={handleFavoriteToggle} />
         {car.isPro && (
@@ -249,19 +255,26 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
         </div>
       </div>
       <CardContent className="flex flex-col flex-1 p-2 ">
-        <h3 className="text-sm font-semibold text-black line-clamp-1">{car.title}</h3>
-        <div className="flex items-center text-gray-500 text-[10px] w-full mt-1">
-          <div className={`flex items-center gap-1 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <h3 className="text-sm font-semibold text-black line-clamp-1 text-center justify-center items-center">{car.title}</h3>
+        <div className="flex items-center text-gray-500 text-[10px] w-full mt-1 ">
+          <div className={`flex items-center gap-1 w-full  ${isRTL ? 'flex-row-reverse  justify-end' : ''}`}>
             <Car size={12} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
             <span>{car.bodyType}</span>
           </div>
-          <span className="mx-1">•</span>
-          <div className={`flex items-center gap-1 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <div className={`flex items-center gap-1 w-full ${isRTL ? 'flex-row-reverse  justify-end' : ''}`}>
+            <Calendar size={12} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
+            <span>{car.year}</span>
+          </div>
+          <div className={`flex items-center gap-1 w-full ${isRTL ? 'flex-row-reverse  justify-end' : ''}`}>
+            <Gauge size={12} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
+            <span>{car.mileage}</span>
+          </div>
+          <div className={`flex items-center gap-1 w-full ${isRTL ? 'flex-row-reverse  justify-start' : ''}`}>
             <Fuel size={12} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
             <span>{car.fuelType}</span>
           </div>
         </div>
-        <p className="text-gray-500 text-[10px] line-clamp-2 mt-1 ">{car.description}</p>
+        <p className="text-gray-500 text-[13px] line-clamp-2 mt-1 ">{car.description}</p>
         
         <div className="mt-2">
           <PriceDisplay price={car.price} className="text-blue-600 text-base font-bold w-full flex justify-center items-center" />
@@ -274,7 +287,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
               icon={MessageSquare}
               label={t('contact')}
               onClick={handleContactSeller}
-              className="flex items-center justify-center w-full text-[10px]"
+              className="flex items-center justify-center w-full text-[10px] bg-blue-600 text-white"
             />
             <ActionButton
               icon={Scale}
@@ -296,7 +309,14 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   );
 
   const listContent = (
-    <Card className={` bg-white  overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-shadow duration-300 ${isRTL ? 'rtl' : 'ltr'} shadow-[0_4px_12px_rgb(0,0,0,0.05)]`}>
+    <Card 
+      onClick={(e) => {
+        // Only trigger if the click wasn't on a button or its children
+        if (!(e.target as HTMLElement).closest('button')) {
+          handleViewDetails(e);
+        }
+      }}
+      className={`bg-white overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-shadow duration-300 ${isRTL ? 'rtl' : 'ltr'} shadow-[0_4px_12px_rgb(0,0,0,0.05)] cursor-pointer`}>
       <div className="flex flex-col md:flex-row">
         <div className="relative w-full md:w-1/3 overflow-hidden  h-[250px]">
           <Img

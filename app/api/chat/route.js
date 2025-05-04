@@ -3,8 +3,9 @@ import { NextResponse } from 'next/server';
 export async function POST(request) {
   try {
     const body = await request.json();
+    const chatUrl = body.chatUrl || 'http://64.227.112.249:5678/webhook-test/cfdce0db-04e5-4f9a-9d23-df65829955a0';
     
-    const response = await fetch('http://64.227.112.249:5678/webhook-test/cfdce0db-04e5-4f9a-9d23-df65829955a0', {
+    const response = await fetch(chatUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -30,7 +31,6 @@ export async function POST(request) {
       throw new Error('Empty response received from server');
     }
 
-    
     return NextResponse.json({message:responseText});
   } catch (error) {
     console.error('Chat proxy error:', error.message);

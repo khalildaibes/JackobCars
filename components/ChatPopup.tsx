@@ -3,7 +3,12 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const ChatPopup = () => {
+interface ChatPopupProps {
+  storeName?: string;
+  chatUrl?: string;
+}
+
+const ChatPopup = ({ storeName, chatUrl }: ChatPopupProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<{ text: string; sender: 'user' | 'bot' }[]>([
     { 
@@ -13,6 +18,18 @@ const ChatPopup = () => {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleOpenChat = () => {
+    setMessages([
+      { 
+        text: storeName
+          ? `Hi! I'm ${storeName}'s assistant. How can I help you today?`
+          : "Hello! Welcome to our car dealership. How can I help you today?",
+        sender: 'bot'
+      }
+    ]);
+    setIsOpen(true);
+  };
 
   const handleSendMessage = async () => {
     if (inputMessage.trim()) {
@@ -28,7 +45,8 @@ const ChatPopup = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            message: userMessage
+            message: userMessage,
+            chatUrl: chatUrl
           }),
         });
 
@@ -37,7 +55,7 @@ const ChatPopup = () => {
         }
 
         const data = await response.json();
-        if (!data?.message  ) throw new Error("Invalid API response structure");
+        if (!data?.message) throw new Error("Invalid API response structure");
         setMessages(prev => [...prev, { 
           text: data.message || "Sorry, I couldn't process your request", 
           sender: 'bot' 
@@ -45,7 +63,7 @@ const ChatPopup = () => {
       } catch (error) {
         console.error('Chat error:', error);
         setMessages(prev => [...prev, { 
-          text:  "failed to get response from chat service", 
+          text: "Failed to get response from chat service", 
           sender: 'bot' 
         }]);
       } finally {
@@ -68,7 +86,7 @@ const ChatPopup = () => {
       <motion.button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        onClick={() => setIsOpen(true)}
+        onClick={handleOpenChat}
         className="fixed bottom-8 right-8 bg-blue-600 text-white p-4 rounded-full shadow-lg z-50"
       >
         <svg
@@ -98,7 +116,7 @@ const ChatPopup = () => {
           >
             {/* Chat Header */}
             <div className="bg-blue-600 text-white p-4 rounded-t-lg flex justify-between items-center">
-              <h3 className="font-semibold">Chat with us</h3>
+              <h3 className="font-semibold">{storeName ? `Chat with ${storeName}` : 'Chat with us'}</h3>
               <button
                 onClick={() => setIsOpen(false)}
                 className="text-white hover:text-gray-200"

@@ -125,7 +125,7 @@ export default function StorePartsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredParts.map((part) => (
               <Link href={`/parts/${part.slug}?storehostname=${part.stores[0]?.hostname}`} key={part.id}>
-                <div className="p-6 rounded-xl bg-white hover:shadow-md transition-all">
+                <div className="p-6 rounded-xl bg-white hover:shadow-md transition-all shadow-lg border border-gray-200 h-[400px] max-h-[400px] min-h-[400px]">
                   <Img
                     width={1920}
                     height={1080}
@@ -134,8 +134,8 @@ export default function StorePartsPage() {
                     alt={part.title}
                     className="w-full h-48 object-cover rounded-t-lg"
                   />
-                  <h3 className="text-xl font-semibold text-gray-800 mb-3">{part.title}</h3>
-                  <p className="text-gray-600 mb-4 line-clamp-3">{part.description}</p>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-3">{t("features")}: {part.title}</h3>
+                  <p className="text-gray-600 mb-4 line-clamp-3">{t("description")}: {part.description}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-blue-600 font-semibold">
                       {part.price.toLocaleString()}
