@@ -16,6 +16,7 @@ import { initializeStoreConfigs } from './utils/storeConfig';
 import ChatPopup from '../components/ChatPopup';
 import { ComparisonProvider } from "../context/ComparisonContext";
 import AccessibilityControls from "../components/AccessibilityControls";
+import GlobalChatPopup from "../components/GlobalChatPopup";
 
 // Initialize store configurations
 initializeStoreConfigs().catch(console.error);
@@ -44,7 +45,7 @@ export default async function RootLayout({
               <Analytics />
               <Footer />
               <Toaster />
-              <ChatPopup />
+              <GlobalChatPopup />
               <div
                 className="
                   fixed z-50

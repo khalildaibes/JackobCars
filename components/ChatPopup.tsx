@@ -6,10 +6,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 interface ChatPopupProps {
   storeName?: string;
   chatUrl?: string;
+  openOnRender?: boolean;
 }
 
-const ChatPopup = ({ storeName, chatUrl }: ChatPopupProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+const ChatPopup = ({ storeName, chatUrl, openOnRender = false }: ChatPopupProps) => {
+  const [isOpen, setIsOpen] = useState(openOnRender);
   const [messages, setMessages] = useState<{ text: string; sender: 'user' | 'bot' }[]>([
     { 
       text: "Hello! Welcome to our car dealership. How can I help you today?", 

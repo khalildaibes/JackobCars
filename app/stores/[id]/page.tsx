@@ -1,7 +1,7 @@
 "use client";
 // sdada
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { 
   Loader2, MapPin, Phone, Mail, Globe, Clock, Tag, 
@@ -107,6 +107,7 @@ interface ChatPopupProps {
   storeName?: string;
   chatUrl?: string;
   variant?: 'inline' | 'popup';
+  openOnRender?: boolean;
 }
 
 export default function StorePage() {
@@ -123,6 +124,8 @@ export default function StorePage() {
   const [showProProducts, setShowProProducts] = useState(false);
   const [filteredParts, setFilteredParts] = useState<any[]>([]);
   const [filteredServices, setFilteredServices] = useState<any[]>([]);
+  const pathname = usePathname();
+  const isStorePage = pathname.startsWith('/stores/');
 
   useEffect(() => {
     const fetchStore = async () => {
@@ -374,14 +377,7 @@ export default function StorePage() {
         {/* Compact Info Section */}
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-lg mb-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {/* Chat */}
-            {store && (
-              <ChatPopup
-                storeName={store.name}
-                chatUrl={store.additional?.storechatassistant?.url}
-                variant="inline"
-              />
-            )}
+           
 
             {/* Contact Info */}
             <div className="space-y-2">
@@ -428,12 +424,17 @@ export default function StorePage() {
                   transition={{ duration: 0.2 }}
                   className="space-y-1"
                 >
-                  {Object.entries(openingHours).map(([day, hours]) => (
-                    <div key={day} className="flex justify-between items-center text-sm">
-                      <span className="capitalize text-gray-700">{day}</span>
-                      <span className="text-gray-600">{hours}</span>
-                    </div>
-                  ))}
+                  <div className="flex flex-col gap-1">
+                    {Object.entries(openingHours).map(([day, hours]) => (
+                      <div
+                        key={day}
+                        className="flex justify-between items-center rounded-lg bg-gray-100 px-3 py-1 text-xs sm:text-sm font-medium text-gray-700"
+                      >
+                        <span className="capitalize">{day}</span>
+                        <span className="text-gray-600 font-normal">{hours}</span>
+                      </div>
+                    ))}
+                  </div>
                 </motion.div>
               )}
             </div>
@@ -628,10 +629,21 @@ export default function StorePage() {
                   </div>
                 </div>
               </div>
+             
             </div>
+            
           )}
         </div>
       </div>
+        {/* Chat */}
+        {store && (
+              <ChatPopup
+                storeName={store.name}
+                chatUrl={store.additional?.storechatassistant?.url}
+                openOnRender={true}
+              />
+            )}
     </div>
+    
   );
 } 
