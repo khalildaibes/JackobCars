@@ -578,7 +578,7 @@ export default function StorePage() {
                       .map((part) => (
                         <div key={part.id} className="w-[280px] flex-shrink-0 snap-start">
                           <Link href={`/parts/${part.slug}?storehostname=${store.hostname}`}>
-                            <div className="p-6 rounded-xl bg-gradient-to-br from-blue-800 to-blue-50 hover:shadow-md transition-all">
+                            <div className="p-6 rounded-xl bg-white hover:shadow-md transition-all">
                               <Img
                                 width={1920}
                                 height={1080}
@@ -591,7 +591,7 @@ export default function StorePage() {
                               <p className="text-gray-600 mb-4 line-clamp-3">{t("description")}</p>
                               <div className="flex justify-between items-center">
                                 <span className="text-blue-600 font-semibold">
-                                  ${t("price")}: {part.price.toLocaleString()}
+                                  {t("price")}: {part.price.toLocaleString()}
                                 </span>
                                 <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                                   {t("view_details")}
