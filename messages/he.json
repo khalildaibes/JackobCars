@@ -22,5 +22,173 @@
   "ceramic_coating": "ציפוי קרמי",
   "ceramic_coating_desc": "ציפוי קרמי פרימיום להגנה וברק לאורך זמן",
   "learn_more": "למידע נוסף",
-  "book_now": "הזמן עכשיו"
+  "book_now": "הזמן עכשיו",
+  "Navbar": {
+    "logo_alt": "לוגו AtSpeedLimit",
+    "carsMarket": "שוק הרכב",
+    "plate_search": "חיפוש לפי מספר לוחית",
+    "news": "חדשות",
+    "after_market": "אפטרמרקט",
+    "compareCars": "השוואת רכבים",
+    "stores": "חנויות",
+    "login": "התחברות",
+    "open_24h": "פתוח 24/7",
+    "dropdown": {
+      "cars_market": {
+        "new_cars": "רכבים חדשים",
+        "used_cars": "רכבים משומשים",
+        "electric_vehicles": "רכבים חשמליים",
+        "luxury_cars": "רכבי יוקרה"
+      },
+      "find_by_plate": {
+        "plate_search": "חיפוש לפי מספר לוחית",
+        "vehicle_history": "היסטוריית הרכב",
+        "ownership_check": "בדיקת בעלות"
+      },
+      "news": {
+        "latest_news": "חדשות אחרונות",
+        "car_reviews": "ביקורות רכב",
+        "industry_updates": "עדכוני תעשייה"
+      },
+      "after_market": {
+        "parts_accessories": "חלקי חילוף ואביזרים",
+        "service_centers": "מרכזי שירות",
+        "maintenance_tips": "טיפים לתחזוקה"
+      },
+      "comparison": {
+        "compare_models": "השוואת דגמים",
+        "price_comparison": "השוואת מחירים",
+        "feature_comparison": "השוואת תכונות"
+      },
+      "stores": {
+        "find_dealers": "מציאת סוחרים",
+        "service_centers": "מרכזי שירות",
+        "parts_stores": "חנויות חלקי חילוף"
+      }
+    }
+  },
+  "SalesAndReviews": {
+    "cars_for_sale": "רכבים למכירה",
+    "dealer_reviews": "ביקורות סוחרים",
+    "visitors_per_day": "מבקרים ביום",
+    "verified_dealers": "סוחרים מאומתים",
+    "loading": "טוען נתונים..."
+  },
+  "Common": {
+    "Home": "בית",
+    "Accessories": "אביזרים"
+  },
+  "Footer": {
+    
+    "company": "החברה",
+    "resources": "משאבים",
+    "socials": "רשתות חברתיות",
+    "how_it_works": "איך זה עובד",
+    "featured": "מומלץ",
+    "partnership": "שותפות",
+    "business_relations": "יחסי עסקים",
+    "events": "אירועים",
+    "blog": "בלוג",
+    "podcast": "פודקאסט",
+    "invite_friend": "הזמן חבר",
+    "invite_a_friend": "הזמן חבר",
+    "discord": "דיסקורד",
+    "instagram": "אינסטגרם",
+    "twitter": "טוויטר",
+    "facebook": "פייסבוק",
+    "all_rights_reserved": "כל הזכויות שמורות",
+    "privacy_policy": "מדיניות פרטיות",
+    "terms_of_use": "תנאי שימוש"
+  },
+  "Hero": {
+    "title": "מצא את הרכב המושלם שלך",
+    "subtitle": "חיפוש מתקדם לרכב חדש או משומש",
+    "search_placeholder": "חפש לפי יצרן, דגם או שנה",
+    "search_button": "חיפוש",
+    "hero_image_alt": "תמונת רכב",
+    "no_featured_cars_available": "אין רכבים מומלצים כרגע",
+    "info_line_1": "יותר מ-1000 רכבים זמינים",
+    "info_line_2": "מחירים תחרותיים והצעות בלעדיות",
+    "info_line_3": "שירות לקוחות 24/7",
+    "discover_perfect_car": "גלה את הרכב המושלם שלך",
+    "exclusive_deals": "הצעות בלעדיות"
+  },
+  "NewsPage": {
+    "title": "חדשות וסרטונים",
+    "subtitle": "חדשות הרכב העדכניות ביותר, סרטונים וביקורות מומחים, מעיתונאי הרכב העצמאיים של מקס ספיד לימיט",
+    "featured_stories": "סיפורים מומלצים",
+    "read_now": "קרא עכשיו",
+    "news_category": "קטגוריית חדשות",
+    "choose_category": "בחר קטגוריה",
+    "featured": "מומלץ",
+    "latest": "חדשות אחרונות",
+    "reviews": "ביקורות מומחים",
+    "view_more": "צפה בעוד מאמרים",
+    "expert_review": "ביקורת מומחה",
+    "by": "מאת",
+    "unknown_author": "מחבר לא ידוע",
+    "welcome": "ברוכים הבאים לאוטו ניוז",
+    "share_article": "שתף מאמר",
+    "add_comment": "הוסף תגובה",
+    "your_comment": "התגובה שלך",
+    "write_comment": "כתוב את התגובה שלך כאן",
+    "post_comment": "פרסם תגובה",
+    "comments": "תגובות"
+  },
+  "AfterMarket": {
+    "page_title": "חלקי חילוף ביצועים גבוהים למכוניות ומשאיות",
+    "page_description": "חפש חלקי חילוף ואביזרים באיכות גבוהה לרכב שלך",
+    "search_placeholder": "חפש חלקי חילוף ואביזרים...",
+    "stores": "חנויות",
+    "services": "שירותים",
+    "parts": "חלקים",
+    "price_range": "טווח מחירים",
+    "low": "נמוך",
+    "medium": "בינוני",
+    "high": "גבוה",
+    "minimum_rating": "דירוג מינימלי",
+    "availability": "זמינות",
+    "in_stock": "במלאי",
+    "limited": "כמות מוגבלת",
+    "out_of_stock": "אזל מהמלאי",
+    "sort_by": "מיין לפי",
+    "relevance": "רלוונטיות",
+    "price_low": "מחיר: מהנמוך לגבוה",
+    "price_high": "מחיר: מהגבוה לנמוך",
+    "rating": "דירוג",
+    "no_results_found": "לא נמצאו תוצאות",
+    "clear_all_filters": "נקה את כל המסננים",
+    "show_filters": "הצג מסננים",
+    "hide_filters": "הסתר מסננים"
+  },
+  "StorePage": {
+    "contact_information": "פרטי התקשרות",
+    "opening_hours": "שעות פתיחה",
+    "quick_actions": "פעולות מהירות",
+    "chat_on_whatsapp": "צ'אט בוואטסאפ",
+    "get_directions": "קבל הנחיות",
+    "google_maps": "גוגל מפות",
+    "waze": "וויז",
+    "location_not_available": "נתוני מיקום אינם זמינים לחנות זו",
+    "services": "שירותים",
+    "products": "מוצרים",
+    "all": "הכל",
+    "learn_more": "למידע נוסף",
+    "no_image_available": "אין תמונה זמינה",
+    "loading_store": "טוען נתוני חנות...",
+    "store_not_found": "החנות לא נמצאה",
+    "back_to_stores": "חזרה לחנויות",
+    "features": "תכונות",
+    "description": "תיאור",
+    "price": "מחיר",
+    "year": "שנה",
+    "mileage": "קילומטראז'",
+    "body_type": "סוג שלדה",
+    "fuel_type": "סוג דלק",
+    "transmission": "תיבת הילוכים",
+    "view_details": "צפה בפרטים",
+    "view_all_parts": "צפה בכל החלקים",
+    "view_all_cars": "צפה בכל המכוניות",
+    "view_all_services": "צפה בכל השירותים"
+  }
 } 

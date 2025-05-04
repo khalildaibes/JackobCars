@@ -14,6 +14,7 @@ import { Img} from "../../../components/Img";
 import  CarCard  from "../../../components/CarCard";
 import axios from 'axios';
 import { ServiceCard } from "../../../components/ServiceCard";
+import { useTranslations } from "use-intl";
 
 interface Store {
   id: number;
@@ -103,6 +104,7 @@ interface Product {
 export default function StorePage() {
   const params = useParams();
   const slug = params?.id as string;
+  const t = useTranslations("StorePage");
   const [store, setStore] = useState<Store | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -300,10 +302,10 @@ export default function StorePage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-gray-50 to-blue-50">
         <div className="text-center">
-          <p className="text-red-600 mb-4">{error || "Store not found"}</p>
+          <p className="text-red-600 mb-4">{error || t("store_not_found")}</p>
           <Link href="/stores">
             <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
-              Back to Stores
+              {t("back_to_stores")}
             </button>
           </Link>
         </div>
@@ -339,7 +341,7 @@ export default function StorePage() {
             ) : (
               <div className="relative md:w-[20%] w-[100%] h-[70%] rounded-xl overflow-hidden shadow-lg bg-gray-100 flex items-center justify-center">
                 <div className="text-gray-400 text-center">
-                  <span>No image available</span>
+                  <span>{t("no_image_available")}</span>
                 </div>
               </div>
             )}
@@ -367,7 +369,7 @@ export default function StorePage() {
             <div className="space-y-2">
               <div className="flex items-center gap-2 mb-2">
                 <Phone className="w-4 h-4 text-blue-600" />
-                <h3 className="text-sm font-medium text-gray-800">Contact</h3>
+                <h3 className="text-sm font-medium text-gray-800">{t("contact_information")}</h3>
               </div>
               <a href={`tel:${store.phone}`} className="block text-sm text-gray-600 hover:text-blue-600">
                 {store.phone}
@@ -383,7 +385,7 @@ export default function StorePage() {
             <div className="space-y-2">
               <div className="flex items-center gap-2 mb-2">
                 <MapPin className="w-4 h-4 text-blue-600" />
-                <h3 className="text-sm font-medium text-gray-800">Address</h3>
+                <h3 className="text-sm font-medium text-gray-800">{t("get_directions")}</h3>
               </div>
               <p className="text-sm text-gray-600">{store.address}</p>
             </div>
@@ -396,7 +398,7 @@ export default function StorePage() {
               >
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-blue-600" />
-                  <h3 className="text-sm font-medium text-gray-800">Hours</h3>
+                  <h3 className="text-sm font-medium text-gray-800">{t("opening_hours")}</h3>
                 </div>
                 <ChevronDown className={`w-4 h-4 transition-transform ${showHours ? 'rotate-180' : ''}`} />
               </button>
@@ -422,14 +424,14 @@ export default function StorePage() {
             <div className="space-y-2">
               <div className="flex items-center gap-2 mb-2">
                 <Navigation className="w-4 h-4 text-blue-600" />
-                <h3 className="text-sm font-medium text-gray-800">Actions</h3>
+                <h3 className="text-sm font-medium text-gray-800">{t("quick_actions")}</h3>
               </div>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => handleContact('whatsapp')}
                   className="px-2 py-1 text-xs rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
                 >
-                  WhatsApp
+                  {t("chat_on_whatsapp")}
                 </button>
                 {store.address && (
                   <>
@@ -437,13 +439,13 @@ export default function StorePage() {
                       onClick={() => handleNavigation('google')}
                       className="px-2 py-1 text-xs rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
                     >
-                      Maps
+                      {t("google_maps")}
                     </button>
                     <button
                       onClick={() => handleNavigation('waze')}
                       className="px-2 py-1 text-xs rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 transition-colors"
                     >
-                      Waze
+                      {t("waze")}
                     </button>
                   </>
                 )}
@@ -482,9 +484,9 @@ export default function StorePage() {
           {filteredServices.length !== 0 && (
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Featured Services</h2>
+                <h2 className="text-2xl font-bold text-gray-800">{t("services")}</h2>
                 <Link href={`/stores/${store.id}/services?store_hostname=${store.hostname}`} className="text-blue-600 hover:text-blue-700 font-medium">
-                  View All Services →
+                  {t("view_all_services")} →
                 </Link>
               </div>
               <div className="relative">
@@ -519,9 +521,9 @@ export default function StorePage() {
           {filteredProducts.length !== 0 && (
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Featured Cars</h2>
+                <h2 className="text-2xl font-bold text-gray-800">{t("products")}</h2>
                 <Link href={`/stores/${store.id}/listings?store_hostname=${store.hostname}`} className="text-blue-600 hover:text-blue-700 font-medium">
-                  View All Cars →
+                  {t("view_all_cars")} →
                 </Link>
               </div>
               <div className="relative">
@@ -565,7 +567,7 @@ export default function StorePage() {
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-800">Featured Parts</h2>
                 <Link href={`/stores/${store.id}/parts?store_hostname=${store.hostname}`} className="text-blue-600 hover:text-blue-700 font-medium">
-                  View All Parts →
+                  {t("view_all_parts")} →
                 </Link>
               </div>
               <div className="relative">
@@ -585,14 +587,14 @@ export default function StorePage() {
                                 alt={part.title}
                                 className="w-full h-48 object-cover rounded-t-lg"
                               />
-                              <h3 className="text-xl font-semibold text-gray-800 mb-3">{part.title}</h3>
-                              <p className="text-gray-600 mb-4 line-clamp-3">{part.description}</p>
+                              <h3 className="text-xl font-semibold text-gray-800 mb-3">{t("features")}</h3>
+                              <p className="text-gray-600 mb-4 line-clamp-3">{t("description")}</p>
                               <div className="flex justify-between items-center">
                                 <span className="text-blue-600 font-semibold">
-                                  ${part.price.toLocaleString()}
+                                  ${t("price")}: {part.price.toLocaleString()}
                                 </span>
                                 <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                                  View Details
+                                  {t("view_details")}
                                 </button>
                               </div>
                             </div>

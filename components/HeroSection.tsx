@@ -77,7 +77,7 @@ const HeroSection = ({ listings }: HeroSectionProps) => {
 
   if (!cars.length) {
     return <div className="min-h-[600px] flex items-center justify-center text-gray-500">
-      No featured cars available at the moment
+      {t('no_featured_cars_available')}
     </div>;
   }
 

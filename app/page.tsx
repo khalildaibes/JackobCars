@@ -543,7 +543,7 @@ function HomeContent() {
         condition: product.details?.car.condition || "Used",
         transmission: product.details?.car.transmission || "Unknown",
         details: product.details?.car.transmission || "Unknown",
-        price: `$${product.price.toLocaleString()}`,
+        price: `${product.price.toLocaleString()}`,
         mileage: product.details?.car.miles || "N/A",
         year: product.details?.car.year || 2025,
         fuelType: normalizeFuelType(product.details?.car.fuel || "Unknown"),
@@ -568,7 +568,7 @@ function HomeContent() {
       imageUrl: article.cover ? article.cover.url : '',
       category: article.categories?.map((category) => category.name).join(', ') || '',
       date: new Date(article.publishedAt).toLocaleDateString() || '',
-      author: article.author?.data?.attributes?.name || 'Unknown Author',
+      author: article.author?.data?.attributes?.name || t('unknown_author'),
       description: article.description || '',
       cover: article.cover || null,
       categories: article.categories || [],
@@ -753,50 +753,50 @@ function HomeContent() {
       {showads && (
         <div className="w-[15%] bg-white/10 mt-[5%] backdrop-blur-sm border-r border-gray-200/20 p-4 hidden lg:block ${!isAdmin ? 'invisible' : ''}">
           <div className="sticky top-4">
-            <h2 className="text-lg font-semibold text-white mb-4">Quick Links</h2>
+            <h2 className="text-lg font-semibold text-white mb-4">{t('quick_links')}</h2>
             <nav className="space-y-2">
               <Link href="/car-listings" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
                 <Car className="w-4 h-4" />
-                <span>All Cars</span>
+                <span>{t('all_cars')}</span>
               </Link>
               <Link href="/services" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
                 <Settings className="w-4 h-4" />
-                <span>Services</span>
+                <span>{t('services')}</span>
               </Link>
               <Link href="/parts" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
                 <Wrench className="w-4 h-4" />
-                <span>Parts</span>
+                <span>{t('parts')}</span>
               </Link>
               <Link href="/car-listings" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
                 <Tag className="w-4 h-4" />
-                <span>Special Deals</span>
+                <span>{t('special_deals')}</span>
               </Link>
             </nav>
 
             <div className="mt-8">
-              <h2 className="text-lg font-semibold text-white mb-4">Recent Watched Cars</h2>
+              <h2 className="text-lg font-semibold text-white mb-4">{t('recent_watched_cars')}</h2>
               <div className="space-y-2">
                 <button className="w-full text-left px-3 py-2 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
-                  Electric Cars
+                  {t('electric_cars')}
                 </button>
                 <button className="w-full text-left px-3 py-2 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
-                  Luxury SUVs
+                  {t('luxury_suvs')}
                 </button>
                 <button className="w-full text-left px-3 py-2 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
-                  Family Sedans
+                  {t('family_sedans')}
                 </button>
               </div>
             </div>
 
             <div className="mt-8">
-              <h2 className="text-lg font-semibold text-white mb-4">Quick Stats</h2>
+              <h2 className="text-lg font-semibold text-white mb-4">{t('quick_stats')}</h2>
               <div className="space-y-3">
                 <div className="bg-white/5 rounded-lg p-3">
-                  <p className="text-sm text-white/60">Total Listings</p>
+                  <p className="text-sm text-white/60">{t('total_listings')}</p>
                   <p className="text-xl font-bold text-white">{listings.length}</p>
                 </div>
                 <div className="bg-white/5 rounded-lg p-3">
-                  <p className="text-sm text-white/60">Featured Cars</p>
+                  <p className="text-sm text-white/60">{t('featured_cars')}</p>
                   <p className="text-xl font-bold text-white">{listings.filter(l => l.category.some(cat => cat.toLowerCase().includes('featured'))).length}</p>
                 </div>
               </div>
@@ -952,8 +952,8 @@ function HomeContent() {
                 }}
                 className="mb-6"
               >
-                <h3 className="text-2xl font-bold text-gray-900">{t('عروض مميزة')}</h3>
-                <p className="text-gray-600 mt-1">عروض خاصة من شركائنا</p>
+                <h3 className="text-2xl font-bold text-gray-900">{t('special_offers')}</h3>
+                <p className="text-gray-600 mt-1">{t('partner_offers')}</p>
               </motion.div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1046,15 +1046,15 @@ function HomeContent() {
                   <div className="flex items-center justify-between mb-6">
                     <div>
                       <h3 className="text-2xl font-bold text-gray-900">{t('electric_vehicles')}</h3>
-                      <p className="text-gray-600 mt-1">Discover the future of mobility</p>
+                      <p className="text-gray-600 mt-1">{t('discover_future_mobility')}</p>
                     </div>
                     <div className="hidden sm:block">
                       <div className="flex gap-2">
                         <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                          View All
+                          {t('view_all')}
                         </button>
                         <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                          Compare
+                          {t('compare')}
                         </button>
                       </div>
                     </div>
@@ -1129,15 +1129,15 @@ function HomeContent() {
                   <div className="flex items-center justify-between mb-6">
                     <div>
                       <h3 className="text-2xl font-bold text-white">{t('parts_and_accessories')}</h3>
-                      <p className="text-gray-300 mt-1">Premium performance parts for your vehicle</p>
+                      <p className="text-gray-300 mt-1">{t('premium_parts')}</p>
                     </div>
                     <div className="hidden sm:block">
                       <div className="flex gap-2">
                         <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                          Shop Now
+                          {t('shop_now')}
                         </button>
                         <button className="px-4 py-2 border border-gray-600 text-white rounded-lg hover:bg-gray-800 transition-colors">
-                          Browse Categories
+                          {t('browse_categories')}
                         </button>
                       </div>
                     </div>
@@ -1169,15 +1169,15 @@ function HomeContent() {
                   <div className="flex items-center justify-between mb-6">
                     <div>
                       <h3 className="text-2xl font-bold text-gray-900">{t('automotive_services')}</h3>
-                      <p className="text-gray-600 mt-1">Expert care for your vehicle</p>
+                      <p className="text-gray-600 mt-1">{t('expert_care')}</p>
                     </div>
                     <div className="hidden sm:block">
                       <div className="flex gap-2">
                         <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                          Book Service
+                          {t('book_service')}
                         </button>
                         <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                          View Packages
+                          {t('view_packages')}
                         </button>
                       </div>
                     </div>
@@ -1298,7 +1298,7 @@ function HomeContent() {
       {showcontrols && (
         <div className="w-[15%] bg-white/10 mt-[5%] backdrop-blur-sm border-l border-gray-200/20 p-4 hidden lg:block">
           <div className="sticky top-4">
-            <h2 className="text-lg font-semibold text-white mb-4">Featured Ads</h2>
+            <h2 className="text-lg font-semibold text-white mb-4">{t('featured_ads')}</h2>
             <div className="space-y-4">
               <div className="bg-white/5 rounded-lg overflow-hidden">
                 <div className="aspect-video relative">
@@ -1311,10 +1311,10 @@ function HomeContent() {
                   />
                 </div>
                 <div className="p-3">
-                  <h3 className="text-white font-medium">Get 20% Off Car Insurance</h3>
-                  <p className="text-sm text-white/60 mt-1">Limited time offer for new customers</p>
+                  <h3 className="text-white font-medium">{t('car_insurance_offer')}</h3>
+                  <p className="text-sm text-white/60 mt-1">{t('limited_time_offer')}</p>
                   <button className="mt-2 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                    Learn More
+                    {t('learn_more')}
                   </button>
                 </div>
               </div>
@@ -1330,10 +1330,10 @@ function HomeContent() {
                   />
                 </div>
                 <div className="p-3">
-                  <h3 className="text-white font-medium">Low Interest Car Loans</h3>
-                  <p className="text-sm text-white/60 mt-1">Starting from 2.9% APR</p>
+                  <h3 className="text-white font-medium">{t('low_interest_loans')}</h3>
+                  <p className="text-sm text-white/60 mt-1">{t('starting_apr')}</p>
                   <button className="mt-2 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                    Apply Now
+                    {t('apply_now')}
                   </button>
                 </div>
               </div>
@@ -1349,10 +1349,10 @@ function HomeContent() {
                   />
                 </div>
                 <div className="p-3">
-                  <h3 className="text-white font-medium">Premium Car Service</h3>
-                  <p className="text-sm text-white/60 mt-1">Free inspection with every service</p>
+                  <h3 className="text-white font-medium">{t('premium_service')}</h3>
+                  <p className="text-sm text-white/60 mt-1">{t('free_inspection')}</p>
                   <button className="mt-2 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                    Book Now
+                    {t('book_now')}
                   </button>
                 </div>
               </div>

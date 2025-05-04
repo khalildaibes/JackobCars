@@ -566,7 +566,7 @@ const CarDetails: React.FC<CarDetailsProps> = ({ params }) => {
                 <div className="space-y-6">
                   <div className="bg-gray-50 p-6 rounded-xl">
                     <div className="text-sm text-gray-600 mb-1">{t('estimated_monthly_payment')}</div>
-                    <div className="text-3xl font-bold text-blue-600">₪{monthlyPayment.toLocaleString()}</div>
+                    <div className="text-3xl font-bold text-blue-600">{monthlyPayment.toLocaleString()}</div>
                     <div className="text-sm text-gray-500 mt-2">{t('for_months', { months: loanTerm, rate: interestRate })}</div>
                   </div>
 

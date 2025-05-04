@@ -376,7 +376,7 @@ interface CategoriesPageProps {
 }
 
 const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
-  const t = useTranslations("Categories");
+  const t = useTranslations("AfterMarket");
   const searchParams = useSearchParams();
   const [selectedFilter, setSelectedFilter] = useState("parts");
   const [searchQuery, setSearchQuery] = useState("");
@@ -443,7 +443,7 @@ const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
     <div className="min-h-screen  py-12 px-4 sm:px-6 lg:px-8 mt-[5%] ">
       <div className="max-w-7xl mx-auto ">
         {/* Header Section */}
-        {/* <motion.div
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -455,7 +455,7 @@ const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             {t("page_description")}
           </p>
-        </motion.div> */}
+        </motion.div>
 
         {/* Search and Filter Section */}
         <div className="mb-8 space-y-6 rounded-lg py-4">
@@ -487,7 +487,7 @@ const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
               className="md:hidden px-6 py-3 rounded-2xl bg-blue-600 text-white flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20"
             >
               <FilterIcon size={20} />
-              {showMobileFilters ? "Hide Filters" : "Show Filters"}
+              {showMobileFilters ? t("hide_filters") : t("show_filters")}
             </motion.button>
           </div>
 
@@ -502,7 +502,7 @@ const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Type Filter */}
                 <div className="space-y-3">
-                  <h3 className="font-medium text-gray-700">Type</h3>
+                  <h3 className="font-medium text-gray-700">{t("Type")}</h3>
                   <div className="flex flex-wrap gap-2">
                     {FILTERS.map((filter) => (
                       <button
@@ -524,7 +524,7 @@ const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
                 <div className="space-y-3">
                   <h3 className="font-medium text-gray-700 flex items-center gap-2">
                     <DollarSign size={16} />
-                    Price Range
+                    {t("price_range")}
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {PRICE_RANGES.map((range) => (
@@ -553,7 +553,7 @@ const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
                 <div className="space-y-3">
                   <h3 className="font-medium text-gray-700 flex items-center gap-2">
                     <Star size={16} />
-                    Minimum Rating
+                    {t("minimum_rating")}
                   </h3>
                   <div className="flex gap-2">
                     {RATINGS.map((rating) => (
@@ -576,7 +576,7 @@ const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
                 <div className="space-y-3">
                   <h3 className="font-medium text-gray-700 flex items-center gap-2">
                     <Clock size={16} />
-                    Availability
+                    {t("availability")}
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {AVAILABILITY.map((status) => (
@@ -604,16 +604,16 @@ const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
 
               {/* Sort Options */}
               <div className="mt-6 flex items-center gap-4 border-t pt-4">
-                <span className="text-gray-700 font-medium">Sort by:</span>
+                <span className="text-gray-700 font-medium">{t("sort_by")}:</span>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                   className="px-4 py-2 rounded-xl bg-gray-100 text-gray-700 border-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="relevance">Relevance</option>
-                  <option value="price_low">Price: Low to High</option>
-                  <option value="price_high">Price: High to Low</option>
-                  <option value="rating">Rating</option>
+                  <option value="relevance">{t("relevance")}</option>
+                  <option value="price_low">{t("price_low")}</option>
+                  <option value="price_high">{t("price_high")}</option>
+                  <option value="rating">{t("rating")}</option>
                 </select>
               </div>
             </motion.div>
@@ -634,7 +634,7 @@ const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
                   {/* Copy the same filter content from above */}
                   {/* Type Filter */}
                   <div className="space-y-3">
-                    <h3 className="font-medium text-gray-700">Type</h3>
+                    <h3 className="font-medium text-gray-700">{t("Type")}</h3>
                     <div className="flex flex-wrap gap-2">
                       {FILTERS.map((filter) => (
                         <button
@@ -656,7 +656,7 @@ const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
                   <div className="space-y-3">
                     <h3 className="font-medium text-gray-700 flex items-center gap-2">
                       <DollarSign size={16} />
-                      Price Range
+                      {t("price_range")}
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {PRICE_RANGES.map((range) => (
@@ -685,7 +685,7 @@ const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
                   <div className="space-y-3">
                     <h3 className="font-medium text-gray-700 flex items-center gap-2">
                       <Star size={16} />
-                      Minimum Rating
+                      {t("minimum_rating")}
                     </h3>
                     <div className="flex gap-2">
                       {RATINGS.map((rating) => (
@@ -708,7 +708,7 @@ const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
                   <div className="space-y-3">
                     <h3 className="font-medium text-gray-700 flex items-center gap-2">
                       <Clock size={16} />
-                      Availability
+                      {t("availability")}
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {AVAILABILITY.map((status) => (
@@ -736,16 +736,16 @@ const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
 
                 {/* Sort Options */}
                 <div className="mt-6 flex items-center gap-4 border-t pt-4">
-                  <span className="text-gray-700 font-medium">Sort by:</span>
+                  <span className="text-gray-700 font-medium">{t("sort_by")}:</span>
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
                     className="px-4 py-2 rounded-xl bg-gray-100 text-gray-700 border-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="relevance">Relevance</option>
-                    <option value="price_low">Price: Low to High</option>
-                    <option value="price_high">Price: High to Low</option>
-                    <option value="rating">Rating</option>
+                    <option value="relevance">{t("relevance")}</option>
+                    <option value="price_low">{t("price_low")}</option>
+                    <option value="price_high">{t("price_high")}</option>
+                    <option value="rating">{t("rating")}</option>
                   </select>
                 </div>
               </motion.div>
@@ -832,7 +832,7 @@ const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
                 }}
                 className="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
               >
-                Clear all filters
+                {t("clear_all_filters")}
               </button>
             </div>
           </motion.div>

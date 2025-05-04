@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Img } from "./Img";
+import { useTranslations } from "next-intl";
 
 interface PartCardProps {
   part: {
@@ -25,6 +26,7 @@ interface PartCardProps {
 
 const PartCard = ({ part }: PartCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const t = useTranslations("PartCard");
 
   return (
     <div
@@ -45,7 +47,7 @@ const PartCard = ({ part }: PartCardProps) => {
         />
         {part.categories?.some(cat => typeof cat?.name === 'string' && cat.name.toLowerCase().includes("featured")) && (
           <div className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded-md text-xs font-medium">
-            Featured
+            {t("featured")}
           </div>
         )}
       </div>
@@ -65,7 +67,7 @@ const PartCard = ({ part }: PartCardProps) => {
             href={`/parts/${part.slug}?slug=${part.slug}&storehostname=${part.store?.hostname || '64.227.112.249'}`}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
           >
-            View Details
+            {t("view_details")}
           </Link>
         </div>
 
@@ -82,7 +84,7 @@ const PartCard = ({ part }: PartCardProps) => {
               ))}
               {part.features.length > 3 && (
                 <span className="text-gray-500 text-xs">
-                  +{part.features.length - 3} more
+                  +{part.features.length - 3} {t("more_features")}
                 </span>
               )}
             </div>

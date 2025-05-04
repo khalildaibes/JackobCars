@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Img } from "./Img";
+import { useTranslations } from "next-intl";
 
 interface ServiceCardProps {
   id: string;
@@ -30,6 +31,8 @@ export const ServiceCard = ({
   hostname,
   onClick,
 }: ServiceCardProps) => {
+  const t = useTranslations("ServiceCard");
+
   return (
     <Link href={`/services/${slug}?store_hostname=${hostname ?? stores[0]?.hostname ?? ""}`}>  
     <div
@@ -66,13 +69,13 @@ export const ServiceCard = ({
 
           <div className="flex items-center justify-between pt-2">
             <span className="text-lg font-bold text-white">
-              ${price.toLocaleString()}
+              {t("default_currency")}{price.toLocaleString()}
             </span>
             <button
               onClick={onClick}
               className="bg-white/10 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-white/20 transition-colors flex items-center gap-2 backdrop-blur-sm"
             >
-              View Details
+              {t("view_details")}
               <svg
                 className="w-4 h-4"
                 fill="none"

@@ -232,7 +232,7 @@ const PartDetails = () => {
           </div>
 
           <div className="text-3xl font-bold text-blue-600">
-            ${currentPart.price.toLocaleString()}
+            {currentPart.price.toLocaleString()}
           </div>
 
           <div className="flex gap-4 ">
@@ -341,7 +341,7 @@ const PartDetails = () => {
               <CardContent className="p-4">
                 <h3 className="font-semibold">{similarPart.name}</h3>
                 <p className="text-lg font-bold text-blue-600 mt-2">
-                  ${similarPart.price.toLocaleString()}
+                  {similarPart.price.toLocaleString()}
                 </p>
               </CardContent>
             </Card>

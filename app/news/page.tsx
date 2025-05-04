@@ -594,7 +594,7 @@ export default function NewsPage() {
                   <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
                     <h3 className="text-xl font-bold text-white mb-2 px-2">{featuredNews[0].title}</h3>
                     <div className="flex items-center text-sm text-white">
-                      <span>{featuredNews[0].author?.data?.attributes?.name || 'Unknown Author'}</span>
+                      <span>{featuredNews[0].author?.data?.attributes?.name ||  t('unknown_author')}</span>
                       <span className="mx-2 ">|</span>
                       <span>{formatDate(featuredNews[0].publishedAt)}</span>
                     </div>
@@ -621,7 +621,7 @@ export default function NewsPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900 px-2">{item.title}</h3>
-                      <p className="text-sm text-black mt-1 px-2">{item.author?.data?.attributes?.name || 'Unknown Author'}</p>
+                      <p className="text-sm text-black mt-1 px-2">{item.author?.data?.attributes?.name ||  t('unknown_author')}</p>
                     </div>
                   </article>
                 ))}
@@ -696,7 +696,7 @@ export default function NewsPage() {
                         <h3 className="font-bold text-lg text-gray-900 mb-2 px-2">{item.title}</h3>
                         <p className="text-gray-600 text-sm mb-2 px-2">{item.description}</p>
                         <div className="text-sm text-gray-600 px-2">
-                          <span>{t('by')} {item.author?.data?.attributes?.name || 'Unknown Author'}</span>
+                          <span>{t('by')} {item.author?.data?.attributes?.name ||  t('unknown_author')}</span>
                           <span className="mx-2">•</span>
                           <span>{formatDate(item.publishedAt)}</span>
                         </div>
@@ -764,7 +764,7 @@ export default function NewsPage() {
                         <h3 className="font-bold text-lg text-gray-900 mb-2 px-2">{item.title}</h3>
                         <p className="text-gray-600 text-sm mb-2 px-2">{item.description}</p>
                         <div className="text-sm text-gray-600 px-2">
-                          <span>{t('by')} {item.author?.data?.attributes?.name || 'Unknown Author'}</span>
+                          <span>{t('by')} {item.author?.data?.attributes?.name ||  t('unknown_author')}</span>
                           <span className="mx-2">•</span>
                           <span>{formatDate(item.publishedAt)}</span>
                         </div>
@@ -800,7 +800,7 @@ export default function NewsPage() {
                           <div className="text-xs text-white mb-1 font-bold uppercase tracking-wider bg-white/5 rounded-full px-2 py-1 inline-block">{t('expert_review')}</div>
                           <h3 className="font-bold text-lg text-white mb-2 line-clamp-2 px-2">{item.title}</h3>
                           <div className="text-sm text-gray-300 px-2">
-                            By {item.author?.data?.attributes?.name || 'Unknown Author'}
+                            By {item.author?.data?.attributes?.name ||  t('unknown_author')}
                           </div>
                         </div>
                       </div>

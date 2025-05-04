@@ -195,7 +195,7 @@ const ServiceDetails = () => {
           </div>
 
           <div className="text-3xl font-bold text-blue-600">
-            ${currentService.details.price.toLocaleString()}
+            {currentService.details.price.toLocaleString()}
           </div>
 
           <div className="flex gap-4">
@@ -301,7 +301,7 @@ const ServiceDetails = () => {
               <CardContent className="p-4">
                 <h3 className="font-semibold">{similarService.name}</h3>
                 <p className="text-lg font-bold text-blue-600 mt-2">
-                  ${similarService.price.toLocaleString()}
+                  {similarService.price.toLocaleString()}
                 </p>
               </CardContent>
             </Card>
