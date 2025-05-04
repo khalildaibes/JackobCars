@@ -592,7 +592,7 @@ export default function ProductsClient({ products }: ProductsClientProps) {
               <motion.div
                 key={item.id}
                 variants={itemVariants}
-                className={`bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 ${
+                className={` ${
                   viewMode === 'list' ? 'flex gap-6' : ''
                 }`}
               >
