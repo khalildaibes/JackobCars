@@ -163,7 +163,7 @@ export default function StorePage() {
             : String(storeDataItem.details || ''),
           hostname: String(storeDataItem.hostname || ''),
           visits: Number(storeDataItem.visits || 0),
-          logo: storeDataItem.logo?.url || null,
+          logo: storeDataItem.logo ? storeDataItem.logo : null,
           images: storeDataItem.image || [],
           tags: String(storeDataItem.tags || ''),
           provider: storeDataItem.provider ? String(storeDataItem.provider) : undefined,
@@ -327,10 +327,10 @@ export default function StorePage() {
         {/* Store Header with Logo */}
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg mb-8">
           <div className="flex flex-col md:flex-row gap-8">
-            {store.images && store.images.length > 0 ? (
+            {store.logo ? (
               <div className="relative md:w-[20%] w-[100%] h-[70%] rounded-xl overflow-hidden shadow-lg">
                 <Img
-                  src={`${store.hostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${store.hostname}`}${store.images[0].url}`}
+                  src={`${store.hostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${store.hostname}`}${store.logo.url}`}
                   external={true}
                   alt={store.name}
                   width={1024}

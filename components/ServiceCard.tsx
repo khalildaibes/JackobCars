@@ -69,7 +69,7 @@ export const ServiceCard = ({
 
           <div className="flex items-center justify-between pt-2">
             <span className="text-lg font-bold text-white">
-              {t("default_currency")}{price.toLocaleString()}
+              {price.toLocaleString()}
             </span>
             <button
               onClick={onClick}

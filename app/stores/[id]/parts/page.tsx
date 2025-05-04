@@ -5,6 +5,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import Link from "next/link";
 import { Img } from "../../../../components/Img";
+import { useTranslations } from "next-intl";
 
 interface Part {
   id: string;
@@ -18,6 +19,8 @@ interface Part {
 }
 
 export default function StorePartsPage() {
+  const t = useTranslations("parts");
+
   const params = useParams();
   const searchParams = useSearchParams();
   const storeHostname = searchParams.get('store_hostname') || '';
@@ -75,7 +78,7 @@ export default function StorePartsPage() {
     <div className="min-h-screen bg-[#050B20] pt-24">
       <div className="max-w-7xl mx-auto px-4">
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
-          <h1 className="text-3xl font-bold text-gray-800 mb-8">Store Parts</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-8">{t("store_parts")}</h1>
           
           {/* Search and Filter Section */}
           <div className="mb-8">
@@ -84,7 +87,7 @@ export default function StorePartsPage() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search parts..."
+                  placeholder={t("search_parts")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -99,7 +102,7 @@ export default function StorePartsPage() {
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  All Categories
+                  {t("all_categories")}
                 </button>
                 {categories.map((category) => (
                   <button
@@ -122,7 +125,7 @@ export default function StorePartsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredParts.map((part) => (
               <Link href={`/parts/${part.slug}?storehostname=${part.stores[0]?.hostname}`} key={part.id}>
-                <div className="p-6 rounded-xl bg-gradient-to-br from-blue-800 to-blue-50 hover:shadow-md transition-all">
+                <div className="p-6 rounded-xl bg-white hover:shadow-md transition-all">
                   <Img
                     width={1920}
                     height={1080}
@@ -135,10 +138,10 @@ export default function StorePartsPage() {
                   <p className="text-gray-600 mb-4 line-clamp-3">{part.description}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-blue-600 font-semibold">
-                      ${part.price.toLocaleString()}
+                      {part.price.toLocaleString()}
                     </span>
                     <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                      View Details
+                      {t("view_details")}
                     </button>
                   </div>
                 </div>
@@ -148,7 +151,7 @@ export default function StorePartsPage() {
 
           {filteredParts.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">No parts found matching your criteria.</p>
+              <p className="text-gray-500 text-lg">{t("no_parts_found")}</p>
             </div>
           )}
         </div>

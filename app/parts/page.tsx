@@ -116,7 +116,7 @@ export default function PartsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredParts.map((part) => (
               <Link href={`/parts/${part.slug}?storehostname=${part.hostname}`} key={part.id}>
-                <div className="p-6 rounded-xl bg-gradient-to-br from-blue-800 to-blue-50 hover:shadow-md transition-all">
+                <div className="p-6 rounded-xl bg-white hover:shadow-md transition-all">
                   <Img
                     width={1920}
                     height={1080}
