@@ -440,6 +440,7 @@ function HomeContent() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showads, setShowads] = useState(false);
   const [showcontrols, setShowcontrols] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Get search params with memoization
   const { selectedFuel, selectedYear, selectedManufacturer, selectedLimit, selectedModel } = useMemo(() => ({
@@ -472,7 +473,6 @@ function HomeContent() {
         queryKey: ['articles'],
         queryFn: fetchArticles
       },
-
       {
         queryKey: ['parts'],
         queryFn: fetchParts
@@ -488,35 +488,36 @@ function HomeContent() {
     ]
   });
 
-  // Destructure the results
+  // Destructure the results with proper typing
   const [
-    { data: carsData, isLoading: isLoadingCars },
-    { data: dealsData, isLoading: isLoadingDeals },
-    { data: articlesData, isLoading: isLoadingArticles },
-    { data: partsData, isLoading: isLoadingParts },
-    { data: servicesData, isLoading: isLoadingServices },
-    { data: storiesData, isLoading: isLoadingStories }
+    { data: carsData, isLoading: isLoadingCars, error: carsError },
+    { data: dealsData, isLoading: isLoadingDeals, error: dealsError },
+    { data: articlesData, isLoading: isLoadingArticles, error: articlesError },
+    { data: partsData, isLoading: isLoadingParts, error: partsError },
+    { data: servicesData, isLoading: isLoadingServices, error: servicesError },
+    { data: storiesData, isLoading: isLoadingStories, error: storiesError }
   ] = queryResults;
+
+  // Check for any errors
+  useEffect(() => {
+    const errors = [carsError, dealsError, articlesError, partsError, servicesError, storiesError];
+    const firstError = errors.find(error => error);
+    if (firstError) {
+      setError(firstError.message);
+    }
+  }, [carsError, dealsError, articlesError, partsError, servicesError, storiesError]);
+
   // Check if any query is still loading
   const isLoading = queryResults.some(result => result.isLoading);
   const [sliderState, setSliderState] = React.useState(0);
   const sliderRef = React.useRef<AliceCarousel>(null);
-  // Transform deals data with memoization
+
+  // Transform deals data with memoization and proper type checking
   const listings = useMemo(() => {
-    console.log("Transforming deals data...");
-    if (isLoadingDeals) {
-      console.log("Deals data is loading...");
-      return [];
-    }
+    if (isLoadingDeals || !dealsData) return [];
     
-    if (!dealsData) {
-      console.log("No deals data available");
-      return [];
-    }
-    
-    console.log("Raw deals data:", dealsData);
-    return dealsData.map((product: Deal): Listing => {
-      console.log("Processing product:", product);
+    const deals = dealsData as Deal[];
+    return deals.map((product: Deal): Listing => {
       let categories: string[] = [];
       
       if (!product.categories) {
@@ -557,11 +558,14 @@ function HomeContent() {
     });
   }, [dealsData, isLoadingDeals]);
 
-  // Transform articles data with memoization
+  // Transform articles data with proper type checking
   const transformedArticles = useMemo(() => {
-    if (!articlesData?.featuredData?.data) return [];
+    if (!articlesData) return [];
     
-    return articlesData.featuredData.data.map((article: Article) => ({
+    const data = articlesData as { featuredData: { data: Article[] } };
+    if (!data?.featuredData?.data) return [];
+    
+    return data.featuredData.data.map((article: Article) => ({
       id: article.id,
       title: article.title || '',
       excerpt: article.excerpt || '',
@@ -577,7 +581,53 @@ function HomeContent() {
       slug: article.slug || '',
       blocks: article.blocks || []
     }));
-  }, [articlesData]);
+  }, [articlesData, t]);
+
+  // Transform parts data with proper type checking
+  const transformedParts = useMemo(() => {
+    if (!partsData) return [];
+    
+    const parts = partsData as Part[];
+    return parts.map((part: Part): TransformedPart => ({
+      id: part.id,
+      title: part.title,
+      slug: part.slug,
+      price: part.price,
+      details: part.details,
+      categories: part.categories,
+      stores: part.stores,
+      images: part.images,
+      features: undefined,
+      description: ""
+    }));
+  }, [partsData]);
+
+  // Transform services data with proper type checking
+  const transformedServices = useMemo(() => {
+    if (!servicesData) return [];
+    
+    const services = servicesData as Service[];
+    return services.map((service: Service) => {
+      const imageUrl = service.image?.url || null;
+
+      return {
+        id: parseInt(service.id),
+        mainImage: imageUrl 
+          ? `http://${service.stores[0].hostname}${imageUrl}`
+          : "/default-service.png",
+        alt: service.title || "Service Image",
+        title: service.title,
+        slug: service.slug, 
+        description: service.details?.description || "",
+        price: service.price,
+        features: service.details ? service.details.features.map((feature) => feature.value) || [] : [],
+        categories: service.categories || [],
+        stores: service.stores || [],
+        hostname: service.stores?.[0]?.hostname || "",
+        image: service.image || { url: "/default-service.png" }
+      };
+    });
+  }, [servicesData]);
 
   // News slider state and functions
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -642,24 +692,6 @@ function HomeContent() {
     }
   ], [t]);
 
-  // Transform parts data
-  const transformedParts = useMemo(() => {
-    if (!partsData) return [];
-    
-    return partsData.map((part: Part): TransformedPart => ({
-      id: part.id,
-      title: part.title,
-      slug: part.slug,
-      price: part.price,
-      details: part.details,
-      categories: part.categories,
-      stores: part.stores,
-      images: part.images,
-      features: undefined,
-      description: ""
-    }));
-  }, [partsData]);
-
   // Filter listings based on selected category
   const filteredListings = useMemo(() => {
     if (!selectedCategory) return listings;
@@ -685,32 +717,6 @@ function HomeContent() {
     );
   }, [filteredListings]);
 
-  // Transform services data
-  const transformedServices = useMemo(() => {
-    if (!servicesData) return [];
-    
-    return servicesData.map((service: Service) => {
-      const imageUrl = service.image?.url || null;
-
-      return {
-        id: parseInt(service.id),
-        mainImage: imageUrl 
-          ? `http://${service.stores[0].hostname}${imageUrl}`
-          : "/default-service.png",
-        alt: service.title || "Service Image",
-        title: service.title,
-        slug: service.slug, 
-        description: service.details?.description || "",
-        price: service.price,
-        features: service.details ? service.details.features.map((feature) => feature.value) || [] : [],
-        categories: service.categories || [],
-        stores: service.stores || [],
-        hostname: service.stores?.[0]?.hostname || "",
-        image: service.image || { url: "/default-service.png" }
-      };
-    });
-  }, [servicesData]);
-  
   // Fetch stories
   useEffect(() => {
     const fetchStories = async () => {
@@ -746,6 +752,36 @@ function HomeContent() {
     params.set('category', category);
     router.push(`?${params.toString()}`);
   };
+
+  // Add error display
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center p-8">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Page</h2>
+          <p className="text-gray-600">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Add loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex w-full z-70 overflow-x-hidden">
