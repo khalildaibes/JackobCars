@@ -323,7 +323,9 @@
     "automotive_services": "خدمات السيارات",
     "expert_care": "رعاية خبيرة",
     "book_service": "حجز خدمة",
-    "view_packages": "عرض الباقات"
+    "view_packages": "عرض الباقات",
+    "special_offers": "عروض خاصة",
+    "partner_offers": "عروض الشركاء"
   },
   "ServiceCard": {
     "view_details": "عرض التفاصيل",
@@ -524,7 +526,8 @@
     "rating_5": "مرتفع جداً",
 
     "loading_info": "جاري تحميل معلومات إضافية...",
-    "error_loading_info": "خطأ في تحميل المعلومات الإضافية"
+    "error_loading_info": "خطأ في تحميل المعلومات الإضافية",
+    "id": "معرف"
   },
   "ServiceCard": {
     "view_details": "عرض التفاصيل",
@@ -949,7 +952,6 @@
     "how_it_works": "كيف يعمل",
     "invite_a_friend": "دعوة صديق",
     "socials": "التواصل الاجتماعي",
-    "how_it_works": "كيف يعمل",
     "featured": "مميز",
     "partnership": "شراكة",
     "business_relations": "علاقات تجارية",

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const LanguageSwitcher = () => {
   const languages = [
@@ -8,13 +8,13 @@ const LanguageSwitcher = () => {
     { code: "he-IL", label: "עברית" },
   ];
 
-  // Read the current locale from cookie (if available), default to "en"
-  const getCurrentLocale = (): string => {
-    const match = document.cookie.match(/NEXT_LOCALE=([^;]+)/);
-    return match ? match[1] : "ar";
-  };
+  const [currentLocale, setCurrentLocale] = useState('ar');
 
-  const [currentLocale, setCurrentLocale] = React.useState(getCurrentLocale());
+  useEffect(() => {
+    // Read the current locale from cookie (if available), default to "ar"
+    const match = document.cookie.match(/NEXT_LOCALE=([^;]+)/);
+    setCurrentLocale(match ? match[1] : 'ar');
+  }, []);
 
   // Set the site's text direction based on the current locale.
   useEffect(() => {
