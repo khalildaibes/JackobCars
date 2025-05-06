@@ -68,10 +68,10 @@ interface Product {
   slug: string;
   quantity: number;
   price: number;
-  categories?: {string }[]; // Categories from Strapi
+  categories?: string[]; // Categories from Strapi
   image: { url: string }[]; // Image array for localization
   details: {
-    images: any;
+    images: { url: string }[]; // Add this line to match the interface
     car: {
       description: string;
       fuelType: string;
@@ -146,16 +146,21 @@ export default function StorePage() {
         }
         
         
-        // Fetch products from the store's specific API endpoint
-        const productsResponse = await fetch(`/api/deals?store_hostname=${storeDataItem.hostname}`);
-        if (!productsResponse.ok) throw new Error("Failed to fetch products");
-        const productsData = await productsResponse.json();
-        console.log('productsData ', JSON.stringify(productsData, null, 2));
+        // Fetch products from the store's specific API endpoint only if store has car-listing tag
+        let productsData = { data: [] };
+        let partsData = { data: [] };
+        if (storeDataItem.tags?.includes('car-listing')) {
+          const productsResponse = await fetch(`/api/deals?store_hostname=${storeDataItem.hostname}`);
+          if (!productsResponse.ok) throw new Error("Failed to fetch products");
+          productsData = await productsResponse.json();
+          console.log('productsData ', JSON.stringify(productsData, null, 2));
+                  // Fetch parts from the parts API
+          const partsResponse = await fetch(`/api/parts?store_hostname=${storeDataItem.hostname}`);
+          if (!partsResponse.ok) throw new Error("Failed to fetch parts, " + partsResponse.statusText);
+          partsData = await partsResponse.json();
 
-        // Fetch parts from the parts API
-        const partsResponse = await fetch(`/api/parts?store_hostname=${storeDataItem.hostname}`);
-        if (!partsResponse.ok) throw new Error("Failed to fetch parts, " + partsResponse.statusText);
-        const partsData = await partsResponse.json();
+        }
+
 
         // Fetch services from the services API
         const servicesResponse = await fetch(`/api/services?store_hostname=${storeDataItem.hostname}`);
@@ -196,9 +201,11 @@ export default function StorePage() {
             name: String(product.name || ''),
             slug: String(product.slug || ''),
             quantity: Number(product.quantity || 0),
+            image: product.image || [], // Ensure this is an array of objects with url property
             price: Number(product.price || 0),
             categories: product.categories ? product.categories.split(',').map((cat: string) => cat.trim()) : [],
             details: {
+              images: product.image || [], // Add this line to match the interface
               car: {
                 description: product.details?.car?.description || '',
                 fuelType: product.details?.car?.fuel || '',

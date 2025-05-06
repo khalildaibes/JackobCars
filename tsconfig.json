@@ -20,14 +20,21 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "target": "ES2017"
   },
   "include": [
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "app/api/blogdata/route.js", "app/api/stores/route.js", "app/api/parts/route.js", "app/api/services/route.js", "app/api/stories/route.js", "app/api/category/route.js"  ],
+    "**/*.tsx",
+    "app/api/blogdata/route.js",
+    "app/api/stores/route.js",
+    "app/api/parts/route.js",
+    "app/api/services/route.js",
+    "app/api/stories/route.js",
+    "app/api/category/route.js"
+  ],
   "exclude": [
     "node_modules"
   ]
