@@ -84,10 +84,10 @@ const HeroSection = ({ listings }: HeroSectionProps) => {
   const currentArticle = cars[currentIndex];
 
   return (
-    <div className="relative min-h-[400px] sm:min-h-[600px] w-full">
+    <div className="relative min-h-[400px] sm:min-h-[600px] w-full rounded-xl">
       {/* Background Image with Overlay */}
       <div 
-        className="absolute inset-0 bg-cover bg-center"
+        className="absolute inset-0 bg-cover bg-center rounded-xl"
         style={{
           backgroundImage: `url(${currentArticle?.mainImage || '/images/hero-bg.jpg'})`,
           filter: 'brightness(0.8)'

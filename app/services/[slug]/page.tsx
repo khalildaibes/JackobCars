@@ -44,7 +44,7 @@ interface Service {
     features: Array<{ value: string }>;
     requirements: Array<{ value: string }>;
   };
-  categories: string;
+  categories: any;
   stores: Array<{ 
     id: string; 
     name: string;
@@ -63,7 +63,7 @@ interface Service {
 const ServiceDetails = () => {
   const { slug } = useParams();
   const searchParams = useSearchParams();
-  const storehostname = searchParams.get('storehostname');
+  const storehostname = searchParams.get('store_hostname');
   const [activeImage, setActiveImage] = useState(0);
   const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
   const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
@@ -77,7 +77,7 @@ const ServiceDetails = () => {
   const { data: serviceData, isLoading } = useQuery({
     queryKey: ["service", slug, storehostname],
     queryFn: async () => {
-      const response = await fetch(`/api/services?slug=${slug}&storehostname=${storehostname}`);
+      const response = await fetch(`/api/services?slug=${slug}&store_hostname=${storehostname}`);
       if (!response.ok) throw new Error('Service not found');
       const data = await response.json();
       console.log('Response:', data);
@@ -126,7 +126,7 @@ const ServiceDetails = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="container mx-auto px-4 py-8"
+      className="container mx-auto px-4 py-8 bg-white mt-[10%] md:mt-[5%]"
     >
       {/* Back Button */}
       <Link
@@ -146,7 +146,7 @@ const ServiceDetails = () => {
           >
             <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
               <Img
-                src={`http://${storehostname}${currentService.images?.[activeImage]?.url || '/default-service.png'}`}
+                src={`http://${storehostname}${currentService.image.url || '/default-service.png'}`}
                 alt={currentService.name}
                 width={800}
                 height={800}
@@ -155,9 +155,9 @@ const ServiceDetails = () => {
               />
             </div>
           </div>
-          {currentService.images && currentService.images.length > 1 && (
+          {currentService.image && currentService.image.length > 1 && (
             <div className="grid grid-cols-4 gap-2">
-              {currentService.images.map((img, index) => (
+              {currentService.image.map((img, index) => (
                 <button
                   key={index}
                   onClick={() => setActiveImage(index)}
@@ -184,18 +184,18 @@ const ServiceDetails = () => {
         {/* Service Details */}
         <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">{currentService.name}</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{currentService.title}</h1>
             <div className="flex items-center gap-2">
-              {currentService.categories.split(',').map((category, index) => (
+              {currentService.categories && currentService.categories?.map((category, index) => (
                 <Badge key={index} variant="secondary">
-                  {category.trim()}
+                  {category.name.trim()}
                 </Badge>
               ))}
             </div>
           </div>
 
           <div className="text-3xl font-bold text-blue-600">
-            {currentService.details.price.toLocaleString()}
+            {currentService.price.toLocaleString()}
           </div>
 
           <div className="flex gap-4">
@@ -218,15 +218,15 @@ const ServiceDetails = () => {
 
             <TabsContent value="description" className="mt-4">
               <div className="space-y-4">
-                <p className="text-gray-600 whitespace-pre-line">{currentService.details.description}</p>
+                <p className="text-gray-600 whitespace-pre-line">{currentService.description}</p>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <Clock className="w-5 h-5 text-gray-500" />
-                    <span>{currentService.details.duration}</span>
+                    <span>{currentService.duration}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Shield className="w-5 h-5 text-gray-500" />
-                    <span>{currentService.details.warranty}</span>
+                    <span>{currentService.warranty}</span>
                   </div>
                 </div>
               </div>
@@ -234,7 +234,7 @@ const ServiceDetails = () => {
 
             <TabsContent value="features" className="mt-4">
               <div className="space-y-4">
-                {currentService.details.features.map((feature, index) => (
+                {currentService.details && currentService.details.features && currentService.details.features.map((feature, index) => (
                   <div key={index} className="flex items-center gap-2">
                     <Check className="w-5 h-5 text-green-500" />
                     <span>{feature.value}</span>
@@ -245,7 +245,7 @@ const ServiceDetails = () => {
 
             <TabsContent value="requirements" className="mt-4">
               <div className="space-y-4">
-                {currentService.details.requirements.map((requirement, index) => (
+                {currentService.details && currentService.details.requirements && currentService.details.requirements.map((requirement, index) => (
                   <div key={index} className="flex items-center gap-2">
                     <Check className="w-5 h-5 text-green-500" />
                     <span>{requirement.value}</span>
@@ -289,11 +289,11 @@ const ServiceDetails = () => {
       <div className="mt-12">
         <h2 className="text-2xl font-bold mb-6">Similar Services</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {currentService.similarServices.map((similarService) => (
+          {currentService.similarServices && currentService.similarServices.map((similarService) => (
             <Card key={similarService.id} className="overflow-hidden">
               <div className="relative aspect-video">
                 <Img
-                  src={`http://${storehostname}${similarService.images[0]?.url || '/default-service.png'}`}
+                  src={`http://${storehostname}${similarService.image?.url || '/default-service.png'}`}
                   alt={similarService.name}
                   className="w-full h-full object-cover"
                 />
@@ -316,7 +316,7 @@ const ServiceDetails = () => {
             <div className="relative w-full h-full flex items-center justify-center">
               <div className="max-w-full max-h-full p-4">
                 <Img
-                  src={`http://${storehostname}${currentService.images?.[activeImage]?.url || '/default-service.png'}`}
+                  src={`http://${storehostname}${currentService.image[activeImage]?.url || '/default-service.png'}`}
                   alt={currentService.name}
                   width={1920}
                   height={1080}

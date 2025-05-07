@@ -847,399 +847,385 @@ function HomeContent() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="flex flex-col w-full overflow-hidden mt-[5%] px-2 sm:px-4 md:px-6"
+          className="flex flex-col w-full overflow-hidden mt-[5%] px-2 sm:px-4 md:px-6 rounded-xl"
         >
           {/* 1. Hero Banner Section */}
           <HeroSection listings={listings} />
           {/* <StoriesCarousel stories={stories} /> */} 
 
           {/* Main Content Container */}
-          <div className="container mx-auto w-full px-2 sm:px-3 lg:px-4 max-w-7xl overflow-x-hidden">
-            {/* 4. Latest News Section - Industry Updates */}
-            <motion.section 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
-              className="w-full bg-gradient-to-b from-white to-gray-50 py-1 mb-3 rounded-2xl overflow-hidden"
-            >
-              <motion.div 
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ 
-                  duration: 0.8,
-                  ease: [0.6, -0.05, 0.01, 0.99],
-                  delay: 0.4
-                }}
-                className="flex items-center justify-between mb-3 px-2"
-              >
-                <h2 className="text-lg sm:text-xl font-bold text-white bg-[#050B20] p-2 rounded-lg flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8H8v7h8V8z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 4v16" />
-                  </svg>
-                  {t('other_news')}
-                </h2>
-                {totalSlides > 1 && (
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={prevSlide}
-                      className="p-1 sm:p-2 rounded-full bg-white shadow-md hover:bg-gray-50 transition-colors"
-                      aria-label="Previous slide"
-                    >
-                      <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                    </button>
-                    <button
-                      onClick={nextSlide}
-                      className="p-1 sm:p-2 rounded-full bg-white shadow-md hover:bg-gray-50 transition-colors"
-                      aria-label="Next slide"
-                    >
-                      <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-                    </button>
+          <div className="container mx-auto w-full px-4 sm:px-6 lg:px-8 max-w-7xl overflow-x-hidden">
+            {/* Magazine-style Grid Layout */}
+            <div className="grid grid-cols-12 gap-6 mb-8">
+              {/* Featured Article - Spans full width */}
+              {/* <div className="col-span-12 mb-8">
+                <motion.section 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.8 }}
+                  className="w-full bg-gradient-to-b from-white to-gray-50 py-8 rounded-2xl overflow-hidden"
+                >
+                  <div className="px-6">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('featured_story')}</h2>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                      <div className="relative h-[400px] rounded-xl overflow-hidden">
+                        <Img
+                          src={visibleArticles[0]?.imageUrl ? `http://64.227.112.249${visibleArticles[0].imageUrl}` : '/default-article.jpg'}
+                          alt={visibleArticles[0]?.title || 'Featured Article'}
+                          className="object-cover w-full h-full"
+                          width={800}
+                          height={600}
+                          external={true}
+                        />
+                      </div>
+                      <div className="flex flex-col justify-center">
+                        <span className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full w-fit mb-4">
+                          {visibleArticles[0]?.category}
+                        </span>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-4">{visibleArticles[0]?.title}</h3>
+                        <p className="text-gray-600 mb-6">{visibleArticles[0]?.excerpt}</p>
+                        <div className="flex items-center gap-4">
+                          <span className="text-sm text-gray-500">{visibleArticles[0]?.date}</span>
+                          <span className="text-sm font-medium">{visibleArticles[0]?.author}</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                )}
-              </motion.div>
-              <div className="relative px-2">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
-                  {visibleArticles.map((article, index) => (
-                    <motion.div
-                      key={article.id}
-                      initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      transition={{ 
-                        duration: 0.6,
-                        ease: [0.6, -0.05, 0.01, 0.99],
-                        delay: 0.6 + (index * 0.1)
-                      }}
-                      whileHover={{ 
-                        scale: 1.02,
-                        transition: { duration: 0.2 }
-                      }}
-                      className="w-full"
-                    >
-                      <Link href={`/news/${article.slug}`} className="group block">
-                        <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl min-h-[200px] sm:min-h-[250px] max-h-[250px] w-full">
-                          <div className="overflow-hidden h-[120px] sm:h-[140px]">
-                            <Img
-                              src={`http://64.227.112.249${article.imageUrl}`}
-                              alt={article.title}
-                              className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
-                              width={1290}
-                              height={2040}
-                              external={true}
-                            />
+                </motion.section>
+              </div> */}
+
+              {/* Latest News Grid - 3 columns */}
+              <div className="col-span-12">
+                <motion.section 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.8 }}
+                  className="w-full bg-white py-8 rounded-2xl"
+                >
+                  <div className="px-6 mb-8">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-2xl font-bold text-gray-900">{t('latest_news')}</h2>
+                      <div className="flex items-center gap-4">
+                        <button
+                          onClick={prevSlide}
+                          className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                        >
+                          <ChevronRight className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={nextSlide}
+                          className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                        >
+                          <ChevronLeft className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6">
+                    {visibleArticles.slice(1).map((article, index) => (
+                      <motion.div
+                        key={article.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+                      >
+                        <div className="relative h-48">
+                          <Img
+                            src={`http://64.227.112.249${article.imageUrl}`}
+                            alt={article.title}
+                            className="object-cover w-full h-full"
+                            width={400}
+                            height={300}
+                            external={true}
+                          />
+                        </div>
+                        <div className="p-6">
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                              {article.category}
+                            </span>
+                            <span className="text-xs text-gray-500">{article.date}</span>
                           </div>
-                          <div className="p-2 sm:p-3 h-[160px]">
-                            <div className="flex items-center mb-0.5">
-                              <span className="text-xs font-medium text-blue-600 bg-blue-50 px-1 py-0.5 rounded-full">
-                                {article.category}
-                              </span>
-                              <span className="mx-2 text-gray-400">•</span>
-                              <span className="text-xs text-gray-500">{article.date}</span>
-                            </div>
-                            <h2 className="text-sm font-bold mb-0.5 text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                              {article.title}
-                            </h2>
-                            <p className="text-xs text-gray-600 line-clamp-2 mb-3">{article.excerpt}</p>
-                            <div className="flex items-center mb-3 px-2">
-                              <span className="font-medium">{article.author}</span>
-                            </div>
+                          <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
+                            {article.title}
+                          </h3>
+                          <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                            {article.excerpt}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-gray-900">{article.author}</span>
+                            <Link 
+                              href={`/news/${article.slug}`}
+                              className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                            >
+                              Read More →
+                            </Link>
                           </div>
                         </div>
-                      </Link>
-                    </motion.div>
-                  ))}
-                </div>
-                {totalSlides > 1 && (
-                  <div className="flex justify-center mt-4 gap-2">
-                    {Array.from({ length: totalSlides }).map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentSlide(index)}
-                        className={`w-2 h-2 rounded-full transition-colors ${
-                          currentSlide === index ? 'bg-blue-600' : 'bg-gray-300'
-                        }`}
-                        aria-label={`Go to slide ${index + 1}`}
-                      />
+                      </motion.div>
                     ))}
                   </div>
-                )}
+                </motion.section>
               </div>
-            </motion.section>
-            {/* add here a section to promo5t one store */}
-            <StorePromotion />
-           
+            </div>
 
-           
-            {/* Ads Section */}
+            {/* Store Promotion Section */}
+            <div className="mb-12">
+              <StorePromotion />
+            </div>
+
+            {/* Special Offers Section */}
             <motion.section
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
-              className="w-full bg-white mb-3 rounded-2xl p-6"
+              className="w-full bg-white mb-12 rounded-2xl p-8"
             >
-              <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{
-                  duration: 0.8,
-                  ease: [0.6, -0.05, 0.01, 0.99],
-                  delay: 0.6
-                }}
-                className="mb-6"
-              >
-                <h3 className="text-2xl font-bold text-gray-900">{t('special_offers')}</h3>
-                <p className="text-gray-600 mt-1">{t('partner_offers')}</p>
-              </motion.div>
+              <div className="mb-8">
+                <h3 className="text-3xl font-bold text-gray-900 mb-2">{t('special_offers')}</h3>
+                <p className="text-gray-600 text-lg">{t('partner_offers')}</p>
+              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Ad Card 1 */}
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 shadow-sm">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full">إعلان</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {/* Ad Cards with improved spacing */}
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-full">إعلان</span>
                     <span className="text-blue-600 font-semibold">عرض محدود</span>
                   </div>
-                  <h4 className="text-xl font-bold text-gray-900 mb-2">عرض الصيف للصيانة</h4>
-                  <p className="text-gray-600 mb-4">باقة صيانة كاملة تشمل تغيير الزيت، تبديل الإطارات، وفحص شامل للسيارة</p>
+                  <h4 className="text-2xl font-bold text-gray-900 mb-3">عرض الصيف للصيانة</h4>
+                  <p className="text-gray-600 mb-6 text-lg">باقة صيانة كاملة تشمل تغيير الزيت، تبديل الإطارات، وفحص شامل للسيارة</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-blue-600">٧٤٩ شيكل</span>
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <span className="text-3xl font-bold text-blue-600">٧٤٩ شيكل</span>
+                    <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                       اعرف المزيد
                     </button>
                   </div>
                 </div>
 
-                {/* Ad Card 2 */}
-                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 shadow-sm">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="bg-green-600 text-white text-sm px-3 py-1 rounded-full">جديد</span>
+                {/* Repeat similar structure for other ad cards */}
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="bg-green-600 text-white text-sm px-4 py-1.5 rounded-full">جديد</span>
                     <span className="text-green-600 font-semibold">مميز</span>
                   </div>
-                  <h4 className="text-xl font-bold text-gray-900 mb-2">باقة شحن السيارات الكهربائية</h4>
-                  <p className="text-gray-600 mb-4">تركيب محطة شحن منزلية مع ضمان لمدة سنتين ودعم فني على مدار الساعة</p>
+                  <h4 className="text-2xl font-bold text-gray-900 mb-3">باقة شحن السيارات الكهربائية</h4>
+                  <p className="text-gray-600 mb-6 text-lg">تركيب محطة شحن منزلية مع ضمان لمدة سنتين ودعم فني على مدار الساعة</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-green-600">٣,٣٧٥ شيكل</span>
-                    <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                    <span className="text-3xl font-bold text-green-600">٣,٣٧٥ شيكل</span>
+                    <button className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                       احصل على العرض
                     </button>
                   </div>
                 </div>
 
-                {/* Ad Card 3 */}
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 shadow-sm">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="bg-purple-600 text-white text-sm px-3 py-1 rounded-full">فاخر</span>
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="bg-purple-600 text-white text-sm px-4 py-1.5 rounded-full">فاخر</span>
                     <span className="text-purple-600 font-semibold">حصري</span>
                   </div>
-                  <h4 className="text-xl font-bold text-gray-900 mb-2">تأجير سيارات فاخرة</h4>
-                  <p className="text-gray-600 mb-4">تجربة قيادة السيارات الفاخرة لعطلة نهاية الأسبوع مع تغطية تأمينية كاملة وخدمة كونسيرج</p>
+                  <h4 className="text-2xl font-bold text-gray-900 mb-3">تأجير سيارات فاخرة</h4>
+                  <p className="text-gray-600 mb-6 text-lg">تجربة قيادة السيارات الفاخرة لعطلة نهاية الأسبوع مع تغطية تأمينية كاملة وخدمة كونسيرج</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-purple-600">١,٨٧٥ شيكل/يوم</span>
-                    <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                    <span className="text-3xl font-bold text-purple-600">١,٨٧٥ شيكل/يوم</span>
+                    <button className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
                       احجز الآن
                     </button>
                   </div>
                 </div>
               </div>
             </motion.section>
-            {/* Popular Categories Section */}
-             {/* 3. Most Searched Section - Popular Cars */}
-             <motion.section 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
-              className="w-full mb-3 rounded-2xl"
-            >
-              <motion.div 
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ 
-                  duration: 0.8,
-                  ease: [0.6, -0.05, 0.01, 0.99],
-                  delay: 0.6
-                }}
-                className="flex items-center mb-4 px-4"
-              >
 
-              </motion.div>
-              <CategoryButtons onCategorySelect={handleCategorySelect} />
-              <RecentlyAddedSection 
-                listings={listings.filter((listing) => listing.category.includes(t("most_searched_cars")))} 
-                title={t(selectedCategory)}
-                viewAllLink="/cars"
-              />
-              
-            </motion.section>
+            {/* Categories and Featured Cars Section */}
+            <div className="grid grid-cols-12 gap-8 mb-12">
+              <div className="col-span-12">
+                <CategoryButtons onCategorySelect={handleCategorySelect} />
+              </div>
+              <div className="col-span-12">
+                <RecentlyAddedSection 
+                  listings={listings.filter((listing) => listing.category.includes(t("most_searched_cars")))} 
+                  title={t(selectedCategory)}
+                  viewAllLink="/cars"
+                />
+              </div>
+            </div>
+
+            {/* EV Cars Section with improved layout */}
             <motion.section 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
-              className="w-full py-1 mb-3 rounded-2xl overflow-hidden"
+              className="w-full bg-gradient-to-br from-white to-gray-50 rounded-2xl p-8 mb-12"
             >
-
-                {/* EV Cars Section - Tesla-inspired */}
-                <div className="mt-4 sm:mt-8 w-full bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 shadow-lg mb-8">
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h3 className="text-2xl font-bold text-gray-900">{t('electric_vehicles')}</h3>
-                      <p className="text-gray-600 mt-1">{t('discover_future_mobility')}</p>
-                    </div>
-                    <div className="hidden sm:block">
-                      <div className="flex gap-2">
-                        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                          {t('view_all')}
-                        </button>
-                        <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                          {t('compare')}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="w-full overflow-x-hidden items-center justify-center">
-                    {window.innerWidth <= 768 ? (
-                      <Slider
-                        autoPlay
-                        autoPlayInterval={3000}
-                        responsive={{ 
-                          "0": { items: 1 }, 
-                          "551": { items: 1 }, 
-                          "1051": { items: 2 }, 
-                          "1441": { items: 4 } 
-                        }}
-                        disableDotsControls
-                        activeIndex={sliderState}
-                        onSlideChanged={(e: EventObject) => {
-                          setSliderState(e?.item);
-                        }}
-                        paddingLeft={10}
-                        paddingRight={10}
-                        className="items-center justify-center"
-                        items={filteredListings.filter(listing => 
-                          listing.category.includes('featured') && 
-                          listing.category.includes('electric_vehicles')
-                          )
-                        
-                          .slice(0, 4).map((car) => (
-                          <div key={car.id} className="px-0.5 w-full">
-                            <CarCard key={car.id} car={car} variant="list" />
-                          </div>
-                        ))}
-                        ref={sliderRef}
-                      />
-                    ) : (
-                      <Slider
-                        autoPlay
-                        autoPlayInterval={3000}
-                        responsive={{ 
-                          "0": { items: 1 }, 
-                          "551": { items: 1 }, 
-                          "1051": { items: 2 }, 
-                          "1441": { items: 4 } 
-                        }}
-                        disableDotsControls
-                        activeIndex={sliderState}
-                        onSlideChanged={(e: EventObject) => {
-                          setSliderState(e?.item);
-                        }}
-                        paddingLeft={10}
-                        paddingRight={10}
-                        className="items-center justify-center"
-                        items={filteredListings.filter(listing => 
-                          listing.category.includes('featured') && 
-                          listing.category.includes('electric_vehicles')
-                          )
-                        
-                          .slice(0, 4).map((car) => (
-                          <div key={car.id} className="px-0.5 w-full">
-                            <CarCard key={car.id} car={car} variant="grid" />
-                          </div>
-                        ))}
-                        ref={sliderRef}
-                      />
-                    )}
-                  </div>
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h3 className="text-3xl font-bold text-gray-900 mb-2">{t('electric_vehicles')}</h3>
+                  <p className="text-gray-600 text-lg">{t('discover_future_mobility')}</p>
                 </div>
-
-                {/* Parts Section - Performance-focused */}
-                <div className="mt-4 sm:mt-8 w-full bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 shadow-lg mb-8">
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h3 className="text-2xl font-bold text-white">{t('parts_and_accessories')}</h3>
-                      <p className="text-gray-300 mt-1">{t('premium_parts')}</p>
-                    </div>
-                    <div className="hidden sm:block">
-                      <div className="flex gap-2">
-                        <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                          {t('shop_now')}
-                        </button>
-                        <button className="px-4 py-2 border border-gray-600 text-white rounded-lg hover:bg-gray-800 transition-colors">
-                          {t('browse_categories')}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {filteredParts.slice(0, 4).map((part) => (
-                      <div key={part.id} className="transform hover:scale-105 transition-transform duration-300">
-                        <PartCard 
-                          key={part.id} 
-                          part={{
-                            id: part.id,
-                            images: part.images,
-                            title: part.title,
-                            slug: part.slug,
-                            price: part.price.toString(),
-                            description: part?.description || "",
-                            features: part?.features?.map(f => f.value) || [],
-                            categories: part.categories || [],
-                            store: { hostname: part.stores[0]?.hostname || "" }
-                          }} 
-                        />
+                <div className="hidden sm:flex gap-4">
+                  <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    {t('view_all')}
+                  </button>
+                  <button className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    {t('compare')}
+                  </button>
+                </div>
+              </div>
+              <div className="w-full overflow-x-hidden items-center justify-center">
+                {window.innerWidth <= 768 ? (
+                  <Slider
+                    autoPlay
+                    autoPlayInterval={3000}
+                    responsive={{ 
+                      "0": { items: 1 }, 
+                      "551": { items: 1 }, 
+                      "1051": { items: 2 }, 
+                      "1441": { items: 4 } 
+                    }}
+                    disableDotsControls
+                    activeIndex={sliderState}
+                    onSlideChanged={(e: EventObject) => {
+                      setSliderState(e?.item);
+                    }}
+                    paddingLeft={10}
+                    paddingRight={10}
+                    className="items-center justify-center"
+                    items={filteredListings.filter(listing => 
+                      listing.category.includes('featured') && 
+                      listing.category.includes('electric_vehicles')
+                      )
+                      
+                      .slice(0, 4).map((car) => (
+                      <div key={car.id} className="px-0.5 w-full">
+                        <CarCard key={car.id} car={car} variant="list" />
                       </div>
                     ))}
-                  </div>
-                </div>
-
-                {/* Services Section - Professional */}
-                <div className="mt-4 sm:mt-8 w-full bg-gradient-to-br from-blue-50 to-white rounded-2xl p-6 shadow-lg">
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h3 className="text-2xl font-bold text-gray-900">{t('automotive_services')}</h3>
-                      <p className="text-gray-600 mt-1">{t('expert_care')}</p>
-                    </div>
-                    <div className="hidden sm:block">
-                      <div className="flex gap-2">
-                        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                          {t('book_service')}
-                        </button>
-                        <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                          {t('view_packages')}
-                        </button>
+                    ref={sliderRef}
+                  />
+                ) : (
+                  <Slider
+                    autoPlay
+                    autoPlayInterval={3000}
+                    responsive={{ 
+                      "0": { items: 1 }, 
+                      "551": { items: 1 }, 
+                      "1051": { items: 2 }, 
+                      "1441": { items: 4 } 
+                    }}
+                    disableDotsControls
+                    activeIndex={sliderState}
+                    onSlideChanged={(e: EventObject) => {
+                      setSliderState(e?.item);
+                    }}
+                    paddingLeft={10}
+                    paddingRight={10}
+                    className="items-center justify-center"
+                    items={filteredListings.filter(listing => 
+                      listing.category.includes('featured') && 
+                      listing.category.includes('electric_vehicles')
+                      )
+                      
+                      .slice(0, 4).map((car) => (
+                      <div key={car.id} className="px-0.5 w-full">
+                        <CarCard key={car.id} car={car} variant="grid" />
                       </div>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {transformedServices
-                      .filter(service => service.categories?.some(cat => cat.name.includes('featured')))
-                      .slice(0, 4)
-                      .map((service) => (
-                        <div key={service.id} className="transform hover:scale-105 transition-transform duration-300">
-                          <ServiceCard 
-                            key={service.id} 
-                            slug={service.slug}
-                            id={service.id.toString()}
-                            title={service.title}
-                            description={service.description}
-                            price={service.price}
-                            image={service.image}
-                            stores={service.stores}
-                            hostname={service.stores[0]?.hostname}
-                          />
-                        </div>
-                      ))
-                    }
+                    ))}
+                    ref={sliderRef}
+                  />
+                )}
+              </div>
+            </motion.section>
+
+            {/* Parts and Services Sections with improved spacing */}
+            <motion.section 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              className="w-full bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 mb-12"
+            >
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h3 className="text-2xl font-bold text-white">{t('parts_and_accessories')}</h3>
+                  <p className="text-gray-300 mt-1">{t('premium_parts')}</p>
+                </div>
+                <div className="hidden sm:block">
+                  <div className="flex gap-2">
+                    <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                      {t('shop_now')}
+                    </button>
+                    <button className="px-4 py-2 border border-gray-600 text-white rounded-lg hover:bg-gray-800 transition-colors">
+                      {t('browse_categories')}
+                    </button>
                   </div>
                 </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {filteredParts.slice(0, 4).map((part) => (
+                  <div key={part.id} className="transform hover:scale-105 transition-transform duration-300">
+                    <PartCard 
+                      key={part.id} 
+                      part={{
+                        id: part.id,
+                        images: part.images,
+                        title: part.title,
+                        slug: part.slug,
+                        price: part.price.toString(),
+                        description: part?.description || "",
+                        features: part?.features?.map(f => f.value) || [],
+                        categories: part.categories || [],
+                        store: { hostname: part.stores[0]?.hostname || "" }
+                      }} 
+                    />
+                  </div>
+                ))}
+              </div>
+            </motion.section>
+
+            <motion.section 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              className="w-full bg-gradient-to-br from-blue-50 to-white rounded-2xl p-8 mb-12"
+            >
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">{t('automotive_services')}</h3>
+                  <p className="text-gray-600 text-lg">{t('expert_care')}</p>
+                </div>
+                <div className="hidden sm:block">
+                  <div className="flex gap-2">
+                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                      {t('book_service')}
+                    </button>
+                    <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                      {t('view_packages')}
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {transformedServices
+                  .filter(service => service.categories?.some(cat => cat.name.includes('featured')))
+                  .slice(0, 4)
+                  .map((service) => (
+                    <div key={service.id} className="transform hover:scale-105 transition-transform duration-300">
+                      <ServiceCard 
+                        key={service.id} 
+                        slug={service.slug}
+                        id={service.id.toString()}
+                        title={service.title}
+                        description={service.description}
+                        price={service.price}
+                        image={service.image}
+                        stores={service.stores}
+                        hostname={service.stores[0]?.hostname}
+                      />
+                    </div>
+                  ))
+                }
+              </div>
             </motion.section>
 
             {/* Search Car by Plate Number Section */}
@@ -1286,46 +1272,6 @@ function HomeContent() {
                 </div>
               </motion.div>
             </motion.section>
-
-            {/* 7. Call to Action Section - Looking for a Car
-            <motion.section 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
-              className="w-full bg-white py-1 mb-3 rounded-2xl"
-            >
-              <div className="px-4">
-                <div className="flex flex-col md:flex-row justify-center gap-4">
-                  {lookingForCarData.map(({ title, text, buttonColor, backgroundColor, icon, buttonTextColor, textColor }, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      transition={{ 
-                        duration: 0.6,
-                        ease: [0.6, -0.05, 0.01, 0.99],
-                        delay: 1.2 + (index * 0.1)
-                      }}
-                      whileHover={{ 
-                        scale: 1.02,
-                        transition: { duration: 0.2 }
-                      }}
-                    >
-                      <LookingForCar
-                        text={text}
-                        title={title}
-                        backgroundColor={backgroundColor}
-                        textColor={textColor}
-                        buttonColor={buttonColor}
-                        buttonTextColor={buttonTextColor}
-                        icon={icon}
-                        variant={index === 0 ? 'buy' : 'sell'}
-                      />
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </motion.section> */}
           </div>
         </motion.main>
       </div>

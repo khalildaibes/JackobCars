@@ -17,15 +17,21 @@ import { ServiceCard } from "../../../components/ServiceCard";
 import { useTranslations } from "use-intl";
 import ChatPopup from '../../../components/ChatPopup';
 
+interface WorkingHours {
+  open?: string;
+  close?: string;
+  closed?: boolean;
+}
+
 interface Store {
-  id: number;
+  logo: { url: string };
+  id: string;
   name: string;
   phone: string;
   images: { url: string }[];
   address: string;
   details: string;
   hostname: string;
-  additional: any;
   visits: number;
   tags: string;
   products: Product[];
@@ -33,6 +39,7 @@ interface Store {
   email?: string;
   socialMedia?: {
     facebook?: string;
+    twitter?: string;
     instagram?: string;
     whatsapp?: string;
   };
@@ -40,28 +47,22 @@ interface Store {
     lat: number;
     lng: number;
   };
-  logo?: any;
-  balance?: number;
-  openingHours?: {
-    monday?: string;
-    tuesday?: string;
-    wednesday?: string;
-    thursday?: string;
-    friday?: string;
-    saturday?: string;
-    sunday?: string;
+  openingHours: {
+    [key: string]: WorkingHours;
   };
+  additional?: {
+    storechatassistant?: {
+      url: string;
+    };
+    working_hours?: {
+      [key: string]: WorkingHours;
+    };
+  };
+
+
+  balance: number;
 }
 
-const defaultOpeningHours = {
-  monday: "9:00 AM - 6:00 PM",
-  tuesday: "9:00 AM - 6:00 PM",
-  wednesday: "9:00 AM - 6:00 PM",
-  thursday: "9:00 AM - 6:00 PM",
-  friday: "9:00 AM - 6:00 PM",
-  saturday: "10:00 AM - 4:00 PM",
-  sunday: "Closed"
-};
 interface Product {
   id: string;
   name: string;
@@ -169,43 +170,46 @@ export default function StorePage() {
         console.log('Services Data:', JSON.stringify(servicesData, null, 2));
 
         const storeInstance: Store = {
-          id: Number(storeDataItem.id),
+          id: String(storeDataItem.id),
           name: String(storeDataItem.name || ''),
-          phone: String(storeDataItem.phone || ''),
+
           address: String(storeDataItem.address || ''),
-          details: Array.isArray(storeDataItem.details)
-            ? storeDataItem.details.map(detail => detail.children?.map(child => child.text).join(' ') || ''
-            ).join('\n')
-            : String(storeDataItem.details || ''),
-          hostname: String(storeDataItem.hostname || ''),
-          visits: Number(storeDataItem.visits || 0),
-          logo: storeDataItem.logo ? storeDataItem.logo : null,
-          images: storeDataItem.image || [],
-          additional: storeDataItem.additional || [],
+          phone: String(storeDataItem.phone || ''),
+          email: storeDataItem.email ? String(storeDataItem.email) : '',
+          logo: storeDataItem.logo ,
+
           tags: String(storeDataItem.tags || ''),
-          provider: storeDataItem.provider ? String(storeDataItem.provider) : undefined,
-          email: storeDataItem.email ? String(storeDataItem.email) : undefined,
           socialMedia: storeDataItem.socialMedia ? {
             facebook: storeDataItem.socialMedia.facebook ? String(storeDataItem.socialMedia.facebook) : undefined,
+            twitter: storeDataItem.socialMedia.twitter ? String(storeDataItem.socialMedia.twitter) : undefined,
             instagram: storeDataItem.socialMedia.instagram ? String(storeDataItem.socialMedia.instagram) : undefined,
             whatsapp: storeDataItem.socialMedia.whatsapp ? String(storeDataItem.socialMedia.whatsapp) : undefined
-          } : undefined,
+          } : {
+            facebook: undefined,
+            twitter: undefined,
+            instagram: undefined,
+            whatsapp: undefined
+          },
           location: storeDataItem.location ? {
             lat: Number(storeDataItem.location.lat || 0),
             lng: Number(storeDataItem.location.lng || 0)
-          } : undefined,
-          balance: Number(storeDataItem.balance || 0),
-          openingHours: storeDataItem.openingHours || defaultOpeningHours,
+          } : {
+            lat: 0,
+            lng: 0
+          },
+          openingHours: storeDataItem.additional?.working_hours || {},
+          additional: storeDataItem.additional || {},
+          images: storeDataItem.image ? storeDataItem.image.map((img: any) => img.url || '') : [],
           products: productsData.data?.map((product: any) => ({
             id: String(product.id),
             name: String(product.name || ''),
             slug: String(product.slug || ''),
             quantity: Number(product.quantity || 0),
-            image: product.image || [], // Ensure this is an array of objects with url property
+            image: product.image || [],
             price: Number(product.price || 0),
             categories: product.categories ? product.categories.split(',').map((cat: string) => cat.trim()) : [],
             details: {
-              images: product.image || [], // Add this line to match the interface
+              images: product.image || [],
               car: {
                 description: product.details?.car?.description || '',
                 fuelType: product.details?.car?.fuel || '',
@@ -238,6 +242,10 @@ export default function StorePage() {
               }
             }
           })) || [],
+          hostname: String(storeDataItem.hostname || ''),
+          visits: Number(storeDataItem.visits || 0),
+          balance: Number(storeDataItem.balance || 0),
+          details: String(storeDataItem.details || '')
         };
 
         setStore(storeInstance);
@@ -332,14 +340,13 @@ export default function StorePage() {
     );
   }
 
-  const openingHours = store.openingHours || defaultOpeningHours;
+  const openingHours = store.openingHours || {};
   const tags = store.tags ? store.tags.split(',').map(tag => tag.trim()) : [];
   const categories = Array.from(new Set(
     store.products.flatMap(product => 
       product.categories.toString().split(',').map(cat => cat.trim())
     )
   ));
-
   return (
     <div className="min-h-screen bg-[#050B20] pt-24">
       <div className="max-w-7xl mx-auto px-4">
@@ -349,7 +356,7 @@ export default function StorePage() {
             {store.logo ? (
               <div className="relative md:w-[20%] w-[100%] h-[70%] rounded-xl overflow-hidden shadow-lg">
                 <Img
-                  src={`${store.hostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${store.hostname}`}${store.logo.url}`}
+                  src={`${store.hostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${store.hostname}/`}${store.logo.url}`}
                   external={true}
                   alt={store.name}
                   width={1024}
@@ -432,15 +439,20 @@ export default function StorePage() {
                   className="space-y-1"
                 >
                   <div className="flex flex-col gap-1">
-                    {Object.entries(openingHours).map(([day, hours]) => (
-                      <div
-                        key={day}
-                        className="flex justify-between items-center rounded-lg bg-gray-100 px-3 py-1 text-xs sm:text-sm font-medium text-gray-700"
-                      >
-                        <span className="capitalize">{day}</span>
-                        <span className="text-gray-600 font-normal">{hours}</span>
-                      </div>
-                    ))}
+                    {['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].map((day) => {
+                      const hours = store.additional?.working_hours?.[day] as WorkingHours;
+                      return (
+                        <div
+                          key={day}
+                          className="flex justify-between items-center rounded-lg bg-gray-100 px-3 py-1 text-xs sm:text-sm font-medium text-gray-700"
+                        >
+                          <span className="capitalize">{t(`days.${day}`)}</span>
+                          <span className="text-gray-600 font-normal">
+                            {hours?.closed ? t("closed") : hours ? `${hours.open} - ${hours.close}` : t("closed")}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </motion.div>
               )}

@@ -601,7 +601,7 @@ export default function NewsPage() {
                   </div>
                 </article>
 
-                {featuredNews.slice(1).map((item) => (
+                {featuredNews.slice(featuredNews.length < 5 ? featuredNews.length : 5).map((item) => (
                   <article
                     key={item.id}
                     onClick={() => router.push(`/news/${item.slug}`)}
@@ -739,7 +739,7 @@ export default function NewsPage() {
               <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">featured news</h2>
               <div className="space-y-6 mb-8">
                 {latestNews
-                .filter(item => item.categories.some(tag => tag.name === "interior"))
+                .filter(item => item.categories.some(tag => tag.name === "featured"))
                 .map((item) => (
                   <article
                     key={item.id}

@@ -11,7 +11,7 @@ export async function GET(req) {
         let storeHostname = searchParams.get('store_hostname');
 
         // Define allowed filters
-        const allowedFilters = ["category", "min_price", "max_price", "store"];
+        const allowedFilters = ["category", "min_price", "max_price", "store", "slug"];
 
         // Build query parameters dynamically
         const queryParams = new URLSearchParams();
@@ -23,6 +23,7 @@ export async function GET(req) {
                 if (key === "min_price") queryParams.append("filters[price][$gte]", value);
                 if (key === "max_price") queryParams.append("filters[price][$lte]", value);
                 if (key === "store") queryParams.append("filters[store][$contains]", value);
+                if (key === "slug") queryParams.append("filters[slug][$contains]", value);
             }
         });
 

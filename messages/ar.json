@@ -111,7 +111,7 @@
     "ceramic_coating_desc": "دهان سيراميك فاخر للحماية واللمعان لفترة طويلة",
     "exterior_detailing_desc": "خدمات تنظيف وتلميع وحماية برا محترفة",
     "interior_cleaning_desc": "تنظيف وتعقيم عميق لجوا العربية",
-    "open_7_days": "مفتوح 7 أيام في الأسبوع",
+    "open_7_days": "مفتوح 6 أيام في الأسبوع",
     "visit_store": "احجز هلا",
     "special_offer": "عرض خاص",
     "free_inspection": "عطر جوا مجاني مع كل خدمة",
@@ -119,7 +119,7 @@
     "view_all": "شوف الكل",
     "find_car_plate_heading": "دور على سيارتك برقم اللوحة",
     "explore_car_specs": "شوف مواصفات العربية",
-"car_catalogue_heading": "كتالوج السيارات",
+    "car_catalogue_heading": "كتالوج السيارات",
     "explore_cars_like": "شوف سيارات ممكن تعجبك",
     "loading_cars": "جاري التحميل...",
     "oops_no_results": "للأسف، ما في نتايج",
@@ -312,7 +312,7 @@
     "our_services": "خدماتنا",
     "learn_more": "اعرف المزيد",
     "book_now": "احجز الآن",
-    "open_7_days": "مفتوح 7 أيام في الأسبوع",
+    "open_7_days": "مفتوح 6 أيام في الأسبوع",
     "special_offer": "عرض خاص",
     "compare": "قارن",
     "electric_vehicles": "السيارات الكهربائية",
@@ -325,7 +325,8 @@
     "book_service": "حجز خدمة",
     "view_packages": "عرض الباقات",
     "special_offers": "عروض خاصة",
-    "partner_offers": "عروض الشركاء"
+    "partner_offers": "عروض الشركاء",
+    "latest_news": "آخر الأخبار"
   },
   "ServiceCard": {
     "view_details": "عرض التفاصيل",
@@ -1247,11 +1248,21 @@
     "view_details": "عرض التفاصيل",
     "view_all_parts": "عرض جميع القطع",
     "view_all_cars": "عرض جميع السيارات",
-    "view_all_services": "عرض جميع الخدمات"
+    "view_all_services": "عرض جميع الخدمات",
+    "days": {
+      "monday": "الاثنين",
+      "tuesday": "الثلاثاء",
+      "wednesday": "الأربعاء",
+      "thursday": "الخميس",
+      "friday": "الجمعة",
+      "saturday": "السبت",
+      "sunday": "الأحد"
+    },
+    "closed": "مغلق"
   },
   "CarDetails": {
     "excellent_performance": "أداء ممتاز",
-    "comfortable_interior": "داخلية مريحة",
+    "comfortable_interior": "داخلية ريحة",
     "advanced_tech": "تكنولوجيا متقدمة",
     "higher_price": "سعر مرتفع",
     "firm_ride": "قيادة صلبة",
@@ -1474,5 +1485,24 @@
     "cancel": "إلغاء",
     "success": "تم بنجاح",
     "error_submitting": "حدث خطأ أثناء الإرسال"
+  },
+  "ServiceDetails": {
+    "back_to_services": "العودة إلى الخدمات",
+    "book_now": "احجز الآن",
+    "contact_store": "تواصل مع المتجر",
+    "description": "الوصف",
+    "features": "المميزات",
+    "requirements": "المتطلبات",
+    "available_at": "متوفر في",
+    "similar_services": "خدمات مشابهة",
+    "send_message": "إرسال الرسالة",
+    "name": "الاسم",
+    "phone": "رقم الهاتف",
+    "message": "الرسالة",
+    "duration": "المدة",
+    "warranty": "الضمان",
+    "reviews": "تقييمات",
+    "price": "السعر",
+    "view_details": "عرض التفاصيل"
   }
 }

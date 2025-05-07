@@ -145,7 +145,7 @@ const StorePromotion: React.FC<StorePromotionProps> = ({ className = '' }) => {
               className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 bg-gradient-to-r from-blue-600/90 to-blue-800/90 backdrop-blur-sm p-3 sm:p-4 rounded-xl shadow-lg"
             >
               <p className="text-white text-sm sm:text-lg font-medium">
-                הבית לרכב שלך מקצועיות, אמינות, ושירות מעל ומעבר
+              احترافية، مصداقية، وخدمة تفوق التوقعات.
               </p>
             </motion.div>
           </motion.div>
