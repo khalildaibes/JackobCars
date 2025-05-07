@@ -196,7 +196,7 @@ const HeroSection = ({ listings }: HeroSectionProps) => {
                 {/* Circular Image */}
                 <div className="absolute top-2 right-2 sm:top-6 sm:right-6 w-12 h-12 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 sm:border-4 border-white shadow-lg">
                   <Img
-                    external={true}
+                    external={currentArticle?.mainImage ? true : false}
                     src={currentArticle?.mainImage || '/images/placeholder-car.jpg'}
                     alt={currentArticle?.title || "Featured Car"}
                     width={96}
