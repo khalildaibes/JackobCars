@@ -19,7 +19,7 @@ const nextConfig = {
   images: {
     remotePatterns: [
       ...ALLOWED_HOSTNAMES.map(hostname => ({
-        protocol: hostname.startsWith('cdn.') ||hostname.startsWith('64.227.112.249') || hostname.includes('placeholder.com') || hostname.includes('unsplash.com') ? 'https' : 'http',
+        protocol: hostname.startsWith('cdn.') || hostname.includes('placeholder.com') || hostname.includes('unsplash.com') ? 'https' : 'http',
         hostname,
         pathname: '/**',
       })),
