@@ -977,7 +977,7 @@ function HomeContent() {
             </div>
 
             {/* Special Offers Section */}
-            <motion.section
+            {/* <motion.section
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
@@ -989,7 +989,6 @@ function HomeContent() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {/* Ad Cards with improved spacing */}
                 <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex items-center justify-between mb-4">
                     <span className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-full">إعلان</span>
@@ -1005,7 +1004,6 @@ function HomeContent() {
                   </div>
                 </div>
 
-                {/* Repeat similar structure for other ad cards */}
                 <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex items-center justify-between mb-4">
                     <span className="bg-green-600 text-white text-sm px-4 py-1.5 rounded-full">جديد</span>
@@ -1036,7 +1034,7 @@ function HomeContent() {
                   </div>
                 </div>
               </div>
-            </motion.section>
+            </motion.section> */}
 
             {/* Categories and Featured Cars Section */}
             <div className="grid grid-cols-12 gap-8 mb-12">
