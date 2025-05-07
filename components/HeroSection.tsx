@@ -85,11 +85,12 @@ const HeroSection = ({ listings }: HeroSectionProps) => {
 
   return (
     <div className="relative min-h-[400px] sm:min-h-[600px] w-full rounded-xl">
+      
       {/* Background Image with Overlay */}
       <div 
         className="absolute inset-0 bg-cover bg-center rounded-xl"
         style={{
-          backgroundImage: `url(${currentArticle?.mainImage || '/images/hero-bg.jpg'})`,
+          backgroundImage: `url(${currentArticle?.mainImage ? currentArticle.mainImage.startsWith('http') ? currentArticle.mainImage : `/${currentArticle.mainImage}` : '/images/hero-bg.jpg'})`,
           filter: 'brightness(0.8)'
         }}
       />
