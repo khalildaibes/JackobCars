@@ -87,13 +87,16 @@ const HeroSection = ({ listings }: HeroSectionProps) => {
     <div className="relative min-h-[400px] sm:min-h-[600px] w-full rounded-xl">
       
       {/* Background Image with Overlay */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center rounded-xl"
-        style={{
-          backgroundImage: `url(${currentArticle?.mainImage ? currentArticle.mainImage.startsWith('http') ? currentArticle.mainImage : `/${currentArticle.mainImage}` : '/images/hero-bg.jpg'})`,
-          filter: 'brightness(0.8)'
-        }}
-      />
+      <div className="absolute inset-0 rounded-xl overflow-hidden">
+        <Img
+          external={currentArticle?.mainImage ? true : false}
+          src={currentArticle?.mainImage || '/images/hero-bg.jpg'}
+          alt={currentArticle?.title || "Hero Background"}
+          width={1920}
+          height={1080}
+          className="w-full h-full object-cover brightness-[0.8]"
+        />
+      </div>
       
       {/* Gradient Overlay */}
       <div 
