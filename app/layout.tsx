@@ -22,7 +22,7 @@ import GlobalChatPopup from "../components/GlobalChatPopup";
 initializeStoreConfigs().catch(console.error);
 
 export const metadata: Metadata = {
-  title: "AtSpeedLimit",
+  title: "MaxSpeedLimit",
   description: "Discover best cars!",
 };
 

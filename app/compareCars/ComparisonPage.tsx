@@ -184,9 +184,9 @@ export default function Comparison() {
               <div className="flex flex-col items-center gap-2 sm:gap-4">
                 <Car className="h-8 w-8 sm:h-12 sm:w-12 text-gray-400" />
                 <h2 className="text-base sm:text-xl font-semibold text-white">{t('select_cars_prompt')}</h2>
-                <p className="text-gray-600 text-xs sm:text-base">{t('select_cars_description')}</p>
-                <Button asChild className="text-xs sm:text-base">
-                  <Link href="/car-listing">{t('browse_cars')}</Link>
+                <p className="text-gray-600 text-xs sm:text-base text-white">{t('select_cars_description')}</p>
+                <Button asChild className="text-xs sm:text-base bg-blue-500 hover:bg-blue-600 rounded-md px-4 py-2">
+                  <Link href="/car-listing" className="text-white hover:text-gray-300 transition-colors bg-blue-500 hover:bg-blue-600 rounded-md px-4 py-2">{t('browse_cars')}</Link>
                 </Button>
               </div>
             </CardContent>

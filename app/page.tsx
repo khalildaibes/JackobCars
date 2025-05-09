@@ -441,6 +441,8 @@ function HomeContent() {
   const [showads, setShowads] = useState(false);
   const [showcontrols, setShowcontrols] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [newsIndex, setNewsIndex] = useState(0);
+  const [newsIndex2, setNewsIndex2] = useState(Math.floor(Math.random() * 5));
 
   // Get search params with memoization
   const { selectedFuel, selectedYear, selectedManufacturer, selectedLimit, selectedModel } = useMemo(() => ({
@@ -744,6 +746,32 @@ function HomeContent() {
     }
   }, [stories?.length]);
 
+
+  // Auto-advance stories
+  useEffect(() => {
+    if (transformedArticles?.length > 0) {
+      const timer = setInterval(() => {
+        setNewsIndex((prev) => (prev + 1) % transformedArticles.length);
+      }, 5000); // Change story every 5 seconds
+
+      return () => clearInterval(timer);
+    }
+  }, [transformedArticles?.length]);
+
+
+  
+  // Auto-advance stories
+  useEffect(() => {
+    if (transformedArticles?.length > 0) {
+      const timer = setInterval(() => {
+        setNewsIndex2((prev) => (prev + 1) % transformedArticles.length);
+      }, 5000); // Change story every 5 seconds
+
+      return () => clearInterval(timer);
+    }
+  }, [transformedArticles?.length]);
+
+
   // Add handler for category selection
   const handleCategorySelect = (category: string) => {
     setSelectedCategory(category);
@@ -762,7 +790,7 @@ function HomeContent() {
           <p className="text-gray-600">{error}</p>
           <button 
             onClick={() => window.location.reload()} 
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="mt-4 px-4 py-2 bg-white text-white rounded-lg hover:bg-white"
           >
             Retry
           </button>
@@ -850,13 +878,123 @@ function HomeContent() {
           className="flex flex-col w-full overflow-hidden mt-[5%] px-2 sm:px-4 md:px-6 rounded-xl"
         >
           {/* 1. Hero Banner Section */}
-          <HeroSection listings={listings} />
-          {/* <StoriesCarousel stories={stories} /> */} 
+          <div className="relative z-10 flex flex-col lg:flex-row gap-2 px-2 lg:px-4 items-stretch min-h-0 justify-center items-center mb-8 w-full md:w-[80%] mx-auto">
+            {/* Main Column - 70% width */}
+            <div className="w-full lg:w-full flex flex-col gap-2">
+              {/* News Section */}
+              <div className="w-full flex-grow flex flex-col bg-gradient-to-br from-blue-100 via-blue-300 from-white rounded-lg shadow-lg  h-[320px] min-h-[320px] max-h-[320px]">
+                {transformedArticles?.[newsIndex]?.cover?.url && (
+                  <div className="relative rounded-lg overflow-hidden w-full h-full min-h-[320px] max-h-[320px]">
+                    <Img
+                      src={`http://64.227.112.249${transformedArticles?.[newsIndex]?.cover.url}`}
+                      alt={transformedArticles?.[newsIndex]?.title}
+                      external={true}
+                      width={1290}
+                      height={1290}
+                      className="absolute inset-0 w-full h-full object-cover p-2"
+                    />
+                    <div className="absolute inset-0 bg-black/40"></div>
+                    <div className="relative flex flex-col items-center justify-center h-full w-full text-center p-2">
+                      <h1 className="text-sm font-bold text-white mb-0.5 line-clamp-1">
+                        {transformedArticles?.[newsIndex]?.title}
+                      </h1>
+                      <p className="text-white/80 mb-1 text-xs line-clamp-1">
+                        {transformedArticles?.[newsIndex]?.description}
+                      </p>
+                      <button 
+                        onClick={() => router.push(`/news/${transformedArticles?.[newsIndex]?.slug}`)}
+                        className="bg-white text-blue-700 px-2 py-0.5 rounded-full font-semibold hover:bg-blue-50 transition-colors text-xs"
+                      >
+                        {t('read_now')}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Hero Section */}
+              <div className="w-full bg-gradient-to-br from-blue-100 via-blue-300 from-white rounded-lg shadow-lg p-1 h-[320px] min-h-[320px] max-h-[320px] flex items-center justify-center">
+                <div className="w-full h-full flex items-center justify-center">
+                  <HeroSection listings={listings} />
+                </div>
+              </div>
+            </div>
+
+            {/* Side Column - 30% width */}
+            <div className="w-full lg:w-[30%] flex flex-col gap-2">
+              {/* Top Section - Article */}
+              <div className="w-full bg-gradient-to-br from-blue-100 via-blue-300 from-white rounded-lg shadow-lg p-1 h-[320px] min-h-[320px] max-h-[320px] hidden lg:block">
+                {transformedArticles?.[newsIndex]?.cover?.url && (
+                  <div className="relative rounded-lg overflow-hidden w-full h-full max-h-[320px]">
+                    <Img
+                      src={`http://64.227.112.249${transformedArticles?.[newsIndex]?.cover.url}`}
+                      alt={transformedArticles?.[newsIndex]?.title}
+                      external={true}
+                      width={1290}
+                      height={1290}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/40"></div>
+                    <div className="relative flex flex-col items-center justify-center h-full w-full text-center p-1">
+                      <h2 className="text-xs font-bold text-white mb-0.5 line-clamp-1">
+                        {transformedArticles?.[newsIndex]?.title}
+                      </h2>
+                      <p className="text-white/80 mb-0.5 text-xs line-clamp-1">
+                        {transformedArticles?.[newsIndex]?.description}
+                      </p>
+                      <button 
+                        onClick={() => router.push(`/news/${transformedArticles?.[newsIndex]?.slug}`)}
+                        className="bg-white text-blue-700 px-2 py-0.5 rounded-full font-semibold hover:bg-blue-50 transition-colors text-xs"
+                      >
+                        {t('read_now')}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Bottom Section - Featured Cars */}
+              <div className="w-full bg-gradient-to-br from-blue-100 via-blue-300 from-white rounded-lg shadow-lg p-1 h-[320px] min-h-[320px] max-h-[320px] flex flex-col">
+                <h3 className="text-xs font-bold text-white mb-1 line-clamp-1">{t('featured')}</h3>
+                <div className="space-y-1 flex-1 overflow-y-auto">
+                  {listings
+                    .filter(listing => listing.category.includes('featured'))
+                    .slice(0, 5)
+                    .map((car) => (
+                      <div key={car.id} className="flex gap-1 items-center bg-white/10 backdrop-blur-sm rounded-md p-0.5 hover:bg-white/20 transition-all">
+                        <div className="relative w-10 h-10 rounded-md overflow-hidden">
+                          <Img
+                            src={car.mainImage}
+                            alt={car.title}
+                            width={1290}
+                            external={true}
+                            height={1290}
+                            className="object-cover w-full h-full"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-white text-xs line-clamp-1">{car.title}</h4>
+                          <p className="text-blue-200 font-bold text-xs">{car.price}</p>
+                          <div className="flex items-center gap-1 text-[10px] text-white/60">
+                            <span>{car.year}</span>
+                            <span>•</span>
+                            <span>{car.miles}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </div>
+          </div>
+          
 
           {/* Main Content Container */}
           <div className="container mx-auto w-full px-4 sm:px-6 lg:px-8 max-w-7xl overflow-x-hidden">
+            
             {/* Magazine-style Grid Layout */}
             <div className="grid grid-cols-12 gap-6 mb-8">
+
               {/* Featured Article - Spans full width */}
               {/* <div className="col-span-12 mb-8">
                 <motion.section 
@@ -900,9 +1038,9 @@ function HomeContent() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.8 }}
-                  className="w-full bg-white py-8 rounded-2xl"
+                  className="w-full bg-white py-8 rounded-2xl hidden lg:block"
                 >
-                  <div className="px-6 mb-8">
+                  <div className="px-6 mb-8 ">
                     <div className="flex items-center justify-between">
                       <h2 className="text-2xl font-bold text-gray-900">{t('latest_news')}</h2>
                       <div className="flex items-center gap-4">
@@ -922,8 +1060,8 @@ function HomeContent() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6">
-                    {visibleArticles.slice(1).map((article, index) => (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6 ">
+                    {transformedArticles.slice(1).map((article, index) => (
                       <motion.div
                         key={article.id}
                         initial={{ opacity: 0, y: 20 }}
@@ -937,7 +1075,7 @@ function HomeContent() {
                             alt={article.title}
                             className="object-cover w-full h-full"
                             width={400}
-                            height={300}
+                            height={320}
                             external={true}
                           />
                         </div>
@@ -991,14 +1129,14 @@ function HomeContent() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex items-center justify-between mb-4">
-                    <span className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-full">إعلان</span>
+                    <span className="bg-white text-white text-sm px-4 py-1.5 rounded-full">إعلان</span>
                     <span className="text-blue-600 font-semibold">عرض محدود</span>
                   </div>
                   <h4 className="text-2xl font-bold text-gray-900 mb-3">عرض الصيف للصيانة</h4>
                   <p className="text-gray-600 mb-6 text-lg">باقة صيانة كاملة تشمل تغيير الزيت، تبديل الإطارات، وفحص شامل للسيارة</p>
                   <div className="flex items-center justify-between">
                     <span className="text-3xl font-bold text-blue-600">٧٤٩ شيكل</span>
-                    <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <button className="px-6 py-3 bg-white text-white rounded-lg hover:bg-white transition-colors">
                       اعرف المزيد
                     </button>
                   </div>
@@ -1063,10 +1201,10 @@ function HomeContent() {
                   <p className="text-gray-600 text-lg">{t('discover_future_mobility')}</p>
                 </div>
                 <div className="hidden sm:flex gap-4">
-                  <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  <button className="px-6 py-3 bg-white text-white rounded-lg hover:bg-white transition-colors">
                     {t('view_all')}
                   </button>
-                  <button className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                  <button className="px-6 py-3 border border-gray-320 rounded-lg hover:bg-gray-50 transition-colors">
                     {t('compare')}
                   </button>
                 </div>
@@ -1075,7 +1213,7 @@ function HomeContent() {
                 {window.innerWidth <= 768 ? (
                   <Slider
                     autoPlay
-                    autoPlayInterval={3000}
+                    autoPlayInterval={3200}
                     responsive={{ 
                       "0": { items: 1 }, 
                       "551": { items: 1 }, 
@@ -1105,7 +1243,7 @@ function HomeContent() {
                 ) : (
                   <Slider
                     autoPlay
-                    autoPlayInterval={3000}
+                    autoPlayInterval={3200}
                     responsive={{ 
                       "0": { items: 1 }, 
                       "551": { items: 1 }, 
@@ -1146,7 +1284,7 @@ function HomeContent() {
               <div className="flex items-center justify-between mb-8">
                 <div>
                   <h3 className="text-2xl font-bold text-white">{t('parts_and_accessories')}</h3>
-                  <p className="text-gray-300 mt-1">{t('premium_parts')}</p>
+                  <p className="text-gray-320 mt-1">{t('premium_parts')}</p>
                 </div>
                 <div className="hidden sm:block">
                   <div className="flex gap-2">
@@ -1161,7 +1299,7 @@ function HomeContent() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {filteredParts.slice(0, 4).map((part) => (
-                  <div key={part.id} className="transform hover:scale-105 transition-transform duration-300">
+                  <div key={part.id} className="transform hover:scale-105 transition-transform duration-320">
                     <PartCard 
                       key={part.id} 
                       part={{
@@ -1194,10 +1332,10 @@ function HomeContent() {
                 </div>
                 <div className="hidden sm:block">
                   <div className="flex gap-2">
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <button className="px-4 py-2 bg-white text-white rounded-lg hover:bg-white transition-colors">
                       {t('book_service')}
                     </button>
-                    <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    <button className="px-4 py-2 border border-gray-320 rounded-lg hover:bg-gray-50 transition-colors">
                       {t('view_packages')}
                     </button>
                   </div>
@@ -1208,7 +1346,7 @@ function HomeContent() {
                   .filter(service => service.categories?.some(cat => cat.name.includes('featured')))
                   .slice(0, 4)
                   .map((service) => (
-                    <div key={service.id} className="transform hover:scale-105 transition-transform duration-300">
+                    <div key={service.id} className="transform hover:scale-105 transition-transform duration-320">
                       <ServiceCard 
                         key={service.id} 
                         slug={service.slug}
@@ -1293,7 +1431,7 @@ function HomeContent() {
                 <div className="p-3">
                   <h3 className="text-white font-medium">{t('car_insurance_offer')}</h3>
                   <p className="text-sm text-white/60 mt-1">{t('limited_time_offer')}</p>
-                  <button className="mt-2 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                  <button className="mt-2 w-full bg-white text-white py-2 rounded-lg hover:bg-white transition-colors">
                     {t('learn_more')}
                   </button>
                 </div>
@@ -1312,7 +1450,7 @@ function HomeContent() {
                 <div className="p-3">
                   <h3 className="text-white font-medium">{t('low_interest_loans')}</h3>
                   <p className="text-sm text-white/60 mt-1">{t('starting_apr')}</p>
-                  <button className="mt-2 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                  <button className="mt-2 w-full bg-white text-white py-2 rounded-lg hover:bg-white transition-colors">
                     {t('apply_now')}
                   </button>
                 </div>
@@ -1331,7 +1469,7 @@ function HomeContent() {
                 <div className="p-3">
                   <h3 className="text-white font-medium">{t('premium_service')}</h3>
                   <p className="text-sm text-white/60 mt-1">{t('free_inspection')}</p>
-                  <button className="mt-2 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                  <button className="mt-2 w-full bg-white text-white py-2 rounded-lg hover:bg-white transition-colors">
                     {t('book_now')}
                   </button>
                 </div>

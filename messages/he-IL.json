@@ -260,5 +260,9 @@
     "logout": "התנתק",
     "login": "התחבר",
     "register": "הרשם"
+  },
+  "AfterMarket": {
+    "Type": "סוג",
+    "winches": "משיכות"
   }
 }

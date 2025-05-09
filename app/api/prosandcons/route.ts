@@ -1,5 +1,5 @@
-import { getLocale } from 'next-intl/server';
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
@@ -8,8 +8,11 @@ const openai = new OpenAI({
 
 export async function POST(request: Request) {
   try {
-    const { make, model, year, specs } = await request.json();
-    const locale = await getLocale();
+    const cookieStore = await cookies();
+    const locale = cookieStore.get('NEXT_LOCALE')?.value ?? 'ar';
+    
+    const body = await request.json();
+    const { make, model, year, specs } = body;
 
     const prompt = `
       Analyze this ${year} ${make} ${model} car and provide a detailed analysis in ${locale} language.
@@ -48,9 +51,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json(parsedResponse);
   } catch (error) {
-    console.error('Error generating pros and cons:', error);
+    console.error('Error in prosandcons API:', error);
     return NextResponse.json(
-      { error: 'Failed to generate pros and cons' },
+      { error: 'Failed to process request' },
       { status: 500 }
     );
   }

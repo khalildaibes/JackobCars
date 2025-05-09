@@ -120,10 +120,10 @@ export const footerLinks = [
   {
     title: "Company",
     links: [
-      { title: "How it works", url: "/how-it-works" },
+      { title: "How it works", url: "/how_it_works" },
       { title: "Featured", url: "/featured" },
       { title: "Partnership", url: "/partnership" },
-      { title: "Business Relations", url: "/business-relations" },
+      { title: "Business Relations", url: "/business_relations" },
       { title: "Events", url: "/events" },
     ],
   },
@@ -132,7 +132,7 @@ export const footerLinks = [
     links: [
       { title: "Blog", url: "/blog" },
       { title: "Podcast", url: "/podcast" },
-      { title: "Invite a friend", url: "/invite" },
+      { title: "Invite a friend", url: "/invite_a_friend" },
     ],
   },
   {

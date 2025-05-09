@@ -543,7 +543,7 @@ const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
                             : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                           }`}
                       >
-                        {range.charAt(0).toUpperCase() + range.slice(1)}
+                        {t(range)}
                       </button>
                     ))}
                   </div>
@@ -595,7 +595,7 @@ const CategoriesPage = ({ initialCategory }: CategoriesPageProps) => {
                             : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                           }`}
                       >
-                        {status.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                        {t(status)}
                       </button>
                     ))}
                   </div>

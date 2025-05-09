@@ -35,9 +35,27 @@ import Image from "next/image";
 // Move these to environment variables
 const API_BASE_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&q=";
 const ALTERNATE_API_BASE_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=03adc637-b6fe-402b-9937-7c3d3afc9140&q=";
+const OWNERSHIP_HISTORY_API_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=bb2355dc-9ec7-4f06-9c3f-3344672171da&q=";
+const VEHICLE_SPECS_API_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=142afde2-6228-49f9-8a29-9b6c3a0cbe40&q=";
 
 interface CarData {
   [key: string]: string;
+}
+
+interface VehicleSpecs {
+  sug_degem: string;
+  ramat_gimur: string;
+  shnat_yitzur: string;
+  degem_nm: string;
+  [key: string]: string;
+}
+
+interface OwnershipRecord {
+  _id: number;
+  mispar_rechev: number;
+  baalut_dt: number;
+  baalut: string;
+  rank: number;
 }
 
 interface CarPerformanceData {
@@ -79,6 +97,13 @@ const CarSearch = () => {
   const [carImage, setCarImage] = useState<string | null>(null);
   const [performanceData, setPerformanceData] = useState<CarPerformanceData | null>(null);
   const [loadingPerformance, setLoadingPerformance] = useState(false);
+  const [ownershipHistory, setOwnershipHistory] = useState<OwnershipRecord[]>([]);
+  const [vehicleSpecs, setVehicleSpecs] = useState<VehicleSpecs | null>(null);
+  const [expandedSections, setExpandedSections] = useState({
+    handling: false,
+    reliability: false,
+    tuning: true
+  });
 
   const iconMap = {
     transmission: Cog,
@@ -206,6 +231,51 @@ const CarSearch = () => {
     }
   };
 
+  const fetchOwnershipHistory = async (plateNumber: string) => {
+    try {
+      const response = await fetch(`${OWNERSHIP_HISTORY_API_URL}${plateNumber}`);
+      const data = await response.json();
+      
+      if (data?.result?.records) {
+        // Sort records by baalut_dt in descending order (most recent first)
+        const sortedRecords = data.result.records.sort((a: OwnershipRecord, b: OwnershipRecord) => 
+          b.baalut_dt - a.baalut_dt
+        );
+        setOwnershipHistory(sortedRecords);
+      }
+    } catch (error) {
+      console.error("Error fetching ownership history:", error);
+    }
+  };
+
+  const fetchVehicleSpecs = async (carData: CarData) => {
+    try {
+      // Construct query from car data
+      const query = JSON.stringify([
+        carData.model_type || '',
+        carData.trim_level || '',
+        carData.manufacturer_name || '',
+        carData.year_of_production || ''
+      ]);
+      
+      const response = await fetch(`${VEHICLE_SPECS_API_URL}${encodeURIComponent(query)}`);
+      const data = await response.json();
+      
+      if (data?.result?.records?.length) {
+        const record = data.result.records[0] as Record<string, unknown>;
+        const vehicleSpecs = Object.fromEntries(
+          Object.entries(record).map(([key, value]) => [
+            key,
+            String(value),
+          ])
+        ) as VehicleSpecs;
+        setVehicleSpecs(vehicleSpecs);
+      }
+    } catch (error) {
+      console.error("Error fetching vehicle specs:", error);
+    }
+  };
+
   const fetchCarData = async () => {
     if (!plateNumber) return;
     // Remove dashes before making the API call
@@ -213,18 +283,17 @@ const CarSearch = () => {
     setLoading(true);
     setError(null);
     setCarImage(null);
+    setOwnershipHistory([]);
+    setVehicleSpecs(null);
     let data = null;
 
     try {
       // First fetch with the primary API
       const response = await fetch(`${API_BASE_URL}${cleanPlateNumber}`);
       const primaryData = await response.json();
-      console.log(`${API_BASE_URL}${cleanPlateNumber}`)
 
       // If no records were returned, try the alternate API
       if (primaryData?.result?.records?.length) {
-        console.log("record")
-        console.log(primaryData?.result?.records)
         data = primaryData;
       } else {
         const alternateResponse = await fetch(`${ALTERNATE_API_BASE_URL}${cleanPlateNumber}`);
@@ -233,7 +302,6 @@ const CarSearch = () => {
 
       if (data?.result?.records?.length) {
         const record = data.result.records[0] as Record<string, unknown>;
-        console.log(record)
 
         const translatedData = Object.fromEntries(
           Object.entries(record).map(([key, value]) => [
@@ -244,15 +312,19 @@ const CarSearch = () => {
 
         setCarData(translatedData);
         
-        // Fetch car image and performance data
+        // Fetch car image, performance data, and ownership history
         if (record.tozeret_nm && record.kinuy_mishari && record.shnat_yitzur) {
-          await fetchCarImage(String(record.tozeret_nm), String(record.kinuy_mishari));
-          await fetchCarPerformanceData(
-            String(record.tozeret_nm),
-            String(record.kinuy_mishari),
-            String(record.shnat_yitzur),
-            String(record.ramat_gimur)
-          );
+          await Promise.all([
+            fetchCarImage(String(record.tozeret_nm), String(record.kinuy_mishari)),
+            fetchCarPerformanceData(
+              String(record.tozeret_nm),
+              String(record.kinuy_mishari),
+              String(record.shnat_yitzur),
+              String(record.ramat_gimur)
+            ),
+            fetchOwnershipHistory(cleanPlateNumber),
+            fetchVehicleSpecs(translatedData)
+          ]);
         }
 
         // Scroll to results after data is loaded
@@ -437,82 +509,127 @@ const CarSearch = () => {
 
                     {/* Tuning Section */}
                     <div className="bg-gray-50 rounded-lg p-6">
-                      <div className="flex items-center gap-3 mb-4">
+                      <div 
+                        className="flex items-center gap-3 mb-4 cursor-pointer"
+                        onClick={() => setExpandedSections(prev => ({ ...prev, tuning: !prev.tuning }))}
+                      >
                         <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
                           <Sparkles className="h-6 w-6 text-blue-600" />
                         </div>
                         <h3 className="text-xl font-semibold">{t('tuning')}</h3>
-                      </div>
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">{t('tuning_potential')}</span>
-                          <span className="font-semibold">{renderRating(performanceData.tuning.tuning_potential)}</span>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">{t('tuning_notes')}</span>
-                          <p className="mt-1 font-semibold">{performanceData.tuning.tuning_notes}</p>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">{t('common_upgrades')}</span>
-                          <ul className="mt-1 list-disc list-inside">
-                            {performanceData.tuning.common_upgrades.map((upgrade, index) => (
-                              <li key={index} className="font-semibold">{upgrade}</li>
-                            ))}
-                          </ul>
+                        <div className="ml-auto">
+                          <svg 
+                            className={`w-6 h-6 transform transition-transform ${expandedSections.tuning ? 'rotate-180' : ''}`} 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
                         </div>
                       </div>
+                      {expandedSections.tuning && (
+                        <div className="space-y-3">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">{t('tuning_potential')}</span>
+                            <span className="font-semibold">{renderRating(performanceData.tuning.tuning_potential)}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">{t('tuning_notes')}</span>
+                            <p className="mt-1 font-semibold">{performanceData.tuning.tuning_notes}</p>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">{t('common_upgrades')}</span>
+                            <ul className="mt-1 list-disc list-inside">
+                              {performanceData.tuning.common_upgrades.map((upgrade, index) => (
+                                <li key={index} className="font-semibold">{upgrade}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Handling Section */}
                     <div className="bg-gray-50 rounded-lg p-6">
-                      <div className="flex items-center gap-3 mb-4">
+                      <div 
+                        className="flex items-center gap-3 mb-4 cursor-pointer"
+                        onClick={() => setExpandedSections(prev => ({ ...prev, handling: !prev.handling }))}
+                      >
                         <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
                           <Activity className="h-6 w-6 text-blue-600" />
                         </div>
                         <h3 className="text-xl font-semibold">{t('handling')}</h3>
-                      </div>
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">{t('handling_rating')}</span>
-                          <span className="font-semibold">{renderRating(performanceData.handling.handling_rating)}</span>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">{t('suspension_type')}</span>
-                          <p className="mt-1 font-semibold">{performanceData.handling.suspension_type}</p>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">{t('driving_characteristics')}</span>
-                          <p className="mt-1 font-semibold">{performanceData.handling.driving_characteristics}</p>
+                        <div className="ml-auto">
+                          <svg 
+                            className={`w-6 h-6 transform transition-transform ${expandedSections.handling ? 'rotate-180' : ''}`} 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
                         </div>
                       </div>
+                      {expandedSections.handling && (
+                        <div className="space-y-3">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">{t('handling_rating')}</span>
+                            <span className="font-semibold">{renderRating(performanceData.handling.handling_rating)}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">{t('suspension_type')}</span>
+                            <p className="mt-1 font-semibold">{performanceData.handling.suspension_type}</p>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">{t('driving_characteristics')}</span>
+                            <p className="mt-1 font-semibold">{performanceData.handling.driving_characteristics}</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Reliability Section */}
                     <div className="bg-gray-50 rounded-lg p-6">
-                      <div className="flex items-center gap-3 mb-4">
+                      <div 
+                        className="flex items-center gap-3 mb-4 cursor-pointer"
+                        onClick={() => setExpandedSections(prev => ({ ...prev, reliability: !prev.reliability }))}
+                      >
                         <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
                           <ShieldCheck className="h-6 w-6 text-blue-600" />
                         </div>
                         <h3 className="text-xl font-semibold">{t('reliability')}</h3>
-                      </div>
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">{t('reliability_rating')}</span>
-                          <span className="font-semibold">{renderRating(performanceData.reliability.reliability_rating)}</span>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">{t('common_issues')}</span>
-                          <ul className="mt-1 list-disc list-inside">
-                            {performanceData.reliability.common_issues.map((issue, index) => (
-                              <li key={index} className="font-semibold">{issue}</li>
-                            ))}
-                          </ul>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">{t('maintenance_cost')}</span>
-                          <span className="font-semibold">{renderRating(performanceData.reliability.maintenance_cost)}</span>
+                        <div className="ml-auto">
+                          <svg 
+                            className={`w-6 h-6 transform transition-transform ${expandedSections.reliability ? 'rotate-180' : ''}`} 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
                         </div>
                       </div>
+                      {expandedSections.reliability && (
+                        <div className="space-y-3">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">{t('reliability_rating')}</span>
+                            <span className="font-semibold">{renderRating(performanceData.reliability.reliability_rating)}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">{t('common_issues')}</span>
+                            <ul className="mt-1 list-disc list-inside">
+                              {performanceData.reliability.common_issues.map((issue, index) => (
+                                <li key={index} className="font-semibold">{issue}</li>
+                              ))}
+                            </ul>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">{t('maintenance_cost')}</span>
+                            <span className="font-semibold">{renderRating(performanceData.reliability.maintenance_cost)}</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -566,6 +683,67 @@ const CarSearch = () => {
                   )
                 ))}
               </div>
+
+              {/* Ownership History Section */}
+              {ownershipHistory.length > 0 && (
+                <div className="mt-8">
+                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-white">
+                    <User className="h-6 w-6 text-blue-600" />
+                    {t('ownership_history')} ({ownershipHistory.length} {t('records')})
+                  </h3>
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <div className="space-y-4">
+                      {ownershipHistory.map((record, index) => (
+                        <div key={record._id} className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                              <User className="h-5 w-5 text-blue-600" />
+                            </div>
+                            <div>
+                              <p className="font-semibold">{t(record.baalut)}</p>
+                              <p className="text-sm text-gray-500">
+                                {record.baalut_dt.toString().slice(0, 4)}/{record.baalut_dt.toString().slice(4)}
+                              </p>
+                            </div>
+                          </div>
+                          {index === 0 && (
+                            <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                              {t('current_owner')}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Vehicle Specs Section */}
+              {vehicleSpecs && (
+                <div className="mt-8">
+                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-white">
+                    <Tag className="h-6 w-6 text-blue-600" />
+                    {t('vehicle_specs')}
+                  </h3>
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <div className="space-y-4">
+                      {Object.entries(vehicleSpecs).map(([key, value]) => (
+                        <div key={key} className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                              <Tag className="h-5 w-5 text-blue-600" />
+                            </div>
+                            <div>
+                              <p className="font-semibold">{t(key)}</p>
+                              <p className="text-sm text-gray-500">{value}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}

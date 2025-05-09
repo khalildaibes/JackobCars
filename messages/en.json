@@ -576,6 +576,7 @@
   },
   "CarDetails": {
     "financing_options": "Financing Options",
+    "month": "month",
     "estimated_monthly_payment": "Estimated Monthly Payment",
     "for_months": "for {months} months @ {rate}% APR",
     "interest_rate": "Interest Rate",
@@ -1186,5 +1187,9 @@
     "info_line_3": "24/7 customer service",
     "discover_perfect_car": "Discover your perfect car",
     "exclusive_deals": "Exclusive deals"
+  },
+  "AfterMarket": {
+    "Type": "Type",
+    "winches": "Winches"
   }
 }

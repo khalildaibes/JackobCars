@@ -28,13 +28,13 @@ const Footer = () => {
               <div className="flex flex-col gap-2">
                 {section.links.map((link) => (
                   <Link
-                    key={link.title}
+                    key={link.url}
                     href={link.url}
                     className="text-white hover:text-gray-300 transition-colors"
                     target={link.url.startsWith('http') ? '_blank' : '_self'}
                     rel={link.url.startsWith('http') ? 'noopener noreferrer' : ''}
                   >
-                    {t(link.title.toLowerCase().replace(' ', '_'))}
+                    {t(link.title.toLowerCase().replaceAll(' ', '_'))}
                   </Link>
                 ))}
               </div>

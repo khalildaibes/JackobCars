@@ -1,35 +1,74 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { useLocale } from 'next-intl';
 
 interface Story {
   id: string;
   title: string;
   description: string;
   url: string;
+  title_ar?: string;
+  title_he?: string;
+  description_ar?: string;
+  description_he?: string;
 }
 
 interface StoriesCarouselProps {
-  stories: Story[];
+  initialStories: Story[];
 }
 
-export default function StoriesCarousel({ stories }: StoriesCarouselProps) {
+export default function StoriesCarousel({ initialStories }: StoriesCarouselProps) {
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
+  const [stories, setStories] = useState<Story[]>(initialStories || []);
+  const locale = useLocale();
+
+  // Update stories when initialStories changes
+  useEffect(() => {
+    if (initialStories && initialStories.length > 0) {
+      setStories(initialStories);
+    }
+  }, [initialStories]);
 
   // Auto-advance stories
   useEffect(() => {
-    if (stories.length > 0) {
-      const timer = setInterval(() => {
-        setCurrentStoryIndex((prev) => (prev + 1) % stories.length);
-      }, 5000); // Change story every 5 seconds
+    if (!stories || stories.length === 0) return;
 
-      return () => clearInterval(timer);
-    }
-  }, [stories?.length]);
+    const timer = setInterval(() => {
+      setCurrentStoryIndex((prev) => (prev + 1) % stories.length);
+    }, 5000); // Change story every 5 seconds
+
+    return () => clearInterval(timer);
+  }, [stories]);
+
+  // Get localized content
+  const getLocalizedContent = (story: Story) => {
+    if (!story) return { title: '', description: '' };
+    
+    const localizedTitle = story[`title_${locale}`] || story.title || '';
+    const localizedDescription = story[`description_${locale}`] || story.description || '';
+    return {
+      title: localizedTitle,
+      description: localizedDescription
+    };
+  };
+
+  if (!stories || stories.length === 0) {
+    return (
+      <div className="w-full h-[500px] flex items-center justify-center bg-gray-100 rounded-[16px]">
+        <p className="text-gray-500">No stories available</p>
+      </div>
+    );
+  }
+
+  const currentStory = stories[currentStoryIndex];
+  if (!currentStory) return null;
 
   return (
     <motion.section 
-      initial={{ opacity: 0, scale: 0.95, y: 50 }}
+      initial={{ opacity: 1, scale: 0.95, y: 50 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ 
         duration: 0.8,
@@ -44,7 +83,7 @@ export default function StoriesCarousel({ stories }: StoriesCarouselProps) {
           <div className="w-full h-full relative overflow-hidden rounded-xl rounded-full">
             {/* Story Progress Bar */}
             <div className="absolute top-0 left-0 right-0 z-30 flex gap-1 p-2 rounded-full">
-              {stories?.map((_, index) => (
+              {stories.map((_, index) => (
                 <div key={index} className="h-1 flex-1 bg-white/30 rounded-full overflow-hidden rounded-full">
                   <div 
                     className={`h-full ${currentStoryIndex === index ? 'w-1/2 bg-white' : ''} rounded-full`}
@@ -53,30 +92,29 @@ export default function StoriesCarousel({ stories }: StoriesCarouselProps) {
               ))}
             </div>
             {/* Story Content */}
-            {stories && stories.length > 0 ? (
-              <iframe
-                src={`https://www.instagram.com/p/${stories[currentStoryIndex].url.match(/reel\/(.*?)(?:\?|$)/)?.[1]}embed`}
-                allowFullScreen 
-                className="w-full h-full" 
-                style={{
-                  borderRadius: '10px',
-                  overflow: 'hidden',
-                  aspectRatio: '2/1'
-                }}
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <p>No stories available</p>
-              </div>
-            )}
+            <iframe
+              src={`https://www.instagram.com/p/${currentStory.url.match(/reel\/(.*?)(?:\?|$)/)?.[1]}embed`}
+              allowFullScreen 
+              className="w-full h-full" 
+              style={{
+                borderRadius: '10px',
+                overflow: 'hidden',
+                aspectRatio: '2/1'
+              }}
+            />
             
             {/* Story Text Overlay */}
-            {stories && stories.length > 0 && (
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
-                <h3 className="text-white text-lg font-semibold">{stories[currentStoryIndex].title}</h3>
-                <p className="text-white/80 text-sm">{stories[currentStoryIndex].description}</p>
-              </div>
-            )}
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
+              {(() => {
+                const { title, description } = getLocalizedContent(currentStory);
+                return (
+                  <>
+                    <h3 className="text-white text-lg font-semibold">{title}</h3>
+                    <p className="text-white/80 text-sm">{description}</p>
+                  </>
+                );
+              })()}
+            </div>
           </div>
         </div>
 
@@ -87,6 +125,8 @@ export default function StoriesCarousel({ stories }: StoriesCarouselProps) {
             {(() => {
               const prevIndex = currentStoryIndex === 0 ? stories.length - 1 : currentStoryIndex - 1;
               const prevStory = stories[prevIndex];
+              if (!prevStory) return null;
+              
               return (
                 <iframe
                   key={prevStory.id}
@@ -111,6 +151,8 @@ export default function StoriesCarousel({ stories }: StoriesCarouselProps) {
             {(() => {
               const nextIndex = currentStoryIndex === stories.length - 1 ? 0 : currentStoryIndex + 1;
               const nextStory = stories[nextIndex];
+              if (!nextStory) return null;
+              
               return (
                 <iframe
                   key={nextStory.id}
