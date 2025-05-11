@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import CarDetailsContent from './CarDetailsContent';
+import Link from 'next/link';
 
 async function getCarDetails(slug: string, locale: string) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
@@ -161,10 +162,30 @@ async function getCarDetails(slug: string, locale: string) {
 export default async function CarDetailsPage({ params }: { params: { slug: string } }) {
   const cookieStore = await cookies();
   const locale = cookieStore.get('NEXT_LOCALE')?.value ?? 'ar';
-  
-  const initialData = await getCarDetails(params.slug, locale);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
-  return <CarDetailsContent initialData={initialData} slug={params.slug} />;
+  try {
+    const initialData = await getCarDetails(params.slug, locale);
+
+    return (
+      <>
+        <div className='mt-10'>
+        </div>
+        <CarDetailsContent initialData={initialData} slug={params.slug} />
+      </>
+    );
+  } catch (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Car not found</h1>
+          <Link href="/car-listing" className="text-primary hover:text-primary-dark">
+            Back to listings
+          </Link>
+        </div>
+      </div>
+    );
+  }
 }
 
 

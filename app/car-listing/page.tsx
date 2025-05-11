@@ -403,7 +403,7 @@ const CarListings: React.FC = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>{t('price_range')}: ${priceRange[0].toLocaleString()} - ${priceRange[1].toLocaleString()}</Label>
+                  <Label>{t('price_range')}: {priceRange[0].toLocaleString()} - {priceRange[1].toLocaleString()}</Label>
                   <Slider
                     defaultValue={[5000, minMaxPrices.max]}
                     min={5000}

@@ -197,6 +197,24 @@ interface TransformedPart {
   images: Array<{ url: string }>;
 }
 
+// Add this interface before the HomeContent component
+interface TransformedArticle {
+  id: string;
+  title: string;
+  excerpt: string;
+  imageUrl: string;
+  category: string;
+  date: string;
+  author: string;
+  description: string;
+  cover: { url: string } | null;
+  categories: Array<{ name: string }>;
+  publishedAt: string;
+  locale: string;
+  slug: string;
+  blocks: any[];
+}
+
 // API fetch functions
 const fetchArticles = async () => {
   const cachedData = getCookie('articlesData');
@@ -443,6 +461,10 @@ function HomeContent() {
   const [error, setError] = useState<string | null>(null);
   const [newsIndex, setNewsIndex] = useState(0);
   const [newsIndex2, setNewsIndex2] = useState(Math.floor(Math.random() * 5));
+  const [cachedListings, setCachedListings] = useState<Listing[]>([]);
+  const [isLoadingCache, setIsLoadingCache] = useState(true);
+  const [cachedArticles, setCachedArticles] = useState<TransformedArticle[]>([]);
+  const [isLoadingArticlesCache, setIsLoadingArticlesCache] = useState(true);
 
   // Get search params with memoization
   const { selectedFuel, selectedYear, selectedManufacturer, selectedLimit, selectedModel } = useMemo(() => ({
@@ -514,12 +536,54 @@ function HomeContent() {
   const [sliderState, setSliderState] = React.useState(0);
   const sliderRef = React.useRef<AliceCarousel>(null);
 
-  // Transform deals data with memoization and proper type checking
+  // Add this useEffect for cache handling
+  useEffect(() => {
+    const loadCachedData = async () => {
+      const CACHE_KEY = 'deals_listings';
+      try {
+        const cached = await getCachedData<Listing[]>(CACHE_KEY);
+        if (cached) {
+          setCachedListings(cached);
+        }
+      } catch (error) {
+        console.error('Error loading cached data:', error);
+      } finally {
+        setIsLoadingCache(false);
+      }
+    };
+
+    loadCachedData();
+  }, []);
+
+  // Add this useEffect for articles cache handling
+  useEffect(() => {
+    const loadCachedArticles = async () => {
+      const CACHE_KEY = 'articles_data';
+      try {
+        const cached = await getCachedData<TransformedArticle[]>(CACHE_KEY);
+        if (cached) {
+          setCachedArticles(cached);
+        }
+      } catch (error) {
+        console.error('Error loading cached articles:', error);
+      } finally {
+        setIsLoadingArticlesCache(false);
+      }
+    };
+
+    loadCachedArticles();
+  }, []);
+
+  // Replace the listings useMemo with this updated version
   const listings = useMemo(() => {
+    if (!isLoadingCache && cachedListings.length > 0) {
+      return cachedListings;
+    }
+    
     if (isLoadingDeals || !dealsData) return [];
     
     const deals = dealsData as Deal[];
-    return deals.map((product: Deal): Listing => {
+    const transformedListings = deals.map((product: Deal): Listing => {
       let categories: string[] = [];
       
       if (!product.categories) {
@@ -558,16 +622,25 @@ function HomeContent() {
         categories: categories.map(cat => ({ name: cat }))
       };
     });
-  }, [dealsData, isLoadingDeals]);
 
-  // Transform articles data with proper type checking
+    // Cache the transformed listings for 2 hours
+    setCachedData('deals_listings', transformedListings, 2 * 60 * 60); // 2 hours in seconds
+    
+    return transformedListings;
+  }, [dealsData, isLoadingDeals, cachedListings, isLoadingCache]);
+
+  // Update the transformedArticles useMemo
   const transformedArticles = useMemo(() => {
+    if (!isLoadingArticlesCache && cachedArticles.length > 0) {
+      return cachedArticles;
+    }
+
     if (!articlesData) return [];
     
     const data = articlesData as { featuredData: { data: Article[] } };
     if (!data?.featuredData?.data) return [];
     
-    return data.featuredData.data.map((article: Article) => ({
+    const transformed: TransformedArticle[] = data.featuredData.data.map((article: Article) => ({
       id: article.id,
       title: article.title || '',
       excerpt: article.excerpt || '',
@@ -583,7 +656,12 @@ function HomeContent() {
       slug: article.slug || '',
       blocks: article.blocks || []
     }));
-  }, [articlesData, t]);
+
+    // Cache the transformed articles for 2 hours
+    setCachedData('articles_data', transformed, 2 * 60 * 60); // 2 hours in seconds
+    
+    return transformed;
+  }, [articlesData, t, cachedArticles, isLoadingArticlesCache]);
 
   // Transform parts data with proper type checking
   const transformedParts = useMemo(() => {
@@ -657,9 +735,11 @@ function HomeContent() {
     setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
 
-  const visibleArticles = transformedArticles
-    .filter(article => article.category.includes('featured'))
-    .slice(currentSlide * itemsPerPage, (currentSlide + 1) * itemsPerPage);
+  const visibleArticles = useMemo(() => {
+    return transformedArticles
+      .filter((article: TransformedArticle) => article.category.includes('featured'))
+      .slice(currentSlide * itemsPerPage, (currentSlide + 1) * itemsPerPage);
+  }, [transformedArticles, currentSlide, itemsPerPage]);
 
   // Memoized filter change handler
   const handleFilterChange = useCallback((title: string, value: string) => {
@@ -924,48 +1004,15 @@ function HomeContent() {
             <div className="w-full lg:w-[30%] flex flex-col gap-2">
               {/* Top Section - Article */}
               <div className="w-full bg-gradient-to-br from-blue-100 via-blue-300 from-white rounded-lg shadow-lg p-1 h-[320px] min-h-[320px] max-h-[320px] hidden lg:block">
-                {transformedArticles?.[newsIndex]?.cover?.url && (
-                  <div className="relative rounded-lg overflow-hidden w-full h-full max-h-[320px]">
-                    <Img
-                      src={`http://64.227.112.249${transformedArticles?.[newsIndex]?.cover.url}`}
-                      alt={transformedArticles?.[newsIndex]?.title}
-                      external={true}
-                      width={1290}
-                      height={1290}
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black/40"></div>
-                    <div className="relative flex flex-col items-center justify-center h-full w-full text-center p-1">
-                      <h2 className="text-xs font-bold text-white mb-0.5 line-clamp-1">
-                        {transformedArticles?.[newsIndex]?.title}
-                      </h2>
-                      <p className="text-white/80 mb-0.5 text-xs line-clamp-1">
-                        {transformedArticles?.[newsIndex]?.description}
-                      </p>
-                      <button 
-                        onClick={() => router.push(`/news/${transformedArticles?.[newsIndex]?.slug}`)}
-                        className="bg-white text-blue-700 px-2 py-0.5 rounded-full font-semibold hover:bg-blue-50 transition-colors text-xs"
-                      >
-                        {t('read_now')}
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Bottom Section - Featured Cars */}
-              <div className="w-full bg-gradient-to-br from-blue-100 via-blue-300 from-white rounded-lg shadow-lg p-1 h-[320px] min-h-[320px] max-h-[320px] flex flex-col">
-                <h3 className="text-xs font-bold text-white mb-1 line-clamp-1">{t('featured')}</h3>
-                <div className="space-y-1 flex-1 overflow-y-auto">
-                  {listings
-                    .filter(listing => listing.category.includes('featured'))
+                 {transformedArticles
+                    .filter(article => article.category.includes('featured'))
                     .slice(0, 5)
-                    .map((car) => (
-                      <div key={car.id} className="flex gap-1 items-center bg-white/10 backdrop-blur-sm rounded-md p-0.5 hover:bg-white/20 transition-all">
+                    .map((article) => (
+                      <div key={article.id} className="flex gap-1 items-center bg-white/10 backdrop-blur-sm rounded-md p-0.5 hover:bg-white/20 transition-all">
                         <div className="relative w-10 h-10 rounded-md overflow-hidden">
                           <Img
-                            src={car.mainImage}
-                            alt={car.title}
+                            src={`http://64.227.112.249${article.imageUrl}`}
+                            alt={article.title}
                             width={1290}
                             external={true}
                             height={1290}
@@ -973,16 +1020,106 @@ function HomeContent() {
                           />
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-semibold text-white text-xs line-clamp-1">{car.title}</h4>
-                          <p className="text-blue-200 font-bold text-xs">{car.price}</p>
+                          <h4 className="font-semibold text-white text-xs line-clamp-1">{article.title}</h4>
+                          <p className="text-blue-200 text-[10px] line-clamp-1">{article.excerpt}</p>
                           <div className="flex items-center gap-1 text-[10px] text-white/60">
-                            <span>{car.year}</span>
+                            <span>{article.date}</span>
                             <span>•</span>
-                            <span>{car.miles}</span>
+                            <span>{article.author}</span>
                           </div>
                         </div>
                       </div>
                     ))}
+              </div>
+
+              {/* Bottom Section - Website Ads */}
+              <div className="w-full bg-gradient-to-br from-blue-100 via-blue-300 from-white rounded-lg shadow-lg p-1 h-[320px] min-h-[320px] max-h-[320px] flex flex-col">
+                <h3 className="text-xs font-bold text-white mb-1 line-clamp-1">{t('special_offers')}</h3>
+                <div className="space-y-1 flex-1 overflow-y-auto">
+                  {/* Ad 1 - Car Insurance */}
+                  <div className="flex gap-1 items-center bg-white/10 backdrop-blur-sm rounded-md p-0.5 hover:bg-white/20 transition-all">
+                    <div className="relative w-10 h-10 rounded-md overflow-hidden">
+                      <Img
+                        src="/images/ad1.jpg"
+                        alt="Car Insurance Ad"
+                        width={1290}
+                        external={true}
+                        height={1290}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-white text-xs line-clamp-1">{t('car_insurance_offer')}</h4>
+                      <p className="text-blue-200 text-[10px] line-clamp-1">{t('limited_time_offer')}</p>
+                      <button className="mt-0.5 px-2 py-0.5 bg-white text-blue-600 rounded-full text-[10px] hover:bg-blue-50 transition-colors">
+                        {t('learn_more')}
+                      </button>
+                    </div>
+                  </div>
+
+
+                  {/* Ad 3 - Car Service */}
+                  <div className="flex gap-1 items-center bg-white/10 backdrop-blur-sm rounded-md p-0.5 hover:bg-white/20 transition-all">
+                    <div className="relative w-10 h-10 rounded-md overflow-hidden">
+                      <Img
+                        src="/images/ad3.jpg"
+                        alt="Car Service Ad"
+                        width={1290}
+                        external={true}
+                        height={1290}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-white text-xs line-clamp-1">{t('premium_service')}</h4>
+                      <p className="text-blue-200 text-[10px] line-clamp-1">{t('free_inspection')}</p>
+                      <button className="mt-0.5 px-2 py-0.5 bg-white text-blue-600 rounded-full text-[10px] hover:bg-blue-50 transition-colors">
+                        {t('book_now')}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Ad 4 - Car Parts */}
+                  <div className="flex gap-1 items-center bg-white/10 backdrop-blur-sm rounded-md p-0.5 hover:bg-white/20 transition-all">
+                    <div className="relative w-10 h-10 rounded-md overflow-hidden">
+                      <Img
+                        src="/images/ad4.jpg"
+                        alt="Car Parts Ad"
+                        width={1290}
+                        external={true}
+                        height={1290}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-white text-xs line-clamp-1">{t('genuine_parts')}</h4>
+                      <p className="text-blue-200 text-[10px] line-clamp-1">{t('quality_guaranteed')}</p>
+                      <button className="mt-0.5 px-2 py-0.5 bg-white text-blue-600 rounded-full text-[10px] hover:bg-blue-50 transition-colors">
+                        {t('shop_now')}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Ad 5 - Car Wash */}
+                  <div className="flex gap-1 items-center bg-white/10 backdrop-blur-sm rounded-md p-0.5 hover:bg-white/20 transition-all">
+                    <div className="relative w-10 h-10 rounded-md overflow-hidden">
+                      <Img
+                        src="/images/ad5.jpg"
+                        alt="Car Wash Ad"
+                        width={1290}
+                        external={true}
+                        height={1290}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-white text-xs line-clamp-1">{t('premium_wash')}</h4>
+                      <p className="text-blue-200 text-[10px] line-clamp-1">{t('special_offer')}</p>
+                      <button className="mt-0.5 px-2 py-0.5 bg-white text-blue-600 rounded-full text-[10px] hover:bg-blue-50 transition-colors">
+                        {t('book_service')}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -993,7 +1130,7 @@ function HomeContent() {
           <div className="container mx-auto w-full px-4 sm:px-6 lg:px-8 max-w-7xl overflow-x-hidden">
             
             {/* Magazine-style Grid Layout */}
-            <div className="grid grid-cols-12 gap-6 mb-8">
+            <div className="grid grid-cols-1 gap-6 mb-8">
 
               {/* Featured Article - Spans full width */}
               {/* <div className="col-span-12 mb-8">
@@ -1061,7 +1198,7 @@ function HomeContent() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6 ">
-                    {transformedArticles.slice(1).map((article, index) => (
+                    {transformedArticles.slice(1, 4).map((article: TransformedArticle, index) => (
                       <motion.div
                         key={article.id}
                         initial={{ opacity: 0, y: 20 }}
@@ -1181,7 +1318,7 @@ function HomeContent() {
               </div>
               <div className="col-span-12">
                 <RecentlyAddedSection 
-                  listings={listings.filter((listing) => listing.category.includes(t("most_searched_cars")))} 
+                  listings={listings.filter((listing) => listing.category.includes(selectedCategory))} 
                   title={t(selectedCategory)}
                   viewAllLink="/cars"
                 />
@@ -1284,7 +1421,7 @@ function HomeContent() {
               <div className="flex items-center justify-between mb-8">
                 <div>
                   <h3 className="text-2xl font-bold text-white">{t('parts_and_accessories')}</h3>
-                  <p className="text-gray-320 mt-1">{t('premium_parts')}</p>
+                  <p className="text-gray-320 mt-1 colro-w  ">{t('premium_parts')}</p>
                 </div>
                 <div className="hidden sm:block">
                   <div className="flex gap-2">

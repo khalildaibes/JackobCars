@@ -17,8 +17,8 @@ const StoreImage: React.FC<StoreImageProps> = ({ isRTL }) => {
       <div className="aspect-video w-full rounded-xl sm:rounded-2xl overflow-hidden shadow-xl sm:shadow-2xl">
         <Image
           src="/asd.jpg"
-          width={1000}
-          height={1000}
+          width={1290}
+          height={1290}
           alt="ASD - Auto Spa Detailing Showroom"
           className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
         />

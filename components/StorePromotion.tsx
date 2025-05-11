@@ -25,7 +25,7 @@ const StorePromotion: React.FC<StorePromotionProps> = ({ className = '' }) => {
           <StoreInfo isRTL={isRTL} />
           <StoreImage isRTL={isRTL} />
         </div>
-        <StoreServices isRTL={isRTL} />
+        {/* <StoreServices isRTL={isRTL} /> */}
       </motion.section>
     </div>
   );

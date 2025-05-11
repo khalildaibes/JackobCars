@@ -46,6 +46,7 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ initialData, slug
   const [car, setCar] = useState<any>(initialData?.car || null);
   const [listings, setListings] = useState<any[]>(initialData?.listings || []);
   const [loading, setLoading] = useState(false);
+  const [loadingProsCons, setLoadingProsCons] = useState(false);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [interestRate, setInterestRate] = useState(4.9);
   const [loanTerm, setLoanTerm] = useState(60);
@@ -65,6 +66,40 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ initialData, slug
       setProsAndCons(initialData.prosAndCons);
     }
   }, [initialData]);
+
+  // useEffect(() => {
+  //   const fetchProsAndCons = async () => {
+  //     if (car && !prosAndCons) {
+  //       setLoadingProsCons(true);
+  //       try {
+  //         const response = await fetch('/api/prosandcons', {
+  //           method: 'POST',
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //             'Accept-Language': locale
+  //           },
+  //           body: JSON.stringify({
+  //             make: car.make,
+  //             model: car.model,
+  //             year: car.year,
+  //             specs: car.specs
+  //           })
+  //         });
+
+  //         if (response.ok) {
+  //           const data = await response.json();
+  //           setProsAndCons(data);
+  //         }
+  //       } catch (error) {
+  //         console.error('Error fetching pros and cons:', error);
+  //       } finally {
+  //         setLoadingProsCons(false);
+  //       }
+  //     }
+  //   };
+
+  //   fetchProsAndCons();
+  // }, [car, locale, prosAndCons]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -521,35 +556,37 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ initialData, slug
                       <Check className="h-6 w-6 text-blue-600" />
                     </div>
                     <h4 className="font-medium text-gray-900 text-lg mb-4">{t('pros')}</h4>
-                    <ul className="space-y-3 text-gray-600">
-                      {loading ? (
-                        <div className="animate-pulse space-y-3">
-                          {[1, 2, 3].map((i) => (
-                            <li key={i} className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></li>
-                          ))}
-                        </div>
-                      ) : prosAndCons?.pros?.map((pro: string, index: number) => (
-                        <li key={index} className="flex items-center justify-center">
-                          <span className="mr-2">•</span>
-                          {pro}
-                        </li>
-                      )) || (
-                        <>
-                          <li className="flex items-center justify-center">
+                    {loadingProsCons ? (
+                      <div className="animate-pulse space-y-3 w-full">
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
+                        ))}
+                      </div>
+                    ) : (
+                      <ul className="space-y-3 text-gray-600">
+                        {prosAndCons?.pros?.map((pro: string, index: number) => (
+                          <li key={index} className="flex items-center justify-center">
                             <span className="mr-2">•</span>
-                            {t('excellent_performance')}
+                            {pro}
                           </li>
-                          <li className="flex items-center justify-center">
-                            <span className="mr-2">•</span>
-                            {t('comfortable_interior')}
-                          </li>
-                          <li className="flex items-center justify-center">
-                            <span className="mr-2">•</span>
-                            {t('advanced_tech')}
-                          </li>
-                        </>
-                      )}
-                    </ul>
+                        )) || (
+                          <>
+                            <li className="flex items-center justify-center">
+                              <span className="mr-2">•</span>
+                              {t('excellent_performance')}
+                            </li>
+                            <li className="flex items-center justify-center">
+                              <span className="mr-2">•</span>
+                              {t('comfortable_interior')}
+                            </li>
+                            <li className="flex items-center justify-center">
+                              <span className="mr-2">•</span>
+                              {t('advanced_tech')}
+                            </li>
+                          </>
+                        )}
+                      </ul>
+                    )}
                   </div>
 
                   {/* Cons */}
@@ -558,35 +595,37 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ initialData, slug
                       <X className="h-6 w-6 text-red-600" />
                     </div>
                     <h4 className="font-medium text-gray-900 text-lg mb-4">{t('cons')}</h4>
-                    <ul className="space-y-3 text-gray-600">
-                      {loading ? (
-                        <div className="animate-pulse space-y-3">
-                          {[1, 2, 3].map((i) => (
-                            <li key={i} className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></li>
-                          ))}
-                        </div>
-                      ) : prosAndCons?.cons?.map((con: string, index: number) => (
-                        <li key={index} className="flex items-center justify-center">
-                          <span className="mr-2">•</span>
-                          {con}
-                        </li>
-                      )) || (
-                        <>
-                          <li className="flex items-center justify-center">
+                    {loadingProsCons ? (
+                      <div className="animate-pulse space-y-3 w-full">
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
+                        ))}
+                      </div>
+                    ) : (
+                      <ul className="space-y-3 text-gray-600">
+                        {prosAndCons?.cons?.map((con: string, index: number) => (
+                          <li key={index} className="flex items-center justify-center">
                             <span className="mr-2">•</span>
-                            {t('higher_price')}
+                            {con}
                           </li>
-                          <li className="flex items-center justify-center">
-                            <span className="mr-2">•</span>
-                            {t('firm_ride')}
-                          </li>
-                          <li className="flex items-center justify-center">
-                            <span className="mr-2">•</span>
-                            {t('limited_cargo')}
-                          </li>
-                        </>
-                      )}
-                    </ul>
+                        )) || (
+                          <>
+                            <li className="flex items-center justify-center">
+                              <span className="mr-2">•</span>
+                              {t('higher_price')}
+                            </li>
+                            <li className="flex items-center justify-center">
+                              <span className="mr-2">•</span>
+                              {t('firm_ride')}
+                            </li>
+                            <li className="flex items-center justify-center">
+                              <span className="mr-2">•</span>
+                              {t('limited_cargo')}
+                            </li>
+                          </>
+                        )}
+                      </ul>
+                    )}
                   </div>
                 </div>
               </div>

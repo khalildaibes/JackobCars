@@ -61,7 +61,7 @@ const CarDetails: React.FC = () => {
   // If no car is found, show a not found message
   if (!car) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center">
+      <div className="container mx-auto px-4 py-16 text-center mt-10">
         <h1 className="text-3xl font-bold mb-4">Car Not Found</h1>
         <p className="mb-8">The car you're looking for doesn't exist or has been removed.</p>
         <Link href="/car-listing">

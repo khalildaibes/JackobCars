@@ -30,17 +30,17 @@ const StoreInfo: React.FC<StoreInfoProps> = ({ isRTL }) => {
       <div className="space-y-3 sm:space-y-4">
         <div className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-white/5 rounded-xl backdrop-blur-sm hover:bg-white/10 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}>
           <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-blue-300" />
-          <span className="text-sm sm:text-base">בולטימור 30, אזור תעשיה עכו</span>
+          <span className="text-sm sm:text-base">بولتيمور 30, إقليم الصناعات الثقيلة, عكا</span>
         </div>
         
         <div className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-white/5 rounded-xl backdrop-blur-sm hover:bg-white/10 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}>
           <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-blue-300" />
-          <span className="text-sm sm:text-base">יעקב: 0544603725</span>
+          <span className="text-sm sm:text-base">يعقوب: 0544603725</span>
         </div>
 
         <div className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-white/5 rounded-xl backdrop-blur-sm hover:bg-white/10 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}>
           <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-blue-300" />
-          <span className="text-sm sm:text-base">יוסי: 0542354882</span>
+          <span className="text-sm sm:text-base">يوسي: 0542354882</span>
         </div>
         
         <div className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-white/5 rounded-xl backdrop-blur-sm hover:bg-white/10 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}>
