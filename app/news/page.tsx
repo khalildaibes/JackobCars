@@ -429,7 +429,12 @@ export default function NewsPage() {
   const latestNews = filteredNews.filter(item => 
     item.categories.some(tag => tag.name === "latest news")
   );
-
+  const localNews = filteredNews.filter(item => 
+    item.categories.some(tag => tag.name === "local news")
+  );
+  const worldNews = filteredNews.filter(item => 
+    item.categories.some(tag => tag.name === "world news")
+  );
   const featuredStories = filteredNews.filter(item => 
     item.categories.some(tag => tag.name === "featured stories")
   );
@@ -556,6 +561,41 @@ export default function NewsPage() {
             )}
           </div>
 
+            {/* Featured Stories Section */}
+            <div className="flex flex-col">
+              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('featured_stories')}</h2>
+              <div className="space-y-6">
+                {featuredStories.slice(1, 3).map((item) => (
+                  <article
+                    key={item.id}
+                    className="md:rounded-xl overflow-hidden cursor-pointer group relative rounded-xl"
+                    onClick={() => router.push(`/news/${item.slug}`)}
+                  >
+                    <div className="relative h-[200px] md:h-[280px] w-full">
+                      {item.cover?.url && (
+                        <Img
+                          src={`http://64.227.112.249${item.cover.url}`}
+                          alt={item.title}
+                          external={true}
+                          width={1200}
+                          height={1200}
+                          className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                        <div className="absolute bottom-0 left-0 right-0 p-6">
+                          <div className="text-xs text-white mb-1 font-bold uppercase tracking-wider bg-white/5 rounded-full px-2 py-1 inline-block">{t('expert_review')}</div>
+                          <h3 className="font-bold text-lg text-white mb-2 line-clamp-2 px-2">{item.title}</h3>
+                          <div className="text-sm text-gray-300 px-2">
+                            By {item.author?.data?.attributes?.name || t('unknown_author')}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
           {/* Featured News - Different layouts for mobile and desktop */}
           <section className="mb-8 px-4 ">
             
@@ -563,7 +603,7 @@ export default function NewsPage() {
             {/* Desktop Layout */}
             <div className="hidden md:block">
               <div className="grid grid-cols-3 gap-6 mb-8">
-                {featuredNews.slice(0, 3).map((item) => (
+                {featuredNews.slice(2, 5).map((item) => (
                   <article
                     key={item.id}
                     className="bg-white rounded-xl shadow-sm overflow-hidden cursor-pointer"
@@ -599,12 +639,12 @@ export default function NewsPage() {
           </div>
 
           {/* Latest News and Featured Stories - Different layouts for mobile and desktop */}
-          <div className="md:grid md:grid-cols-3 md:gap-8">
-            {/* Latest News - takes 2 columns */}
-            <div className="flex flex-col md:col-span-2">
-              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('latest_news')}</h2>
-              <div className="space-y-6 mb-8">
-                {latestNews.map((item) => (
+          <div className="flex flex-col gap-8">
+            {/* Local News Section */}
+            <div className="flex flex-col">
+              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('local_news')}</h2>
+              <div className="space-y-6">
+                {localNews.map((item) => (
                   <article
                     key={item.id}
                     className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
@@ -628,7 +668,7 @@ export default function NewsPage() {
                         <h3 className="font-bold text-lg text-gray-900 mb-2 px-2">{item.title}</h3>
                         <p className="text-gray-600 text-sm mb-2 px-2">{item.description}</p>
                         <div className="text-sm text-gray-600 px-2">
-                          <span>{t('by')} {item.author?.data?.attributes?.name ||  t('unknown_author')}</span>
+                          <span>{t('by')} {item.author?.data?.attributes?.name || t('unknown_author')}</span>
                           <span className="mx-2">•</span>
                           <span>{formatDate(item.publishedAt)}</span>
                         </div>
@@ -638,113 +678,87 @@ export default function NewsPage() {
                 ))}
               </div>
             </div>
-
-            {/* Desktop Ads - Right Side */}
-            <div className="hidden lg:block mb-8 shrink-0 relative shrink-0 h-full">
-              <div className="sticky top-4 space-y-6">
-                {rightAds.map((ad) => (
-                  <AdBanner
-                    key={ad.id}
-                    imageUrl={ad.imageUrl}
-                    link={ad.link}
-                    alt={ad.alt}
-                    className="mb-4"
-                  />
+            {/* World News Section */}
+            <div className="flex flex-col">
+              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('world_news')}</h2>
+              <div className="space-y-6">
+                {worldNews.map((item) => (
+                  <article
+                    key={item.id}
+                    className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
+                    onClick={() => router.push(`/news/${item.slug}`)}
+                  >
+                    <div className="md:flex bg-white rounded-xl">
+                      <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
+                        {item.cover?.url && (
+                          <Img
+                            src={`http://64.227.112.249${item.cover.url}`}
+                            alt={item.title}
+                            external={true}
+                            width={512}
+                            height={512}
+                            className="object-cover w-full h-full md:h-48"
+                          />
+                        )}
+                      </div>
+                      <div className="mt-3 md:mt-0 md:w-2/3 md:p-4">
+                        <div className="text-sm text-gray-600 mb-1">{t('expert_review')}</div>
+                        <h3 className="font-bold text-lg text-gray-900 mb-2 px-2">{item.title}</h3>
+                        <p className="text-gray-600 text-sm mb-2 px-2">{item.description}</p>
+                        <div className="text-sm text-gray-600 px-2">
+                          <span>{t('by')} {item.author?.data?.attributes?.name || t('unknown_author')}</span>
+                          <span className="mx-2">•</span>
+                          <span>{formatDate(item.publishedAt)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
                 ))}
               </div>
             </div>
+            
+            
 
-            {/* Mobile Ads - Top */}
-            <div className="lg:hidden grid grid-cols-2 gap-4 mb-8">
-              <AdSlider ads={topMobileAds} />
-            </div>
-
-            {/* Latest News and Featured Stories - Different layouts for mobile and desktop */}
-
-            {/* Latest News - takes 2 columns */}
-            <div className="flex flex-col md:col-span-2">
-              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">featured news</h2>
-              <div className="space-y-6 mb-8">
+            {/* Featured News Section */}
+            <div className="flex flex-col">
+              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('featured_news')}</h2>
+              <div className="space-y-6">
                 {latestNews
-                .filter(item => item.categories.some(tag => tag.name === "featured"))
-                .map((item) => (
-                  <article
-                    key={item.id}
-                    className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
-                    onClick={() => router.push(`/news/${item.slug}`)}
-                  >
-                    <div className="md:flex bg-white rounded-xl">
-                      <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
-                        {item.cover?.url && (
-                          <Img
-                            src={`http://64.227.112.249${item.cover.url}`}
-                            alt={item.title}
-                            external={true}
-                            width={512}
-                            height={512}
-                            className="object-cover w-full h-full md:h-48"
-                          />
-                        )}
-                      </div>
-                      <div className="mt-3 md:mt-0 md:w-2/3 md:p-4">
-                        <div className="text-sm text-gray-600 mb-1">{t('expert_review')}</div>
-                        <h3 className="font-bold text-lg text-gray-900 mb-2 px-2">{item.title}</h3>
-                        <p className="text-gray-600 text-sm mb-2 px-2">{item.description}</p>
-                        <div className="text-sm text-gray-600 px-2">
-                          <span>{t('by')} {item.author?.data?.attributes?.name ||  t('unknown_author')}</span>
-                          <span className="mx-2">•</span>
-                          <span>{formatDate(item.publishedAt)}</span>
+                  .filter(item => item.categories.some(tag => tag.name === "featured"))
+                  .map((item) => (
+                    <article
+                      key={item.id}
+                      className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
+                      onClick={() => router.push(`/news/${item.slug}`)}
+                    >
+                      <div className="md:flex bg-white rounded-xl">
+                        <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
+                          {item.cover?.url && (
+                            <Img
+                              src={`http://64.227.112.249${item.cover.url}`}
+                              alt={item.title}
+                              external={true}
+                              width={512}
+                              height={512}
+                              className="object-cover w-full h-full md:h-48"
+                            />
+                          )}
                         </div>
-                      </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-             {/* Featured Stories */}
-             <div className="md:min-h-[600px]">
-              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('featured_stories')}</h2>
-              <div className="space-y-6 mb-8">
-                {featuredStories.map((item) => (
-                  <article
-                    key={item.id}
-                    className="md:rounded-xl overflow-hidden cursor-pointer group relative rounded-xl"
-                    onClick={() => router.push(`/news/${item.slug}`)}
-                  >
-                    <div className="relative h-[200px] md:h-[280px] w-full">
-                      {item.cover?.url && (
-                        <Img
-                          src={`http://64.227.112.249${item.cover.url}`}
-                          alt={item.title}
-                          external={true}
-                          width={1200}
-                          height={1200}
-                          className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                        />
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-                        <div className="absolute bottom-0 left-0 right-0 p-6">
-                          <div className="text-xs text-white mb-1 font-bold uppercase tracking-wider bg-white/5 rounded-full px-2 py-1 inline-block">{t('expert_review')}</div>
-                          <h3 className="font-bold text-lg text-white mb-2 line-clamp-2 px-2">{item.title}</h3>
-                          <div className="text-sm text-gray-300 px-2">
-                            By {item.author?.data?.attributes?.name ||  t('unknown_author')}
+                        <div className="mt-3 md:mt-0 md:w-2/3 md:p-4">
+                          <div className="text-sm text-gray-600 mb-1">{t('expert_review')}</div>
+                          <h3 className="font-bold text-lg text-gray-900 mb-2 px-2">{item.title}</h3>
+                          <p className="text-gray-600 text-sm mb-2 px-2">{item.description}</p>
+                          <div className="text-sm text-gray-600 px-2">
+                            <span>{t('by')} {item.author?.data?.attributes?.name || t('unknown_author')}</span>
+                            <span className="mx-2">•</span>
+                            <span>{formatDate(item.publishedAt)}</span>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </article>
-                ))}
+                    </article>
+                  ))}
               </div>
-             
             </div>
-           
-
-          <div className="md:grid md:grid-cols-3 md:gap-8 w">
-
-            </div>
-             
-
-           
           </div>
         </main>
 
