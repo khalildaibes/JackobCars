@@ -494,21 +494,15 @@ export default function NewsPage() {
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 w-full max-w-[1400px] mx-auto px-8 mt-[25%] md:mt-[5%]  min-h-screen pb-[5%] lg:px-[200px]">
+        <main className="flex-1 w-full max-w-[1400px] mx-auto px-8 mt-[25%] md:mt-[5%] min-h-screen pb-[5%] lg:px-[200px] flex flex-col">
           {/* Mobile Ads - Top */}
-          <div className="lg:hidden gap-4 mb-8 ">
-              <AdSlider ads={topMobileAds} />
+          <div className="lg:hidden grid grid-cols-2 gap-4 mb-8">
+            <AdSlider ads={topMobileAds} />
           </div>
 
           {/* Mobile Title and Category */}
           <div className="md:hidden bg-white rounded-lg px-4 mb-8">
-            <div className="py-6">
-              <h1 className="text-xl font-bold text-white">{t('title')}</h1>
-              <p className="mt-2 text-gray-600">
-                {t('subtitle')}
-              </p>
-            </div>
-
+           
             <div className="mb-8  bg-white rounded-lg p-4">
               <label className="block text-sm font-medium text-white mb-1">{t('news_category')}</label>
               <select
@@ -598,7 +592,7 @@ export default function NewsPage() {
           </section>
 
           {/* View More Link - Mobile Only */}
-          <div className="text-center mb-8 hidden lg:block">
+          <div className="text-center mb-8 hidden lg:block ">
             <a href="#" className="text-white font-semibold hover:underline">
               {t('view_more')}
             </a>
@@ -646,16 +640,18 @@ export default function NewsPage() {
             </div>
 
             {/* Desktop Ads - Right Side */}
-            <div className="hidden lg:block mb-8">
-              {rightAds.map((ad) => (
-                <AdBanner
-                  key={ad.id}
-                  imageUrl={ad.imageUrl}
-                  link={ad.link}
-                  alt={ad.alt}
-                  className="mb-4"
-                />
-              ))}
+            <div className="hidden lg:block mb-8 shrink-0 relative shrink-0 h-full">
+              <div className="sticky top-4 space-y-6">
+                {rightAds.map((ad) => (
+                  <AdBanner
+                    key={ad.id}
+                    imageUrl={ad.imageUrl}
+                    link={ad.link}
+                    alt={ad.alt}
+                    className="mb-4"
+                  />
+                ))}
+              </div>
             </div>
 
             {/* Mobile Ads - Top */}
@@ -739,17 +735,7 @@ export default function NewsPage() {
                   </article>
                 ))}
               </div>
-               {/* Desktop Ads - Middle */}
-            <div className="hidden lg:grid lg:grid-cols-2 lg:gap-4 my-8">
-              {middleDesktopAds.map((ad) => (
-                <AdBanner
-                  key={ad.id}
-                  imageUrl={ad.imageUrl}
-                  link={ad.link}
-                  alt={ad.alt}
-                />
-              ))}
-            </div>
+             
             </div>
            
 
@@ -758,17 +744,7 @@ export default function NewsPage() {
             </div>
              
 
-            {/* Mobile Ads - Bottom */}
-            <div className="lg:hidden grid grid-cols-2 gap-4 mt-8 mt-[15%]">
-              {bottomMobileAds.map((ad) => (
-                <AdBanner
-                  key={ad.id}
-                  imageUrl={ad.imageUrl}
-                  link={ad.link}
-                  alt={ad.alt}
-                />
-              ))}
-            </div>
+           
           </div>
         </main>
 
