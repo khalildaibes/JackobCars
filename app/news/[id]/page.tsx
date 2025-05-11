@@ -9,6 +9,7 @@ import React from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Facebook, Instagram, Twitter, Link as LinkIcon, MessageCircle } from "lucide-react";
+import { VideoCameraIcon } from "@heroicons/react/24/outline";
 
 interface Params {
   slug: string;
@@ -154,11 +155,12 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
       blocks,
       conver,
       categories,
+      vedio,
     } = article;
 
     // Get author name from author object
     const authorName = author?.name || author?.email || '';
-
+    console.log("article",article)
     const renderContent = (content: any[]) => {
       return content.map((item, index) => {
         switch (item.type) {
@@ -281,7 +283,21 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
       <main className="min-h-screen bg-white text-gray-800">
         {/* Hero Section */}
         <section className="relative w-full min-h-[60vh]">
-          {cover?.url ? (
+          {vedio?.url ? (
+            <div className="absolute inset-0 w-full h-full">
+              <video
+                className="w-full h-full object-cover"
+                autoPlay
+                muted
+                loop
+                playsInline
+              >
+                <source src={`http://64.227.112.249${vedio.url}`} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+              <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-black/30" />
+            </div>
+          ) : cover?.url ? (
             <Img
               src={`http://64.227.112.249${cover.url}`}
               alt={title}
@@ -293,7 +309,7 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
           ) : (
             <div className="absolute inset-0 w-full h-full bg-gray-200" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-black/30" />
+          {!vedio?.url && <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-black/30" />}
           
           {/* Content Container */}
           <div className="relative container mx-auto px-4 pt-32 pb-20">
@@ -402,15 +418,32 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
             </div>
           </section>
         )} */}
-
+           
         {/* Content Blocks */}
         <article className="py-16">
-          <div className="container mx-auto px-4 max-w-4xl">
-            {/* {content && renderContent(content)} */}
+         
+            <div className="container mx-auto px-4 max-w-4xl">
+              {/* Video Section */}
+            {vedio?.[0]?.url && (
+              <div className="mb-8">
+                <div className="relative aspect-video rounded-xl overflow-hidden shadow-xl">
+                  <video
+                    className="w-full h-full"
+                    controls
+                    preload="metadata"
+                  >
+                    <source src={`http://64.227.112.249${vedio[0].url}`} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              </div>
+            )}
+
+            {/* Content Blocks */}
             {blocks?.map((block: any) => renderBlock(block))}
             
             {/* Show message if no content */}
-            {(!content?.length && !blocks?.length) && (
+            {(!content?.length && !blocks?.length && !vedio?.[0]?.url) && (
               <p className="text-center text-gray-500">No content found in this article.</p>
             )}
           </div>
