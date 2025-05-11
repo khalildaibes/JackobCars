@@ -7,7 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Img } from '../../components/Img';
-import AdBanner from '../../components/AdBanner';
+import AdBanner, { AdSlider } from '../../components/AdBanner';
 
 interface Article {
   id: number;
@@ -496,15 +496,8 @@ export default function NewsPage() {
         {/* Main Content */}
         <main className="flex-1 w-full max-w-[1400px] mx-auto px-8 mt-[25%] md:mt-[5%]  min-h-screen pb-[5%] lg:px-[200px]">
           {/* Mobile Ads - Top */}
-          <div className="lg:hidden grid grid-cols-2 gap-4 mb-8 ">
-            {topMobileAds.map((ad) => (
-              <AdBanner
-                key={ad.id}
-                imageUrl={ad.imageUrl}
-                link={ad.link}
-                alt={ad.alt}
-              />
-            ))}
+          <div className="lg:hidden gap-4 mb-8 ">
+              <AdSlider ads={topMobileAds} />
           </div>
 
           {/* Mobile Title and Category */}
@@ -571,62 +564,7 @@ export default function NewsPage() {
 
           {/* Featured News - Different layouts for mobile and desktop */}
           <section className="mb-8 px-4 ">
-            <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('featured_news')}</h2>
-            {featuredNews.length > 0 && (
-              <div className="md:hidden space-y-4 bg-white/10 backdrop-blur-sm rounded-lg p-4 ">
-                {/* Mobile Layout */}
-                <article 
-                  className="relative rounded-lg overflow-hidden cursor-pointer "
-                  onClick={() => router.push(`/news/${featuredNews[0].slug}`)}
-                >
-                  <div className="aspect-[16/9] relative space-y-4 bg-white  rounded-lg p-4">
-                    {featuredNews[0].cover?.url && (
-                      <Img
-                        src={`http://64.227.112.249${featuredNews[0].cover.url}`}
-                        alt={featuredNews[0].title}
-                        external={true}
-                        width={800}
-                        height={450}
-                        className="object-cover w-full h-full"
-                      />
-                    )}
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
-                    <h3 className="text-xl font-bold text-white mb-2 px-2">{featuredNews[0].title}</h3>
-                    <div className="flex items-center text-sm text-white">
-                      <span>{featuredNews[0].author?.data?.attributes?.name ||  t('unknown_author')}</span>
-                      <span className="mx-2 ">|</span>
-                      <span>{formatDate(featuredNews[0].publishedAt)}</span>
-                    </div>
-                  </div>
-                </article>
-
-                {featuredNews.slice(featuredNews.length < 5 ? featuredNews.length : 5).map((item) => (
-                  <article
-                    key={item.id}
-                    onClick={() => router.push(`/news/${item.slug}`)}
-                    className="flex items-center space-x-4 cursor-pointer bg-white rounded-lg p-4"
-                  >
-                    <div className="w-24 h-24 relative flex-shrink-0">
-                      {item.cover?.url && (
-                        <Img
-                          src={`http://64.227.112.249${item.cover.url}`}
-                          alt={item.title}
-                          external={true}
-                          width={96}
-                          height={96}
-                          className="object-cover w-full h-full rounded-lg"
-                        />
-                      )}
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900 px-2">{item.title}</h3>
-                      <p className="text-sm text-black mt-1 px-2">{item.author?.data?.attributes?.name ||  t('unknown_author')}</p>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
+            
 
             {/* Desktop Layout */}
             <div className="hidden md:block">
@@ -660,7 +598,7 @@ export default function NewsPage() {
           </section>
 
           {/* View More Link - Mobile Only */}
-          <div className="text-center mb-8 md:hidden">
+          <div className="text-center mb-8 hidden lg:block">
             <a href="#" className="text-white font-semibold hover:underline">
               {t('view_more')}
             </a>
@@ -721,15 +659,8 @@ export default function NewsPage() {
             </div>
 
             {/* Mobile Ads - Top */}
-            <div className="lg:hidden grid grid-cols-2 gap-4 mb-8 mt-[15%]">
-              {topMobileAds.map((ad) => (
-                <AdBanner
-                  key={ad.id}
-                  imageUrl={ad.imageUrl}
-                  link={ad.link}
-                  alt={ad.alt}
-                />
-              ))}
+            <div className="lg:hidden grid grid-cols-2 gap-4 mb-8">
+              <AdSlider ads={topMobileAds} />
             </div>
 
             {/* Latest News and Featured Stories - Different layouts for mobile and desktop */}
