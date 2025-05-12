@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
-interface TikTokEmbedProps {
+interface InstagramEmbedProps {
   url: string;
   width?: string | number;
-  height?: string | number;
 }
 
-const TikTokEmbed: React.FC<TikTokEmbedProps> = ({ url, width = '100%', height = '100%' }) => {
+const InstagramEmbed: React.FC<InstagramEmbedProps> = ({ url, width = '100%' }) => {
   const [embedHtml, setEmbedHtml] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,22 +14,21 @@ const TikTokEmbed: React.FC<TikTokEmbedProps> = ({ url, width = '100%', height =
       try {
         setError(null);
         setEmbedHtml(null);
-        const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`);
-        if (!res.ok) throw new Error('Failed to fetch TikTok embed');
+        const res = await fetch(`https://www.instagram.com/p/BFKjVxkBsCC/embed`);
+        if (!res.ok) throw new Error('Failed to fetch Instagram embed');
         const data = await res.json();
         setEmbedHtml(data.html);
       } catch (err: any) {
-        setError(err.message || 'Error loading TikTok video');
+        setError(err.message || 'Error loading Instagram video');
       }
     };
     fetchEmbed();
   }, [url]);
 
   useEffect(() => {
-    // TikTok requires their embed.js script to be loaded
     if (embedHtml) {
       const script = document.createElement('script');
-      script.src = 'https://www.tiktok.com/embed.js';
+      script.src = 'https://www.instagram.com/embed.js';
       script.async = true;
       document.body.appendChild(script);
       return () => {
@@ -40,15 +38,20 @@ const TikTokEmbed: React.FC<TikTokEmbedProps> = ({ url, width = '100%', height =
   }, [embedHtml]);
 
   if (error) return <div className="text-red-500">{error}</div>;
-  if (!embedHtml) return <div>Loading TikTok video...</div>;
+  if (!embedHtml) return <div>Loading Instagram post...</div>;
 
   return (
     <div
-      className="w-full"
-      style={{ width, height, margin: '0 auto' }}
+      style={{
+        width: width,
+        maxWidth: 540,
+        minWidth: 320,
+        margin: '0 auto',
+        overflow: 'auto',
+      }}
       dangerouslySetInnerHTML={{ __html: embedHtml }}
     />
   );
 };
 
-export default TikTokEmbed; 
+export default InstagramEmbed;
