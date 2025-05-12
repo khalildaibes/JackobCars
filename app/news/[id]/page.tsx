@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Facebook, Instagram, Twitter, Link as LinkIcon, MessageCircle } from "lucide-react";
 import { VideoCameraIcon } from "@heroicons/react/24/outline";
+import TikTokEmbed from "../../../components/TikTokEmbed";
 
 interface Params {
   slug: string;
@@ -155,7 +156,7 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
       blocks,
       conver,
       categories,
-      vedio,
+      videos,
     } = article;
 
     // Get author name from author object
@@ -283,21 +284,7 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
       <main className="min-h-screen bg-white text-gray-800">
         {/* Hero Section */}
         <section className="relative w-full min-h-[60vh]">
-          {vedio?.url ? (
-            <div className="absolute inset-0 w-full h-full">
-              <video
-                className="w-full h-full object-cover"
-                autoPlay
-                muted
-                loop
-                playsInline
-              >
-                <source src={`http://64.227.112.249${vedio.url}`} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-              <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-black/30" />
-            </div>
-          ) : cover?.url ? (
+         {cover?.url ? (
             <Img
               src={`http://64.227.112.249${cover.url}`}
               alt={title}
@@ -309,7 +296,7 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
           ) : (
             <div className="absolute inset-0 w-full h-full bg-gray-200" />
           )}
-          {!vedio?.url && <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-black/30" />}
+          {!videos && <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-black/30" />}
           
           {/* Content Container */}
           <div className="relative container mx-auto px-4 pt-32 pb-20">
@@ -422,28 +409,36 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
         {/* Content Blocks */}
         <article className="py-16">
          
-            <div className="container mx-auto px-4 max-w-4xl">
+            <div className="container mx-auto px-4 max-w-4xl h-full">
               {/* Video Section */}
-            {vedio?.[0]?.url && (
-              <div className="mb-8">
-                <div className="relative aspect-video rounded-xl overflow-hidden shadow-xl">
-                  <video
-                    className="w-full h-full"
-                    controls
-                    preload="metadata"
-                  >
-                    <source src={`http://64.227.112.249${vedio[0].url}`} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                </div>
-              </div>
-            )}
+                 {/* TikTok Video Section */}
+                 {videos && videos.length > 0 && (
+                 <section className="w-full flex justify-center my-12">
+                   <div className="w-full max-w-3xl bg-white rounded-xl shadow-lg p-6">
+                     <h2 className="text-xl text-white font-bold mb-6 bg-gradient-to-r from-pink-400 to-blue-400 rounded-xl p-4 text-center">
+                       الخبر على منصة تيكتوك
+                     </h2>
+                     <div className="flex flex-col md:flex-row items-center justify-center gap-8 overflow-x-auto">
+                       {videos.split(',').map((url, idx) => (
+                         <div
+                           key={url + idx}
+                           className="w-full md:w-1/2 flex justify-center"
+                           style={{ maxWidth: 605 }}
+                         >
+                           <TikTokEmbed url={url} width="100%" />
+                         </div>
+                       ))}
+                     </div>
+                   </div>
+                 </section>
+                 )}
+           
 
             {/* Content Blocks */}
             {blocks?.map((block: any) => renderBlock(block))}
             
             {/* Show message if no content */}
-            {(!content?.length && !blocks?.length && !vedio?.[0]?.url) && (
+            {(!content?.length && !blocks?.length && !videos) && (
               <p className="text-center text-gray-500">No content found in this article.</p>
             )}
           </div>

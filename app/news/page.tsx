@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Img } from '../../components/Img';
 import AdBanner, { AdSlider } from '../../components/AdBanner';
+import TikTokEmbed from '../../components/TikTokEmbed';
 
 interface Article {
   id: number;
@@ -501,12 +502,9 @@ export default function NewsPage() {
         {/* Main Content */}
         <main className="flex-1 w-full max-w-[1400px] mx-auto px-8 mt-[25%] md:mt-[5%] min-h-screen pb-[5%] lg:px-[200px] flex flex-col">
           {/* Mobile Ads - Top */}
-          <div className="lg:hidden grid grid-cols-2 gap-4 mb-8">
+          {/* <div className="lg:hidden grid grid-cols-2 gap-4 mb-8">
             <AdSlider ads={topMobileAds} />
-          </div>
-
-          {/* Mobile Title and Category */}
-          <div className="md:hidden bg-white rounded-lg px-4 mb-8">
+I notice there's a lint error indicating that `TikTokEmbed` is not defined. We need to import it first. Here's the corrected version:
            
             <div className="mb-8  bg-white rounded-lg p-4">
               <label className="block text-sm font-medium text-white mb-1">{t('news_category')}</label>
@@ -522,13 +520,13 @@ export default function NewsPage() {
               </select>
             </div>
           </div>
-
-          {/* Featured Banner - Desktop Only */}
+{/* 
+          {/* Featured Banner - Desktop Only 
           <div className="hidden md:block mt-[5%]">
             {filteredNews.length > 0 && (
               <div className="mb-8">
                 <div className="relative bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl overflow-hidden mt-[5%] h-96">
-                  {/* Background image */}
+                  {/* Background image 
                   {featuredNewsbanner?.cover?.url && (
                     <Img
                       src={`http://64.227.112.249${featuredNewsbanner?.cover.url}`}
@@ -539,9 +537,9 @@ export default function NewsPage() {
                       className="absolute inset-0 w-full h-full object-cover z-0"
                     />
                   )}
-                  {/* Overlay */}
+                  {/* Overlay 
                   <div className="absolute inset-0 bg-black/40 z-10"></div>
-                  {/* Centered text */}
+                  {/* Centered text 
                   <div className="relative z-20 flex flex-col items-center justify-center h-full w-full text-center">
                     <h1 className="text-4xl font-bold text-white mb-4">
                       {featuredNewsbanner?.title}
@@ -559,7 +557,7 @@ export default function NewsPage() {
                 </div>
               </div>
             )}
-          </div>
+          </div> */}
 
             {/* Featured Stories Section */}
             <div className="flex flex-col">
@@ -596,12 +594,13 @@ export default function NewsPage() {
                 ))}
               </div>
             </div>
+         
           {/* Featured News - Different layouts for mobile and desktop */}
           <section className="mb-8 px-4 ">
             
 
             {/* Desktop Layout */}
-            <div className="hidden md:block">
+            {/* <div className="hidden md:block">
               <div className="grid grid-cols-3 gap-6 mb-8">
                 {featuredNews.slice(2, 5).map((item) => (
                   <article
@@ -628,7 +627,7 @@ export default function NewsPage() {
                   </article>
                 ))}
               </div>
-            </div>
+            </div> */}
           </section>
 
           {/* View More Link - Mobile Only */}
