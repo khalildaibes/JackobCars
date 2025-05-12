@@ -957,39 +957,78 @@ function HomeContent() {
           transition={{ duration: 0.8 }}
           className="flex flex-col w-full overflow-hidden mt-[5%] px-2 sm:px-4 md:px-6 rounded-xl"
         >
+          {/* Featured Stories Section */}
+          <div className="flex flex-col w-full px-4 mb-8 lg:hidden">
+              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('featured_stories')}</h2>
+              <div className="space-y-4">
+                {transformedArticles.slice(1, 4).map((item) => (
+                  <article
+                    key={item.id}
+                    className="rounded-xl overflow-hidden cursor-pointer group relative"
+                    onClick={() => router.push(`/news/${item.slug}`)}
+                  >
+                    <div className="relative h-[180px] w-full">
+                      {item.cover?.url && (
+                        <Img
+                          src={`http://64.227.112.249${item.cover.url}`}
+                          alt={item.title}
+                          external={true}
+                          width={800}
+                          height={600}
+                          className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                        <div className="absolute bottom-0 left-0 right-0 p-4">
+                          <div className="text-[10px] text-white mb-1 font-bold uppercase tracking-wider bg-white/5 rounded-full px-2 py-0.5 inline-block">{t('expert_review')}</div>
+                          <h3 className="font-bold text-base text-white mb-1 line-clamp-2">{item.title}</h3>
+                          <div className="text-xs text-gray-300">
+                            By {item.author || t('unknown_author')}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
           {/* 1. Hero Banner Section */}
           <div className="relative z-10 flex flex-col lg:flex-row gap-2 px-2 lg:px-4 items-stretch min-h-0 justify-center items-center mb-8 w-full md:w-[80%] mx-auto">
             {/* Main Column - 70% width */}
             <div className="w-full lg:w-full flex flex-col gap-2">
               {/* News Section */}
               <div className="w-full flex-grow flex flex-col bg-gradient-to-br from-blue-100 via-blue-300 from-white rounded-lg shadow-lg  h-[320px] min-h-[320px] max-h-[320px]">
-                {transformedArticles?.[newsIndex]?.cover?.url && (
-                  <div className="relative rounded-lg overflow-hidden w-full h-full min-h-[320px] max-h-[320px]">
-                    <Img
-                      src={`http://64.227.112.249${transformedArticles?.[newsIndex]?.cover.url}`}
-                      alt={transformedArticles?.[newsIndex]?.title}
-                      external={true}
-                      width={1290}
-                      height={1290}
-                      className="absolute inset-0 w-full h-full object-cover p-2"
-                    />
-                    <div className="absolute inset-0 bg-black/40"></div>
-                    <div className="relative flex flex-col items-center justify-center h-full w-full text-center p-2">
-                      <h1 className="text-sm font-bold text-white mb-0.5 line-clamp-1">
-                        {transformedArticles?.[newsIndex]?.title}
-                      </h1>
-                      <p className="text-white/80 mb-1 text-xs line-clamp-1">
-                        {transformedArticles?.[newsIndex]?.description}
-                      </p>
-                      <button 
-                        onClick={() => router.push(`/news/${transformedArticles?.[newsIndex]?.slug}`)}
-                        className="bg-white text-blue-700 px-2 py-0.5 rounded-full font-semibold hover:bg-blue-50 transition-colors text-xs"
-                      >
-                        {t('read_now')}
-                      </button>
+                {(() => {
+                  const article = transformedArticles?.slice(4, 7)?.[newsIndex];
+                  if (!article || !article.cover || !article.cover.url) return null;
+                  return (
+                    <div className="relative rounded-lg overflow-hidden w-full h-full min-h-[320px] max-h-[320px]">
+                      <Img
+                        src={`http://64.227.112.249${article.cover.url}`}
+                        alt={article.title}
+                        external={true}
+                        width={1290}
+                        height={1290}
+                        className="absolute inset-0 w-full h-full object-cover p-2"
+                      />
+                      <div className="absolute inset-0 bg-black/40"></div>
+                      <div className="relative flex flex-col items-center justify-center h-full w-full text-center p-2">
+                        <h1 className="text-sm font-bold text-white mb-0.5 line-clamp-1">
+                          {article.title}
+                        </h1>
+                        <p className="text-white/80 mb-1 text-xs line-clamp-1">
+                          {article.description}
+                        </p>
+                        <button 
+                          onClick={() => router.push(`/news/${article.slug}`)}
+                          className="bg-white text-blue-700 px-2 py-0.5 rounded-full font-semibold hover:bg-blue-50 transition-colors text-xs"
+                        >
+                          {t('read_now')}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
               </div>
 
               {/* Hero Section */}
