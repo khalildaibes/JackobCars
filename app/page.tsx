@@ -12,7 +12,7 @@ import MobileFilters from "../components/SearchCar";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import React from "react";
+import React, { createContext, useContext } from "react";
 import CustomerTestimonialsSection from "../components/homeeight/CustomerTestimonialsSection";
 import LatestBlogPostsSection from "../components/homeeight/LatestBlogPostsSection";
 import RecentlyAddedSection from "../components/homeeight/RecentlyAddedSection";
@@ -32,8 +32,9 @@ import CategoryButtons from "../components/CategoryButtons";
 import HeroSection from "../components/HeroSection";
 import StorePromotion from "../components/StorePromotion";
 import { getCachedData, setCachedData } from "../utils/cacheUtils";
+import { useUserActivity, UserActivityProvider } from "../context/UserActivityContext";
 
-// Types
+// Typs
 interface Deal {
   store: any;
   slug: string;
@@ -465,6 +466,7 @@ function HomeContent() {
   const [isLoadingCache, setIsLoadingCache] = useState(true);
   const [cachedArticles, setCachedArticles] = useState<TransformedArticle[]>([]);
   const [isLoadingArticlesCache, setIsLoadingArticlesCache] = useState(true);
+  const { logActivity } = useUserActivity();
 
   // Get search params with memoization
   const { selectedFuel, selectedYear, selectedManufacturer, selectedLimit, selectedModel } = useMemo(() => ({
@@ -996,43 +998,9 @@ function HomeContent() {
           <div className="relative z-10 flex flex-col lg:flex-row gap-2 px-2 lg:px-4 items-stretch min-h-0 justify-center items-center mb-8 w-full md:w-[80%] mx-auto">
             {/* Main Column - 70% width */}
             <div className="w-full lg:w-full flex flex-col gap-2">
-              {/* News Section */}
-              <div className="w-full flex-grow flex flex-col bg-gradient-to-br from-blue-100 via-blue-300 from-white rounded-lg shadow-lg  h-[320px] min-h-[320px] max-h-[320px]">
-                {(() => {
-                  const article = transformedArticles?.slice(4, 7)?.[newsIndex];
-                  if (!article || !article.cover || !article.cover.url) return null;
-                  return (
-                    <div className="relative rounded-lg overflow-hidden w-full h-full min-h-[320px] max-h-[320px]">
-                      <Img
-                        src={`http://64.227.112.249${article.cover.url}`}
-                        alt={article.title}
-                        external={true}
-                        width={1290}
-                        height={1290}
-                        className="absolute inset-0 w-full h-full object-cover p-2"
-                      />
-                      <div className="absolute inset-0 bg-black/40"></div>
-                      <div className="relative flex flex-col items-center justify-center h-full w-full text-center p-2">
-                        <h1 className="text-sm font-bold text-white mb-0.5 line-clamp-1">
-                          {article.title}
-                        </h1>
-                        <p className="text-white/80 mb-1 text-xs line-clamp-1">
-                          {article.description}
-                        </p>
-                        <button 
-                          onClick={() => router.push(`/news/${article.slug}`)}
-                          className="bg-white text-blue-700 px-2 py-0.5 rounded-full font-semibold hover:bg-blue-50 transition-colors text-xs"
-                        >
-                          {t('read_now')}
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
-
+             
               {/* Hero Section */}
-              <div className="w-full bg-gradient-to-br from-blue-100 via-blue-300 from-white rounded-lg shadow-lg p-1 h-[320px] min-h-[320px] max-h-[320px] flex items-center justify-center">
+              <div className="w-full bg-gradient-to-br h-full from-blue-100 via-blue-300 from-white rounded-lg shadow-lg p-1 flex items-center justify-center">
                 <div className="w-full h-full flex items-center justify-center">
                   <HeroSection listings={listings} />
                 </div>
@@ -1660,9 +1628,17 @@ function HomeContent() {
 
 
 export default function HomePage() {
+  const { logActivity } = useUserActivity();
+
+  useEffect(() => {
+    logActivity("page_view", { path: "/home" });
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
-      <HomeContent />
+      <UserActivityProvider>
+        <HomeContent />
+      </UserActivityProvider>
     </QueryClientProvider>
   );
 }

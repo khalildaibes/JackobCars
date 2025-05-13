@@ -13,6 +13,7 @@ import TikTokEmbed from '../../components/TikTokEmbed';
 interface Article {
   id: number;
   title: string;
+  createdAt : string;
   excerpt: string;
   ImgUrl: string;
   category: string;
@@ -401,8 +402,10 @@ export default function NewsPage() {
         throw new Error('Failed to fetch news');
       }
       const data = await response.json();
-      console.log(data)
-      setNews(data.data || []);
+      console.log(data.data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()))
+
+
+      setNews(data.data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -418,27 +421,29 @@ export default function NewsPage() {
     });
   };
 
-  const filteredNews = news.filter(item => 
+  const filteredNews = news.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
     item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const featuredNews = filteredNews.filter(item => 
+  const featuredNews = filteredNews.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
     item.categories?.some(tag => tag.name === "featured")
   );
 
-  const latestNews = filteredNews.filter(item => 
+  const latestNews = filteredNews.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
     item.categories.some(tag => tag.name === "latest news")
   );
-  const localNews = filteredNews.filter(item => 
+  const localNews = filteredNews.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
     item.categories.some(tag => tag.name === "local news")
   );
-  const worldNews = filteredNews.filter(item => 
+  const worldNews = filteredNews.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
     item.categories.some(tag => tag.name === "world news")
   );
-  const featuredStories = filteredNews.filter(item => 
+  const featuredStories = filteredNews.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
     item.categories.some(tag => tag.name === "featured stories")
   );
+
+  const trendingNews = filteredNews;
 
   const handleImageUpload = async (file: File, refId: string) => {
     try {
@@ -484,6 +489,7 @@ export default function NewsPage() {
   const featuredNewsbanner = filteredNews.filter(item => item.categories.some(tag => tag.name === "interior"))[0]
   return (
     <div className="min-h-screen bg-[#050B20]">
+      
       <div className="flex flex-col lg:flex-row relative">
         {/* Left Ad Section - Desktop */}
         <div className="hidden lg:block w-[20%] fixed left-0 top-0 h-screen p-4 overflow-x-hidden md:mt-[5%]">
@@ -501,6 +507,37 @@ export default function NewsPage() {
 
         {/* Main Content */}
         <main className="flex-1 w-full max-w-[1400px] mx-auto px-8 mt-[25%] md:mt-[5%] min-h-screen pb-[5%] lg:px-[200px] flex flex-col">
+          {/* Trending News Ticker */}
+      {trendingNews.length > 0 && (
+        <>
+          <style jsx global>{`
+            @keyframes ticker {
+              0% { transform: translateX(100%); }
+              100% { transform: translateX(-100%); }
+            }
+            .animate-ticker {
+              display: inline-block;
+              animation: ticker 50s linear infinite;
+            }
+          `}</style>
+          <div className="w-full bg-gradient-to-r from-yellow-400 to-red-500 py-2 overflow-hidden relative z-50">
+            <div className="absolute left-0 top-0 w-full h-full bg-black/10 pointer-events-none" />
+            <div className="relative flex items-center">
+              <span className="font-bold text-white px-4">Trending:</span>
+              <div className="flex-1 overflow-hidden">
+                <div className="whitespace-nowrap animate-ticker text-white text-base font-medium flex items-center gap-8">
+                  {trendingNews.map((item, idx) => (
+                    <span key={item.id} className="inline-flex items-center">
+                      <span className="hover:underline cursor-pointer" onClick={() => router.push(`/news/${item.slug}`)}>{item.title}</span>
+                      {idx < trendingNews.length - 1 && <span className="mx-4">•</span>}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
           {/* Mobile Ads - Top */}
           {/* <div className="lg:hidden grid grid-cols-2 gap-4 mb-8">
             <AdSlider ads={topMobileAds} />

@@ -17,6 +17,7 @@ import ChatPopup from '../components/ChatPopup';
 import { ComparisonProvider } from "../context/ComparisonContext";
 import AccessibilityControls from "../components/AccessibilityControls";
 import GlobalChatPopup from "../components/GlobalChatPopup";
+import { UserActivityProvider } from "../context/UserActivityContext";
 
 // Initialize store configurations
 initializeStoreConfigs().catch(console.error);
@@ -39,6 +40,8 @@ export default async function RootLayout({
       <body className="bg-[#050B20] min-h-screen text-black ">
         <Providers>
           <NextIntlClientProvider messages={messages}>
+          <UserActivityProvider>
+
             <ComparisonProvider>
               <Navbar />
               <TranslateChildren targetLang={'ar'} >{children}</TranslateChildren>
@@ -58,6 +61,7 @@ export default async function RootLayout({
                 <AccessibilityControls />
               </div>
             </ComparisonProvider>
+            </UserActivityProvider>
           </NextIntlClientProvider>
         </Providers>
       </body>

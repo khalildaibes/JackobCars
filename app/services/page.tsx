@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { ServiceCard } from "../../components/ServiceCard";
 import { Search, Filter } from "lucide-react";
 import axios from "axios";
+import { useUserActivity } from "../../context/UserActivityContext";
 
 interface Service {
   id: string;
@@ -47,6 +48,11 @@ export default function ServicesPage() {
     };
 
     fetchServices();
+  }, []);
+  const { logActivity } = useUserActivity();
+
+  useEffect(() => {
+    logActivity("services_view", { id: "services", title: "services" });
   }, []);
 
   const filteredServices = services.filter(service => {

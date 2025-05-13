@@ -413,7 +413,7 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
             <div className="container mx-auto px-4 max-w-4xl h-full">
               {/* Video Section */}
                  {/* TikTok Video Section */}
-                 {videos && videos.length > 0 && (
+                 {videos && videos?.length > 0 && (
                  <section className="w-full flex justify-center my-16">
                    <div className="w-full max-w-4xl bg-gradient-to-br from-blue-50 via-white to-pink-50 rounded-2xl shadow-2xl p-0 md:p-8 border border-blue-100">
                      <div className="w-full bg-gradient-to-r from-pink-400 to-blue-400 rounded-t-2xl p-4 text-center">
@@ -422,14 +422,14 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
                        </h2>
                      </div>
                      <div className="flex flex-col md:flex-row items-center justify-center gap-8 p-6 md:p-8">
-                       {videos.split(',')[0] && (
+                       {videos?.split(',')[0] && (
                          <div
-                           key={videos.split(',')[0]}
+                           key={videos?.split(',')[0]}
                            className="flex justify-center w-full md:w-1/2 "
                            style={{ maxWidth: 605 }}
                          >
                            <div className="rounded-xl overflow-hidden shadow-lg bg-white border border-gray-100 p-2">
-                             <TikTokEmbed url={`${videos.split(',')[0]}`} width="100%" />
+                             <TikTokEmbed url={`${videos?.split(',')[0]}`} width="100%" />
                            </div>
                          </div>
                        )}
@@ -439,14 +439,14 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
                  )}
            
                  {/* Instagram Embed */}
-                 {videos.split(',')[1] && (
+                 {videos?.split(',')[1] && (
                  <section className="w-full flex justify-center my-12">
                    <div className="w-full max-w-3xl bg-white rounded-xl shadow-lg p-6">
                      <h2 className="text-xl text-white font-bold mb-6 bg-gradient-to-r from-pink-400 to-blue-400 rounded-xl p-4 text-center">
                        الخبر على منصة انستغرام
                      </h2>
                      <div style={{ display: 'flex', justifyContent: 'center' }}>
-                      <InstagramEmbed url={`${videos.split(',')[1]}`} className="w-full h-full"/>
+                      <InstagramEmbed url={`${videos?.split(',')[1]}`} className="w-full h-full"/>
                     </div>
                    </div>
                  </section>

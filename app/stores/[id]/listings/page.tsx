@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import CarCard from "../../../../components/CarCard";
+import { useUserActivity } from "../../../../context/UserActivityContext";
 
 interface Car {
   id: string;
@@ -68,6 +69,11 @@ export default function StoreListingsPage() {
     };
 
     fetchCars();
+  }, [storeHostname]);
+  const { logActivity } = useUserActivity();
+
+  useEffect(() => {
+    logActivity("store_listings_view", { id: storeHostname, title: storeHostname });
   }, [storeHostname]);
 
   const filteredCars = cars.filter(car => {

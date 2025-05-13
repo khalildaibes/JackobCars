@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
@@ -30,6 +30,7 @@ import { Input } from "../../../components/ui/input";
 import { Textarea } from "../../../components/ui/textarea";
 import { Toaster } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
+import { useUserActivity } from "../../../context/UserActivityContext";
 
 interface Service {
   id: string;
@@ -59,6 +60,7 @@ interface Service {
     price: number;
   }>;
 }
+
 
 const ServiceDetails = () => {
   const { slug } = useParams();
@@ -99,7 +101,11 @@ const ServiceDetails = () => {
     setIsEmailDialogOpen(false);
     toast.success('Message sent successfully!');
   };
+  const { logActivity } = useUserActivity();
 
+  useEffect(() => {
+    logActivity("service_view", { id: serviceData.data[0].id, title: serviceData.data[0].name });
+  }, [serviceData.data[0].id]);
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">

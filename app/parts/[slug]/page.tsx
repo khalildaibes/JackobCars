@@ -31,6 +31,7 @@ import { Textarea } from "../../../components/ui/textarea";
 import { Toaster } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import emailjs from 'emailjs-com';
+import { useUserActivity } from "../../../context/UserActivityContext";
 
 // Initialize EmailJS
 emailjs.init("XNc8KcHCQwchLLHG5");
@@ -144,7 +145,11 @@ const PartDetails = () => {
       </div>
     );
   }
+  const { logActivity } = useUserActivity();
 
+  useEffect(() => {
+    logActivity("part_view", { id: slug, title: slug });
+  }, [slug]);
   if (!partData?.data?.[0]) {
     return (
       <div className="min-h-screen flex items-center justify-center">

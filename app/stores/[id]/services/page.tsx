@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import { ServiceCard } from "../../../../components/ServiceCard";
+import { useUserActivity } from "../../../../context/UserActivityContext";
 
 interface Service {
   categories: any;
@@ -52,6 +53,11 @@ export default function StoreServicesPage() {
     };
 
     fetchServices();
+  }, [storeHostname]);
+  const { logActivity } = useUserActivity();
+
+  useEffect(() => {
+    logActivity("store_services_view", { id: storeHostname, title: storeHostname });
   }, [storeHostname]);
 
   const filteredServices = services.filter(service => {

@@ -84,10 +84,10 @@ const HeroSection = ({ listings }: HeroSectionProps) => {
   const currentArticle = cars[currentIndex];
 
   return (
-    <div className="relative  w-full rounded-xl h-full overflow-hidden">
+    <div className="relative  w-full rounded-xl h-full overflow-hidden justify-center items-center">
       
       {/* Background Image with Overlay */}
-      <div className="absolute inset-0 rounded-xl overflow-hidden">
+      <div className="absolute inset-0 rounded-xl  h-full overflow-hidden justify-center items-center">
         <Img
           external={currentArticle?.mainImage ? true : false}
           src={currentArticle?.mainImage || '/images/hero-bg.jpg'}
@@ -107,7 +107,7 @@ const HeroSection = ({ listings }: HeroSectionProps) => {
       />
 
       {/* Content */}
-      <div className="absolute container mx-auto px-2 sm:px-4 py-1">
+      <div className="absolute container mx-auto px-2 sm:px-4 py-1 justify-center items-center  h-full">
         <div className="max-w-4xl mx-auto text-center text-white mb-2 sm:mb-4">
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold line-clamp-1">
             {t('discover_perfect_car')}
@@ -125,7 +125,7 @@ const HeroSection = ({ listings }: HeroSectionProps) => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -100 }}
             transition={{ duration: 0.5 }}
-            className="max-w-4xl w-full mx-auto mt-6 flex justify-center items-center"
+            className="max-w-4xl w-full mx-auto mt-6 flex justify-center items-center h-[70%]"
           >
             <Link href={`/cars/${currentArticle.id}`}>
               <Card className="relative overflow-visible bg-white/95 rounded-2xl shadow-2xl hover:shadow-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer flex flex-col justify-center items-center min-h-[120px] px-8 w-full">

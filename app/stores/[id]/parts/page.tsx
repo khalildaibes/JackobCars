@@ -6,6 +6,7 @@ import { Search } from "lucide-react";
 import Link from "next/link";
 import { Img } from "../../../../components/Img";
 import { useTranslations } from "next-intl";
+import { useUserActivity } from "../../../../context/UserActivityContext";
 
 interface Part {
   id: string;
@@ -56,6 +57,11 @@ export default function StorePartsPage() {
     };
 
     fetchParts();
+  }, [storeHostname]);
+  const { logActivity } = useUserActivity();
+
+  useEffect(() => {
+    logActivity("store_parts_view", { id: storeHostname, title: storeHostname });
   }, [storeHostname]);
 
   const filteredParts = parts.filter(part => {

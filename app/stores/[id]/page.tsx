@@ -16,6 +16,7 @@ import axios from 'axios';
 import { ServiceCard } from "../../../components/ServiceCard";
 import { useTranslations } from "use-intl";
 import ChatPopup from '../../../components/ChatPopup';
+import { useUserActivity } from "../../../context/UserActivityContext";
 
 interface WorkingHours {
   open?: string;
@@ -339,6 +340,11 @@ export default function StorePage() {
       </div>
     );
   }
+  const { logActivity } = useUserActivity();
+
+  useEffect(() => {
+    logActivity("store_view", { id: store.id, title: store.name });
+  }, [store.id]);
 
   const openingHours = store.openingHours || {};
   const tags = store.tags ? store.tags.split(',').map(tag => tag.trim()) : [];
