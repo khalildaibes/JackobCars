@@ -1380,6 +1380,8 @@
   "unknown_author": "مؤلف غير معروف",
   "Navbar": {
     "logo_alt": "شعار MaxSpeedLimit",
+    "parts": "قطع الغيار",
+    "services": "الخدمات",
     "carsMarket": "سوق السيارات",
     "plate_search": "البحث برقم اللوحة",
     "news": "الأخبار",
