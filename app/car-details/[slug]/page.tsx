@@ -8,9 +8,7 @@ async function getCarDetails(slug: string, locale: string) {
     headers: {
       'Accept-Language': locale
     },
-    next: {
-      revalidate: 3600 // Revalidate every hour
-    }
+  
   });
 
   console.log('Deals API response status:', response.status);
