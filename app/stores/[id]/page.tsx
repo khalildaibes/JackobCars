@@ -130,6 +130,13 @@ export default function StorePage() {
   const [filteredServices, setFilteredServices] = useState<any[]>([]);
   const pathname = usePathname();
   const isStorePage = pathname.startsWith('/stores/');
+  const { logActivity } = useUserActivity();
+
+  useEffect(() => {
+    if (store) {
+      logActivity("store_view", { id: store.id, title: store.name });
+    }
+  }, [store?.id]);
 
   useEffect(() => {
     const fetchStore = async () => {
@@ -345,11 +352,6 @@ export default function StorePage() {
       </div>
     );
   }
-  const { logActivity } = useUserActivity();
-
-  useEffect(() => {
-    logActivity("store_view", { id: store.id, title: store.name });
-  }, [store.id]);
 
   const openingHours = store.openingHours || {};
   const tags = store.tags ? store.tags.split(',').map(tag => tag.trim()) : [];
