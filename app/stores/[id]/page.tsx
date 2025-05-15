@@ -432,101 +432,105 @@ export default function StorePage() {
             </div>
 
             {/* Hours */}
-            <div className="space-y-2">
-              <button 
-                onClick={() => setShowHours(!showHours)}
-                className="w-full flex items-center justify-between gap-2 mb-2"
-              >
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-blue-600" />
-                  <h3 className="text-sm font-medium text-gray-800">{t("opening_hours")}</h3>
-                </div>
-                <ChevronDown className={`w-4 h-4 transition-transform ${showHours ? 'rotate-180' : ''}`} />
-              </button>
-              {showHours && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="space-y-1"
-                >
-                  <div className="flex flex-col gap-1">
-                    {['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].map((day) => {
-                      const hours = store.additional?.working_hours?.[day] as WorkingHours;
-                      return (
-                        <div
-                          key={day}
-                          className="flex justify-between items-center rounded-lg bg-gray-100 px-3 py-1 text-xs sm:text-sm font-medium text-gray-700"
-                        >
-                          <span className="capitalize">{t(`days.${day}`)}</span>
-                          <span className="text-gray-600 font-normal">
-                            {hours?.closed ? t("closed") : hours ? `${hours.open} - ${hours.close}` : t("closed")}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </motion.div>
-              )}
-            </div>
-
-            {/* Quick Actions */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 mb-2">
-                <Navigation className="w-4 h-4 text-blue-600" />
-                <h3 className="text-sm font-medium text-gray-800">{t("quick_actions")}</h3>
-              </div>
-              <div className="flex flex-wrap gap-2">
+                <div className="space-y-2">
+                {store.additional?.working_hours && (
                 <button
-                  onClick={() => handleContact('whatsapp')}
-                  className="px-2 py-1 text-xs rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+                  onClick={() => setShowHours(!showHours)}
+                  className="w-full flex items-center justify-between gap-2 mb-2"
                 >
-                  {t("chat_on_whatsapp")}
+                   <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-blue-600" />
+                    <h3 className="text-sm font-medium text-gray-800">{t("opening_hours")}</h3>
+                  </div>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${showHours ? 'rotate-180' : ''}`} />
                 </button>
-                {store.address && (
-                  <>
+                )}
+                {showHours && store.additional?.working_hours && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="space-y-1"
+                  >
+                    <div className="flex flex-col gap-1">
+                      {['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].map((day) => {
+                        const hours = store.additional?.working_hours?.[day] as WorkingHours;
+                        return (
+                          <div
+                            key={day}
+                            className="flex justify-between items-center rounded-lg bg-gray-100 px-3 py-1 text-xs sm:text-sm font-medium text-gray-700"
+                          >
+                            <span className="capitalize">{t(`days.${day}`)}</span>
+                            <span className="text-gray-600 font-normal">
+                              {hours?.closed ? t("closed") : hours ? `${hours.open} - ${hours.close}` : t("closed")}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+
+
+
+</div><div className="space-y-2">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Navigation className="w-4 h-4 text-blue-600" />
+                    <h3 className="text-sm font-medium text-gray-800">{t("quick_actions")}</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
                     <button
-                      onClick={() => handleNavigation('google')}
+                      onClick={() => handleContact('whatsapp')}
                       className="px-2 py-1 text-xs rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
                     >
-                      {t("google_maps")}
+                      {t("chat_on_whatsapp")}
                     </button>
-                    <button
-                      onClick={() => handleNavigation('waze')}
-                      className="px-2 py-1 text-xs rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 transition-colors"
-                    >
-                      {t("waze")}
-                    </button>
-                  </>
-                )}
-              </div>
-              {store.socialMedia && (
-                <div className="flex gap-2 pt-1">
-                  {store.socialMedia.facebook && (
-                    <a
-                      href={store.socialMedia.facebook}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors"
-                    >
-                      <Facebook className="w-3 h-3 text-blue-600" />
-                    </a>
-                  )}
-                  {store.socialMedia.instagram && (
-                    <a
-                      href={store.socialMedia.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors"
-                    >
-                      <Instagram className="w-3 h-3 text-blue-600" />
-                    </a>
+                    {store.address && (
+                      <>
+                        <button
+                          onClick={() => handleNavigation('google')}
+                          className="px-2 py-1 text-xs rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+                        >
+                          {t("google_maps")}
+                        </button>
+                        <button
+                          onClick={() => handleNavigation('waze')}
+                          className="px-2 py-1 text-xs rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 transition-colors"
+                        >
+                          {t("waze")}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                  {store.socialMedia && (
+                    <div className="flex gap-2 pt-1">
+                      {store.socialMedia.facebook && (
+                        <a
+                          href={store.socialMedia.facebook}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors"
+                        >
+                          <Facebook className="w-3 h-3 text-blue-600" />
+                        </a>
+                      )}
+                      {store.socialMedia.instagram && (
+                        <a
+                          href={store.socialMedia.instagram}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors"
+                        >
+                          <Instagram className="w-3 h-3 text-blue-600" />
+                        </a>
+                      )}
+                    </div>
                   )}
                 </div>
-              )}
-            </div>
+                
           </div>
+          
         </div>
 
         {/* Products and Services Sections */}
