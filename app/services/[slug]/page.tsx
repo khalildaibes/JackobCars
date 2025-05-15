@@ -64,6 +64,8 @@ interface Service {
 
 const ServiceDetails = () => {
   const { slug } = useParams();
+  console.log('slug', slug);  
+
   const searchParams = useSearchParams();
   const storehostname = searchParams.get('store_hostname');
   const [activeImage, setActiveImage] = useState(0);
@@ -79,6 +81,7 @@ const ServiceDetails = () => {
   const { data: serviceData, isLoading } = useQuery({
     queryKey: ["service", slug, storehostname],
     queryFn: async () => {
+      console.log('storehostname', storehostname);
       const response = await fetch(`/api/services?slug=${slug}&store_hostname=${storehostname}`);
       if (!response.ok) throw new Error('Service not found');
       const data = await response.json();
@@ -104,8 +107,11 @@ const ServiceDetails = () => {
   const { logActivity } = useUserActivity();
 
   useEffect(() => {
-    logActivity("service_view", { id: serviceData.data[0].id, title: serviceData.data[0].name });
-  }, [serviceData.data[0].id]);
+    if (serviceData?.data?.[0]) {
+      logActivity("service_view", { id: serviceData.data[0].id, title: serviceData.data[0].name });
+    }
+  }, [serviceData?.data?.[0]?.id]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
