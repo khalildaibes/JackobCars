@@ -49,6 +49,7 @@ interface CarCardProps {
     year: number;
     mileage: string;
     price: string;
+    hostname: string;
     bodyType: string;
     fuelType: string;
     description: string;
@@ -190,7 +191,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   const handleViewDetails = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    router.push(`/car-details/${car.slug}`);
+    router.push(`/car-details/${car.slug}?hostname=${car.hostname}`);
   }, [car.slug, router]);
 
   const handleCompareToggle = useCallback((e: React.MouseEvent) => {

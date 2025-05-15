@@ -30,6 +30,8 @@ export interface CarProps {
   model: string;
   slug: string;
   year: number;
+  store: any;
+  hostname: string;
   fuel: string;
   city_mpg: number;
   transmission: string;

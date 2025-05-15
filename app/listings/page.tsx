@@ -7,6 +7,7 @@ import CarCard from "../../components/CarCard";
 interface Car {
   id: string;
   name: string;
+  store: any;
   slug: string;
   details: {
     car: {
@@ -163,6 +164,7 @@ export default function ListingsPage() {
                 key={car.id}
                 car={{
                   id: car.id,
+                  hostname: car.store.hostname,
                   slug: car.slug,
                   mainImage: car.details.car.images.main
                     ? `${car.hostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${car.hostname}`}${car.details.car.images.main}`

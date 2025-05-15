@@ -19,6 +19,7 @@ export async function GET(req) {
 
         allowedFilters.forEach((key) => {
             const value = searchParams.get(key);
+            console.log("Value:", value);
             if (value) {
                 if (key === "category") queryParams.append("filters[categories][$contains]", value);
                 if (key === "min_price") queryParams.append("filters[price][$gte]", value);
@@ -59,10 +60,11 @@ export async function GET(req) {
         }
         
         // Construct the final API URL with filters
-        let apiUrl = storeHostname.includes('64.227.112.249') ? `http://${baseUrl}/api/products?populate=*` : `http://${baseUrl}/api/products?populate=*`;
+        let apiUrl = storeHostname.includes('64.227.112.249') ? `http://${baseUrl}/api/products?` : `http://${baseUrl}/api/products?`;
         if (queryParams.toString()) {
             apiUrl += `&${queryParams.toString()}`;
         }
+        apiUrl += `&populate=*`;
 
         console.log("Final API URL:", apiUrl);
         console.log("Using API Token:", apiToken ? "Token exists" : "No token");

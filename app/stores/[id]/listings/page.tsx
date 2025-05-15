@@ -10,6 +10,7 @@ interface Car {
   id: string;
   name: string;
   slug: string;
+  store: any;
   details: {
     car: {
       description: string;
@@ -173,6 +174,7 @@ export default function StoreListingsPage() {
                 key={car.id}
                 car={{
                   id: car.id,
+                  hostname: car.store.hostname,
                   slug: car.slug,
                   mainImage: car.details.car.images.main
                     ? `${storeHostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${storeHostname}`}${car.details.car.images.main}`

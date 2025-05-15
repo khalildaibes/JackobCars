@@ -36,15 +36,15 @@ import emailjs from '@emailjs/browser';
 import { Toaster } from "react-hot-toast";
 
 interface CarDetailsContentProps {
-  initialData: any;
   slug: string;
+  hostname: string;
 }
 
-const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ initialData, slug }): JSX.Element => {
+const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname }): JSX.Element => {
   const t = useTranslations('CarDetails');
   const locale = useLocale();
-  const [car, setCar] = useState<any>(initialData?.car || null);
-  const [listings, setListings] = useState<any[]>(initialData?.listings || []);
+  const [car, setCar] = useState<any>(null);
+  const [listings, setListings] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingProsCons, setLoadingProsCons] = useState(false);
   const [favorites, setFavorites] = useState<number[]>([]);
@@ -57,50 +57,158 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ initialData, slug
     name: '',
     phone: ''
   });
-  const [prosAndCons, setProsAndCons] = useState<{ pros: string[], cons: string[], reliability: any } | null>(initialData?.prosAndCons || null);
+  const [prosAndCons, setProsAndCons] = useState<{ pros: string[], cons: string[], reliability: any } | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (initialData) {
-      setCar(initialData.car);
-      setListings(initialData.listings);
-      setProsAndCons(initialData.prosAndCons);
+
+  async function getCarDetails(slug: string) {
+    // Get the host from headers for SSR absolute URL
+    const dealsUrl = `/api/deals?store_hostname=${hostname}&slug=${slug}`;
+    const response = await fetch(dealsUrl);
+    if (!response.ok) throw new Error(`Failed to fetch car details: ${response.statusText}`);
+  
+    const data = await response.json();
+    if (!data || !data.data) throw new Error("Invalid API response structure");
+    console.log('data', data);
+    // Format listings
+    const formattedListings = data.data.map((product: any) => {
+      // Get the fuel type and normalize it
+      const rawFuelType = product.details?.car.fuel || "Unknown";
+      let normalizedFuelType = rawFuelType;
+      // Normalize fuel type values to English
+      if (rawFuelType.toLowerCase().includes("plug-in") || 
+          rawFuelType.toLowerCase().includes("plug in") || 
+          rawFuelType === "היברידי נטען" ||
+          rawFuelType === "هجين قابل للشحن") {
+        normalizedFuelType = "Plug-in Hybrid";
+      } else if (rawFuelType.toLowerCase().includes("hybrid") || 
+                rawFuelType === "היברידי" ||
+                rawFuelType === "هجين") {
+        normalizedFuelType = "Hybrid";
+      } else if (rawFuelType.toLowerCase().includes("electric") || 
+                rawFuelType === "חשמלי" ||
+                rawFuelType === "كهربائي") {
+        normalizedFuelType = "Electric";
+      } else if (rawFuelType.toLowerCase().includes("diesel") || 
+                rawFuelType === "דיזל" ||
+                rawFuelType === "ديزل") {
+        normalizedFuelType = "Diesel";
+      } else if (rawFuelType.toLowerCase().includes("gasoline") || 
+                rawFuelType.toLowerCase().includes("petrol") || 
+                rawFuelType === "בנזין" ||
+                rawFuelType === "بنزين") {
+        normalizedFuelType = "Gasoline";
+      }
+  
+      // Normalize make
+      const rawMake = product.details?.car.make || "Unknown";
+      let normalizedMake = rawMake;
+      if (rawMake.toLowerCase().includes("toyota") || rawMake === "טויוטה" || rawMake === "تويوتا") {
+        normalizedMake = "Toyota";
+      } else if (rawMake.toLowerCase().includes("honda") || rawMake === "הונדה" || rawMake === "هوندا") {
+        normalizedMake = "Honda";
+      } else if (rawMake.toLowerCase().includes("ford") || rawMake === "פורד" || rawMake === "فورد") {
+        normalizedMake = "Ford";
+      } else if (rawMake.toLowerCase().includes("chevrolet") || rawMake === "שברולט" || rawMake === "شيفروليه") {
+        normalizedMake = "Chevrolet";
+      } else if (rawMake.toLowerCase().includes("bmw") || rawMake === "ב.מ.וו" || rawMake === "بي ام دبليو") {
+        normalizedMake = "BMW";
+      } else if (rawMake.toLowerCase().includes("mercedes") || rawMake === "מרצדס" || rawMake === "مرسيدس") {
+        normalizedMake = "Mercedes-Benz";
+      } else if (rawMake.toLowerCase().includes("audi") || rawMake === "אאודי" || rawMake === "أودي") {
+        normalizedMake = "Audi";
+      } else if (rawMake.toLowerCase().includes("tesla") || rawMake === "טסלה" || rawMake === "تيسلا") {
+        normalizedMake = "Tesla";
+      } else if (rawMake.toLowerCase().includes("lexus") || rawMake === "לקסוס" || rawMake === "لكزس") {
+        normalizedMake = "Lexus";
+      } else if (rawMake.toLowerCase().includes("subaru") || rawMake === "סובארו" || rawMake === "سوبارو") {
+        normalizedMake = "Subaru";
+      }
+  
+      // Normalize body type
+      const rawBodyType = product.details?.car.body_type || "Unknown";
+      let normalizedBodyType = rawBodyType;
+      if (rawBodyType.toLowerCase().includes("sedan") || rawBodyType === "סדאן" || rawBodyType === "سيدان") {
+        normalizedBodyType = "Sedan";
+      } else if (rawBodyType.toLowerCase().includes("suv") || rawBodyType === "רכב שטח" || rawBodyType === "سيارة رياضية متعددة الاستخدامات") {
+        normalizedBodyType = "SUV";
+      } else if (rawBodyType.toLowerCase().includes("truck") || rawBodyType === "משאית" || rawBodyType === "شاحنة") {
+        normalizedBodyType = "Truck";
+      } else if (rawBodyType.toLowerCase().includes("coupe") || rawBodyType === "קופה" || rawBodyType === "كوبيه") {
+        normalizedBodyType = "Coupe";
+      } else if (rawBodyType.toLowerCase().includes("convertible") || rawBodyType === "קבריולה" || rawBodyType === "كابريوليه") {
+        normalizedBodyType = "Convertible";
+      } else if (rawBodyType.toLowerCase().includes("hatchback") || rawBodyType === "הצ'בק" || rawBodyType === "هاتشباك") {
+        normalizedBodyType = "Hatchback";
+      } else if (rawBodyType.toLowerCase().includes("wagon") || rawBodyType === "סטיישן" || rawBodyType === "ستيشن") {
+        normalizedBodyType = "Wagon";
+      } else if (rawBodyType.toLowerCase().includes("van") || rawBodyType === "ואן" || rawBodyType === "فان") {
+        normalizedBodyType = "Van";
+      }
+      setCar({
+        id: product.id,
+        mainImage: product.image?.url ? `http://${product.store.hostname}${product.image.url}` : "/default-car.png",
+        alt: product.name || "Car Image",
+        title: product.name,
+        miles: product.details?.car.miles || "N/A",
+        fuel: normalizedFuelType,
+        condition: product.details?.car.condition || "Used",
+        transmission: product.details?.car.transmission || "Unknown",
+        details: product.details?.car || "Unknown",
+        price: `$${product.price.toLocaleString()}`,
+        mileage: product.details?.car.miles || "N/A",
+        year: product.details.car.year,
+        pros: product.details.car.pros,
+        cons: product.details.car.cons,
+        fuelType: normalizedFuelType,
+        make: normalizedMake,
+        slug: product.slug,
+        createdAt: product.createdAt,
+        bodyType: normalizedBodyType,
+        description: product.details.car.description,
+        features: product.details.car.features.map((feature: any) => feature.value) || [],
+        category: product.categories ? product.categories.split(",").map((c: string) => c.toLowerCase().trim()) : [],
+      });
+      return {
+        id: product.id,
+        mainImage: product.image?.url ? `http://${product.store.hostname}${product.image.url}` : "/default-car.png",
+        alt: product.name || "Car Image",
+        title: product.name,
+        miles: product.details?.car.miles || "N/A",
+        fuel: normalizedFuelType,
+        condition: product.details?.car.condition || "Used",
+        transmission: product.details?.car.transmission || "Unknown",
+        details: product.details?.car || "Unknown",
+        price: `$${product.price.toLocaleString()}`,
+        mileage: product.details?.car.miles || "N/A",
+        year: product.details.car.year,
+        pros: product.details.car.pros,
+        cons: product.details.car.cons,
+        fuelType: normalizedFuelType,
+        make: normalizedMake,
+        slug: product.slug,
+        createdAt: product.createdAt,
+        bodyType: normalizedBodyType,
+        description: product.details.car.description,
+        features: product.details.car.features.map((feature: any) => feature.value) || [],
+        category: product.categories ? product.categories.split(",").map((c: string) => c.toLowerCase().trim()) : [],
+      };
+    });
+    console.log('formattedListings', formattedListings);
+    // Find the car with matching slug
+    const carData = formattedListings.find((car: any) => car.slug.toString() === slug);
+    if (!carData) {
+      throw new Error("Car not found");
     }
-  }, [initialData]);
+  
 
-  // useEffect(() => {
-  //   const fetchProsAndCons = async () => {
-  //     if (car && !prosAndCons) {
-  //       setLoadingProsCons(true);
-  //       try {
-  //         const response = await fetch('/api/prosandcons', {
-  //           method: 'POST',
-  //           headers: {
-  //             'Content-Type': 'application/json',
-  //             'Accept-Language': locale
-  //           },
-  //           body: JSON.stringify({
-  //             make: car.make,
-  //             model: car.model,
-  //             year: car.year,
-  //             specs: car.specs
-  //           })
-  //         });
-
-  //         if (response.ok) {
-  //           const data = await response.json();
-  //           setProsAndCons(data);
-  //         }
-  //       } catch (error) {
-  //         console.error('Error fetching pros and cons:', error);
-  //       } finally {
-  //         setLoadingProsCons(false);
-  //       }
-  //     }
-  //   };
-
-  //   fetchProsAndCons();
-  // }, [car, locale, prosAndCons]);
-
+  
+    return {
+      car: carData,
+      listings: formattedListings,
+      prosAndCons: []
+    };
+  }
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedFavorites = localStorage.getItem("favorites");
@@ -184,6 +292,32 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ initialData, slug
     setIsEmailDialogOpen(true);
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // You may want to get the baseUrl from window.location.host or a default value
+        const localeValue = locale || 'ar';
+        const data = await getCarDetails(slug);
+        setCar(data.car);
+        setListings(data.listings);
+        setProsAndCons(null);
+      } catch (err) {
+        console.error("Error fetching car details:", err);
+        setCar(null);
+        setListings([]);
+        setProsAndCons(null);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (slug) {
+      fetchData();
+    }
+  }, [slug, locale]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -191,6 +325,7 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ initialData, slug
       </div>
     );
   }
+
 
   if (!car) {
     return (
@@ -513,7 +648,7 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ initialData, slug
                 <h3 className="text-xl font-semibold mb-6">{t('similar_vehicles')}</h3>
                 <div className="space-y-4">
                   {listings.filter(c => c.id !== car.id).slice(0, 3).map((similarCar) => (
-                  <Link key={similarCar.id} href={`/car-details/${similarCar.slug}`}>
+                  <Link key={similarCar.id} href={`/car-details/${similarCar.slug}?hostname=${similarCar.hostname}`}>
                       <div className="flex space-x-4 group p-3 rounded-lg hover:bg-gray-50 transition-colors">
                         <div className="w-24 h-20 overflow-hidden rounded-lg">
                           {/* <Img

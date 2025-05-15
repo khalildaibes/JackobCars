@@ -69,6 +69,8 @@ interface Product {
   name: string;
   slug: string;
   quantity: number;
+  hostname: string;
+  store: any;
   price: number;
   categories?: string[]; // Categories from Strapi
   image: { url: string }[]; // Image array for localization
@@ -205,6 +207,8 @@ export default function StorePage() {
             id: String(product.id),
             name: String(product.name || ''),
             slug: String(product.slug || ''),
+            hostname: product.store.hostname,
+            store: product.store,
             quantity: Number(product.quantity || 0),
             image: product.image || [],
             price: Number(product.price || 0),
@@ -231,6 +235,7 @@ export default function StorePage() {
                   share: { icon: 'share', label: 'Share' },
                   compare: { icon: 'compare', label: 'Compare' }
                 },
+                store: product.store,
                 mileage: String(product.details?.car?.miles || ''),
                 features: product.details?.car?.features?.map((feature: any) => ({
                   icon: '',
@@ -582,6 +587,7 @@ export default function StorePage() {
                             car={{
                               id: product.id,
                               slug: product.slug,
+                              hostname: product.store.hostname,
                               mainImage: product.details.car.images.main
                                 ? `${store.hostname === '64.227.112.249' ? process.env.NEXT_PUBLIC_STRAPI_URL : `http://${store.hostname}`}${product.details.car.images.main}`
                                 : "/default-car.png",

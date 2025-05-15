@@ -202,6 +202,8 @@ const CarListings: React.FC = () => {
               mainImage: product.image ? `http://${product.store.hostname}${product.image?.url}` : "/default-car.png",
               alt: product.name || "Car Image",
               title: product.name,
+              store: product.store,
+              hostname: product.store.hostname,
               miles: product.details?.car.miles || "N/A",
               fuel: normalizedFuelType,
               condition: product.details?.car.condition || "Used",

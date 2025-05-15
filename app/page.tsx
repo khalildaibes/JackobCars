@@ -41,6 +41,7 @@ interface Deal {
   id: string;
   image: { url: string };
   name: string;
+  s
   details: {
     car: {
       fuel: string;
@@ -102,6 +103,8 @@ interface Listing {
   year: number;
   fuelType: string;
   make: string;
+  store: any;
+  hostname: string;
   slug: string;
   bodyType: string;
   description: string;
@@ -606,6 +609,8 @@ function HomeContent() {
         mainImage: product.image ? `http://${product.store.hostname}${product.image?.url}` : "/default-car.png",
         alt: product.name || "Car Image",
         title: product.name,
+        store: product.store,
+        hostname: product.store.hostname,
         slug: product.slug,
         miles: product.details?.car.miles || "N/A",
         fuel: normalizeFuelType(product.details?.car.fuel || "Unknown"),

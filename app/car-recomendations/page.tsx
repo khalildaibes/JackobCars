@@ -26,6 +26,8 @@ interface Question {
 }
 
 interface RecommendedCar {
+  slug: any;
+  hostname: any;
   id: string;
   name: string;
   match: number;
@@ -221,8 +223,10 @@ const questions: Question[] = [
     const mockRecommendations: RecommendedCar[] = [
       {
         id: '1',
-        name: 'Toyota Camry',
+        name: 'MG4 لوكسري 2023 الكاملة كهربائياً',
         match: 95,
+        slug: 'mg4-luxury-2023-13202021123028',
+        hostname: '64.227.112.249',
         image: '/images/cars/camry.jpg',
         price: '$25,000',
         pros: ['Reliable', 'Fuel efficient', 'Comfortable'],
@@ -410,14 +414,14 @@ const questions: Question[] = [
                       
                     <div className="mt-6 space-y-4">
                       <button
-                        onClick={() => router.push(`/car-details/${car.id}`)}
+                        onClick={() => router.push(`/car-details/${car.slug}?hostname=${car.hostname}`)}
                         className="w-full flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                       >
                         {t('view_similar')}
                       </button>
 
                       <button
-                        onClick={() => router.push(`/car-details/${car.id}?tab=dealers`)}
+                        onClick={() => router.push(`/car-details/${car.slug}?hostname=${car.hostname}`)}
                         className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
                       >
                         {t('find_dealerships')}

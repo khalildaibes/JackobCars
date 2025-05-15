@@ -23,6 +23,8 @@ interface Listing {
   title: string;
   miles: string;
   fuel: string;
+  store: any;
+  hostname: string;
   transmission: string;
   year: number;
   mileage: string;
@@ -146,6 +148,7 @@ export default function FeaturedListingsSection({
                           <CarCard 
                             key={listing.id} 
                             car={{
+                              hostname: listing.store.hostname,
                               id: listing.id,
                               slug: listing.slug,
                               mainImage: listing.mainImage,

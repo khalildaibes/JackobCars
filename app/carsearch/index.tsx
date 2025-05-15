@@ -148,9 +148,11 @@ export default function CarSearch() {
                 <CarCard 
                   key={car.id}
                   car={{
+                    hostname: car.store.hostname,
                     id: car.id,
                     slug: car.slug,
                     mainImage: car.mainImage,
+                    
                     title: car.title,
                     year: car.year,
                     mileage: String(car.mileage),
