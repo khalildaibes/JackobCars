@@ -194,12 +194,12 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
     };
 
     const renderBlock = (block: any) => {
-      switch (block.__component) {
+      switch (block?.__component) {
         case 'shared.rich-text':
           // Split the content by newlines and process each line
-          const lines = block.body.split('\n');
+          const lines = block?.body?.split('\n');
           return (
-            <div key={block.id} className="mb-6 prose prose-lg max-w-none">
+            <div key={block?.id} className="mb-6 prose prose-lg max-w-none">
               {lines.map((line: string, index: number) => {
                 // Check if line is a heading
                 if (line.startsWith('# ')) {
@@ -249,16 +249,16 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
           );
         case 'shared.media':
           return (
-            <div key={block.id} className="my-8">
-              {block.file && (
+            <div key={block?.id} className="my-8">
+              {block?.file && (
                 
                 <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg">
                   <Img
-                    src={`http://64.227.112.249${block.file.url}`}
-                    alt={block.file.alternativeText || 'Media content'}
+                    src={`http://64.227.112.249${block?.file.url}`}
+                    alt={block?.file.alternativeText || 'Media content'}
                     external={true}
-                    width={block.file.width || 1920}
-                    height={block.file.height || 1080}
+                    width={block?.file.width || 1920}
+                    height={block?.file.height || 1080}
                     className="object-cover w-full h-full"
                   />
                 </div>
@@ -267,12 +267,12 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
           );
         case 'shared.quote':
           return (
-            <div key={block.id} className="my-8 p-6 bg-gray-50 border-l-4 border-blue-500">
+            <div key={block?.id} className="my-8 p-6 bg-gray-50 border-l-4 border-blue-500">
               <blockquote className="text-xl italic text-gray-700">
-                {block.body}
+                {block?.body}
               </blockquote>
-              {block.title && (
-                <p className="mt-4 text-gray-600">— {block.title}</p>
+              {block?.title && (
+                <p className="mt-4 text-gray-600">— {block?.title}</p>
               )}
             </div>
           );
@@ -453,10 +453,14 @@ export default function BlogListPage({ params }: { params: { id: string } }) {
                  )}
 
                  {/* Content Blocks */}
-                 {blocks?.map((block: any) => renderBlock(block))}
+                 {blocks?.length > 0 && (
+                   <>
+                     {blocks.map((block: any) => renderBlock(block))}
+                   </>
+                 )}
                  
                  {/* Show message if no content */}
-            {(!content?.length && !blocks?.length && !videos) && (
+                 {(!content?.length && !blocks?.length && !videos) && (
               <p className="text-center text-gray-500">No content found in this article.</p>
             )}
           </div>
