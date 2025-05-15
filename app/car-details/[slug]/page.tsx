@@ -179,6 +179,7 @@ export default async function CarDetailsPage({ params }: { params: { slug: strin
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Car not found</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">{error}</h1>
           <Link href="/car-listing" className="text-primary hover:text-primary-dark">
             Back to listings
           </Link>
