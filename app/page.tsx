@@ -900,29 +900,7 @@ function HomeContent() {
 
   return (
     <div className="flex w-full z-70 overflow-x-hidden">
-      {/* Mobile Upper Navigation Section */}
-      <nav className="flex sm:hidden w-full bg-white/90 shadow-md fixed top-0 left-0 z-50 border-b border-gray-200 px-2 py-2 gap-2 justify-between items-center" style={{backdropFilter: 'blur(8px)'}}>
-        <Link href="/news" className="flex flex-col items-center flex-1 text-xs text-blue-700 hover:text-blue-900">
-          <Tag className="w-6 h-6 mb-1" />
-          <span>News</span>
-        </Link>
-        <Link href="/plate_search" className="flex flex-col items-center flex-1 text-xs text-blue-700 hover:text-blue-900">
-          <Shield className="w-6 h-6 mb-1" />
-          <span>Plate</span>
-        </Link>
-        <Link href="/after_market" className="flex flex-col items-center flex-1 text-xs text-blue-700 hover:text-blue-900">
-          <Car className="w-6 h-6 mb-1" />
-          <span>Market</span>
-        </Link>
-        <Link href="/parts" className="flex flex-col items-center flex-1 text-xs text-blue-700 hover:text-blue-900">
-          <Wrench className="w-6 h-6 mb-1" />
-          <span>Parts</span>
-        </Link>
-        <Link href="/services" className="flex flex-col items-center flex-1 text-xs text-blue-700 hover:text-blue-900">
-          <Settings className="w-6 h-6 mb-1" />
-          <span>Services</span>
-        </Link>
-      </nav>
+
 
       {/* Left Dashboard - Hide on mobile */}
       {showads && (

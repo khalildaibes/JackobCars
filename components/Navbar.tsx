@@ -10,6 +10,7 @@ import UserMenu from "./UserMenu";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "./ui/button";
 import { authService } from "../services/authService";
+import { ChevronLeft, ChevronRight, Car, Settings, Wrench, Tag, CheckCircle, Shield, Database } from "lucide-react";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -171,6 +172,7 @@ export default function Navbar() {
 
     return (
       <div className="relative group rounded-xl">
+       
         <Link href={href} className="w-full" onClick={handleClick}>
           <button 
             className={`
@@ -264,21 +266,21 @@ export default function Navbar() {
   const navbarClass = `fixed top-0 left-0 right-0 bg-black/30 backdrop-blur-md z-50 ${textColor}`;
 
   return (
-    <nav className={navbarClass}>
+    <><nav className={navbarClass}>
       <div className="container mx-auto max-w-screen-xl px-4 py-3 flex items-center justify-between gap-6">
         {/* Logo */}
-        
+
         <Link href="/" className="flex items-center gap-2">
           <div className="min-w-[80px] h-16 flex items-center justify-center rounded-2xl p-2 transition-all hover:scale-105 bg-white">
             <Image src="/logo-transparent-1.png" alt={t("logo_alt")} width={80} height={200} className="object-fill w-[60px] md:w-[80px] p-[2px]" />
           </div>
         </Link>
 
-       
+
         {/* Mobile Menu & Accessibility Controls */}
         <div className="flex items-center gap-2 md:hidden">
-          
-          <button 
+
+          <button
             className="text-white/80 hover:text-white hover:bg-white/5/10 p-2 rounded-full transition-all duration-500 ease-in-out"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
@@ -298,7 +300,7 @@ export default function Navbar() {
           `}
         >
           {Object.keys(dropdownItems).map((key) => (
-            <NavButton 
+            <NavButton
               key={key}
               href={`/${key}`}
               gradient={buttonStyles[key as keyof typeof buttonStyles]}
@@ -311,8 +313,8 @@ export default function Navbar() {
             {user ? (
               <UserMenu user={user} onLogout={handleLogout} isMobile={true} />
             ) : (
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="text-white/80  border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out w-full bg-white/5 rounded-xl"
               >
                 {t("login")}
@@ -330,17 +332,39 @@ export default function Navbar() {
           {user ? (
             <UserMenu user={user} onLogout={handleLogout} />
           ) : (
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="text-white/80 border-transparent hover:border-white/80 hover:text-white transition-all duration-500 ease-in-out bg-white/5 rounded-xl"
             >
               {t("login")}
             </Button>
           )}
           <LanguageSwitcher />
-         
+
         </div>
       </div>
     </nav>
+    <nav className="flex sm:hidden w-full bg-white/90 shadow-md fixed bottom-0 left-0 z-50 border-t border-gray-200 px-2 py-2 gap-2 justify-between items-center" style={{ backdropFilter: 'blur(8px)' }}>
+        <Link href="/news" className="flex flex-col items-center flex-1 text-xs text-blue-700 hover:text-blue-900">
+          <Tag className="w-6 h-6 mb-1" />
+          <span>News</span>
+        </Link>
+        <Link href="/plate_search" className="flex flex-col items-center flex-1 text-xs text-blue-700 hover:text-blue-900">
+          <Shield className="w-6 h-6 mb-1" />
+          <span>Plate</span>
+        </Link>
+        <Link href="/after_market" className="flex flex-col items-center flex-1 text-xs text-blue-700 hover:text-blue-900">
+          <Car className="w-6 h-6 mb-1" />
+          <span>Market</span>
+        </Link>
+        <Link href="/parts" className="flex flex-col items-center flex-1 text-xs text-blue-700 hover:text-blue-900">
+          <Wrench className="w-6 h-6 mb-1" />
+          <span>Parts</span>
+        </Link>
+        <Link href="/services" className="flex flex-col items-center flex-1 text-xs text-blue-700 hover:text-blue-900">
+          <Settings className="w-6 h-6 mb-1" />
+          <span>Services</span>
+        </Link>
+      </nav></>
   );
 }

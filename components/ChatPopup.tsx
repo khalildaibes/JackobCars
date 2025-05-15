@@ -88,7 +88,14 @@ const ChatPopup = ({ storeName, chatUrl, openOnRender = false }: ChatPopupProps)
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={handleOpenChat}
-        className="fixed bottom-8 right-8 bg-blue-600 text-white p-4 rounded-full shadow-lg z-50"
+        className="fixed z-50 bg-blue-600 text-white p-3 sm:p-4 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition-transform
+          left-4 bottom-20 sm:left-8 sm:bottom-8
+          w-14 h-14 flex items-center justify-center
+        "
+        style={{
+          // On mobile, place above nav; on desktop, bottom-8
+        }}
+        aria-label="Open chat"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +120,10 @@ const ChatPopup = ({ storeName, chatUrl, openOnRender = false }: ChatPopupProps)
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="fixed bottom-24 right-8 w-80 h-96 bg-white rounded-lg shadow-xl z-50 flex flex-col"
+            className="fixed z-50 bg-white rounded-lg shadow-xl flex flex-col
+              w-[90vw] max-w-xs sm:w-80 sm:max-w-sm md:max-w-md md:w-80 lg:w-96
+              left-4 bottom-36 sm:left-8 sm:bottom-24
+            "
           >
             {/* Chat Header */}
             <div className="bg-blue-600 text-white p-4 rounded-t-lg flex justify-between items-center">

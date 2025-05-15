@@ -48,16 +48,15 @@ export default async function RootLayout({
               <Analytics />
               <Footer />
               <Toaster />
-              <GlobalChatPopup />
               <div
                 className="
                   fixed z-50
                   left-4
-                  bottom-24
-                  sm:bottom-6
+                  bottom-20
                   flex flex-col items-start
                 "
               >
+                <GlobalChatPopup />
                 <AccessibilityControls />
               </div>
             </ComparisonProvider>
