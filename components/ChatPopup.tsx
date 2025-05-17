@@ -203,6 +203,7 @@ const ChatPopup = ({ storeName, chatUrl, openOnRender = false }: ChatPopupProps)
             </div>
           </motion.div>
         )}
+        
       </AnimatePresence>
     </>
   );
