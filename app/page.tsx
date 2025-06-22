@@ -33,6 +33,8 @@ import HeroSection from "../components/HeroSection";
 import StorePromotion from "../components/StorePromotion";
 import { getCachedData, setCachedData } from "../utils/cacheUtils";
 import { useUserActivity, UserActivityProvider } from "../context/UserActivityContext";
+import { formatDate } from "react-datepicker/dist/date_utils";
+import NewsArticleList from "../components/NewsArticleList";
 
 // Typs
 interface Deal {
@@ -834,6 +836,7 @@ function HomeContent() {
   }, [stories?.length]);
 
 
+
   // Auto-advance stories
   useEffect(() => {
     if (transformedArticles?.length > 0) {
@@ -872,12 +875,12 @@ function HomeContent() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center p-8">
-          <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Page</h2>
+        <div className="text-center p-6">
+          <h2 className="text-2xl font-bold text-red-600 mb-2">Error Loading Page</h2>
           <p className="text-gray-600">{error}</p>
           <button 
             onClick={() => window.location.reload()} 
-            className="mt-4 px-4 py-2 bg-white text-white rounded-lg hover:bg-white"
+            className="mt-2 px-2 py-0 bg-white text-white rounded-lg hover:bg-white"
           >
             Retry
           </button>
@@ -892,11 +895,33 @@ function HomeContent() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-2 text-gray-600">Loading...</p>
         </div>
       </div>
     );
   }
+  
+
+
+
+
+
+  const featuredNews = transformedArticles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
+    item.categories?.some(tag => tag.name === "featured")
+  ).slice(0, 6);
+
+  const latestNews = transformedArticles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
+    item.categories.some(tag => tag.name === "latest news")
+  ).slice(0, 6);
+  const localNews = transformedArticles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
+    item.categories.some(tag => tag.name === "local news")
+  ).slice(0, );
+  const worldNews = transformedArticles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
+    item.categories.some(tag => tag.name === "world news")
+  ).slice(0, );
+  const featuredStories = transformedArticles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
+    item.categories.some(tag => tag.name === "featured stories")
+  ).slice(0, );
 
   return (
     <div className="flex w-full z-70 overflow-x-hidden">
@@ -904,53 +929,53 @@ function HomeContent() {
 
       {/* Left Dashboard - Hide on mobile */}
       {showads && (
-        <div className="w-[15%] bg-white/10 mt-[5%] backdrop-blur-sm border-r border-gray-200/20 p-4 hidden lg:block ${!isAdmin ? 'invisible' : ''}">
-          <div className="sticky top-4">
-            <h2 className="text-lg font-semibold text-white mb-4">{t('quick_links')}</h2>
-            <nav className="space-y-2">
-              <Link href="/car-listings" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
+        <div className="w-[15%] bg-white/10 mt-[5%] backdrop-blur-sm border-r border-gray-200/20 p-2 hidden lg:block ${!isAdmin ? 'invisible' : ''}">
+          <div className="sticky top-2">
+          <h2 className="text-l text-blue-800 font-bold mb-2 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-0">{t('quick_links')}</h2>
+            <nav className="space-y-0">
+              <Link href="/car-listings" className="flex items-center gap-0 text-white/80 hover:text-white transition-colors">
                 <Car className="w-4 h-4" />
                 <span>{t('all_cars')}</span>
               </Link>
-              <Link href="/services" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
+              <Link href="/services" className="flex items-center gap-0 text-white/80 hover:text-white transition-colors">
                 <Settings className="w-4 h-4" />
                 <span>{t('services')}</span>
               </Link>
-              <Link href="/parts" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
+              <Link href="/parts" className="flex items-center gap-0 text-white/80 hover:text-white transition-colors">
                 <Wrench className="w-4 h-4" />
                 <span>{t('parts')}</span>
               </Link>
-              <Link href="/car-listings" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
+              <Link href="/car-listings" className="flex items-center gap-0 text-white/80 hover:text-white transition-colors">
                 <Tag className="w-4 h-4" />
                 <span>{t('special_deals')}</span>
               </Link>
             </nav>
 
-            <div className="mt-8">
-              <h2 className="text-lg font-semibold text-white mb-4">{t('recent_watched_cars')}</h2>
-              <div className="space-y-2">
-                <button className="w-full text-left px-3 py-2 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
+            <div className="mt-6">
+            <h2 className="text-l text-blue-800 font-bold mb-2 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-0">{t('recent_watched_cars')}</h2>
+              <div className="space-y-0">
+                <button className="w-full text-left px-1 py-0 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
                   {t('electric_cars')}
                 </button>
-                <button className="w-full text-left px-3 py-2 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
+                <button className="w-full text-left px-1 py-0 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
                   {t('luxury_suvs')}
                 </button>
-                <button className="w-full text-left px-3 py-2 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
+                <button className="w-full text-left px-1 py-0 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
                   {t('family_sedans')}
                 </button>
               </div>
             </div>
 
-            <div className="mt-8">
-              <h2 className="text-lg font-semibold text-white mb-4">{t('quick_stats')}</h2>
-              <div className="space-y-3">
-                <div className="bg-white/5 rounded-lg p-3">
+            <div className="mt-6">
+            <h2 className="text-l text-blue-800 font-bold mb-2 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-0">{t('quick_stats')}</h2>
+              <div className="space-y-1">
+                <div className="bg-white/5 rounded-lg p-1">
                   <p className="text-sm text-white/60">{t('total_listings')}</p>
-                  <p className="text-xl font-bold text-white">{listings.length}</p>
+                  <p className="text-l font-bold text-white">{listings.length}</p>
                 </div>
-                <div className="bg-white/5 rounded-lg p-3">
+                <div className="bg-white/5 rounded-lg p-1">
                   <p className="text-sm text-white/60">{t('featured_cars')}</p>
-                  <p className="text-xl font-bold text-white">{listings.filter(l => l.category.some(cat => cat.toLowerCase().includes('featured'))).length}</p>
+                  <p className="text-l font-bold text-white">{listings.filter(l => l.category.some(cat => cat.toLowerCase().includes('featured'))).length}</p>
                 </div>
               </div>
             </div>
@@ -964,12 +989,12 @@ function HomeContent() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="flex flex-col w-full overflow-hidden mt-[5%] px-2 sm:px-4 md:px-6 rounded-xl"
+          className="flex flex-col w-full overflow-hidden mt-[5%] px-0 sm:px-2 md:px-4 rounded-xl"
         >
           {/* Featured Stories Section */}
-          <div className="flex flex-col w-full px-4 mb-8 lg:hidden">
-              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('featured_stories')}</h2>
-              <div className="space-y-4">
+          <div className="flex flex-col w-full px-2 mb-6 lg:hidden">
+          <h2 className="text-l text-blue-800 font-bold mb-2 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-0">{t('featured_stories')}</h2>
+              <div className="space-y-2">
                 {transformedArticles.slice(1, 4).map((item) => (
                   <article
                     key={item.id}
@@ -988,9 +1013,9 @@ function HomeContent() {
                         />
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-                        <div className="absolute bottom-0 left-0 right-0 p-4">
-                          <div className="text-[10px] text-white mb-1 font-bold uppercase tracking-wider bg-white/5 rounded-full px-2 py-0.5 inline-block">{t('expert_review')}</div>
-                          <h3 className="font-bold text-base text-white mb-1 line-clamp-2">{item.title}</h3>
+                        <div className="absolute bottom-0 left-0 right-0 p-2">
+                          <div className="text-[10px] text-white mb-0 font-bold uppercase tracking-wider bg-white/5 rounded-full px-0 py-0 inline-block">{t('expert_review')}</div>
+                          <h3 className="font-bold text-base text-white mb-0 line-clamp-2">{item.title}</h3>
                           <div className="text-xs text-gray-300">
                             By {item.author || t('unknown_author')}
                           </div>
@@ -1002,22 +1027,19 @@ function HomeContent() {
               </div>
             </div>
           {/* 1. Hero Banner Section */}
-          <div className="relative z-10 flex flex-col lg:flex-row gap-2 px-2 lg:px-4 items-stretch min-h-0 justify-center items-center mb-8 w-full md:w-[80%] mx-auto">
-            {/* Main Column - 70% width */}
-            <div className="w-full lg:w-full flex flex-col gap-2">
+          <div className="relative z-10 flex flex-col lg:flex-row gap-0 px-0 lg:px-2 items-stretch min-h-0 justify-center items-center mb-6 w-full md:w-[80%] mx-auto">
+            <div className="w-full lg:w-full flex flex-col gap-0">
              
-              {/* Hero Section */}
+              {/* Hero Section
               <div className="w-full bg-gradient-to-br h-full from-blue-100 via-blue-300 from-white rounded-lg shadow-lg p-1 flex items-center justify-center">
                 <div className="w-full h-full flex items-center justify-center">
                   <HeroSection listings={listings} />
                 </div>
-              </div>
+              </div> */}
             </div>
 
-            {/* Side Column - 30% width */}
-            <div className="w-full lg:w-[30%] flex flex-col gap-2">
-              {/* Top Section - Article */}
-              <div className="w-full bg-gradient-to-br from-blue-100 via-blue-300 from-white rounded-lg shadow-lg p-1 h-[320px] min-h-[320px] max-h-[320px] hidden lg:block">
+            <div className="w-full lg:w-[30%] flex flex-col gap-0">
+              {/* <div className="w-full bg-gradient-to-br from-blue-100 via-blue-300 from-white rounded-lg shadow-lg p-1 h-[320px] min-h-[320px] max-h-[320px] hidden lg:block">
                  {transformedArticles
                     .filter(article => article.category.includes('featured'))
                     .slice(0, 5)
@@ -1044,13 +1066,11 @@ function HomeContent() {
                         </div>
                       </div>
                     ))}
-              </div>
+              </div> */}
 
-              {/* Bottom Section - Website Ads */}
-              <div className="w-full bg-gradient-to-br from-blue-100 via-blue-300 from-white rounded-lg shadow-lg p-1 h-[320px] min-h-[320px] max-h-[320px] flex flex-col">
+              {/* <div className="w-full bg-gradient-to-br from-blue-100 via-blue-300 from-white rounded-lg shadow-lg p-1 h-[320px] min-h-[320px] max-h-[320px] flex flex-col">
                 <h3 className="text-xs font-bold text-white mb-1 line-clamp-1">{t('special_offers')}</h3>
                 <div className="space-y-1 flex-1 overflow-y-auto">
-                  {/* Ad 1 - Car Insurance */}
                   <div className="flex gap-1 items-center bg-white/10 backdrop-blur-sm rounded-md p-0.5 hover:bg-white/20 transition-all">
                     <div className="relative w-10 h-10 rounded-md overflow-hidden">
                       <Img
@@ -1072,7 +1092,6 @@ function HomeContent() {
                   </div>
 
 
-                  {/* Ad 3 - Car Service */}
                   <div className="flex gap-1 items-center bg-white/10 backdrop-blur-sm rounded-md p-0.5 hover:bg-white/20 transition-all">
                     <div className="relative w-10 h-10 rounded-md overflow-hidden">
                       <Img
@@ -1093,7 +1112,6 @@ function HomeContent() {
                     </div>
                   </div>
 
-                  {/* Ad 4 - Car Parts */}
                   <div className="flex gap-1 items-center bg-white/10 backdrop-blur-sm rounded-md p-0.5 hover:bg-white/20 transition-all">
                     <div className="relative w-10 h-10 rounded-md overflow-hidden">
                       <Img
@@ -1114,7 +1132,6 @@ function HomeContent() {
                     </div>
                   </div>
 
-                  {/* Ad 5 - Car Wash */}
                   <div className="flex gap-1 items-center bg-white/10 backdrop-blur-sm rounded-md p-0.5 hover:bg-white/20 transition-all">
                     <div className="relative w-10 h-10 rounded-md overflow-hidden">
                       <Img
@@ -1135,28 +1152,28 @@ function HomeContent() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
           
 
           {/* Main Content Container */}
-          <div className="container mx-auto w-full px-4 sm:px-6 lg:px-8 max-w-7xl overflow-x-hidden">
+          <div className="container mx-auto w-full px-2 sm:px-4 lg:px-6 max-w-7xl overflow-x-hidden">
             
             {/* Magazine-style Grid Layout */}
-            <div className="grid grid-cols-1 gap-6 mb-8">
+            <div className="grid grid-cols-1 gap-4 mb-6">
 
               {/* Featured Article - Spans full width */}
-              {/* <div className="col-span-12 mb-8">
+              <div className="col-span-12 mb-6">
                 <motion.section 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.8 }}
-                  className="w-full bg-gradient-to-b from-white to-gray-50 py-8 rounded-2xl overflow-hidden"
+                  className="w-full bg-gradient-to-b from-white to-gray-50 py-0 rounded-2xl overflow-hidden"
                 >
-                  <div className="px-6">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('featured_story')}</h2>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div className="px-4">
+                    <h2 className="text-l text-blue-800 font-bold bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-0">{t('featured_story')}</h2>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       <div className="relative h-[400px] rounded-xl overflow-hidden">
                         <Img
                           src={visibleArticles[0]?.imageUrl ? `http://64.227.112.249${visibleArticles[0].imageUrl}` : '/default-article.jpg'}
@@ -1168,12 +1185,12 @@ function HomeContent() {
                         />
                       </div>
                       <div className="flex flex-col justify-center">
-                        <span className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full w-fit mb-4">
+                        <span className="text-sm font-medium text-blue-600 bg-blue-50 px-1 py-0 rounded-full w-fit mb-2">
                           {visibleArticles[0]?.category}
                         </span>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-4">{visibleArticles[0]?.title}</h3>
-                        <p className="text-gray-600 mb-6">{visibleArticles[0]?.excerpt}</p>
-                        <div className="flex items-center gap-4">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2">{visibleArticles[0]?.title}</h3>
+                        <p className="text-gray-600 mb-4">{visibleArticles[0]?.excerpt}</p>
+                        <div className="flex items-center gap-2">
                           <span className="text-sm text-gray-500">{visibleArticles[0]?.date}</span>
                           <span className="text-sm font-medium">{visibleArticles[0]?.author}</span>
                         </div>
@@ -1181,7 +1198,7 @@ function HomeContent() {
                     </div>
                   </div>
                 </motion.section>
-              </div> */}
+              </div>
 
               {/* Latest News Grid - 3 columns */}
               <div className="col-span-12">
@@ -1189,21 +1206,21 @@ function HomeContent() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.8 }}
-                  className="w-full bg-white py-8 rounded-2xl hidden lg:block"
+                  className="w-full bg-white py-0 rounded-2xl hidden lg:block"
                 >
-                  <div className="px-6 mb-8 ">
+                  <div className="px-4 mb-6 ">
                     <div className="flex items-center justify-between">
-                      <h2 className="text-2xl font-bold text-gray-900">{t('latest_news')}</h2>
-                      <div className="flex items-center gap-4">
+                    <h2 className="text-l text-blue-800 font-bold mb-2 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-0">{t('latest_news')}</h2>
+                      <div className="flex items-center gap-2">
                         <button
                           onClick={prevSlide}
-                          className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                          className="p-0 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                         >
                           <ChevronRight className="w-5 h-5" />
                         </button>
                         <button
                           onClick={nextSlide}
-                          className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                          className="p-0 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                         >
                           <ChevronLeft className="w-5 h-5" />
                         </button>
@@ -1211,7 +1228,7 @@ function HomeContent() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6 ">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 ">
                     {transformedArticles.slice(1, 4).map((article: TransformedArticle, index) => (
                       <motion.div
                         key={article.id}
@@ -1234,17 +1251,17 @@ function HomeContent() {
                             external={true}
                           />
                         </div>
-                        <div className="p-6">
-                          <div className="flex items-center gap-2 mb-3">
-                            <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                        <div className="p-4">
+                          <div className="flex items-center gap-0 mb-1">
+                            <span className="text-xs font-medium text-blue-600 bg-blue-50 px-0 py-0 rounded-full">
                               {article.category}
                             </span>
                             <span className="text-xs text-gray-500">{article.date}</span>
                           </div>
-                          <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
+                          <h3 className="text-lg font-bold text-gray-900 mb-0 line-clamp-2">
                             {article.title}
                           </h3>
-                          <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                          <p className="text-gray-600 text-sm mb-2 line-clamp-2">
                             {article.excerpt}
                           </p>
                           <div className="flex items-center justify-between">
@@ -1263,7 +1280,7 @@ function HomeContent() {
             </div>
 
             {/* Store Promotion Section */}
-            <div className="mb-12">
+            <div className="mb-10">
               <StorePromotion />
             </div>
 
@@ -1328,7 +1345,7 @@ function HomeContent() {
             </motion.section> */}
 
             {/* Categories and Featured Cars Section */}
-            <div className="grid grid-cols-12 gap-8 mb-12">
+            {/* <div className="grid grid-cols-12 gap-8 mb-12">
               <div className="col-span-12">
                 <CategoryButtons onCategorySelect={handleCategorySelect} />
               </div>
@@ -1339,10 +1356,10 @@ function HomeContent() {
                   viewAllLink="/cars"
                 />
               </div>
-            </div>
+            </div> */}
 
             {/* EV Cars Section with improved layout */}
-            <motion.section 
+            {/* <motion.section 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
@@ -1425,10 +1442,10 @@ function HomeContent() {
                   />
                 )}
               </div>
-            </motion.section>
+            </motion.section> */}
 
             {/* Parts and Services Sections with improved spacing */}
-            <motion.section 
+            {/* <motion.section 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
@@ -1470,8 +1487,8 @@ function HomeContent() {
                   </div>
                 ))}
               </div>
-            </motion.section>
-
+            </motion.section> */}
+{/* 
             <motion.section 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -1515,14 +1532,93 @@ function HomeContent() {
                   ))
                 }
               </div>
-            </motion.section>
+            </motion.section> */}
+            
+          {/* Latest News and Featured Stories - Different layouts for mobile and desktop */}
+          <div className="flex flex-col gap-6">
+            {/* Local News Section */}
+            <div className="flex flex-col">
+              <h2 className="text-l text-blue-800 font-bold mb-2 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-0">{t('local_news')}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {localNews.slice(0, 4).map((item) => (
+                  <article
+                    key={item.id}
+                    className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
+                    onClick={() => router.push(`/news/${item.slug}`)}
+                  >
+                    <div className="md:flex bg-white rounded-xl">
+                      <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
+                        {item.cover?.url && (
+                          <Img
+                            src={`http://64.227.112.249${item.cover.url}`}
+                            alt={item.title}
+                            external={true}
+                            width={512}
+                            height={512}
+                            className="object-cover w-full h-full md:h-48"
+                          />
+                        )}
+                      </div>
+                      <div className="mt-1 md:mt-0 md:w-2/3 md:p-2">
+                        <div className="text-sm text-gray-600 mb-0">{t('expert_review')}</div>
+                        <h3 className="font-bold text-lg text-gray-900 mb-0 px-0">{item.title}</h3>
+                        <p className="text-gray-600 text-sm mb-0 px-0">{item.description}</p>
+                        <div className="text-sm text-gray-600 px-0">
+                          <span>{t('by')} {item.author?.data?.attributes?.name || t('unknown_author')}</span>
+                          <span className="mx-0">•</span>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+            {/* World News Section */}
+            <div className="flex flex-col">
+              <h2 className="text-l text-white font-bold mb-2 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-0">{t('world_news')}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {worldNews.slice(0, 4).map((item) => (
+                  <article
+                    key={item.id}
+                    className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
+                    onClick={() => router.push(`/news/${item.slug}`)}
+                  >
+                    <div className="md:flex bg-white rounded-xl">
+                      <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
+                        {item.cover?.url && (
+                          <Img
+                            src={`http://64.227.112.249${item.cover.url}`}
+                            alt={item.title}
+                            external={true}
+                            width={512}
+                            height={512}
+                            className="object-cover w-full h-full md:h-48"
+                          />
+                        )}
+                      </div>
+                      <div className="mt-1 md:mt-0 md:w-2/3 md:p-2">
+                        <div className="text-sm text-gray-600 mb-0">{t('expert_review')}</div>
+                        <h3 className="font-bold text-lg text-gray-900 mb-0 px-0">{item.title}</h3>
+                        <p className="text-gray-600 text-sm mb-0 px-0">{item.description}</p>
+                        <div className="text-sm text-gray-600 px-0">
+                          <span>{t('by')} {item.author?.data?.attributes?.name || t('unknown_author')}</span>
+                          <span className="mx-0">•</span>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
 
+          
             {/* Search Car by Plate Number Section */}
             <motion.section 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
-              className="w-full bg-gradient-to-b from-white to-gray-50 py-6 mb-3 rounded-2xl overflow-hidden"
+              className="w-full bg-gradient-to-b from-white to-gray-50 py-4 mb-1 rounded-2xl overflow-hidden mt-10"
             >
               <motion.div 
                 initial={{ opacity: 0, x: -50 }}
@@ -1532,45 +1628,45 @@ function HomeContent() {
                   ease: [0.6, -0.05, 0.01, 0.99],
                   delay: 0.4
                 }}
-                className="flex flex-col items-center px-4 text-center"
+                className="flex flex-col items-center px-2 text-center"
               >
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
-                  {t('search_by_plate')}
+                <h2 className="text-l text-blue-800 font-bold mb-2 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-0">
+                {t('plate_search_description')}
                 </h2>
-                <p className="text-gray-600 mb-6 max-w-2xl">
-                  {t('plate_search_description')}
-                </p>
+               
                 
                 <div className="w-full max-w-xl">
                   <FindCarByPlate />
                 </div>
 
-                <div className="mt-8 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
-                  <div className="flex items-center gap-2">
+                <div className="mt-6 flex flex-wrap justify-center gap-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-0">
                     <CheckCircle className="w-5 h-5 text-green-500" />
                     <span>{t('instant_results')}</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-0">
                     <Shield className="w-5 h-5 text-blue-500" />
                     <span>{t('secure_search')}</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-0">
                     <Database className="w-5 h-5 text-purple-500" />
                     <span>{t('comprehensive_data')}</span>
                   </div>
                 </div>
               </motion.div>
             </motion.section>
+
           </div>
+          
         </motion.main>
       </div>
 
       {/* Right Ads Section - Hide on mobile */}
       {showcontrols && (
-        <div className="w-[15%] bg-white/10 mt-[5%] backdrop-blur-sm border-l border-gray-200/20 p-4 hidden lg:block">
-          <div className="sticky top-4">
-            <h2 className="text-lg font-semibold text-white mb-4">{t('featured_ads')}</h2>
-            <div className="space-y-4">
+        <div className="w-[15%] bg-white/10 mt-[5%] backdrop-blur-sm border-l border-gray-200/20 p-2 hidden lg:block">
+          <div className="sticky top-2">
+          <h2 className="text-l text-blue-800 font-bold mb-2 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-0">{t('featured_ads')}</h2>
+            <div className="space-y-2">
               <div className="bg-white/5 rounded-lg overflow-hidden">
                 <div className="aspect-video relative">
                   <Img
@@ -1581,10 +1677,10 @@ function HomeContent() {
                     className="object-cover w-full h-full"
                   />
                 </div>
-                <div className="p-3">
+                <div className="p-1">
                   <h3 className="text-white font-medium">{t('car_insurance_offer')}</h3>
-                  <p className="text-sm text-white/60 mt-1">{t('limited_time_offer')}</p>
-                  <button className="mt-2 w-full bg-white text-white py-2 rounded-lg hover:bg-white transition-colors">
+                  <p className="text-sm text-white/60 mt-0">{t('limited_time_offer')}</p>
+                  <button className="mt-0 w-full bg-white text-white py-0 rounded-lg hover:bg-white transition-colors">
                     {t('learn_more')}
                   </button>
                 </div>
@@ -1600,10 +1696,10 @@ function HomeContent() {
                     className="object-cover w-full h-full"
                   />
                 </div>
-                <div className="p-3">
+                <div className="p-1">
                   <h3 className="text-white font-medium">{t('low_interest_loans')}</h3>
-                  <p className="text-sm text-white/60 mt-1">{t('starting_apr')}</p>
-                  <button className="mt-2 w-full bg-white text-white py-2 rounded-lg hover:bg-white transition-colors">
+                  <p className="text-sm text-white/60 mt-0">{t('starting_apr')}</p>
+                  <button className="mt-0 w-full bg-white text-white py-0 rounded-lg hover:bg-white transition-colors">
                     {t('apply_now')}
                   </button>
                 </div>
@@ -1619,10 +1715,10 @@ function HomeContent() {
                     className="object-cover w-full h-full"
                   />
                 </div>
-                <div className="p-3">
+                <div className="p-1">
                   <h3 className="text-white font-medium">{t('premium_service')}</h3>
-                  <p className="text-sm text-white/60 mt-1">{t('free_inspection')}</p>
-                  <button className="mt-2 w-full bg-white text-white py-2 rounded-lg hover:bg-white transition-colors">
+                  <p className="text-sm text-white/60 mt-0">{t('free_inspection')}</p>
+                  <button className="mt-0 w-full bg-white text-white py-0 rounded-lg hover:bg-white transition-colors">
                     {t('book_now')}
                   </button>
                 </div>
