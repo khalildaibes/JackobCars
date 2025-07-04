@@ -402,11 +402,14 @@ export default function NewsPage() {
         throw new Error('Failed to fetch news');
       }
       const data = await response.json();
-      console.log(data.data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()))
+      console.log('Raw API response:', data);
+      console.log('Articles data:', data.data);
 
-
-      setNews(data.data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || []);
+      const sortedNews = data.data ? data.data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) : [];
+      console.log('Sorted news:', sortedNews);
+      setNews(sortedNews);
     } catch (err) {
+      console.error('Error fetching news:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
@@ -421,29 +424,59 @@ export default function NewsPage() {
     });
   };
 
-  const filteredNews = news.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
+  const filteredNews = news.filter(item => 
     item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const featuredNews = filteredNews.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
+  console.log('Filtered news:', filteredNews);
+
+  const featuredNews = filteredNews.filter(item => 
     item.categories?.some(tag => tag.name === "featured")
   );
 
-  const latestNews = filteredNews.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
-    item.categories.some(tag => tag.name === "latest news")
+  const latestNews = filteredNews.filter(item => 
+    item.categories?.some(tag => tag.name === "latest news")
   );
-  const localNews = filteredNews.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
-    item.categories.some(tag => tag.name === "local news")
+  
+  const localNews = filteredNews.filter(item => 
+    item.categories?.some(tag => tag.name === "local news")
   );
-  const worldNews = filteredNews.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
-    item.categories.some(tag => tag.name === "world news")
+  
+  const worldNews = filteredNews.filter(item => 
+    item.categories?.some(tag => tag.name === "world news")
   );
-  const featuredStories = filteredNews.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
-    item.categories.some(tag => tag.name === "featured stories")
+  
+  const featuredStories = filteredNews.filter(item => 
+    item.categories?.some(tag => tag.name === "featured stories")
   );
 
-  const trendingNews = filteredNews;
+  console.log('Categories breakdown:', {
+    total: filteredNews.length,
+    featured: featuredNews.length,
+    latest: latestNews.length,
+    local: localNews.length,
+    world: worldNews.length,
+    stories: featuredStories.length
+  });
+
+  // If no categorized news, show all news in each section for now
+  const trendingNews = filteredNews.slice(0, 10);
+
+  // Fallback logic - if no categorized news, use all news
+  const displayFeaturedStories = featuredStories.length > 0 ? featuredStories : filteredNews.slice(0, 3);
+  const displayLocalNews = localNews.length > 0 ? localNews : filteredNews.slice(0, 4);
+  const displayWorldNews = worldNews.length > 0 ? worldNews : filteredNews.slice(4, 8);
+  const displayLatestNews = latestNews.length > 0 ? latestNews : filteredNews.slice(8, 12);
+
+  console.log('Display arrays:', {
+    featuredStories: displayFeaturedStories.length,
+    localNews: displayLocalNews.length,
+    worldNews: displayWorldNews.length,
+    latestNews: displayLatestNews.length
+  });
+
+  const featuredNewsbanner = filteredNews.length > 0 ? filteredNews[0] : null;
 
   const handleImageUpload = async (file: File, refId: string) => {
     try {
@@ -486,7 +519,7 @@ export default function NewsPage() {
       </div>
     );
   }
-  const featuredNewsbanner = filteredNews.filter(item => item.categories.some(tag => tag.name === "interior"))[0]
+  
   return (
     <div className="min-h-screen bg-[#050B20]">
       
@@ -506,7 +539,7 @@ export default function NewsPage() {
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 w-full max-w-[1400px] mx-auto px-8 mt-[25%] md:mt-[5%] min-h-screen pb-[5%] lg:px-[200px] flex flex-col z-[-50]">
+        <main className="flex-1 w-full max-w-[1400px] mx-auto px-8 mt-[25%] md:mt-[5%] min-h-screen pb-[5%] lg:px-[200px] flex flex-col z-10">
           {/* Trending News Ticker */}
       {trendingNews.length > 0 && (
         <>
@@ -600,7 +633,7 @@ I notice there's a lint error indicating that `TikTokEmbed` is not defined. We n
             <div className="flex flex-col">
               <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('featured_stories')}</h2>
               <div className="space-y-6">
-                {featuredStories.slice(1, 3).map((item) => (
+                {displayFeaturedStories.map((item) => (
                   <article
                     key={item.id}
                     className="md:rounded-xl overflow-hidden cursor-pointer group relative rounded-xl"
@@ -680,7 +713,7 @@ I notice there's a lint error indicating that `TikTokEmbed` is not defined. We n
             <div className="flex flex-col">
               <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('local_news')}</h2>
               <div className="space-y-6">
-                {localNews.map((item) => (
+                {displayLocalNews.map((item) => (
                   <article
                     key={item.id}
                     className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
@@ -718,7 +751,7 @@ I notice there's a lint error indicating that `TikTokEmbed` is not defined. We n
             <div className="flex flex-col">
               <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('world_news')}</h2>
               <div className="space-y-6">
-                {worldNews.map((item) => (
+                {displayWorldNews.map((item) => (
                   <article
                     key={item.id}
                     className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
@@ -759,43 +792,84 @@ I notice there's a lint error indicating that `TikTokEmbed` is not defined. We n
             <div className="flex flex-col">
               <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('featured_news')}</h2>
               <div className="space-y-6">
-                {latestNews
-                  .filter(item => item.categories.some(tag => tag.name === "featured"))
-                  .map((item) => (
-                    <article
-                      key={item.id}
-                      className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
-                      onClick={() => router.push(`/news/${item.slug}`)}
-                    >
-                      <div className="md:flex bg-white rounded-xl">
-                        <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
-                          {item.cover?.url && (
-                            <Img
-                              src={`http://64.227.112.249${item.cover.url}`}
-                              alt={item.title}
-                              external={true}
-                              width={512}
-                              height={512}
-                              className="object-cover w-full h-full md:h-48"
-                            />
-                          )}
-                        </div>
-                        <div className="mt-3 md:mt-0 md:w-2/3 md:p-4">
-                          <div className="text-sm text-gray-600 mb-1">{t('expert_review')}</div>
-                          <h3 className="font-bold text-lg text-gray-900 mb-2 px-2">{item.title}</h3>
-                          <p className="text-gray-600 text-sm mb-2 px-2">{item.description}</p>
-                          <div className="text-sm text-gray-600 px-2">
-                            <span>{t('by')} {item.author?.data?.attributes?.name || t('unknown_author')}</span>
-                            <span className="mx-2">•</span>
-                            <span>{formatDate(item.publishedAt)}</span>
-                          </div>
+                {displayLatestNews.map((item) => (
+                  <article
+                    key={item.id}
+                    className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
+                    onClick={() => router.push(`/news/${item.slug}`)}
+                  >
+                    <div className="md:flex bg-white rounded-xl">
+                      <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
+                        {item.cover?.url && (
+                          <Img
+                            src={`http://64.227.112.249${item.cover.url}`}
+                            alt={item.title}
+                            external={true}
+                            width={512}
+                            height={512}
+                            className="object-cover w-full h-full md:h-48"
+                          />
+                        )}
+                      </div>
+                      <div className="mt-3 md:mt-0 md:w-2/3 md:p-4">
+                        <div className="text-sm text-gray-600 mb-1">{t('expert_review')}</div>
+                        <h3 className="font-bold text-lg text-gray-900 mb-2 px-2">{item.title}</h3>
+                        <p className="text-gray-600 text-sm mb-2 px-2">{item.description}</p>
+                        <div className="text-sm text-gray-600 px-2">
+                          <span>{t('by')} {item.author?.data?.attributes?.name || t('unknown_author')}</span>
+                          <span className="mx-2">•</span>
+                          <span>{formatDate(item.publishedAt)}</span>
                         </div>
                       </div>
-                    </article>
-                  ))}
+                    </div>
+                  </article>
+                ))}
               </div>
             </div>
           </div>
+
+          {/* All News Section - Fallback if nothing else shows */}
+          {filteredNews.length > 0 && (
+            <div className="flex flex-col mt-8">
+              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">All News ({filteredNews.length} articles)</h2>
+              <div className="space-y-6">
+                {filteredNews.map((item) => (
+                  <article
+                    key={item.id}
+                    className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
+                    onClick={() => router.push(`/news/${item.slug}`)}
+                  >
+                    <div className="md:flex bg-white rounded-xl">
+                      <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
+                        {item.cover?.url && (
+                          <Img
+                            src={`http://64.227.112.249${item.cover.url}`}
+                            alt={item.title}
+                            external={true}
+                            width={512}
+                            height={512}
+                            className="object-cover w-full h-full md:h-48"
+                          />
+                        )}
+                      </div>
+                      <div className="mt-3 md:mt-0 md:w-2/3 md:p-4">
+                        <div className="text-sm text-gray-600 mb-1">
+                          Categories: {item.categories?.map(cat => cat.name).join(', ') || 'None'}
+                        </div>
+                        <h3 className="font-bold text-lg text-gray-900 mb-2 px-2">{item.title}</h3>
+                        <p className="text-gray-600 text-sm mb-2 px-2">{item.description}</p>
+                        <div className="text-sm text-gray-600 px-2">
+                          <span>{t('by')} {item.author?.data?.attributes?.name || t('unknown_author')}</span>
+                          <span className="mx-2">•</span>
+                          <span>{formatDate(item.publishedAt)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )}
         </main>
 
         {/* Right Ad Section - Desktop */}
