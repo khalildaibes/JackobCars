@@ -45,9 +45,11 @@ export default async function RootLayout({
             <ComparisonProvider>
               <Navbar />
               <main className="page-content">
-                <TranslateChildren targetLang={'ar'} >{children}</TranslateChildren>
+                <TranslateChildren targetLang={'ar'} >{children}
+                <Analytics />
+    
+                </TranslateChildren>
               </main>
-              <Analytics />
               <Footer />
               <Toaster />
               <div
