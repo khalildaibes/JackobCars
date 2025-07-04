@@ -18,7 +18,6 @@ import { ComparisonProvider } from "../context/ComparisonContext";
 import AccessibilityControls from "../components/AccessibilityControls";
 import GlobalChatPopup from "../components/GlobalChatPopup";
 import { UserActivityProvider } from "../context/UserActivityContext";
-import { Analytics } from "@vercel/analytics/next"
 
 // Initialize store configurations
 initializeStoreConfigs().catch(console.error);
