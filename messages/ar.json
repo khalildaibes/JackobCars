@@ -87,7 +87,7 @@
     "view_more": "عرض المزيد من المقالات",
     "expert_review": "مراجعة خبير",
     "by": "بواسطة",
-    "unknown_author": "مؤلف غير معروف",
+    "unknown_author": "",
     "share_article": "مشاركة المقال",
     "add_comment": "إضافة تعليق",
     "your_comment": "تعليقك",
@@ -96,7 +96,7 @@
     "comments": "التعليقات"
   },
   "HomePage": {
-    "unknown_author": "مؤلف غير معروف",
+    "unknown_author": "",
     "find_car_plate_heading": "ابحث عن سيارتك عن طريق رقم اللوحة",
     "explore_car_specs": "اكتشف مواصفات السيارة",
     "car_catalogue_heading": "كتالوج السيارات",
@@ -331,7 +331,34 @@
     "view_packages": "عرض الباقات",
     "special_offers": "عروض خاصة",
     "partner_offers": "عروض الشركاء",
-    "latest_news": "آخر الأخبار"
+    "latest_news": "آخر الأخبار",
+    "by": "بواسطة",
+    "expert_review": "مراجعة خبير",
+    "world_news": "أخبار عالمية",
+    "total_articles": "إجمالي المقالات",
+    "quick_links": "روابط سريعة",
+    "all_cars": "جميع السيارات",
+    "services": "الخدمات",
+    "parts": "قطع الغيار",
+    "special_deals": "صفقات خاصة",
+    "recent_watched_cars": "السيارات المشاهدة مؤخراً",
+    "electric_cars": "السيارات الكهربائية",
+    "luxury_suvs": "سيارات الدفع الرباعي الفاخرة",
+    "family_sedans": "سيارات السيدان العائلية",
+    "quick_stats": "إحصائيات سريعة",
+    "featured_ads": "إعلانات مميزة",
+    "car_insurance_offer": "عرض تأمين السيارات",
+    "limited_time_offer": "عرض لوقت محدود",
+    "low_interest_loans": "قروض بفوائد منخفضة",
+    "starting_apr": "معدل فائدة سنوي يبدأ من",
+    "apply_now": "تقدم الآن",
+    "premium_service": "خدمة متميزة",
+    "free_inspection": "فحص مجاني",
+    "genuine_parts": "قطع غيار أصلية",
+    "quality_guaranteed": "جودة مضمونة",
+    "premium_wash": "غسيل متميز",
+    "plate_search_description": "ابحث عن سيارتك عن طريق رقم اللوحة",
+    "featured_story": "القصة المميزة"
   },
   "ServiceCard": {
     "view_details": "عرض التفاصيل",
@@ -882,7 +909,7 @@
     "courseBenefits": {
       "whatYoullLearn": "ماذا ستتعلم"
     },
-    "unknown_author": "مؤلف غير معروف",
+    "unknown_author": "",
     "requirements": {
       "heading": "المتطلبات",
       "item1": "لا نحتاج إلى خبرة سابقة أو مهارات محددة مسبقًا لأخذ هذه الدورة. التوجيه الجيد سيكون كافيًا لإتقان تصميم واجهة المستخدم وتجربة المستخدم.",
@@ -1377,7 +1404,7 @@
   "exclusive": "حصري",
   "luxury_rental": "تأجير سيارات فاخرة",
   "luxury_rental_description": "تجربة قيادة السيارات الفاخرة لعطلة نهاية الأسبوع مع تغطية تأمينية كاملة وخدمة كونسيرج",
-  "unknown_author": "مؤلف غير معروف",
+  "unknown_author": "",
   "Navbar": {
     "logo_alt": "شعار MaxSpeedLimit",
     "parts": "قطع الغيار",

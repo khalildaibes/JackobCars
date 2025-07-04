@@ -49,7 +49,7 @@ const AccessibilityControls: React.FC = () => {
   }, [settings]);
 
   return (
-    <div className="fixed z-50 flex flex-col items-start left-24 bottom-20 sm:right-4 sm:bottom-8">
+    <div className="relative flex items-start mt-4">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="bg-blue-600 text-white p-3 sm:p-4 rounded-full shadow-lg hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-blue-400 w-14 h-14 flex items-center justify-center"
@@ -60,8 +60,8 @@ const AccessibilityControls: React.FC = () => {
 
       {isOpen && (
         <div
-          className="mt-2 sm:mt-3 bg-white rounded-lg shadow-xl p-4 sm:p-6 border border-gray-100 animate-fadeIn
-            w-[90vw] max-w-xs left-0 bottom-16 fixed sm:static sm:w-auto sm:max-w-sm md:max-w-md md:w-80 lg:w-96
+          className="absolute bottom-16 left-0 bg-white rounded-lg shadow-xl p-4 sm:p-6 border border-gray-100 animate-fadeIn
+            w-[90vw] max-w-xs sm:w-auto sm:max-w-sm md:max-w-md md:w-80 lg:w-96 z-50
           "
           style={{
             boxSizing: 'border-box',

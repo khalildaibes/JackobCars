@@ -13,7 +13,7 @@ const PageLayout = ({ pageKey, children }: PageLayoutProps) => {
   const t = useTranslations('Pages');
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24 pb-12">
+    <div className="min-h-screen bg-gray-50 pb-12 page-content">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

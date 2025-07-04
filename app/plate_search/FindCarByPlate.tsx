@@ -32,7 +32,7 @@ import {
   ShieldCheck
 } from "lucide-react";
 import Image from "next/image";
-import { useUserActivity } from "../../context/UserActivityContext";
+
 // Move these to environment variables
 const API_BASE_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&q=";
 const ALTERNATE_API_BASE_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=03adc637-b6fe-402b-9937-7c3d3afc9140&q=";
@@ -279,11 +279,6 @@ const CarSearch = () => {
 
   const fetchCarData = async () => {
     if (!plateNumber) return;
-    const { logActivity } = useUserActivity();
-
-    useEffect(() => {
-      logActivity("plate_search", { id: plateNumber, title: plateNumber });
-    }, [plateNumber]);
     // Remove dashes before making the API call
     const cleanPlateNumber = plateNumber.replace(/-/g, '');
     setLoading(true);

@@ -37,14 +37,16 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className="bg-[#050B20] min-h-screen text-black ">
+      <body className="bg-[#050B20] min-h-screen text-black mobile-content">
         <Providers>
           <NextIntlClientProvider messages={messages}>
           <UserActivityProvider>
 
             <ComparisonProvider>
               <Navbar />
-              <TranslateChildren targetLang={'ar'} >{children}</TranslateChildren>
+              <main className="page-content">
+                <TranslateChildren targetLang={'ar'} >{children}</TranslateChildren>
+              </main>
               <Analytics />
               <Footer />
               <Toaster />

@@ -32,7 +32,7 @@ import CategoryButtons from "../components/CategoryButtons";
 import HeroSection from "../components/HeroSection";
 import StorePromotion from "../components/StorePromotion";
 import { getCachedData, setCachedData } from "../utils/cacheUtils";
-import { useUserActivity, UserActivityProvider } from "../context/UserActivityContext";
+import { UserActivityProvider } from "../context/UserActivityContext";
 import { formatDate } from "react-datepicker/dist/date_utils";
 import NewsArticleList from "../components/NewsArticleList";
 
@@ -249,6 +249,8 @@ const fetchArticles = async () => {
   return data;
 };
 
+// Comment out other fetch functions for now
+/*
 const fetchDeals = async (): Promise<Deal[]> => {
   // const cachedData = getCookie('dealsData');
   // if (cachedData) {
@@ -270,6 +272,7 @@ const fetchDeals = async (): Promise<Deal[]> => {
   setCookie('dealsData', data.data);
   return data.data;
 };
+
 const fetchHomePageData = async (): Promise<HomePageData> => {
   const response = await fetch('/api/homepage?store_hostname=64.227.112.249');
   if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
@@ -330,6 +333,7 @@ const fetchStories = async (): Promise<Story[]> => {
   setCookie('storiesData', data.data);
   return data.data;
 };
+*/
 
 // Normalization functions
 const normalizeFuelType = (rawFuelType: string): string => {
@@ -471,7 +475,6 @@ function HomeContent() {
   const [isLoadingCache, setIsLoadingCache] = useState(true);
   const [cachedArticles, setCachedArticles] = useState<TransformedArticle[]>([]);
   const [isLoadingArticlesCache, setIsLoadingArticlesCache] = useState(true);
-  const { logActivity } = useUserActivity();
 
   // Get search params with memoization
   const { selectedFuel, selectedYear, selectedManufacturer, selectedLimit, selectedModel } = useMemo(() => ({
@@ -486,57 +489,25 @@ function HomeContent() {
   const queryResults = useQueries({
     queries: [
       {
-        queryKey: ['cars', selectedManufacturer, selectedModel, selectedYear, selectedFuel, selectedLimit],
-        queryFn: () => fetchCars({
-          manufacturer: selectedManufacturer || "",
-          year: selectedYear ? parseInt(selectedYear, 10) : 0,
-          fuel: selectedFuel || "",
-          limit: selectedLimit ? parseInt(selectedLimit, 10) : 12,
-          model: selectedModel || "",
-        }),
-        enabled: !!selectedManufacturer || !!selectedModel
-      },
-      {
-        queryKey: ['deals'],
-        queryFn: fetchDeals
-      },
-      {
         queryKey: ['articles'],
         queryFn: fetchArticles
-      },
-      {
-        queryKey: ['parts'],
-        queryFn: fetchParts
-      },
-      {
-        queryKey: ['services'],
-        queryFn: fetchServices
-      },
-      {
-        queryKey: ['stories'],
-        queryFn: fetchStories
       },
     ]
   });
 
   // Destructure the results with proper typing
   const [
-    { data: carsData, isLoading: isLoadingCars, error: carsError },
-    { data: dealsData, isLoading: isLoadingDeals, error: dealsError },
     { data: articlesData, isLoading: isLoadingArticles, error: articlesError },
-    { data: partsData, isLoading: isLoadingParts, error: partsError },
-    { data: servicesData, isLoading: isLoadingServices, error: servicesError },
-    { data: storiesData, isLoading: isLoadingStories, error: storiesError }
   ] = queryResults;
 
   // Check for any errors
   useEffect(() => {
-    const errors = [carsError, dealsError, articlesError, partsError, servicesError, storiesError];
+    const errors = [articlesError];
     const firstError = errors.find(error => error);
     if (firstError) {
       setError(firstError.message);
     }
-  }, [carsError, dealsError, articlesError, partsError, servicesError, storiesError]);
+  }, [articlesError]);
 
   // Check if any query is still loading
   const isLoading = queryResults.some(result => result.isLoading);
@@ -587,56 +558,9 @@ function HomeContent() {
       return cachedListings;
     }
     
-    if (isLoadingDeals || !dealsData) return [];
-    
-    const deals = dealsData as Deal[];
-    const transformedListings = deals.map((product: Deal): Listing => {
-      let categories: string[] = [];
-      
-      if (!product.categories) {
-        categories = [];
-      } else if (typeof product.categories === 'string') {
-        categories = product.categories.split(",").map(c => c.toLowerCase().trim());
-      } else if (Array.isArray(product.categories)) {
-        categories = product.categories.map(cat => {
-          if (typeof cat === 'string') {
-            return cat.toLowerCase().trim();
-          }
-          return cat.name.toLowerCase().trim();
-        });
-      }
-
-      return {
-        id: parseInt(product.id),
-        mainImage: product.image ? `http://${product.store.hostname}${product.image?.url}` : "/default-car.png",
-        alt: product.name || "Car Image",
-        title: product.name,
-        store: product.store,
-        hostname: product.store.hostname,
-        slug: product.slug,
-        miles: product.details?.car.miles || "N/A",
-        fuel: normalizeFuelType(product.details?.car.fuel || "Unknown"),
-        condition: product.details?.car.condition || "Used",
-        transmission: product.details?.car.transmission || "Unknown",
-        details: product.details?.car.transmission || "Unknown",
-        price: `${product.price.toLocaleString()}`,
-        mileage: product.details?.car.miles || "N/A",
-        year: product.details?.car.year || 2025,
-        fuelType: normalizeFuelType(product.details?.car.fuel || "Unknown"),
-        make: normalizeMake(product.details?.car.make || "Unknown"),
-        bodyType: normalizeBodyType(product.details?.car.body_type || "Unknown"),
-        description: product.details?.car.description || "Unknown",
-        features: product.details?.car.features?.map((feature) => feature.value) || [],
-        category: categories,
-        categories: categories.map(cat => ({ name: cat }))
-      };
-    });
-
-    // Cache the transformed listings for 2 hours
-    setCachedData('deals_listings', transformedListings, 2 * 60 * 60); // 2 hours in seconds
-    
-    return transformedListings;
-  }, [dealsData, isLoadingDeals, cachedListings, isLoadingCache]);
+    // Since we're only loading articles now, return empty array for listings
+    return [];
+  }, [cachedListings, isLoadingCache]);
 
   // Update the transformedArticles useMemo
   const transformedArticles = useMemo(() => {
@@ -672,51 +596,17 @@ function HomeContent() {
     return transformed;
   }, [articlesData, t, cachedArticles, isLoadingArticlesCache]);
 
-  // Transform parts data with proper type checking
+  // Transform parts data with proper type checking - return empty for now
   const transformedParts = useMemo(() => {
-    if (!partsData) return [];
-    
-    const parts = partsData as Part[];
-    return parts.map((part: Part): TransformedPart => ({
-      id: part.id,
-      title: part.title,
-      slug: part.slug,
-      price: part.price,
-      details: part.details,
-      categories: part.categories,
-      stores: part.stores,
-      images: part.images,
-      features: undefined,
-      description: ""
-    }));
-  }, [partsData]);
+    // Since we're only loading articles now, return empty array for parts
+    return [];
+  }, []);
 
-  // Transform services data with proper type checking
+  // Transform services data with proper type checking - return empty for now
   const transformedServices = useMemo(() => {
-    if (!servicesData) return [];
-    
-    const services = servicesData as Service[];
-    return services.map((service: Service) => {
-      const imageUrl = service.image?.url || null;
-
-      return {
-        id: parseInt(service.id),
-        mainImage: imageUrl 
-          ? `http://${service.stores[0].hostname}${imageUrl}`
-          : "/default-service.png",
-        alt: service.title || "Service Image",
-        title: service.title,
-        slug: service.slug, 
-        description: service.details?.description || "",
-        price: service.price,
-        features: service.details ? service.details.features.map((feature) => feature.value) || [] : [],
-        categories: service.categories || [],
-        stores: service.stores || [],
-        hostname: service.stores?.[0]?.hostname || "",
-        image: service.image || { url: "/default-service.png" }
-      };
-    });
-  }, [servicesData]);
+    // Since we're only loading articles now, return empty array for services
+    return [];
+  }, []);
 
   // News slider state and functions
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -762,6 +652,7 @@ function HomeContent() {
   }, [router]);
 
   // Memoized data for LookingForCar component
+  /*
   const lookingForCarData = useMemo(() => [
     {
       text: t("looking_for_car_text"),
@@ -782,60 +673,7 @@ function HomeContent() {
       icon: "/icons/car-icon.svg"
     }
   ], [t]);
-
-  // Filter listings based on selected category
-  const filteredListings = useMemo(() => {
-    if (!selectedCategory) return listings;
-    return listings.filter(listing => {
-      return listing;
-    });
-  }, [listings, selectedCategory, t]);
-
-  // Filter parts based on featured category
-  const filteredParts = useMemo(() => {
-    return transformedParts.filter((part: TransformedPart) => {
-      return part.categories?.some(cat => 
-        cat.name.toLowerCase().includes('featured')
-      ) ?? false;
-    });
-  }, [transformedParts]);
-
-  // Filter listings for EV section
-  const evListings = useMemo(() => {
-    return filteredListings.filter(listing => 
-      listing.category.some(cat => cat.toLowerCase().includes('featured')) && 
-      listing.category.some(cat => cat.toLowerCase().includes('electric_vehicles'))
-    );
-  }, [filteredListings]);
-
-  // Fetch stories
-  useEffect(() => {
-    const fetchStories = async () => {
-      try {
-        const response = await fetch('/api/stories?store_hostname=64.227.112.249');
-        const data = await response.json();
-        setStories(data.data);
-        console.log("Stories:", data.data);
-      } catch (error) {
-        console.error('Error fetching stories:', error);
-      }
-    };
-
-    fetchStories();
-  }, []);
-
-  // Auto-advance stories
-  useEffect(() => {
-    if (stories.length > 0) {
-      const timer = setInterval(() => {
-        setCurrentStoryIndex((prev) => (prev + 1) % stories.length);
-      }, 5000); // Change story every 5 seconds
-
-      return () => clearInterval(timer);
-    }
-  }, [stories?.length]);
-
-
+  */
 
   // Auto-advance stories
   useEffect(() => {
@@ -848,8 +686,6 @@ function HomeContent() {
     }
   }, [transformedArticles?.length]);
 
-
-  
   // Auto-advance stories
   useEffect(() => {
     if (transformedArticles?.length > 0) {
@@ -860,7 +696,6 @@ function HomeContent() {
       return () => clearInterval(timer);
     }
   }, [transformedArticles?.length]);
-
 
   // Add handler for category selection
   const handleCategorySelect = (category: string) => {
@@ -875,12 +710,12 @@ function HomeContent() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center p-6">
-          <h2 className="text-2xl font-bold text-red-600 mb-2">Error Loading Page</h2>
+        <div className="text-center p-8">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Page</h2>
           <p className="text-gray-600">{error}</p>
           <button 
             onClick={() => window.location.reload()} 
-            className="mt-2 px-2 py-0 bg-white text-white rounded-lg hover:bg-white"
+            className="mt-4 px-4 py-2 bg-white text-white rounded-lg hover:bg-white"
           >
             Retry
           </button>
@@ -895,7 +730,7 @@ function HomeContent() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading...</p>
+          <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
     );
@@ -929,53 +764,49 @@ function HomeContent() {
 
       {/* Left Dashboard - Hide on mobile */}
       {showads && (
-        <div className="w-[15%] bg-white/10 mt-[5%] backdrop-blur-sm border-r border-gray-200/20 p-2 hidden lg:block ${!isAdmin ? 'invisible' : ''}">
-          <div className="sticky top-2">
-          <h2 className="text-l text-blue-800 font-bold mb-2 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-0">{t('quick_links')}</h2>
-            <nav className="space-y-0">
-              <Link href="/car-listings" className="flex items-center gap-0 text-white/80 hover:text-white transition-colors">
+        <div className="w-[15%] bg-white/10 mt-[5%] backdrop-blur-sm border-r border-gray-200/20 p-4 hidden lg:block ${!isAdmin ? 'invisible' : ''}">
+          <div className="sticky top-4">
+          <h2 className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">{t('quick_links')}</h2>
+            <nav className="space-y-2">
+              <Link href="/car-listings" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
                 <Car className="w-4 h-4" />
                 <span>{t('all_cars')}</span>
               </Link>
-              <Link href="/services" className="flex items-center gap-0 text-white/80 hover:text-white transition-colors">
+              <Link href="/services" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
                 <Settings className="w-4 h-4" />
                 <span>{t('services')}</span>
               </Link>
-              <Link href="/parts" className="flex items-center gap-0 text-white/80 hover:text-white transition-colors">
+              <Link href="/parts" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
                 <Wrench className="w-4 h-4" />
                 <span>{t('parts')}</span>
               </Link>
-              <Link href="/car-listings" className="flex items-center gap-0 text-white/80 hover:text-white transition-colors">
+              <Link href="/car-listings" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
                 <Tag className="w-4 h-4" />
                 <span>{t('special_deals')}</span>
               </Link>
             </nav>
 
-            <div className="mt-6">
-            <h2 className="text-l text-blue-800 font-bold mb-2 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-0">{t('recent_watched_cars')}</h2>
-              <div className="space-y-0">
-                <button className="w-full text-left px-1 py-0 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
+            <div className="mt-8">
+            <h2 className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">{t('recent_watched_cars')}</h2>
+              <div className="space-y-2">
+                <button className="w-full text-left px-3 py-2 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
                   {t('electric_cars')}
                 </button>
-                <button className="w-full text-left px-1 py-0 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
+                <button className="w-full text-left px-3 py-2 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
                   {t('luxury_suvs')}
                 </button>
-                <button className="w-full text-left px-1 py-0 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
+                <button className="w-full text-left px-3 py-2 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
                   {t('family_sedans')}
                 </button>
               </div>
             </div>
 
-            <div className="mt-6">
-            <h2 className="text-l text-blue-800 font-bold mb-2 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-0">{t('quick_stats')}</h2>
-              <div className="space-y-1">
-                <div className="bg-white/5 rounded-lg p-1">
-                  <p className="text-sm text-white/60">{t('total_listings')}</p>
-                  <p className="text-l font-bold text-white">{listings.length}</p>
-                </div>
-                <div className="bg-white/5 rounded-lg p-1">
-                  <p className="text-sm text-white/60">{t('featured_cars')}</p>
-                  <p className="text-l font-bold text-white">{listings.filter(l => l.category.some(cat => cat.toLowerCase().includes('featured'))).length}</p>
+            <div className="mt-8">
+            <h2 className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">{t('quick_stats')}</h2>
+              <div className="space-y-3">
+                <div className="bg-white/5 rounded-lg p-3">
+                  <p className="text-sm text-white/60">{t('total_articles')}</p>
+                  <p className="text-l font-bold text-white">{transformedArticles.length}</p>
                 </div>
               </div>
             </div>
@@ -989,12 +820,12 @@ function HomeContent() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="flex flex-col w-full overflow-hidden mt-[5%] px-0 sm:px-2 md:px-4 rounded-xl"
+          className="flex flex-col w-full overflow-hidden mt-[5%] px-2 sm:px-4 md:px-6 rounded-xl"
         >
           {/* Featured Stories Section */}
-          <div className="flex flex-col w-full px-2 mb-6 lg:hidden">
-          <h2 className="text-l text-blue-800 font-bold mb-2 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-0">{t('featured_stories')}</h2>
-              <div className="space-y-2">
+          <div className="flex flex-col w-full px-4 mb-8 lg:hidden">
+          <h2 className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">{t('featured_stories')}</h2>
+              <div className="space-y-4">
                 {transformedArticles.slice(1, 4).map((item) => (
                   <article
                     key={item.id}
@@ -1013,9 +844,9 @@ function HomeContent() {
                         />
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-                        <div className="absolute bottom-0 left-0 right-0 p-2">
-                          <div className="text-[10px] text-white mb-0 font-bold uppercase tracking-wider bg-white/5 rounded-full px-0 py-0 inline-block">{t('expert_review')}</div>
-                          <h3 className="font-bold text-base text-white mb-0 line-clamp-2">{item.title}</h3>
+                        <div className="absolute bottom-0 left-0 right-0 p-4">
+                          <div className="text-[10px] text-white mb-1 font-bold uppercase tracking-wider bg-white/5 rounded-full px-2 py-0.5 inline-block">{t('expert_review')}</div>
+                          <h3 className="font-bold text-base text-white mb-1 line-clamp-2">{item.title}</h3>
                           <div className="text-xs text-gray-300">
                             By {item.author || t('unknown_author')}
                           </div>
@@ -1027,8 +858,8 @@ function HomeContent() {
               </div>
             </div>
           {/* 1. Hero Banner Section */}
-          <div className="relative z-10 flex flex-col lg:flex-row gap-0 px-0 lg:px-2 items-stretch min-h-0 justify-center items-center mb-6 w-full md:w-[80%] mx-auto">
-            <div className="w-full lg:w-full flex flex-col gap-0">
+          <div className="relative z-10 flex flex-col lg:flex-row gap-2 px-2 lg:px-4 items-stretch min-h-0 justify-center items-center mb-8 w-full md:w-[80%] mx-auto">
+            <div className="w-full lg:w-full flex flex-col gap-2">
              
               {/* Hero Section
               <div className="w-full bg-gradient-to-br h-full from-blue-100 via-blue-300 from-white rounded-lg shadow-lg p-1 flex items-center justify-center">
@@ -1038,7 +869,7 @@ function HomeContent() {
               </div> */}
             </div>
 
-            <div className="w-full lg:w-[30%] flex flex-col gap-0">
+            <div className="w-full lg:w-[30%] flex flex-col gap-2">
               {/* <div className="w-full bg-gradient-to-br from-blue-100 via-blue-300 from-white rounded-lg shadow-lg p-1 h-[320px] min-h-[320px] max-h-[320px] hidden lg:block">
                  {transformedArticles
                     .filter(article => article.category.includes('featured'))
@@ -1158,22 +989,22 @@ function HomeContent() {
           
 
           {/* Main Content Container */}
-          <div className="container mx-auto w-full px-2 sm:px-4 lg:px-6 max-w-7xl overflow-x-hidden">
+          <div className="container mx-auto w-full px-4 sm:px-6 lg:px-8 max-w-7xl overflow-x-hidden">
             
             {/* Magazine-style Grid Layout */}
-            <div className="grid grid-cols-1 gap-4 mb-6">
+            <div className="grid grid-cols-1 gap-6 mb-8">
 
               {/* Featured Article - Spans full width */}
-              <div className="col-span-12 mb-6">
+              <div className="col-span-12 mb-8 hidden ">
                 <motion.section 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.8 }}
-                  className="w-full bg-gradient-to-b from-white to-gray-50 py-0 rounded-2xl overflow-hidden"
+                  className="w-full bg-gradient-to-b from-white to-gray-50 py-2 rounded-2xl overflow-hidden"
                 >
-                  <div className="px-4">
-                    <h2 className="text-l text-blue-800 font-bold bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-0">{t('featured_story')}</h2>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="px-6">
+                    <h2 className="text-l text-blue-800 font-bold bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">{t('featured_story')}</h2>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                       <div className="relative h-[400px] rounded-xl overflow-hidden">
                         <Img
                           src={visibleArticles[0]?.imageUrl ? `http://64.227.112.249${visibleArticles[0].imageUrl}` : '/default-article.jpg'}
@@ -1185,12 +1016,12 @@ function HomeContent() {
                         />
                       </div>
                       <div className="flex flex-col justify-center">
-                        <span className="text-sm font-medium text-blue-600 bg-blue-50 px-1 py-0 rounded-full w-fit mb-2">
+                        <span className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full w-fit mb-4">
                           {visibleArticles[0]?.category}
                         </span>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2">{visibleArticles[0]?.title}</h3>
-                        <p className="text-gray-600 mb-4">{visibleArticles[0]?.excerpt}</p>
-                        <div className="flex items-center gap-2">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-4">{visibleArticles[0]?.title}</h3>
+                        <p className="text-gray-600 mb-6">{visibleArticles[0]?.excerpt}</p>
+                        <div className="flex items-center gap-4">
                           <span className="text-sm text-gray-500">{visibleArticles[0]?.date}</span>
                           <span className="text-sm font-medium">{visibleArticles[0]?.author}</span>
                         </div>
@@ -1206,21 +1037,21 @@ function HomeContent() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.8 }}
-                  className="w-full bg-white py-0 rounded-2xl hidden lg:block"
+                  className="w-full bg-white py-2 rounded-2xl hidden lg:block"
                 >
-                  <div className="px-4 mb-6 ">
+                  <div className="px-6 mb-8 ">
                     <div className="flex items-center justify-between">
-                    <h2 className="text-l text-blue-800 font-bold mb-2 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-0">{t('latest_news')}</h2>
-                      <div className="flex items-center gap-2">
+                    <h2 className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">{t('latest_news')}</h2>
+                      <div className="flex items-center gap-4">
                         <button
                           onClick={prevSlide}
-                          className="p-0 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                          className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                         >
                           <ChevronRight className="w-5 h-5" />
                         </button>
                         <button
                           onClick={nextSlide}
-                          className="p-0 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                          className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                         >
                           <ChevronLeft className="w-5 h-5" />
                         </button>
@@ -1228,7 +1059,7 @@ function HomeContent() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 ">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6 ">
                     {transformedArticles.slice(1, 4).map((article: TransformedArticle, index) => (
                       <motion.div
                         key={article.id}
@@ -1251,17 +1082,17 @@ function HomeContent() {
                             external={true}
                           />
                         </div>
-                        <div className="p-4">
-                          <div className="flex items-center gap-0 mb-1">
-                            <span className="text-xs font-medium text-blue-600 bg-blue-50 px-0 py-0 rounded-full">
+                        <div className="p-6">
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
                               {article.category}
                             </span>
                             <span className="text-xs text-gray-500">{article.date}</span>
                           </div>
-                          <h3 className="text-lg font-bold text-gray-900 mb-0 line-clamp-2">
+                          <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
                             {article.title}
                           </h3>
-                          <p className="text-gray-600 text-sm mb-2 line-clamp-2">
+                          <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                             {article.excerpt}
                           </p>
                           <div className="flex items-center justify-between">
@@ -1280,7 +1111,7 @@ function HomeContent() {
             </div>
 
             {/* Store Promotion Section */}
-            <div className="mb-10">
+            <div className="mb-12">
               <StorePromotion />
             </div>
 
@@ -1345,7 +1176,8 @@ function HomeContent() {
             </motion.section> */}
 
             {/* Categories and Featured Cars Section */}
-            {/* <div className="grid grid-cols-12 gap-8 mb-12">
+            {/* 
+            <div className="grid grid-cols-12 gap-8 mb-12">
               <div className="col-span-12">
                 <CategoryButtons onCategorySelect={handleCategorySelect} />
               </div>
@@ -1356,10 +1188,12 @@ function HomeContent() {
                   viewAllLink="/cars"
                 />
               </div>
-            </div> */}
+            </div>
+            */}
 
             {/* EV Cars Section with improved layout */}
-            {/* <motion.section 
+            {/* 
+            <motion.section 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
@@ -1442,10 +1276,12 @@ function HomeContent() {
                   />
                 )}
               </div>
-            </motion.section> */}
+            </motion.section>
+            */}
 
             {/* Parts and Services Sections with improved spacing */}
-            {/* <motion.section 
+            {/* 
+            <motion.section 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
@@ -1487,8 +1323,8 @@ function HomeContent() {
                   </div>
                 ))}
               </div>
-            </motion.section> */}
-{/* 
+            </motion.section>
+
             <motion.section 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -1532,14 +1368,15 @@ function HomeContent() {
                   ))
                 }
               </div>
-            </motion.section> */}
+            </motion.section>
+            */}
             
           {/* Latest News and Featured Stories - Different layouts for mobile and desktop */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-8">
             {/* Local News Section */}
             <div className="flex flex-col">
-              <h2 className="text-l text-blue-800 font-bold mb-2 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-0">{t('local_news')}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <h2 className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">{t('local_news')}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {localNews.slice(0, 4).map((item) => (
                   <article
                     key={item.id}
@@ -1559,13 +1396,13 @@ function HomeContent() {
                           />
                         )}
                       </div>
-                      <div className="mt-1 md:mt-0 md:w-2/3 md:p-2">
-                        <div className="text-sm text-gray-600 mb-0">{t('expert_review')}</div>
-                        <h3 className="font-bold text-lg text-gray-900 mb-0 px-0">{item.title}</h3>
-                        <p className="text-gray-600 text-sm mb-0 px-0">{item.description}</p>
-                        <div className="text-sm text-gray-600 px-0">
+                      <div className="mt-3 md:mt-0 md:w-2/3 md:p-4">
+                        <div className="text-sm text-gray-600 mb-1">{t('expert_review')}</div>
+                        <h3 className="font-bold text-lg text-gray-900 mb-2 px-2">{item.title}</h3>
+                        <p className="text-gray-600 text-sm mb-2 px-2">{item.description}</p>
+                        <div className="text-sm text-gray-600 px-2">
                           <span>{t('by')} {item.author?.data?.attributes?.name || t('unknown_author')}</span>
-                          <span className="mx-0">•</span>
+                          <span className="mx-2">•</span>
                         </div>
                       </div>
                     </div>
@@ -1575,8 +1412,8 @@ function HomeContent() {
             </div>
             {/* World News Section */}
             <div className="flex flex-col">
-              <h2 className="text-l text-white font-bold mb-2 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-0">{t('world_news')}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <h2 className="text-l text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-2">{t('world_news')}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {worldNews.slice(0, 4).map((item) => (
                   <article
                     key={item.id}
@@ -1596,13 +1433,13 @@ function HomeContent() {
                           />
                         )}
                       </div>
-                      <div className="mt-1 md:mt-0 md:w-2/3 md:p-2">
-                        <div className="text-sm text-gray-600 mb-0">{t('expert_review')}</div>
-                        <h3 className="font-bold text-lg text-gray-900 mb-0 px-0">{item.title}</h3>
-                        <p className="text-gray-600 text-sm mb-0 px-0">{item.description}</p>
-                        <div className="text-sm text-gray-600 px-0">
+                      <div className="mt-3 md:mt-0 md:w-2/3 md:p-4">
+                        <div className="text-sm text-gray-600 mb-1">{t('expert_review')}</div>
+                        <h3 className="font-bold text-lg text-gray-900 mb-2 px-2">{item.title}</h3>
+                        <p className="text-gray-600 text-sm mb-2 px-2">{item.description}</p>
+                        <div className="text-sm text-gray-600 px-2">
                           <span>{t('by')} {item.author?.data?.attributes?.name || t('unknown_author')}</span>
-                          <span className="mx-0">•</span>
+                          <span className="mx-2">•</span>
                         </div>
                       </div>
                     </div>
@@ -1618,7 +1455,7 @@ function HomeContent() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
-              className="w-full bg-gradient-to-b from-white to-gray-50 py-4 mb-1 rounded-2xl overflow-hidden mt-10"
+              className="w-full bg-gradient-to-b from-white to-gray-50 py-6 mb-3 rounded-2xl overflow-hidden mt-12"
             >
               <motion.div 
                 initial={{ opacity: 0, x: -50 }}
@@ -1628,9 +1465,9 @@ function HomeContent() {
                   ease: [0.6, -0.05, 0.01, 0.99],
                   delay: 0.4
                 }}
-                className="flex flex-col items-center px-2 text-center"
+                className="flex flex-col items-center px-4 text-center"
               >
-                <h2 className="text-l text-blue-800 font-bold mb-2 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-0">
+                <h2 className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">
                 {t('plate_search_description')}
                 </h2>
                
@@ -1639,16 +1476,16 @@ function HomeContent() {
                   <FindCarByPlate />
                 </div>
 
-                <div className="mt-6 flex flex-wrap justify-center gap-2 text-sm text-gray-600">
-                  <div className="flex items-center gap-0">
+                <div className="mt-8 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+                  <div className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5 text-green-500" />
                     <span>{t('instant_results')}</span>
                   </div>
-                  <div className="flex items-center gap-0">
+                  <div className="flex items-center gap-2">
                     <Shield className="w-5 h-5 text-blue-500" />
                     <span>{t('secure_search')}</span>
                   </div>
-                  <div className="flex items-center gap-0">
+                  <div className="flex items-center gap-2">
                     <Database className="w-5 h-5 text-purple-500" />
                     <span>{t('comprehensive_data')}</span>
                   </div>
@@ -1663,10 +1500,10 @@ function HomeContent() {
 
       {/* Right Ads Section - Hide on mobile */}
       {showcontrols && (
-        <div className="w-[15%] bg-white/10 mt-[5%] backdrop-blur-sm border-l border-gray-200/20 p-2 hidden lg:block">
-          <div className="sticky top-2">
-          <h2 className="text-l text-blue-800 font-bold mb-2 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-0">{t('featured_ads')}</h2>
-            <div className="space-y-2">
+        <div className="w-[15%] bg-white/10 mt-[5%] backdrop-blur-sm border-l border-gray-200/20 p-4 hidden lg:block">
+          <div className="sticky top-4">
+          <h2 className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">{t('featured_ads')}</h2>
+            <div className="space-y-4">
               <div className="bg-white/5 rounded-lg overflow-hidden">
                 <div className="aspect-video relative">
                   <Img
@@ -1677,10 +1514,10 @@ function HomeContent() {
                     className="object-cover w-full h-full"
                   />
                 </div>
-                <div className="p-1">
+                <div className="p-3">
                   <h3 className="text-white font-medium">{t('car_insurance_offer')}</h3>
-                  <p className="text-sm text-white/60 mt-0">{t('limited_time_offer')}</p>
-                  <button className="mt-0 w-full bg-white text-white py-0 rounded-lg hover:bg-white transition-colors">
+                  <p className="text-sm text-white/60 mt-1">{t('limited_time_offer')}</p>
+                  <button className="mt-2 w-full bg-white text-white py-2 rounded-lg hover:bg-white transition-colors">
                     {t('learn_more')}
                   </button>
                 </div>
@@ -1696,10 +1533,10 @@ function HomeContent() {
                     className="object-cover w-full h-full"
                   />
                 </div>
-                <div className="p-1">
+                <div className="p-3">
                   <h3 className="text-white font-medium">{t('low_interest_loans')}</h3>
-                  <p className="text-sm text-white/60 mt-0">{t('starting_apr')}</p>
-                  <button className="mt-0 w-full bg-white text-white py-0 rounded-lg hover:bg-white transition-colors">
+                  <p className="text-sm text-white/60 mt-1">{t('starting_apr')}</p>
+                  <button className="mt-2 w-full bg-white text-white py-2 rounded-lg hover:bg-white transition-colors">
                     {t('apply_now')}
                   </button>
                 </div>
@@ -1715,10 +1552,10 @@ function HomeContent() {
                     className="object-cover w-full h-full"
                   />
                 </div>
-                <div className="p-1">
+                <div className="p-3">
                   <h3 className="text-white font-medium">{t('premium_service')}</h3>
-                  <p className="text-sm text-white/60 mt-0">{t('free_inspection')}</p>
-                  <button className="mt-0 w-full bg-white text-white py-0 rounded-lg hover:bg-white transition-colors">
+                  <p className="text-sm text-white/60 mt-1">{t('free_inspection')}</p>
+                  <button className="mt-2 w-full bg-white text-white py-2 rounded-lg hover:bg-white transition-colors">
                     {t('book_now')}
                   </button>
                 </div>
@@ -1733,12 +1570,6 @@ function HomeContent() {
 
 
 export default function HomePage() {
-  const { logActivity } = useUserActivity();
-
-  useEffect(() => {
-    logActivity("page_view", { path: "/home" });
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <UserActivityProvider>

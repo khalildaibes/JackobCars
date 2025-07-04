@@ -218,7 +218,20 @@
     "premium_parts": "חלקי חילוף איכותיים",
     "automotive_services": "שירותי רכב",
     "book_service": "הזמן שירות",
-    "view_packages": "צפה בחבילות"
+    "view_packages": "צפה בחבילות",
+    "by": "מאת",
+    "expert_review": "ביקורת מומחה",
+    "world_news": "חדשות עולמיות",
+    "local_news": "חדשות מקומיות",
+    "total_articles": "סה״כ מאמרים",
+    "secure_search": "חיפוש מאובטח",
+    "instant_results": "תוצאות מיידיות",
+    "comprehensive_data": "נתונים מקיפים",
+    "plate_search_description": "חפש את הרכב שלך לפי מספר לוחית",
+    "genuine_parts": "חלקי חילוף מקוריים",
+    "quality_guaranteed": "איכות מובטחת",
+    "premium_wash": "שטיפה איכותית",
+    "featured_story": "סיפור מומלץ"
   },
   "ServiceCard": {
     "view_details": "הצג פרטים",

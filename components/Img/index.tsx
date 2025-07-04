@@ -15,6 +15,10 @@ type ImgProps = React.DetailedHTMLProps<
     external: boolean; // New prop to decide image source
     width: number;
     height: number;
+    priority?: boolean; // For above-the-fold images
+    quality?: number; // Custom quality setting
+    placeholder?: "blur" | "empty";
+    blurDataURL?: string;
   }>;
 
 const Img: React.FC<React.PropsWithChildren<ImgProps>> = ({
@@ -24,6 +28,10 @@ const Img: React.FC<React.PropsWithChildren<ImgProps>> = ({
   external = false, // Default is false (local images)
   width,
   height,
+  priority = false,
+  quality = 90, // High quality by default
+  placeholder = "empty",
+  blurDataURL,
   ...restProps
 }) => {
   const [imgSrc, setImgSrc] = React.useState(src);
@@ -44,6 +52,11 @@ const Img: React.FC<React.PropsWithChildren<ImgProps>> = ({
       alt={alt}
       width={width}
       height={height}
+      priority={priority}
+      quality={quality}
+      placeholder={placeholder}
+      blurDataURL={blurDataURL}
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       {...restProps}
       onError={handleError}
     />
@@ -51,3 +64,4 @@ const Img: React.FC<React.PropsWithChildren<ImgProps>> = ({
 };
 
 export { Img };
+export default Img;

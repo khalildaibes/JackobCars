@@ -33,7 +33,7 @@ const contactDetails = [
 
 export default function ContactUsPage() {
   return (
-    <div className="relative w-full content-center lg:h-auto md:h-auto">
+    <div className="relative w-full content-center lg:h-auto md:h-auto page-content">
       <div className="w-full overflow-x-scroll bg-white-a700">
         <Header className="bg-black-900 px-[60px] py-7 md:flex-col md:px-5 sm:p-4" />
         <div>

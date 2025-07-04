@@ -113,12 +113,12 @@ export default function Navbar() {
   };
 
   const dropdownItems = {
-    carsMarket: [
-      { label: t("dropdown.cars_market.new_cars"), href: "/car-listing" },
-      { label: t("dropdown.cars_market.used_cars"), href: "/car-listing" },
-      { label: t("dropdown.cars_market.electric_vehicles"), href: "/car-listing" },
-      { label: t("dropdown.cars_market.luxury_cars"), href: "/car-listing" }
-    ],
+    // carsMarket: [
+    //   { label: t("dropdown.cars_market.new_cars"), href: "/car-listing" },
+    //   { label: t("dropdown.cars_market.used_cars"), href: "/car-listing" },
+    //   { label: t("dropdown.cars_market.electric_vehicles"), href: "/car-listing" },
+    //   { label: t("dropdown.cars_market.luxury_cars"), href: "/car-listing" }
+    // ],
     plate_search: [
       { label: t("dropdown.find_by_plate.plate_search"), href: "/plate_search" },
       // { label: t("dropdown.find_by_plate.vehicle_history"), href: "/plate_search" },
@@ -129,21 +129,21 @@ export default function Navbar() {
       { label: t("dropdown.news.car_reviews"), href: "/news/?category=reviews" },
       { label: t("dropdown.news.industry_updates"), href: "/news/?category=industry" }
     ],
-    after_market: [
-      { label: t("dropdown.after_market.parts_accessories"), href: "/after_market?category=parts" },
-      { label: t("dropdown.after_market.service_centers"), href: "/after_market?category=service-centers" },
-      { label: t("dropdown.after_market.maintenance_tips"), href: "/after_market?category=maintenance-tips" }
-    ],
-    compareCars: [
-      { label: t("dropdown.comparison.compare_models"), href: "/compareCars?category=models" },
-      { label: t("dropdown.comparison.price_comparison"), href: "/compareCars?category=prices" },
-      { label: t("dropdown.comparison.feature_comparison"), href: "/compareCars?category=features" }
-    ],
-    stores: [
-      { label: t("dropdown.stores.find_dealers"), href: "/stores" },
-      { label: t("dropdown.stores.service_centers"), href: "/stores?category=service-centers" },
-      { label: t("dropdown.stores.parts_stores"), href: "/stores?category=parts-stores" }
-    ]
+    // after_market: [
+    //   { label: t("dropdown.after_market.parts_accessories"), href: "/after_market?category=parts" },
+    //   { label: t("dropdown.after_market.service_centers"), href: "/after_market?category=service-centers" },
+    //   { label: t("dropdown.after_market.maintenance_tips"), href: "/after_market?category=maintenance-tips" }
+    // ],
+    // compareCars: [
+    //   { label: t("dropdown.comparison.compare_models"), href: "/compareCars?category=models" },
+    //   { label: t("dropdown.comparison.price_comparison"), href: "/compareCars?category=prices" },
+    //   { label: t("dropdown.comparison.feature_comparison"), href: "/compareCars?category=features" }
+    // ],
+    // stores: [
+    //   { label: t("dropdown.stores.find_dealers"), href: "/stores" },
+    //   { label: t("dropdown.stores.service_centers"), href: "/stores?category=service-centers" },
+    //   { label: t("dropdown.stores.parts_stores"), href: "/stores?category=parts-stores" }
+    // ]
   };
 
   const buttonStyles = {
@@ -171,7 +171,7 @@ export default function Navbar() {
     };
 
     return (
-      <div className="relative group rounded-xl">
+      <div className="relative group rounded-xl z-50">
        
         <Link href={href} className="w-full" onClick={handleClick}>
           <button 
@@ -344,7 +344,7 @@ export default function Navbar() {
         </div>
       </div>
     </nav>
-    <nav className="flex sm:hidden w-full bg-white/90 shadow-md fixed bottom-0 left-0 z-50 border-t border-gray-200 px-2 py-2 gap-2 justify-between items-center" style={{ backdropFilter: 'blur(8px)' }}>
+    <nav className="hidden w-full bg-white/90 shadow-md fixed bottom-0 left-0 z-50 border-t border-gray-200 px-2 py-2 gap-2 justify-between items-center" style={{ backdropFilter: 'blur(8px)' }}>
       <Link href="/news" className="flex flex-col items-center flex-1 text-xs text-blue-700 hover:text-blue-900">
         <Tag className="w-6 h-6 mb-1" />
         <span>{t('news')}</span>
@@ -353,7 +353,7 @@ export default function Navbar() {
         <Shield className="w-6 h-6 mb-1" />
         <span>{t('plate_search')}</span>
       </Link>
-      <Link href="/after_market" className="flex flex-col items-center flex-1 text-xs text-blue-700 hover:text-blue-900">
+      {/* <Link href="/after_market" className="flex flex-col items-center flex-1 text-xs text-blue-700 hover:text-blue-900">
         <Car className="w-6 h-6 mb-1" />
         <span>{t('after_market')}</span>
       </Link>
@@ -364,7 +364,7 @@ export default function Navbar() {
       <Link href="/services" className="flex flex-col items-center flex-1 text-xs text-blue-700 hover:text-blue-900">
         <Settings className="w-6 h-6 mb-1" />
         <span>{t('services')}</span>
-      </Link>
+      </Link> */}
     </nav>
       </>
   );

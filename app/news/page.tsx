@@ -57,7 +57,7 @@ const StoryViewer = ({ articles, currentIndex, onClose, onNext, onPrevious }: St
   }, [currentIndex, onNext]);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center">
       <div className="w-full max-w-2xl mx-4">
         {/* Progress bars */}
         <div className="absolute top-4 left-4 right-4 flex gap-1">
@@ -506,7 +506,7 @@ export default function NewsPage() {
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 w-full max-w-[1400px] mx-auto px-8 mt-[25%] md:mt-[5%] min-h-screen pb-[5%] lg:px-[200px] flex flex-col">
+        <main className="flex-1 w-full max-w-[1400px] mx-auto px-8 mt-[25%] md:mt-[5%] min-h-screen pb-[5%] lg:px-[200px] flex flex-col z-[-50]">
           {/* Trending News Ticker */}
       {trendingNews.length > 0 && (
         <>
@@ -517,10 +517,10 @@ export default function NewsPage() {
             }
             .animate-ticker {
               display: inline-block;
-              animation: ticker 50s linear infinite;
+              animation: ticker 90s linear infinite;
             }
           `}</style>
-          <div className="w-full bg-gradient-to-r from-yellow-400 to-red-500 py-2 overflow-hidden relative z-50">
+          <div className="w-full bg-gradient-to-r from-yellow-400 to-red-500 py-2 overflow-hidden relative ">
             <div className="absolute left-0 top-0 w-full h-full bg-black/10 pointer-events-none" />
             <div className="relative flex items-center">
               <span className="font-bold text-white px-4">Trending:</span>
