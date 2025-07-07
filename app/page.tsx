@@ -223,15 +223,15 @@ interface TransformedArticle {
 
 // API fetch functions
 const fetchArticles = async () => {
-  const cachedData = getCookie('articlesData');
-  if (cachedData) {
-    return cachedData;
-  }
+  // const cachedData = getCookie('articlesData');
+  // if (cachedData) {
+  //   return cachedData;
+  // }
 
   const [featuredResponse, newsResponse, storyResponse] = await Promise.all([
-    fetch('/api/articles?limit=8'),
-    fetch('/api/articles?limit=8'),
-    fetch('/api/articles?limit=8')
+    fetch('/api/articles?limit=8&sort=createdAt:desc'),
+    fetch('/api/articles?limit=8&sort=createdAt:desc'),
+    fetch('/api/articles?limit=8&sort=createdAt:desc')
   ]);
 
   const [featuredData, newsData, storyData] = await Promise.all([
@@ -748,13 +748,13 @@ function HomeContent() {
   const latestNews = transformedArticles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
     item.categories.some(tag => tag.name === "latest news")
   ).slice(0, 6);
-  const localNews = transformedArticles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
+  const localNews = transformedArticles.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) || [].filter(item => 
     item.categories.some(tag => tag.name === "local news")
   ).slice(0, );
-  const worldNews = transformedArticles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
+  const worldNews = transformedArticles.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) || [].filter(item => 
     item.categories.some(tag => tag.name === "world news")
   ).slice(0, );
-  const featuredStories = transformedArticles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
+  const featuredStories = transformedArticles.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) || [].filter(item => 
     item.categories.some(tag => tag.name === "featured stories")
   ).slice(0, );
 
@@ -1401,7 +1401,7 @@ function HomeContent() {
                         <h3 className="font-bold text-lg text-gray-900 mb-2 px-2">{item.title}</h3>
                         <p className="text-gray-600 text-sm mb-2 px-2">{item.description}</p>
                         <div className="text-sm text-gray-600 px-2">
-                          <span>{t('by')} {item.author?.data?.attributes?.name || t('unknown_author')}</span>
+                          <span>{t('by')} {item.author || t('unknown_author')}</span>
                           <span className="mx-2">•</span>
                         </div>
                       </div>
@@ -1438,7 +1438,7 @@ function HomeContent() {
                         <h3 className="font-bold text-lg text-gray-900 mb-2 px-2">{item.title}</h3>
                         <p className="text-gray-600 text-sm mb-2 px-2">{item.description}</p>
                         <div className="text-sm text-gray-600 px-2">
-                          <span>{t('by')} {item.author?.data?.attributes?.name || t('unknown_author')}</span>
+                          <span>{t('by')} {item.author || t('unknown_author')}</span>
                           <span className="mx-2">•</span>
                         </div>
                       </div>

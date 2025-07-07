@@ -397,7 +397,7 @@ export default function NewsPage() {
   const fetchNews = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/articles?locale=${selectedLanguage}`);
+      const response = await fetch(`/api/articles?locale=${selectedLanguage}&sort=createdAt:desc`);
       if (!response.ok) {
         throw new Error('Failed to fetch news');
       }

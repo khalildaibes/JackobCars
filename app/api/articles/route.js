@@ -22,11 +22,12 @@ export async function GET(req) {
                 if (key === "featured") queryParams.append("filters[featured][$eq]", value);
                 if (key === "limit") queryParams.append("pagination[limit]", value);
                 if (key === "slug") queryParams.append("filters[slug][$contains]", value);
+                if (key === "sort") queryParams.append("sort", value);
                 }
         });
 
         // Construct the final API URL with filters
-        let apiUrl = `http://64.227.112.249/api/articles?&populate[blocks][populate]=*&populate[cover][populate]=*&populate[categories][populate]=*&populate[comments][populate]=*`//&locale=${locale};
+        let apiUrl = `http://64.227.112.249/api/articles?&sort=createdAt:desc&populate[blocks][populate]=*&populate[cover][populate]=*&populate[categories][populate]=*&populate[comments][populate]=*`//&locale=${locale};
         if (queryParams.toString()) {
             apiUrl += `&${queryParams.toString()}`;
         }
