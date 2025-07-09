@@ -431,50 +431,10 @@ export default function NewsPage() {
 
   console.log('Filtered news:', filteredNews);
 
-  const featuredNews = filteredNews.filter(item => 
-    item.categories?.some(tag => tag.name === "featured")
-  );
 
-  const latestNews = filteredNews.filter(item => 
-    item.categories?.some(tag => tag.name === "latest news")
-  );
-  
-  const localNews = filteredNews.filter(item => 
-    item.categories?.some(tag => tag.name === "local news")
-  );
-  
-  const worldNews = filteredNews.filter(item => 
-    item.categories?.some(tag => tag.name === "world news")
-  );
-  
-  const featuredStories = filteredNews.filter(item => 
-    item.categories?.some(tag => tag.name === "featured stories")
-  );
-
-  console.log('Categories breakdown:', {
-    total: filteredNews.length,
-    featured: featuredNews.length,
-    latest: latestNews.length,
-    local: localNews.length,
-    world: worldNews.length,
-    stories: featuredStories.length
-  });
 
   // If no categorized news, show all news in each section for now
   const trendingNews = filteredNews.slice(0, 10);
-
-  // Fallback logic - if no categorized news, use all news
-  const displayFeaturedStories = featuredStories.length > 0 ? featuredStories : filteredNews.slice(0, 3);
-  const displayLocalNews = localNews.length > 0 ? localNews : filteredNews.slice(0, 4);
-  const displayWorldNews = worldNews.length > 0 ? worldNews : filteredNews.slice(4, 8);
-  const displayLatestNews = latestNews.length > 0 ? latestNews : filteredNews.slice(8, 12);
-
-  console.log('Display arrays:', {
-    featuredStories: displayFeaturedStories.length,
-    localNews: displayLocalNews.length,
-    worldNews: displayWorldNews.length,
-    latestNews: displayLatestNews.length
-  });
 
   const featuredNewsbanner = filteredNews.length > 0 ? filteredNews[0] : null;
 
@@ -501,6 +461,48 @@ export default function NewsPage() {
     }
   };
 
+
+  const featuredNews = filteredNews.filter(item => 
+    item.categories?.some(tag => tag.name === "featured")
+  );
+
+  const latestNews = filteredNews.filter(item => 
+    item.categories?.some(tag => tag.name === "latest news")
+  );
+  
+  const localNews = filteredNews.filter(item => 
+    item.categories?.some(tag => tag.name === "local news")
+  );
+  
+  const worldNews = filteredNews.filter(item => 
+    item.categories?.some(tag => tag.name === "world news")
+  );
+  
+  const featuredStories = filteredNews.filter(item => 
+    item.categories?.some(tag => tag.name === "featured stories")
+  );
+
+  // Fallback logic - if no categorized news, use all news
+  const displayFeaturedStories = featuredStories.length > 0 ? featuredStories : filteredNews.slice(0, 3);
+  const displayLocalNews = localNews.length > 0 ? localNews : filteredNews.filter(item => 
+    item.categories?.some(tag => tag.name === "local news")
+  );
+  const displayWorldNews = worldNews.length > 0 ? worldNews : filteredNews.filter(item => 
+    item.categories?.some(tag => tag.name === "world news")
+  );
+  const displayLatestNews = latestNews.length > 0 ? latestNews : filteredNews.filter(item => 
+    item.categories?.some(tag => tag.name === "latest news")
+  );
+
+  console.log('Display arrays:', {
+    trendingNews: trendingNews.length,
+    total: filteredNews.length,
+    featuredNews: featuredNews.length,
+    featuredStories: displayFeaturedStories.length,
+    localNews: displayLocalNews.length,
+    worldNews: displayWorldNews.length,
+    latestNews: displayLatestNews.length
+  });
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -519,7 +521,8 @@ export default function NewsPage() {
       </div>
     );
   }
-  
+ 
+
   return (
     <div className="min-h-screen bg-[#050B20]">
       

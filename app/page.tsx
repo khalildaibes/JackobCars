@@ -16,7 +16,7 @@ import React, { createContext, useContext } from "react";
 import CustomerTestimonialsSection from "../components/homeeight/CustomerTestimonialsSection";
 import LatestBlogPostsSection from "../components/homeeight/LatestBlogPostsSection";
 import RecentlyAddedSection from "../components/homeeight/RecentlyAddedSection";
-import {  useTranslations } from "next-intl";
+import {  useTranslations, useLocale } from "next-intl";
 import ResponsiveNewsLayout from "../components/Responsivenews";
 import SearchBar from "../components/SearchBar";
 import { Img } from "../components/Img";
@@ -461,6 +461,7 @@ function HomeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("HomePage");
+  const locale = useLocale(); // Get locale on client side
   const [activeIndex, setActiveIndex] = useState(0);
   const [stories, setStories] = useState<Story[]>([]);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
@@ -536,7 +537,7 @@ function HomeContent() {
   // Add this useEffect for articles cache handling
   useEffect(() => {
     const loadCachedArticles = async () => {
-      const CACHE_KEY = 'articles_data';
+      const CACHE_KEY = `articles_data_${locale}`;
       try {
         const cached = await getCachedData<TransformedArticle[]>(CACHE_KEY);
         if (cached) {
@@ -550,7 +551,7 @@ function HomeContent() {
     };
 
     loadCachedArticles();
-  }, []);
+  }, [locale]);
 
   // Replace the listings useMemo with this updated version
   const listings = useMemo(() => {
@@ -741,22 +742,31 @@ function HomeContent() {
 
 
 
-  const featuredNews = transformedArticles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
-    item.categories?.some(tag => tag.name === "featured")
-  ).slice(0, 6);
+  // Sort all articles by latest first (newest publishedAt), then filter by category
+  const featuredNews = (transformedArticles || [])
+    .sort((a: any, b: any) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+    .filter(item => item.categories?.some(tag => tag.name === "featured"))
+    .slice(0, 6);
 
-  const latestNews = transformedArticles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) || [].filter(item => 
-    item.categories.some(tag => tag.name === "latest news")
-  ).slice(0, 6);
-  const localNews = transformedArticles.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) || [].filter(item => 
-    item.categories.some(tag => tag.name === "local news")
-  ).slice(0, );
-  const worldNews = transformedArticles.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) || [].filter(item => 
-    item.categories.some(tag => tag.name === "world news")
-  ).slice(0, );
-  const featuredStories = transformedArticles.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) || [].filter(item => 
-    item.categories.some(tag => tag.name === "featured stories")
-  ).slice(0, );
+  const latestNews = (transformedArticles || [])
+    .sort((a: any, b: any) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+    .filter(item => item.categories?.some(tag => tag.name === "latest news"))
+    .slice(0, 6);
+    
+  const localNews = (transformedArticles || [])
+    .sort((a: any, b: any) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+    .filter(item => item.categories?.some(tag => tag.name === "local news"))
+    .slice(0, 4);
+    
+  const worldNews = (transformedArticles || [])
+    .sort((a: any, b: any) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+    .filter(item => item.categories?.some(tag => tag.name === "world news"))
+    .slice(0, 4);
+    
+  const featuredStories = (transformedArticles || [])
+    .sort((a: any, b: any) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+    .filter(item => item.categories?.some(tag => tag.name === "featured stories"))
+    .slice(0, 3);
 
   return (
     <div className="flex w-full z-70 overflow-x-hidden">
