@@ -603,8 +603,10 @@ export default function StorePage() {
                               price: product.details.car.price.toString(),
                               bodyType: product.details.car.bodyType || '',
                               fuelType: product.details.car.fuel || '',
+                              make: "Unknown",
+                              condition: "Used",
+                              transmission: product.details.car.transmission || "Automatic",
                               description: product.details.car.description,
-                              location: '',
                               features: product.details.car.features.map(feature => feature.label)
                             }}
                             variant="grid"
