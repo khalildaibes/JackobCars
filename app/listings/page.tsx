@@ -175,8 +175,10 @@ export default function ListingsPage() {
                   price: car.details.car.price.toString(),
                   bodyType: car.details.car.bodyType || '',
                   fuelType: car.details.car.fuelType || '',
+                  make: "Unknown",
+                  condition: "Used",
+                  transmission: "Automatic",
                   description: car.details.car.description,
-                  location: '',
                   features: car.details.car.features.map(feature => feature.label)
                 }}
                 variant="grid"
