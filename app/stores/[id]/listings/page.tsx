@@ -185,8 +185,11 @@ export default function StoreListingsPage() {
                   price: car.details.car.price.toString(),
                   bodyType: car.details.car.bodyType,
                   fuelType: car.details.car.fuelType,
+                  make: "Unknown",
+                  condition: "Used", 
+                  transmission: "Automatic",
                   description: car.details.car.description,
-                  // location: '',
+                  // location: '', (removed - not in CarCard interface)
                   features: car.details.car.features.map(feature => feature.label)
                 }}
                 variant="grid"
