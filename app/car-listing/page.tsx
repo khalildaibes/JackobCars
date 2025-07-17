@@ -17,7 +17,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useComparison } from '../../context/ComparisonContext';
 import Link from 'next/link';
-import { toast } from 'react-hot-toast';
+
 import CarCard from '../../components/CarCard';
 
 // First, add this helper function at the top of your file
@@ -29,7 +29,7 @@ const extractPrice = (price: string | number): number => {
 const YEARS = Array.from({ length: 30 }, (_, i) => 2024 - i);
 
 const CarListings: React.FC = () => {
-  const { addToComparison, removeFromComparison, isInComparison, selectedCars } = useComparison();
+  const { selectedCars } = useComparison();
   const t = useTranslations('CarListing');
   const router = useRouter();
   
@@ -291,19 +291,7 @@ const CarListings: React.FC = () => {
     router.push(`/car-details/${slug}`);
   };
 
-  const handleCompareToggle = (car: any) => {
-    if (isInComparison(car.id)) {
-      removeFromComparison(car.id);
-      toast.success(t('removed_from_comparison'));
-    } else {
-      if (selectedCars.length >= 3) {
-        toast.error(t('max_comparison_limit'));
-        return;
-      }
-      addToComparison(car);
-      toast.success(t('added_to_comparison'));
-    }
-  };
+
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl mt-[15%] md:mt-[5%] bg-white rounded-lg">
@@ -450,9 +438,6 @@ const CarListings: React.FC = () => {
                   <CarCard 
                     key={car.slug} 
                     car={car}
-                    onCompareToggle={() => handleCompareToggle(car)}
-                    isInComparison={isInComparison(car.slug)}
-                    label={isInComparison(car.slug) ? t('remove_from_comparison') : t('add_to_comparison')}
                   />
                 ))}
               </div>
