@@ -152,13 +152,15 @@ export default function CarSearch() {
                     id: car.id,
                     slug: car.slug,
                     mainImage: car.mainImage,
-                    
                     title: car.title,
                     year: car.year,
                     mileage: String(car.mileage),
                     price: car.price,
                     bodyType: car.class || "",
                     fuelType: car.fuel,
+                    make: car.make || "",
+                    condition: car.condition || "Unknown",
+                    transmission: car.transmission || "Unknown",
                     description: car.details
                   }}
                 />
