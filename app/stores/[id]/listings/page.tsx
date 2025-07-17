@@ -186,7 +186,7 @@ export default function StoreListingsPage() {
                   bodyType: car.details.car.bodyType,
                   fuelType: car.details.car.fuelType,
                   description: car.details.car.description,
-                  location: '',
+                  // location: '',
                   features: car.details.car.features.map(feature => feature.label)
                 }}
                 variant="grid"

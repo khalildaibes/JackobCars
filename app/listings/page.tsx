@@ -178,7 +178,7 @@ export default function ListingsPage() {
                   make: "Unknown",
                   condition: "Used",
                   transmission: "Automatic",
-                  description: car.details.car.description,
+                  // description: car.details.car.description,
                   features: car.details.car.features.map(feature => feature.label)
                 }}
                 variant="grid"
