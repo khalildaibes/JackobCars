@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { Img } from '../../components/Img';
 import AdBanner, { AdSlider } from '../../components/AdBanner';
 import TikTokEmbed from '../../components/TikTokEmbed';
+import "../styles/newspage.css";
 
 interface Article {
   id: number;
@@ -524,56 +525,47 @@ export default function NewsPage() {
  
 
   return (
-    <div className="min-h-screen bg-[#050B20]">
-      
-      <div className="flex flex-col lg:flex-row relative">
-        {/* Left Ad Section - Desktop */}
-        <div className="hidden lg:block w-[20%] fixed left-0 top-0 h-screen p-4 overflow-x-hidden md:mt-[5%]">
-          <div className="sticky top-4 space-y-6">
-            {leftAds.map((ad) => (
-              <AdBanner
-                key={ad.id}
-                imageUrl={ad.imageUrl}
-                link={ad.link}
-                alt={ad.alt}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <main className="flex-1 w-full max-w-[1400px] mx-auto px-8 mt-[25%] md:mt-[5%] min-h-screen pb-[5%] lg:px-[200px] flex flex-col z-10">
+    <div className="min-h-screen bg-gray-50">
+      {/* Main Content */}
+      <div className="news-container">
+        <main className="news-section">
           {/* Trending News Ticker */}
-      {trendingNews.length > 0 && (
-        <>
-          <style jsx global>{`
-            @keyframes ticker {
-              0% { transform: translateX(100%); }
-              100% { transform: translateX(-100%); }
-            }
-            .animate-ticker {
-              display: inline-block;
-              animation: ticker 90s linear infinite;
-            }
-          `}</style>
-          <div className="w-full bg-gradient-to-r from-yellow-400 to-red-500 py-2 overflow-hidden relative ">
-            <div className="absolute left-0 top-0 w-full h-full bg-black/10 pointer-events-none" />
-            <div className="relative flex items-center">
-              <span className="font-bold text-white px-4">Trending:</span>
-              <div className="flex-1 overflow-hidden">
-                <div className="whitespace-nowrap animate-ticker text-white text-base font-medium flex items-center gap-8">
-                  {trendingNews.map((item, idx) => (
-                    <span key={item.id} className="inline-flex items-center">
-                      <span className="hover:underline cursor-pointer" onClick={() => router.push(`/news/${item.slug}`)}>{item.title}</span>
-                      {idx < trendingNews.length - 1 && <span className="mx-4">•</span>}
-                    </span>
-                  ))}
+          {trendingNews.length > 0 && (
+            <>
+              <style jsx global>{`
+                @keyframes ticker {
+                  0% { transform: translateX(100%); }
+                  100% { transform: translateX(-100%); }
+                }
+                .animate-ticker {
+                  display: inline-block;
+                  animation: ticker 90s linear infinite;
+                }
+              `}</style>
+              <div className="news-trending-ticker lg:mt-[5%] md:mt-[5%] mt-[20%]">
+                <div className="news-trending-content">
+                  <span className="news-trending-label">
+                    {t('trending')}
+                  </span>
+                  <div className="news-trending-items">
+                    <div className="news-trending-scroll">
+                      {trendingNews.map((item, idx) => (
+                        <span key={item.id} className="inline-flex items-center">
+                          <span 
+                            className="hover:underline cursor-pointer transition-colors" 
+                            onClick={() => router.push(`/news/${item.slug}`)}
+                          >
+                            {item.title}
+                          </span>
+                          {idx < trendingNews.length - 1 && <span className="mx-4">•</span>}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </>
-      )}
+            </>
+          )}
           {/* Mobile Ads - Top */}
           {/* <div className="lg:hidden grid grid-cols-2 gap-4 mb-8">
             <AdSlider ads={topMobileAds} />
@@ -632,39 +624,81 @@ I notice there's a lint error indicating that `TikTokEmbed` is not defined. We n
             )}
           </div> */}
 
-            {/* Featured Stories Section */}
-            <div className="flex flex-col">
-              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('featured_stories')}</h2>
-              <div className="space-y-6">
-                {displayFeaturedStories.map((item) => (
-                  <article
-                    key={item.id}
-                    className="md:rounded-xl overflow-hidden cursor-pointer group relative rounded-xl"
-                    onClick={() => router.push(`/news/${item.slug}`)}
-                  >
-                    <div className="relative h-[200px] md:h-[280px] w-full">
-                      {item.cover?.url && (
-                        <Img
-                          src={`http://64.227.112.249${item.cover.url}`}
-                          alt={item.title}
-                          external={true}
-                          width={1200}
-                          height={1200}
-                          className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                        />
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-                        <div className="absolute bottom-0 left-0 right-0 p-6">
-                          <div className="text-xs text-white mb-1 font-bold uppercase tracking-wider bg-white/5 rounded-full px-2 py-1 inline-block">{t('expert_review')}</div>
-                          <h3 className="font-bold text-lg text-white mb-2 line-clamp-2 px-2">{item.title}</h3>
-                          <div className="text-sm text-gray-300 px-2">
+            {/* Hero Featured Article */}
+            {displayFeaturedStories.length > 0 && (
+              <div className="news-feature-article mb-12">
+                <div 
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                  style={{
+                    backgroundImage: displayFeaturedStories[0]?.cover?.url 
+                      ? `url(http://64.227.112.249${displayFeaturedStories[0].cover.url})`
+                      : 'none'
+                  }}
+                />
+                <div className="news-feature-content">
+                  <span className="news-tag mb-4">
+                    {t('featured_story')}
+                  </span>
+                  <h1 className="news-feature-title">
+                    {displayFeaturedStories[0]?.title}
+                  </h1>
+                  <p className="news-feature-excerpt">
+                    {displayFeaturedStories[0]?.description}
+                  </p>
+                  <div className="flex items-center gap-4 mt-4 text-sm text-white/80">
+                    <span>By {displayFeaturedStories[0]?.author?.data?.attributes?.name || t('unknown_author')}</span>
+                    <span>•</span>
+                    <span>{formatDate(displayFeaturedStories[0]?.publishedAt)}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Featured Stories Grid */}
+            <div className="news-magazine-layout mb-12">
+              <div>
+                <h2 className="news-heading-md mb-8">{t('featured_stories')}</h2>
+                <div className="news-grid news-grid-5">
+                  {displayFeaturedStories.slice(1).map((item) => (
+                    <article
+                      key={item.id}
+                      className="news-card group cursor-pointer"
+                      onClick={() => router.push(`/news/${item.slug}`)}
+                    >
+                      <div className="news-card-image relative overflow-hidden">
+                        {item.cover?.url && (
+                          <Img
+                            src={`http://64.227.112.249${item.cover.url}`}
+                            alt={item.title}
+                            external={true}
+                            width={400}
+                            height={250}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
+                        )}
+                      </div>
+                      <div className="news-card-content">
+                        <span className="news-tag news-tag-secondary mb-3">
+                          {t('featured')}
+                        </span>
+                        <h3 className="news-heading-xs mb-2 line-clamp-2 group-hover:text-red-600 transition-colors">
+                          {item.title}
+                        </h3>
+                        <p className="news-body-sm mb-4 line-clamp-2">
+                          {item.description}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <span className="news-caption">
                             By {item.author?.data?.attributes?.name || t('unknown_author')}
-                          </div>
+                          </span>
+                          <span className="news-caption">
+                            {formatDate(item.publishedAt)}
+                          </span>
                         </div>
                       </div>
-                    </div>
-                  </article>
-                ))}
+                    </article>
+                  ))}
+                </div>
               </div>
             </div>
          
@@ -710,184 +744,199 @@ I notice there's a lint error indicating that `TikTokEmbed` is not defined. We n
             </a>
           </div>
 
-          {/* Latest News and Featured Stories - Different layouts for mobile and desktop */}
-          <div className="flex flex-col gap-8">
+          {/* News Sections */}
+          <div className="space-y-12">
             {/* Local News Section */}
-            <div className="flex flex-col">
-              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('local_news')}</h2>
-              <div className="space-y-6">
+            <section>
+              <h2 className="news-heading-md mb-8">{t('local_news')}</h2>
+              <div className="news-grid news-grid-3">
                 {displayLocalNews.map((item) => (
                   <article
                     key={item.id}
-                    className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
+                    className="news-card group cursor-pointer"
                     onClick={() => router.push(`/news/${item.slug}`)}
                   >
-                    <div className="md:flex bg-white rounded-xl">
-                      <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
-                        {item.cover?.url && (
-                          <Img
-                            src={`http://64.227.112.249${item.cover.url}`}
-                            alt={item.title}
-                            external={true}
-                            width={512}
-                            height={512}
-                            className="object-cover w-full h-full md:h-48"
-                          />
-                        )}
+                    <div className="md:flex">
+                      <div className="md:w-1/3">
+                        <div className="news-card-image news-card-small">
+                          {item.cover?.url && (
+                            <Img
+                              src={`http://64.227.112.249${item.cover.url}`}
+                              alt={item.title}
+                              external={true}
+                              width={200}
+                              height={150}
+                              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
+                          )}
+                        </div>
                       </div>
-                      <div className="mt-3 md:mt-0 md:w-2/3 md:p-4">
-                        <div className="text-sm text-gray-600 mb-1">{t('expert_review')}</div>
-                        <h3 className="font-bold text-lg text-gray-900 mb-2 px-2">{item.title}</h3>
-                        <p className="text-gray-600 text-sm mb-2 px-2">{item.description}</p>
-                        <div className="text-sm text-gray-600 px-2">
-                          <span>{t('by')} {item.author?.data?.attributes?.name || t('unknown_author')}</span>
-                          <span className="mx-2">•</span>
-                          <span>{formatDate(item.publishedAt)}</span>
+                      <div className="md:w-2/3 news-card-content">
+                        <span className="news-tag news-tag-blue mb-2">{t('local')}</span>
+                        <h3 className="news-heading-xs mb-2 line-clamp-2 group-hover:text-red-600 transition-colors">
+                          {item.title}
+                        </h3>
+                        <p className="news-body-sm mb-3 line-clamp-2">{item.description}</p>
+                        <div className="flex items-center justify-between">
+                          <span className="news-caption">
+                            By {item.author?.data?.attributes?.name || t('unknown_author')}
+                          </span>
+                          <span className="news-caption">
+                            {formatDate(item.publishedAt)}
+                          </span>
                         </div>
                       </div>
                     </div>
                   </article>
                 ))}
               </div>
-            </div>
+            </section>
+
             {/* World News Section */}
-            <div className="flex flex-col">
-              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('world_news')}</h2>
-              <div className="space-y-6">
+            <section>
+              <h2 className="news-heading-md mb-8">{t('world_news')}</h2>
+              <div className="news-grid news-grid-3">
                 {displayWorldNews.map((item) => (
                   <article
                     key={item.id}
-                    className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
+                    className="news-card group cursor-pointer"
                     onClick={() => router.push(`/news/${item.slug}`)}
                   >
-                    <div className="md:flex bg-white rounded-xl">
-                      <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
-                        {item.cover?.url && (
-                          <Img
-                            src={`http://64.227.112.249${item.cover.url}`}
-                            alt={item.title}
-                            external={true}
-                            width={512}
-                            height={512}
-                            className="object-cover w-full h-full md:h-48"
-                          />
-                        )}
+                    <div className="md:flex">
+                      <div className="md:w-1/3">
+                        <div className="news-card-image news-card-small">
+                          {item.cover?.url && (
+                            <Img
+                              src={`http://64.227.112.249${item.cover.url}`}
+                              alt={item.title}
+                              external={true}
+                              width={200}
+                              height={150}
+                              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
+                          )}
+                        </div>
                       </div>
-                      <div className="mt-3 md:mt-0 md:w-2/3 md:p-4">
-                        <div className="text-sm text-gray-600 mb-1">{t('expert_review')}</div>
-                        <h3 className="font-bold text-lg text-gray-900 mb-2 px-2">{item.title}</h3>
-                        <p className="text-gray-600 text-sm mb-2 px-2">{item.description}</p>
-                        <div className="text-sm text-gray-600 px-2">
-                          <span>{t('by')} {item.author?.data?.attributes?.name || t('unknown_author')}</span>
-                          <span className="mx-2">•</span>
-                          <span>{formatDate(item.publishedAt)}</span>
+                      <div className="md:w-2/3 news-card-content">
+                        <span className="news-tag mb-2">{t('world')}</span>
+                        <h3 className="news-heading-xs mb-2 line-clamp-2 group-hover:text-red-600 transition-colors">
+                          {item.title}
+                        </h3>
+                        <p className="news-body-sm mb-3 line-clamp-2">{item.description}</p>
+                        <div className="flex items-center justify-between">
+                          <span className="news-caption">
+                            By {item.author?.data?.attributes?.name || t('unknown_author')}
+                          </span>
+                          <span className="news-caption">
+                            {formatDate(item.publishedAt)}
+                          </span>
                         </div>
                       </div>
                     </div>
                   </article>
                 ))}
               </div>
-            </div>
-            
-            
+            </section>
 
-            {/* Featured News Section */}
-            <div className="flex flex-col">
-              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">{t('featured_news')}</h2>
-              <div className="space-y-6">
+            {/* Latest News Section */}
+            <section>
+              <h2 className="news-heading-md mb-8">{t('latest_news')}</h2>
+              <div className="news-grid news-grid-3">
                 {displayLatestNews.map((item) => (
                   <article
                     key={item.id}
-                    className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
+                    className="news-card group cursor-pointer"
                     onClick={() => router.push(`/news/${item.slug}`)}
                   >
-                    <div className="md:flex bg-white rounded-xl">
-                      <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
-                        {item.cover?.url && (
-                          <Img
-                            src={`http://64.227.112.249${item.cover.url}`}
-                            alt={item.title}
-                            external={true}
-                            width={512}
-                            height={512}
-                            className="object-cover w-full h-full md:h-48"
-                          />
-                        )}
-                      </div>
-                      <div className="mt-3 md:mt-0 md:w-2/3 md:p-4">
-                        <div className="text-sm text-gray-600 mb-1">{t('expert_review')}</div>
-                        <h3 className="font-bold text-lg text-gray-900 mb-2 px-2">{item.title}</h3>
-                        <p className="text-gray-600 text-sm mb-2 px-2">{item.description}</p>
-                        <div className="text-sm text-gray-600 px-2">
-                          <span>{t('by')} {item.author?.data?.attributes?.name || t('unknown_author')}</span>
-                          <span className="mx-2">•</span>
-                          <span>{formatDate(item.publishedAt)}</span>
-                        </div>
+                    <div className="news-card-image relative overflow-hidden">
+                      {item.cover?.url && (
+                        <Img
+                          src={`http://64.227.112.249${item.cover.url}`}
+                          alt={item.title}
+                          external={true}
+                          width={300}
+                          height={200}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      )}
+                    </div>
+                    <div className="news-card-content">
+                      <span className="news-tag news-tag-secondary mb-3">{t('latest')}</span>
+                      <h3 className="news-heading-xs mb-2 line-clamp-2 group-hover:text-red-600 transition-colors">
+                        {item.title}
+                      </h3>
+                      <p className="news-body-sm mb-4 line-clamp-2">{item.description}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="news-caption">
+                          By {item.author?.data?.attributes?.name || t('unknown_author')}
+                        </span>
+                        <span className="news-caption">
+                          {formatDate(item.publishedAt)}
+                        </span>
                       </div>
                     </div>
                   </article>
                 ))}
               </div>
-            </div>
+            </section>
           </div>
 
-          {/* All News Section - Fallback if nothing else shows */}
+          {/* All News Section */}
           {filteredNews.length > 0 && (
-            <div className="flex flex-col mt-8">
-              <h2 className="text-xl text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-4">All News ({filteredNews.length} articles)</h2>
-              <div className="space-y-6">
+            <section className="mt-12">
+              <h2 className="news-heading-md mb-8">
+                {t('all_news')} ({filteredNews.length} {t('articles')})
+              </h2>
+              <div className="news-grid news-grid-1 gap-6">
                 {filteredNews.map((item) => (
                   <article
                     key={item.id}
-                    className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
+                    className="news-card group cursor-pointer"
                     onClick={() => router.push(`/news/${item.slug}`)}
                   >
-                    <div className="md:flex bg-white rounded-xl">
-                      <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
-                        {item.cover?.url && (
-                          <Img
-                            src={`http://64.227.112.249${item.cover.url}`}
-                            alt={item.title}
-                            external={true}
-                            width={512}
-                            height={512}
-                            className="object-cover w-full h-full md:h-48"
-                          />
-                        )}
-                      </div>
-                      <div className="mt-3 md:mt-0 md:w-2/3 md:p-4">
-                        <div className="text-sm text-gray-600 mb-1">
-                          Categories: {item.categories?.map(cat => cat.name).join(', ') || 'None'}
+                    <div className="md:flex">
+                      <div className="md:w-1/4">
+                        <div className="news-card-image news-card-small">
+                          {item.cover?.url && (
+                            <Img
+                              src={`http://64.227.112.249${item.cover.url}`}
+                              alt={item.title}
+                              external={true}
+                              width={200}
+                              height={150}
+                              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
+                          )}
                         </div>
-                        <h3 className="font-bold text-lg text-gray-900 mb-2 px-2">{item.title}</h3>
-                        <p className="text-gray-600 text-sm mb-2 px-2">{item.description}</p>
-                        <div className="text-sm text-gray-600 px-2">
-                          <span>{t('by')} {item.author?.data?.attributes?.name || t('unknown_author')}</span>
-                          <span className="mx-2">•</span>
-                          <span>{formatDate(item.publishedAt)}</span>
+                      </div>
+                      <div className="md:w-3/4 news-card-content">
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          {item.categories?.map((cat, index) => (
+                            <span key={index} className="news-tag news-tag-secondary text-xs">
+                              {cat.name}
+                            </span>
+                          ))}
+                        </div>
+                        <h3 className="news-heading-xs mb-2 line-clamp-2 group-hover:text-red-600 transition-colors">
+                          {item.title}
+                        </h3>
+                        <p className="news-body-sm mb-3 line-clamp-2">{item.description}</p>
+                        <div className="flex items-center justify-between">
+                          <span className="news-caption">
+                            By {item.author?.data?.attributes?.name || t('unknown_author')}
+                          </span>
+                          <span className="news-caption">
+                            {formatDate(item.publishedAt)}
+                          </span>
                         </div>
                       </div>
                     </div>
                   </article>
                 ))}
               </div>
-            </div>
+            </section>
           )}
         </main>
-
-        {/* Right Ad Section - Desktop */}
-        <div className="hidden lg:block  w-[15%] fixed right-0 top-0 h-screen p-4 overflow-x-hidden mt-[5%] overflow-y-auto">
-          <div className="sticky top-4 space-y-6">
-            {rightAds.map((ad) => (
-              <AdBanner
-                key={ad.id}
-                imageUrl={ad.imageUrl}
-                link={ad.link}
-                alt={ad.alt}
-              />
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );

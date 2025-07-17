@@ -2,25 +2,16 @@
 
 import React, { useEffect, useState, useCallback, memo } from "react";
 import { motion } from "framer-motion";
-import { Card, CardContent } from "./ui/card";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
 import dynamic from 'next/dynamic';
-import { Car, Fuel, Heart, MessageSquare, Scale, Calendar, Gauge, Check } from "lucide-react";
+import { Car, Fuel, Heart, MessageSquare, Scale, Calendar, Gauge, Check, MapPin } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { useTranslations, useLocale } from "next-intl";
-import PriceDisplay from "./PriceDisplay";
 import { useComparison } from "../context/ComparisonContext";
-import emailjs from 'emailjs-com';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
-
 
 // Lazy load the Img component
 const Img = dynamic(() => import("./Img").then(mod => ({ default: mod.Img })), {
-  loading: () => <div className="w-full h-48 bg-gray-200 animate-pulse" />,
+  loading: () => <div className="cd-card-image cd-skeleton" />,
   ssr: false
 }) as React.FC<{
   className?: string;
@@ -31,15 +22,6 @@ const Img = dynamic(() => import("./Img").then(mod => ({ default: mod.Img })), {
   height: number;
 }>;
 
-interface ImgProps {
-  width: number;
-  height: number;
-  external?: boolean;
-  src: string;
-  alt: string;
-  className?: string;
-}
-
 interface CarCardProps {
   car: {
     id: string | number;
@@ -48,73 +30,26 @@ interface CarCardProps {
     title: string;
     year: number;
     mileage: string;
-    price: string;
-    hostname: string;
-    bodyType: string;
     fuelType: string;
-    description: string;
-    location?: string;
+    make: string;
+    price: string;
+    condition: string;
+    transmission: string;
+    bodyType: string;
+    hostname: string;
+    description?: string;
     features?: string[];
-    isPro?: boolean;
+    category?: string[];
   };
-  variant?: 'grid' | 'list';
-  onCompareToggle?: () => void;
-  isInComparison?: boolean;
-  label?: string;
+  variant?: "grid" | "list";
 }
-
-// Memoized button components
-const FavoriteButton = memo(({ isFavorite, onClick }: { 
-  isFavorite: boolean; 
-  onClick: (e: React.MouseEvent) => void;
-}) => (
-  <Button 
-    size="icon" 
-    onClick={onClick}
-    variant="ghost" 
-    className="absolute top-2 right-2 bg-white/80 hover:bg-white text-red-500 rounded-full"
-  >
-    <Heart className={`h-5 w-5 ${isFavorite ? 'fill-current text-red-500' : ''}`} />
-  </Button>
-));
-
-const ActionButton = memo(({ 
-  icon: Icon, 
-  label, 
-  onClick, 
-  variant = "outline",
-  className = "text-black"
-}: { 
-  icon: any; 
-  label: string; 
-  onClick: (e: React.MouseEvent) => void | Promise<void>;
-  variant?: "outline" | "default" | "destructive";
-  className?: string;
-}) => (
-  <Button 
-    size="sm" 
-    variant={variant}
-    className={className}
-    onClick={onClick}
-  >
-    <Icon className="h-4 w-4" />
-    {label}
-  </Button>
-));
 
 const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   const router = useRouter();
   const t = useTranslations("CarListing");
   const locale = useLocale();
-  const isRTL = locale === 'ar' || locale === 'he-IL';
   const { addToComparison, removeFromComparison, isInComparison } = useComparison();
   const [favorites, setFavorites] = useState<(string | number)[]>([]);
-  const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
-  const [emailFormData, setEmailFormData] = useState({
-    name: '',
-    phone: '',
-    message: ''
-  });
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -135,64 +70,16 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
       localStorage.setItem("favorites", JSON.stringify(updated));
       return updated;
     });
-  }, [car.slug]);
+    toast.success(
+      favorites.includes(car.slug) 
+        ? t('removed_from_favorites') 
+        : t('added_to_favorites')
+    );
+  }, [car.slug, favorites, t]);
 
-  const handleEmailInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setEmailFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSendEmail = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const templateParams = {
-        title: `Car Inquiry for ${car.title}`,
-        name: emailFormData.name,
-        phone: emailFormData.phone,
-        time: new Date().toLocaleString(),
-        message: emailFormData.message,
-        email: "blacklife4ever93@gmail.com"
-      };
-
-      const result = await emailjs.send(
-        'service_fiv09zs',
-        'template_o7riedx',
-        templateParams,
-        'XNc8KcHCQwchLLHG5'
-      );
-
-      if (result.status === 200) {
-        setIsEmailDialogOpen(false);
-        toast.success(t('email_sent'));
-        // Clear form
-        setEmailFormData({
-          name: '',
-          phone: '',
-          message: ''
-        });
-      } else {
-        throw new Error('Failed to send email');
-      }
-    } catch (error) {
-      console.error('Error sending email:', error);
-      toast.error(t('email_failed'));
-    }
-  };
-
-  const handleContactSeller = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsEmailDialogOpen(true);
-  }, []);
-
-  const handleViewDetails = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleViewDetails = useCallback(() => {
     router.push(`/car-details/${car.slug}?hostname=${car.hostname}`);
-  }, [car.slug, router]);
+  }, [car.slug, car.hostname, router]);
 
   const handleCompareToggle = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -201,313 +88,241 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
       removeFromComparison(car.slug.toString());
       toast.success(t('removed_from_comparison'));
     } else {
-      addToComparison(car);
+      addToComparison({
+        id: car.slug.toString(),
+        title: car.title,
+        price: car.price,
+        year: car.year,
+        mileage: car.mileage,
+        fuelType: car.fuelType,
+        transmission: car.transmission,
+        image: car.mainImage
+      });
       toast.success(t('added_to_comparison'));
     }
-  }, [car, isInComparison, removeFromComparison, addToComparison, t]);
+  }, [car, isInComparison, addToComparison, removeFromComparison, t]);
 
-  const renderFeatures = useCallback(() => {
-    if (!car.features?.length) return null;
-    
-    return (
-      <div className="flex flex-wrap gap-1 mb-1">
-        {car.features.slice(0, 3).map((feature, index) => (
-          <Badge key={index} variant="outline" className="flex items-center gap-1">
-            <Check className="h-3 w-3" />
-            {feature}
-          </Badge>
-        ))}
-        {car.features.length > 3 && (
-          <Badge variant="outline">
-            +{car.features.length - 3} more
-          </Badge>
-        )}
-      </div>
-    );
-  }, [car.features]);
+  const formatPrice = (price: string) => {
+    const numPrice = parseFloat(price.replace(/[^\d.-]/g, ''));
+    if (isNaN(numPrice)) return price;
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: locale === 'ar' ? 'SAR' : locale === 'he-IL' ? 'ILS' : 'USD',
+      maximumFractionDigits: 0
+    }).format(numPrice);
+  };
 
-  const grslugContent = (
-    <Card 
-      onClick={(e) => {
-        // Only trigger if the click wasn't on a button or its children
-        if (!(e.target as HTMLElement).closest('button')) {
-          handleViewDetails(e);
-        }
-      }}
-      className={`bg-white rounded-t-lg overflow-hidden flex flex-col hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-shadow duration-300 max-w-[280px] ${isRTL ? 'rtl' : 'ltr'} transition-transform duration-300 hover:scale-105 min-h-[180px] shadow-[0_4px_12px_rgb(0,0,0,0.05)] cursor-pointer`}>
-      <div className="relative overflow-hidden">
-        <Img
-          width={1920}
-          height={1080}
-          external={true}
-          src={car.mainImage}
-          alt={car.title}
-          className="w-full h-48 object-cover rounded-t-lg transition-transform duration-300 hover:scale-110"
-        />
-        <FavoriteButton isFavorite={favorites.includes(car.slug)} onClick={handleFavoriteToggle} />
-        {car.isPro && (
-          <Badge className="absolute top-1 left-1 bg-blue-600 text-white text-[10px]">
-            Pro
-          </Badge>
-        )}
-        <div className={`absolute bottom-0 ${isRTL ? 'right-0' : 'left-0'} p-1`}>
-          <Badge className="bg-gray-700 text-white text-[10px]">{car.year}</Badge>
-          <Badge className={`bg-gray-700 ${isRTL ? 'mr-1' : 'ml-1'} text-white text-[10px]`}>{car.mileage}</Badge>
-        </div>
-      </div>
-      <CardContent className="flex flex-col flex-1 p-2 ">
-        <h3 className="text-sm font-semibold text-black line-clamp-1 text-center justify-center items-center">{car.title}</h3>
-        <div className="flex items-center text-gray-500 text-[10px] w-full mt-1 ">
-          <div className={`flex items-center gap-1 w-full  ${isRTL ? 'flex-row-reverse  justify-end' : ''}`}>
-            <Car size={12} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
-            <span>{car.bodyType}</span>
-          </div>
-          <div className={`flex items-center gap-1 w-full ${isRTL ? 'flex-row-reverse  justify-end' : ''}`}>
-            <Calendar size={12} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
-            <span>{car.year}</span>
-          </div>
-          <div className={`flex items-center gap-1 w-full ${isRTL ? 'flex-row-reverse  justify-end' : ''}`}>
-            <Gauge size={12} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
-            <span>{car.mileage}</span>
-          </div>
-          <div className={`flex items-center gap-1 w-full ${isRTL ? 'flex-row-reverse  justify-start' : ''}`}>
-            <Fuel size={12} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
-            <span>{car.fuelType}</span>
-          </div>
-        </div>
-        <p className="text-gray-500 text-[13px] line-clamp-2 mt-1 ">{car.description}</p>
-        
-        <div className="mt-2">
-          <PriceDisplay price={car.price} className="text-blue-600 text-base font-bold w-full flex justify-center items-center" />
-          {car.location && <span className="text-[10px] text-gray-500 text-center w-full block mt-0.5">{car.location}</span>}
-        </div>
+  const formatMileage = (mileage: string) => {
+    const numMileage = parseFloat(mileage.replace(/[^\d.-]/g, ''));
+    if (isNaN(numMileage)) return mileage;
+    return new Intl.NumberFormat(locale).format(numMileage) + ' km';
+  };
 
-        <div className="mt-2 flex flex-col gap-1">
-          <div className="grid grid-cols-2 gap-1 w-full">
-            <ActionButton 
-              icon={MessageSquare}
-              label={t('contact')}
-              onClick={handleContactSeller}
-              className="flex items-center justify-center w-full text-[10px] bg-blue-600 text-white"
-            />
-            <ActionButton
-              icon={Scale}
-              label={isInComparison(car.id.toString()) ? t('remove_from_comparison') : t('add_to_comparison')}
-              onClick={handleCompareToggle}
-              variant={isInComparison(car.id.toString()) ? "destructive" : "outline"}
-              className="flex items-center justify-center gap-1 w-full text-[10px]"
-            />
-          </div>
-          <ActionButton 
-            icon={Car}
-            label={t('view_details')}
-            onClick={handleViewDetails}
-            className="flex items-center justify-center w-full text-[10px]"
-          />
-        </div>
-      </CardContent>
-    </Card>
-  );
-
-  const listContent = (
-    <Card 
-      onClick={(e) => {
-        // Only trigger if the click wasn't on a button or its children
-        if (!(e.target as HTMLElement).closest('button')) {
-          handleViewDetails(e);
-        }
-      }}
-      className={`bg-white overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-shadow duration-300 ${isRTL ? 'rtl' : 'ltr'} shadow-[0_4px_12px_rgb(0,0,0,0.05)] cursor-pointer`}>
-      <div className="flex flex-col md:flex-row">
-        <div className="relative w-full md:w-1/3 overflow-hidden  h-[250px]">
-          <Img
-            external={true}
-            width={1920}
-            height={1080}
-            src={car.mainImage}
-            alt={car.title}
-            className="w-full  md:h-full object-cover transition-transform duration-300 hover:scale-110"
-          />
-          <FavoriteButton isFavorite={favorites.includes(car.slug)} onClick={handleFavoriteToggle} />
-          {car.isPro && (
-            <Badge className="absolute top-1 left-1 bg-blue-600 text-white text-[10px]">
-              Pro
-            </Badge>
-          )}
-          <div className={`absolute bottom-0 ${isRTL ? 'right-0' : 'left-0'} p-1`}>
-            <Badge className="bg-gray-700 text-white text-[10px]">{car.year}</Badge>
-            <Badge className={`bg-gray-700 ${isRTL ? 'mr-1' : 'ml-1'} text-white text-[10px]`}>{car.mileage}</Badge>
-          </div>
-        </div>
-        <CardContent className="w-full md:w-2/3 p-3 md:p-4">
-          <div className="flex flex-col gap-1 md:gap-2">
-            <div>
-              <h3 className="text-base md:text-xl font-semibold text-black line-clamp-1">{car.title}</h3>
-              <div className="flex flex-wrap items-center text-gray-500 text-xs md:text-sm gap-2 mt-1">
-                <div className="flex items-center">
-                  <Car size={14} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
-                  <span>{car.bodyType}</span>
-                </div>
-                <span>•</span>
-                <div className="flex items-center">
-                  <Calendar size={14} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
-                  <span>{car.year}</span>
-                </div>
-                <span>•</span>
-                <div className="flex items-center">
-                  <Gauge size={14} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
-                  <span>{car.mileage}</span>
-                </div>
-                <span>•</span>
-                <div className="flex items-center">
-                  <Fuel size={14} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
-                  <span>{car.fuelType}</span>
-                </div>
-              </div>
-            </div>
-            <p className="text-gray-500 text-sm line-clamp-2">{car.description}</p>
-            {renderFeatures()}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mt-1">
-              <div className="flex flex-col w-full sm:w-auto">
-                {car.location && <span className="text-xs md:text-sm text-gray-500">{car.location}</span>}
-                <PriceDisplay price={car.price} className="text-blue-600 text-lg md:text-xl font-bold" />
-              </div>
-              <div className="flex flex-col sm:flex-row gap-1 w-full sm:w-auto">
-                <ActionButton 
-                  icon={MessageSquare}
-                  label={t('contact')}
-                  onClick={handleContactSeller}
-                  className="text-[10px] md:text-xs"
-                />
-                <ActionButton 
-                  icon={Car}
-                  label={t('view_details')}
-                  onClick={handleViewDetails}
-                  className="text-[10px] md:text-xs"
-                />
-                <ActionButton
-                  icon={Scale}
-                  label={isInComparison(car.id.toString()) ? t('remove_from_comparison') : t('add_to_comparison')}
-                  onClick={handleCompareToggle}
-                  variant={isInComparison(car.id.toString()) ? "destructive" : "outline"}
-                  className="text-[10px] md:text-xs"
-                />
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </div>
-    </Card>
-  );
+  const isNew = car.condition?.toLowerCase() === 'new';
+  const isFavorite = favorites.includes(car.slug);
+  const inComparison = isInComparison(car.slug.toString());
 
   if (variant === "list") {
     return (
-      <>
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3 }}
-          className="w-full"
-        >
-          {listContent}
-        </motion.div>
-        
-        {/* Email Dialog */}
-        <Dialog open={isEmailDialogOpen} onOpenChange={setIsEmailDialogOpen}>
-          <DialogContent className="bg-white p-4 rounded-lg">
-            <DialogHeader>
-              <DialogTitle>Contact About {car.title}</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSendEmail} className="space-y-4">
+      <motion.article
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        whileHover={{ y: -2 }}
+        className="cd-card group cursor-pointer"
+        onClick={handleViewDetails}
+      >
+        <div className="md:flex">
+          <div className="md:w-2/5 relative">
+            <div className="cd-card-image relative overflow-hidden">
+              <Img
+                src={car.mainImage}
+                alt={car.title}
+                width={400}
+                height={250}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              {isNew && (
+                <span className="absolute top-3 left-3 cd-tag">
+                  {t('new')}
+                </span>
+              )}
+              <button
+                onClick={handleFavoriteToggle}
+                className={`absolute top-3 right-3 p-2 rounded-full transition-colors ${
+                  isFavorite 
+                    ? 'bg-red-500 text-white' 
+                    : 'bg-white/80 text-gray-600 hover:bg-white'
+                }`}
+              >
+                <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+              </button>
+            </div>
+          </div>
+          
+          <div className="md:w-3/5 cd-card-content">
+            <div className="flex items-start justify-between mb-3">
               <div>
-                <label className="block text-sm font-medium mb-1">Name</label>
-                <Input
-                  name="name"
-                  value={emailFormData.name}
-                  onChange={handleEmailInputChange}
-                  required
-                />
+                <h3 className="cd-heading-xs mb-1 line-clamp-1 group-hover:text-red-600 transition-colors">
+                  {car.title}
+                </h3>
+                <p className="cd-caption mb-2">
+                  {car.year} • {car.make} • {car.bodyType}
+                </p>
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Phone</label>
-                <Input
-                  name="phone"
-                  value={emailFormData.phone}
-                  onChange={handleEmailInputChange}
-                  required
-                />
+              <div className="text-right">
+                <div className="cd-heading-sm text-red-600 mb-1">
+                  {formatPrice(car.price)}
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Message</label>
-                <Textarea
-                  name="message"
-                  value={emailFormData.message}
-                  onChange={handleEmailInputChange}
-                  required
-                />
+            </div>
+
+            <div className="grid grid-cols-3 gap-4 mb-4">
+              <div className="flex items-center gap-2">
+                <Gauge className="w-4 h-4 text-gray-400" />
+                <span className="cd-body-sm">{formatMileage(car.mileage)}</span>
               </div>
-              <Button type="submit" className="w-full">
-                Send Message
-              </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
-      </>
+              <div className="flex items-center gap-2">
+                <Fuel className="w-4 h-4 text-gray-400" />
+                <span className="cd-body-sm">{car.fuelType}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Car className="w-4 h-4 text-gray-400" />
+                <span className="cd-body-sm">{car.transmission}</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleCompareToggle}
+                  className={`cd-btn-secondary p-2 rounded-lg transition-colors ${
+                    inComparison ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
+                  }`}
+                  title={t('compare')}
+                >
+                  <Scale className="w-4 h-4" />
+                </button>
+                <button
+                  className="cd-btn-secondary p-2 rounded-lg"
+                  title={t('contact')}
+                >
+                  <MessageSquare className="w-4 h-4" />
+                </button>
+              </div>
+              <button 
+                onClick={handleViewDetails}
+                className="text-red-600 font-medium text-sm hover:text-red-700 transition-colors"
+              >
+                {t('view_details')} →
+              </button>
+            </div>
+          </div>
+        </div>
+      </motion.article>
     );
   }
 
+  // Grid variant (default)
   return (
-    <>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3 }}
-        className="w-full"
-      >
-        {grslugContent}
-      </motion.div>
-      
-      {/* Email Dialog */}
-      <Dialog open={isEmailDialogOpen} onOpenChange={setIsEmailDialogOpen}>
-        <DialogContent className="bg-white p-4 rounded-lg">
-          <DialogHeader>
-            <DialogTitle>Contact About {car.title}</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleSendEmail} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Name</label>
-              <Input
-                name="name"
-                value={emailFormData.name}
-                onChange={handleEmailInputChange}
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Phone</label>
-              <Input
-                name="phone"
-                value={emailFormData.phone}
-                onChange={handleEmailInputChange}
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Message</label>
-              <Textarea
-                name="message"
-                value={emailFormData.message}
-                onChange={handleEmailInputChange}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Send Message
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
-    </>
+    <motion.article
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4 }}
+      className="cd-card group cursor-pointer"
+      onClick={handleViewDetails}
+    >
+      <div className="relative">
+        <div className="cd-card-image relative overflow-hidden">
+          <Img
+            src={car.mainImage}
+            alt={car.title}
+            width={400}
+            height={250}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+          {isNew && (
+            <span className="absolute top-3 left-3 cd-tag">
+              {t('new')}
+            </span>
+          )}
+          <button
+            onClick={handleFavoriteToggle}
+            className={`absolute top-3 right-3 p-2 rounded-full transition-colors ${
+              isFavorite 
+                ? 'bg-red-500 text-white' 
+                : 'bg-white/80 text-gray-600 hover:bg-white'
+            }`}
+          >
+            <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+          </button>
+        </div>
+      </div>
+
+      <div className="cd-card-content">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex-1">
+            <h3 className="cd-heading-xs mb-1 line-clamp-2 group-hover:text-red-600 transition-colors">
+              {car.title}
+            </h3>
+            <p className="cd-caption mb-2">
+              {car.year} • {car.make} • {car.bodyType}
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
+          <div className="flex items-center gap-2">
+            <Gauge className="w-4 h-4 text-gray-400" />
+            <span className="cd-body-sm">{formatMileage(car.mileage)}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Fuel className="w-4 h-4 text-gray-400" />
+            <span className="cd-body-sm">{car.fuelType}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Car className="w-4 h-4 text-gray-400" />
+            <span className="cd-body-sm">{car.transmission}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Check className="w-4 h-4 text-gray-400" />
+            <span className="cd-body-sm">{car.condition}</span>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="cd-heading-sm text-red-600">
+            {formatPrice(car.price)}
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleCompareToggle}
+              className={`p-2 rounded-lg transition-colors ${
+                inComparison 
+                  ? 'bg-blue-50 text-blue-600' 
+                  : 'hover:bg-gray-50 text-gray-400'
+              }`}
+              title={t('compare')}
+            >
+              <Scale className="w-4 h-4" />
+            </button>
+            <button
+              className="p-2 rounded-lg hover:bg-gray-50 text-gray-400"
+              title={t('contact')}
+            >
+              <MessageSquare className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        <button 
+          onClick={handleViewDetails}
+          className="w-full mt-4 cd-btn cd-btn-outline"
+        >
+          {t('view_details')}
+        </button>
+      </div>
+    </motion.article>
   );
 });
 

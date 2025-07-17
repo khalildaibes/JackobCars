@@ -1,136 +1,162 @@
 "use client";
-import React from "react";
-
-import MegaMenu1 from "../MegaMenu1";
+import React, { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Search, Menu, X, User, Car } from "lucide-react";
 import { Button } from "../Button/index";
-import { Img } from "../Img/index";
-import { Text } from "../Text/index";
 
 interface Props {
   className?: string;
 }
 
-export default function Header({ ...props }: Props) {
-  const [menuOpen, setMenuOpen] = React.useState(false);
-  const [menuOpen1, setMenuOpen1] = React.useState(false);
-  const [menuOpen2, setMenuOpen2] = React.useState(false);
-  const [menuOpen3, setMenuOpen3] = React.useState(false);
+export default function Header({ className, ...props }: Props) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const navigationItems = [
+    { label: "Reviews", href: "/reviews" },
+    { label: "News", href: "/news" },
+    { label: "Cars", href: "/cars" },
+    { label: "Buying Guide", href: "/buying-guide" },
+    { label: "Research", href: "/research" },
+    { label: "Videos", href: "/videos" }
+  ];
+
+  const isActiveLink = (href: string) => {
+    return pathname === href || pathname.startsWith(href + '/');
+  };
 
   return (
-    <header {...props} className={`${props.className} flex justify-between items-center gap-5 relative `}>
-      <Img
-        src="img_header_logo-with-bg.png"
-        width={108}
-        height={26}
-        alt="Header Logo`"
-        className="h-[26px] w-[108px] object-contain "
-      />
-      <div className="flex items-center md:flex-col ">
-        <ul className="flex items-center gap-[38px] sm:flex-col">
-          <li
-            onMouseLeave={() => {
-              setMenuOpen(false);
-            }}
-            onMouseEnter={() => {
-              setMenuOpen(true);
-            }}
-          >
-            <div className="flex cursor-pointer items-center gap-1.5 py-2.5">
-              <Text as="p" className="text-[15px] font-medium capitalize !text-white-a700">
-                Home{" "}
-              </Text>
-              <div className="white_A700_black_900_00_border mt-2 h-[4px] w-[8px] border-l-4 border-r-4 border-t-4 border-solid" />
-            </div>
-            {menuOpen ? <MegaMenu1 /> : null}
-          </li>
-          <li
-            onMouseLeave={() => {
-              setMenuOpen1(false);
-            }}
-            onMouseEnter={() => {
-              setMenuOpen1(true);
-            }}
-          >
-            <div className="flex cursor-pointer items-center gap-1.5">
-              <Text as="p" className="text-[15px] font-medium capitalize !text-white-a700">
-                Listings{" "}
-              </Text>
-              <Img
-                src="img_border.png"
-                width={8}
-                height={4}
-                alt="Border"
-                className="mt-1.5 h-[4px] w-[8px] object-cover"
-              />
-            </div>
-            {menuOpen1 ? <MegaMenu1 /> : null}
-          </li>
-          <li
-            onMouseLeave={() => {
-              setMenuOpen2(false);
-            }}
-            onMouseEnter={() => {
-              setMenuOpen2(true);
-            }}
-          >
-            <div className="flex cursor-pointer items-center gap-1.5 ">
-              <Text as="p" className="text-[15px] font-medium capitalize !text-white-a700">
-                Blog{" "}
-              </Text>
-              <div className="white_A700_black_900_00_border mt-1.5 h-[4px] w-[8px] border-l-4 border-r-4 border-t-4 border-solid" />
-            </div>
-            {menuOpen2 ? <MegaMenu1 /> : null}
-          </li>
-          <li
-            onMouseLeave={() => {
-              setMenuOpen3(false);
-            }}
-            onMouseEnter={() => {
-              setMenuOpen3(true);
-            }}
-          >
-            <div className="flex cursor-pointer items-center gap-1.5">
-              <Text as="p" className="text-[15px] font-medium capitalize !text-white-a700">
-                Pages{" "}
-              </Text>
-              <div className="white_A700_black_900_00_border mt-1.5 h-[4px] w-[8px] border-l-4 border-r-4 border-t-4 border-solid" />
-            </div>
-            {menuOpen3 ? <MegaMenu1 /> : null}
-          </li>
-          <li>
-            <Link href="#">
-              <Text as="p" className="text-[15px] font-medium capitalize !text-white-a700">
-                About
-              </Text>
+    <header className={`cd-header ${className || ''}`} {...props}>
+      <div className="cd-header-content">
+        {/* Logo */}
+        <Link href="/" className="cd-logo">
+          <div className="flex items-center gap-2">
+            <Car className="w-8 h-8 text-red-600" />
+            <span className="font-bold text-xl tracking-tight">
+              Car<span className="text-red-600">&</span>Driver
+            </span>
+          </div>
+        </Link>
+
+        {/* Desktop Navigation */}
+        <nav className="cd-nav">
+          {navigationItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`cd-nav-link ${isActiveLink(item.href) ? 'active' : ''}`}
+            >
+              {item.label}
             </Link>
-          </li>
-          <li>
-            <Link href="#">
-              <Text as="p" className="text-[15px] font-medium capitalize !text-white-a700">
-                Contact
-              </Text>
-            </Link>
-          </li>
-        </ul>
-        <Img
-          src="img_icon.svg"
-          width={14}
-          height={14}
-          alt="Icon"
-          className="ml-7 mt-3 h-[14px] self-start md:ml-0 md:w-full"
-        />
-        <Text as="p" className="ml-2.5 text-[15px] font-medium !text-white-a700 md:ml-0">
-          Sign in
-        </Text>
-        <Button
-          size="4xl"
-          className="ml-[38px] min-w-[152px] rounded-[22px] border border-solid border-white-a700 px-[23px] font-medium md:ml-0 sm:px-4"
-        >
-          Submit Listing
-        </Button>
+          ))}
+        </nav>
+
+        {/* Desktop Actions */}
+        <div className="hidden md:flex items-center gap-4">
+          {/* Search Button */}
+          <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+            <Search className="w-5 h-5 text-gray-600" />
+          </button>
+
+          {/* Sign In */}
+          <Link 
+            href="/login" 
+            className="flex items-center gap-2 text-gray-700 hover:text-red-600 transition-colors"
+          >
+            <User className="w-4 h-4" />
+            <span className="text-sm font-medium">Sign In</span>
+          </Link>
+
+          {/* Submit Listing Button */}
+          <Link href="/car-listing/create">
+            <button className="cd-btn cd-btn-primary">
+              List Your Car
+            </button>
+          </Link>
+        </div>
+
+        {/* Mobile Menu Button */}
+        <div className="cd-mobile-nav">
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            {mobileMenuOpen ? (
+              <X className="w-6 h-6 text-gray-700" />
+            ) : (
+              <Menu className="w-6 h-6 text-gray-700" />
+            )}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 bg-white md:hidden">
+          <div className="flex flex-col h-full">
+            {/* Mobile Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <Link href="/" className="cd-logo" onClick={() => setMobileMenuOpen(false)}>
+                <div className="flex items-center gap-2">
+                  <Car className="w-6 h-6 text-red-600" />
+                  <span className="font-bold text-lg">Car&Driver</span>
+                </div>
+              </Link>
+              <button 
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 rounded-lg hover:bg-gray-100"
+              >
+                <X className="w-6 h-6 text-gray-700" />
+              </button>
+            </div>
+
+            {/* Mobile Navigation */}
+            <nav className="flex-1 overflow-y-auto">
+              <div className="px-4 py-6 space-y-1">
+                {navigationItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`block px-4 py-3 text-lg font-medium rounded-lg transition-colors ${
+                      isActiveLink(item.href) 
+                        ? 'bg-red-50 text-red-600' 
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+
+              {/* Mobile Actions */}
+              <div className="px-4 py-6 border-t border-gray-200 space-y-4">
+                <Link 
+                  href="/login" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                >
+                  <User className="w-5 h-5" />
+                  <span className="font-medium">Sign In</span>
+                </Link>
+
+                <Link 
+                  href="/car-listing/create"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block w-full"
+                >
+                  <button className="cd-btn cd-btn-primary w-full">
+                    List Your Car
+                  </button>
+                </Link>
+              </div>
+            </nav>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
+
 export { Header };

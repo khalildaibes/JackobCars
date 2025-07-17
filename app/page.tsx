@@ -35,6 +35,7 @@ import { getCachedData, setCachedData } from "../utils/cacheUtils";
 import { UserActivityProvider } from "../context/UserActivityContext";
 import { formatDate } from "react-datepicker/dist/date_utils";
 import NewsArticleList from "../components/NewsArticleList";
+import "./styles/homepage.css";
 
 // Typs
 interface Deal {
@@ -769,68 +770,14 @@ function HomeContent() {
     .slice(0, 3);
 
   return (
-    <div className="flex w-full z-70 overflow-x-hidden">
-
-
-      {/* Left Dashboard - Hide on mobile */}
-      {showads && (
-        <div className="w-[15%] bg-white/10 mt-[5%] backdrop-blur-sm border-r border-gray-200/20 p-4 hidden lg:block ${!isAdmin ? 'invisible' : ''}">
-          <div className="sticky top-4">
-          <h2 className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">{t('quick_links')}</h2>
-            <nav className="space-y-2">
-              <Link href="/car-listings" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
-                <Car className="w-4 h-4" />
-                <span>{t('all_cars')}</span>
-              </Link>
-              <Link href="/services" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
-                <Settings className="w-4 h-4" />
-                <span>{t('services')}</span>
-              </Link>
-              <Link href="/parts" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
-                <Wrench className="w-4 h-4" />
-                <span>{t('parts')}</span>
-              </Link>
-              <Link href="/car-listings" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
-                <Tag className="w-4 h-4" />
-                <span>{t('special_deals')}</span>
-              </Link>
-            </nav>
-
-            <div className="mt-8">
-            <h2 className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">{t('recent_watched_cars')}</h2>
-              <div className="space-y-2">
-                <button className="w-full text-left px-3 py-2 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
-                  {t('electric_cars')}
-                </button>
-                <button className="w-full text-left px-3 py-2 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
-                  {t('luxury_suvs')}
-                </button>
-                <button className="w-full text-left px-3 py-2 bg-white/5 rounded-lg text-white/80 hover:bg-white/10 transition-colors">
-                  {t('family_sedans')}
-                </button>
-              </div>
-            </div>
-
-            <div className="mt-8">
-            <h2 className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">{t('quick_stats')}</h2>
-              <div className="space-y-3">
-                <div className="bg-white/5 rounded-lg p-3">
-                  <p className="text-sm text-white/60">{t('total_articles')}</p>
-                  <p className="text-l font-bold text-white">{transformedArticles.length}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
+    <div className="min-h-screen bg-gray-50">
       {/* Main Content */}
-      <div className="flex-1 w-full md:mt-[0%] mt-[15%]">
+      <div className="cd-container">
         <motion.main 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="flex flex-col w-full overflow-hidden mt-[5%] px-2 sm:px-4 md:px-6 rounded-xl"
+          className="cd-section"
         >
           {/* Featured Stories Section */}
           <div className="flex flex-col w-full px-4 mb-8 lg:hidden">
