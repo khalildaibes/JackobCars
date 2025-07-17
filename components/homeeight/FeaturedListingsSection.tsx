@@ -16,6 +16,10 @@ import CarCard from "../CarCard";
 
 // Define the interface for a single listing
 interface Listing {
+  make: string;
+  condition: string;
+  driveType: string;
+  color: string;
   id: number;
   mainImage: string;
   alt: string;
@@ -152,6 +156,10 @@ export default function FeaturedListingsSection({
                               id: listing.id,
                               slug: listing.slug,
                               mainImage: listing.mainImage,
+                              make: listing.make || "",
+                              condition: listing.condition || "",
+                              transmission: listing.transmission || "",
+                              category: listing.category || [],
                               title: listing.title,
                               price: listing.price,
                               year: listing.year || 0,
@@ -159,7 +167,7 @@ export default function FeaturedListingsSection({
                               bodyType: listing.bodyType || "",
                               fuelType: listing.fuelType || "",
                               description: listing.description || "",
-                              location: listing.location,
+                              // location: listing.location,
                               features: listing.features
                             }}
                             variant="grid" 
