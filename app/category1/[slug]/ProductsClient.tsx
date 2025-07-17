@@ -610,10 +610,11 @@ export default function ProductsClient({ products }: ProductsClientProps) {
                       price: `$${item.price.toLocaleString()}`,
                       bodyType: item.details?.car?.body_type || "Unknown",
                       fuelType: item.details?.car?.fuel || "Unknown",
+                      make: item.details?.car?.make || "Unknown",
+                      condition: "Used",
+                      transmission: item.details?.car?.transmission || "Automatic",
                       description: item.details?.car?.features?.map(f => f.value).join(", ") || "",
-                      location: item.store?.location,
-                      features: item.details?.car?.features?.map(f => f.value) || [],
-                      isPro: item.store?.isPro
+                      features: item.details?.car?.features?.map(f => f.value) || []
                     }} 
                     variant={viewMode === 'list' ? 'list' : 'grid'}
                   />
