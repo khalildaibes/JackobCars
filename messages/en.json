@@ -1224,5 +1224,247 @@
   "AfterMarket": {
     "Type": "Type",
     "winches": "Winches"
+  },
+  "CarReviews": {
+    "title": "Latest Car Reviews",
+    "description": "Expert reviews from our automotive specialists",
+    "view_all_reviews": "View All Reviews",
+    "expert_review": "Expert Review",
+    "by": "By",
+    "unknown_author": "Unknown Author",
+    "pros": "PROS",
+    "cons": "CONS",
+    "road_test": "Road Test",
+    "first_drive": "First Drive",
+    "comparison": "Comparison",
+    "long_term": "Long Term",
+    "review": "Review",
+    "mockData": {
+      "review1": {
+        "title": "Toyota Camry 2024: A Perfect Balance of Comfort and Efficiency",
+        "excerpt": "The 2024 Toyota Camry continues to impress with its refined hybrid powertrain and spacious interior.",
+        "pros": {
+          "0": "Excellent fuel economy",
+          "1": "Spacious interior", 
+          "2": "Reliable hybrid system"
+        },
+        "cons": {
+          "0": "Road noise at highway speeds",
+          "1": "Infotainment could be more intuitive"
+        }
+      },
+      "review2": {
+        "title": "BMW X5 vs Mercedes GLE: Luxury SUV Showdown",
+        "excerpt": "Two German luxury SUVs go head-to-head in our comprehensive comparison test.",
+        "pros": {
+          "0": "Premium materials",
+          "1": "Advanced tech features",
+          "2": "Excellent handling"
+        },
+        "cons": {
+          "0": "High price point",
+          "1": "Complex infotainment"
+        }
+      },
+      "review3": {
+        "title": "Tesla Model 3 Highland: The EV Revolution Continues",
+        "excerpt": "Tesla's refreshed Model 3 Highland brings improved efficiency and a more refined interior.",
+        "pros": {
+          "0": "Incredible efficiency",
+          "1": "Over-the-air updates",
+          "2": "Supercharger network"
+        },
+        "cons": {
+          "0": "Build quality inconsistencies",
+          "1": "Learning curve for new users"
+        }
+      },
+      "review4": {
+        "title": "Honda CR-V: 6 Months Long-Term Review",
+        "excerpt": "After 6 months and 15,000 miles, here's what we really think about the Honda CR-V.",
+        "pros": {
+          "0": "Exceptional reliability",
+          "1": "Great fuel economy",
+          "2": "Practical interior"
+        },
+        "cons": {
+          "0": "CVT can feel sluggish",
+          "1": "Road noise"
+        }
+      }
+    }
+  },
+  "FeaturesFromJackob": {
+    "title": "Latest Features & More from Jackob",
+    "description": "Exclusive insights and expert analysis from our editorial team",
+    "view_all_features": "View All Features",
+    "featured": "Featured",
+    "trending": "Trending",
+    "trending_this_week": "Trending This Week",
+    "exclusive": "Exclusive",
+    "analysis": "Analysis",
+    "industry_insight": "Industry Insight",
+    "how_to": "How To",
+    "min_read": "min read",
+    "mockData": {
+      "feature1": {
+        "title": "The Future of Autonomous Driving: What to Expect in 2024",
+        "excerpt": "An in-depth analysis of the latest developments in self-driving technology and what it means for consumers."
+      },
+      "feature2": {
+        "title": "How to Get the Best Deal When Buying Your Next Car",
+        "excerpt": "Exclusive tips and strategies from industry insiders to help you negotiate the perfect car deal."
+      },
+      "feature3": {
+        "title": "Electric Vehicle Market Analysis: Winners and Losers of 2024",
+        "excerpt": "Our comprehensive analysis of which EV manufacturers are leading the charge and which are falling behind."
+      },
+      "feature4": {
+        "title": "Maintenance Tips That Will Save You Thousands",
+        "excerpt": "Learn the essential maintenance practices that can extend your car's life and save you money."
+      },
+      "feature5": {
+        "title": "Exclusive: Behind the Scenes at Major Auto Shows",
+        "excerpt": "Get exclusive access to what really happens behind the curtains at the world's biggest auto shows."
+      }
+    },
+    "trendingTopics": {
+      "0": "Electric Vehicles",
+      "1": "Car Insurance Tips", 
+      "2": "Best SUVs 2024",
+      "3": "Hybrid Technology",
+      "4": "Car Maintenance",
+      "5": "Auto Industry News"
+    }
+  },
+  "VideoSlider": {
+    "title": "Latest Videos",
+    "description": "Watch our latest automotive videos and reviews",
+    "view_all_videos": "View All Videos",
+    "views": "views",
+    "test_drive": "Test Drive",
+    "comparison": "Comparison",
+    "tutorial": "Tutorial",
+    "news": "News",
+    "review": "Review",
+    "featured": "Featured",
+    "mockData": {
+      "video1": {
+        "title": "2024 Tesla Model S Plaid: The Ultimate Electric Performance Test",
+        "description": "We put the Tesla Model S Plaid through its paces on track and street to see if it lives up to the hype."
+      },
+      "video2": {
+        "title": "BMW M3 vs Mercedes AMG C63: Track Battle",
+        "description": "Two German sports sedans go head-to-head on the track in this epic comparison."
+      },
+      "video3": {
+        "title": "How to Change Your Oil: Complete Guide",
+        "description": "Learn how to change your car's oil like a pro with this step-by-step tutorial."
+      },
+      "video4": {
+        "title": "Toyota Prius 2024: Full Review and Road Test",
+        "description": "Is the new Prius finally cool? We review everything about Toyota's hybrid icon."
+      },
+      "video5": {
+        "title": "Breaking: New Electric SUV Announcements",
+        "description": "All the latest electric SUV announcements from major manufacturers this week."
+      }
+    }
+  },
+  "ClassicCars": {
+    "title": "Classic Cars Collection",
+    "description": "Discover timeless automotive masterpieces and investment-grade classics",
+    "view_collection": "View Collection",
+    "excellent": "Excellent",
+    "very_good": "Very Good",
+    "good": "Good",
+    "fair": "Fair",
+    "project": "Project",
+    "legendary": "Legendary",
+    "very_rare": "Very Rare",
+    "rare": "Rare",
+    "uncommon": "Uncommon",
+    "common": "Common",
+    "featured": "FEATURED",
+    "miles": "miles",
+    "muscle": "Muscle",
+    "luxury": "Luxury",
+    "sports": "Sports",
+    "exotic": "Exotic",
+    "vintage": "Vintage",
+    "european": "European",
+    "key_features": "Key Features",
+    "more": "more",
+    "browse_by_category": "Browse by Category",
+    "muscle_cars": "Muscle Cars",
+    "luxury_classics": "Luxury Classics",
+    "sports_cars": "Sports Cars",
+    "exotic_supercars": "Exotic Supercars",
+    "vintage_collection": "Vintage Collection",
+    "european_classics": "European Classics",
+    "investment_grade_classics": "Investment Grade Classics",
+    "investment_description": "Classic cars have consistently outperformed traditional investments. Our curated collection features authenticated vehicles with verified provenance and professional appraisals."
+  },
+  "DashCams": {
+    "title": "Dash Cams & Security",
+    "description": "Protect your vehicle with advanced dash cam technology",
+    "shop_all_dash_cams": "Shop All Dash Cams",
+    "budget": "Budget",
+    "premium": "Premium",
+    "professional": "Professional",
+    "dual_channel": "Dual Channel",
+    "commercial": "Commercial",
+    "bestseller": "BESTSELLER",
+    "new": "NEW",
+    "save": "SAVE",
+    "key_features": "Key Features",
+    "more": "more",
+    "resolution": "Resolution",
+    "field_of_view": "Field of View",
+    "add_to_cart": "Add to Cart",
+    "shop_by_features": "Shop by Features",
+    "4k_recording": "4K Recording",
+    "ultra_hd_quality": "Ultra HD Quality",
+    "night_vision": "Night Vision",
+    "clear_night_recording": "Clear Night Recording",
+    "wifi_enabled": "WiFi Enabled",
+    "easy_file_transfer": "Easy File Transfer",
+    "parking_mode": "Parking Mode",
+    "24_7_protection": "24/7 Protection",
+    "why_you_need_dash_cam": "Why You Need a Dash Cam",
+    "dash_cam_benefits": "Protect yourself from insurance fraud, document accidents, and capture unexpected moments. Professional installation available for all dash cam models."
+  },
+  "Accessories": {
+    "title": "Car Accessories & Parts",
+    "description": "Upgrade and customize your vehicle with premium accessories",
+    "shop_all_accessories": "Shop All Accessories",
+    "all_categories": "All Categories",
+    "interior": "Interior",
+    "exterior": "Exterior",
+    "electronics": "Electronics",
+    "performance": "Performance",
+    "safety": "Safety",
+    "maintenance": "Maintenance",
+    "bestseller": "BESTSELLER",
+    "new": "NEW",
+    "sale": "SALE",
+    "in_stock": "In Stock",
+    "out_of_stock": "Out of Stock",
+    "save": "SAVE",
+    "key_features": "Key Features",
+    "more": "more",
+    "compatible_with": "Compatible with:",
+    "add_to_cart": "Add to Cart",
+    "popular_categories": "Popular Categories",
+    "floor_mats": "Floor Mats",
+    "phone_mounts": "Phone Mounts",
+    "led_lights": "LED Lights",
+    "air_fresheners": "Air Fresheners",
+    "seat_covers": "Seat Covers",
+    "dash_cams": "Dash Cams",
+    "items": "items",
+    "professional_installation_available": "Professional Installation Available",
+    "installation_description": "Get your accessories professionally installed by certified technicians. We offer installation services for most accessories with warranty coverage.",
+    "book_installation": "Book Installation"
   }
 }

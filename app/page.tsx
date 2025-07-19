@@ -35,6 +35,15 @@ import { getCachedData, setCachedData } from "../utils/cacheUtils";
 import { UserActivityProvider } from "../context/UserActivityContext";
 import { formatDate } from "react-datepicker/dist/date_utils";
 import NewsArticleList from "../components/NewsArticleList";
+import { ResponsiveAd } from "../components/ads";
+import { 
+  LatestCarReviews, 
+  FeaturesFromJackob, 
+  VideoSlider, 
+  ClassicCars, 
+  DashCams, 
+  Accessories 
+} from "../components/sections";
 import "./styles/homepage.css";
 
 // Typs
@@ -770,7 +779,7 @@ function HomeContent() {
     .slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 mt-[10%] lg:mt-[5%]">
       {/* Main Content */}
       <div className="cd-container">
         <motion.main 
@@ -779,6 +788,21 @@ function HomeContent() {
           transition={{ duration: 0.8 }}
           className="cd-section"
         >
+          {/* Top Banner Ad */}
+          {/* <ResponsiveAd 
+            position="top-banner"
+            adSlot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOP_BANNER}
+            enableGoogleAds={process.env.NEXT_PUBLIC_ENABLE_GOOGLE_ADS === 'true'}
+            enableBannerAds={process.env.NEXT_PUBLIC_ENABLE_BANNER_ADS === 'true'}
+          /> */}
+
+          {/* Mobile Banner Ad */}
+          {/* <ResponsiveAd 
+            position="mobile-banner"
+            adSlot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_MOBILE_BANNER}
+            enableGoogleAds={process.env.NEXT_PUBLIC_ENABLE_GOOGLE_ADS === 'true'}
+            enableBannerAds={process.env.NEXT_PUBLIC_ENABLE_BANNER_ADS === 'true'}
+          /> */}
           {/* Featured Stories Section */}
           <div className="flex flex-col w-full px-4 mb-8 lg:hidden">
           <h2 className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">{t('featured_stories')}</h2>
@@ -1071,6 +1095,14 @@ function HomeContent() {
             <div className="mb-12">
               <StorePromotion />
             </div>
+
+            {/* In-Content Ad */}
+            {/* <ResponsiveAd 
+              position="in-content"
+              adSlot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_IN_CONTENT}
+              enableGoogleAds={process.env.NEXT_PUBLIC_ENABLE_GOOGLE_ADS === 'true'}
+              enableBannerAds={process.env.NEXT_PUBLIC_ENABLE_BANNER_ADS === 'true'}
+            /> */}
 
             {/* Special Offers Section */}
             {/* <motion.section
@@ -1367,6 +1399,17 @@ function HomeContent() {
                 ))}
               </div>
             </div>
+
+            {/* In-Content Ad Between News Sections */}
+            {/* <div className="my-8">
+              <ResponsiveAd 
+                position="in-content"
+                adSlot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_IN_CONTENT}
+                enableGoogleAds={process.env.NEXT_PUBLIC_ENABLE_GOOGLE_ADS === 'true'}
+                enableBannerAds={process.env.NEXT_PUBLIC_ENABLE_BANNER_ADS === 'true'}
+              />
+            </div> */}
+
             {/* World News Section */}
             <div className="flex flex-col">
               <h2 className="text-l text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-2">{t('world_news')}</h2>
@@ -1406,6 +1449,23 @@ function HomeContent() {
             </div>
           </div>
 
+          {/* Latest Car Reviews Section */}
+          <LatestCarReviews />
+
+          {/* Features from Jackob Section */}
+          <FeaturesFromJackob />
+
+          {/* Video Slider Section */}
+          <VideoSlider />
+
+          {/* Classic Cars Section */}
+          <ClassicCars />
+
+          {/* Dash Cams Section */}
+          <DashCams />
+
+          {/* Car Accessories Section */}
+          <Accessories />
           
             {/* Search Car by Plate Number Section */}
             <motion.section 
@@ -1451,6 +1511,14 @@ function HomeContent() {
             </motion.section>
 
           </div>
+
+          {/* Bottom Banner Ad */}
+          <ResponsiveAd 
+            position="bottom-banner"
+            adSlot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM_BANNER}
+            enableGoogleAds={process.env.NEXT_PUBLIC_ENABLE_GOOGLE_ADS === 'true'}
+            enableBannerAds={process.env.NEXT_PUBLIC_ENABLE_BANNER_ADS === 'true'}
+          />
           
         </motion.main>
       </div>
