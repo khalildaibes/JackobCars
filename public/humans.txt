@@ -1,0 +1,22 @@
+/* TEAM */
+Website Developer: MaxSpeedLimit Development Team
+Contact: info@maxspeedlimit.com
+Location: Global
+
+/* SITE */
+Last Update: 2024
+Standards: HTML5, CSS3, JavaScript ES6+, React, Next.js
+Components: Next.js 14, TypeScript, Tailwind CSS
+Software: VS Code, Git, Vercel
+
+/* BUSINESS */
+Company: MaxSpeedLimit - ضمن السرعه القانونيه
+Industry: Automotive, Car Dealer, Vehicle Sales
+Services: Car Sales, Auto Parts, Vehicle Financing, Automotive Services
+Languages: English, Arabic, Hebrew
+
+/* THANKS */
+Special thanks to all customers and partners who trust MaxSpeedLimit for their automotive needs.
+
+Built with passion for cars and technology.
+Making car buying experience better, one customer at a time. 

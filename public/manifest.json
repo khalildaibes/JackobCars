@@ -1,0 +1,72 @@
+{
+  "name": "MaxSpeedLimit - ضمن السرعه القانونيه",
+  "short_name": "MaxSpeedLimit",
+  "description": "Premium car dealer offering vehicles, auto parts, services, and financing solutions",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050B20",
+  "theme_color": "#050B20",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["automotive", "business", "shopping"],
+  "icons": [
+    {
+      "src": "/logo-transparent-small.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo-transparent.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo-transparent.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Search Cars",
+      "short_name": "Search",
+      "description": "Search for cars",
+      "url": "/carsearch",
+      "icons": [
+        {
+          "src": "/logo-transparent-small.png",
+          "sizes": "32x32"
+        }
+      ]
+    },
+    {
+      "name": "Featured Vehicles",
+      "short_name": "Featured",
+      "description": "View featured vehicles",
+      "url": "/featured",
+      "icons": [
+        {
+          "src": "/logo-transparent-small.png",
+          "sizes": "32x32"
+        }
+      ]
+    },
+    {
+      "name": "Contact Us",
+      "short_name": "Contact",
+      "description": "Contact MaxSpeedLimit",
+      "url": "/contactus",
+      "icons": [
+        {
+          "src": "/logo-transparent-small.png",
+          "sizes": "32x32"
+        }
+      ]
+    }
+  ]
+} 
