@@ -150,10 +150,13 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <head>
-        {/* Favicon and App Icons */}
-        <link rel="icon" href="/favicon.ico" sizes="32x32" />
-        <link rel="icon" href="/logo-transparent-small.png" type="image/png" sizes="32x32" />
-        <link rel="apple-touch-icon" href="/logo-transparent-small.png" />
+        {/* Favicon and App Icons - MaxSpeedLimit Logo */}
+        <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon-16x16.png" sizes="16x16" type="image/png" />
+        <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
+        <link rel="apple-touch-icon" href="/logo-transparent-small.png" sizes="180x180" />
+        <link rel="mask-icon" href="/logo.svg" color="#050B20" />
         <link rel="manifest" href="/manifest.json" />
         
         {/* Additional SEO Meta Tags */}
@@ -161,6 +164,9 @@ export default async function RootLayout({
         <meta name="format-detection" content="telephone=no" />
         <meta name="geo.region" content="Your-Region" />
         <meta name="geo.placename" content="Your-City" />
+        <meta name="theme-color" content="#050B20" />
+        <meta name="msapplication-TileColor" content="#050B20" />
+        <meta name="msapplication-TileImage" content="/logo-transparent-small.png" />
         
         {/* Structured Data */}
         <script
