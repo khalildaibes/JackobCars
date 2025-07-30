@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     default: "MaxSpeedLimit - ضمن السرعه القانونيه | Premium Car Dealer",
     template: "%s | MaxSpeedLimit"
   },
-  description: "MaxSpeedLimit (ضمن السرعه القانونيه) - Your trusted car dealer offering premium vehicles, auto parts, services, and financing solutions. Discover the best cars with competitive pricing and exceptional customer service.",
+  description: "MaxSpeedLimit (ضمن السرعه القانونيه) - Premium car dealer offering high-quality vehicles, auto parts, services, and financing solutions. Discover the best cars with competitive pricing and exceptional customer service.",
   keywords: "MaxSpeedLimit, ضمن السرعه القانونيه, car dealer, used cars, new cars, auto parts, car financing, vehicle sales, automotive services, car marketplace, car search, vehicle listings",
   authors: [{ name: "MaxSpeedLimit Team" }],
   creator: "MaxSpeedLimit",
@@ -44,15 +44,30 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "MaxSpeedLimit - ضمن السرعه القانونيه",
-    title: "MaxSpeedLimit - Premium Car Dealer | ضمن السرعه القانونيه",
-    description: "Discover premium vehicles, auto parts, and automotive services at MaxSpeedLimit. Your trusted car dealer with competitive pricing and exceptional customer service.",
+    title: "MaxSpeedLimit - Premium Car Dealer | ضمن السرعه القانونيه", 
+    description: "Premium car dealer offering high-quality vehicles, auto parts, services, and financing solutions. Discover the best cars with competitive pricing and exceptional customer service.",
     url: "/",
     images: [
       {
-        url: "/logo-transparent.png",
+        url: "/api/og-image",
         width: 1200,
         height: 630,
-        alt: "MaxSpeedLimit - ضمن السرعه القانونيه Logo"
+        alt: "MaxSpeedLimit - ضمن السرعه القانونيه | Premium Car Dealer",
+        type: "image/png"
+      },
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "MaxSpeedLimit - ضمن السرعه القانونيه | Premium Car Dealer",
+        type: "image/png"
+      },
+      {
+        url: "/logo-transparent.png",
+        width: 800,
+        height: 600,
+        alt: "MaxSpeedLimit Logo",
+        type: "image/png"
       }
     ],
     locale: "en_US",
@@ -63,8 +78,8 @@ export const metadata: Metadata = {
     site: "@MaxSpeedLimit",
     creator: "@MaxSpeedLimit",
     title: "MaxSpeedLimit - Premium Car Dealer | ضمن السرعه القانونيه",
-    description: "Discover premium vehicles, auto parts, and automotive services at MaxSpeedLimit.",
-    images: ["/logo-transparent.png"]
+    description: "Premium car dealer offering high-quality vehicles, auto parts, services, and financing solutions.",
+    images: ["/api/og-image"],
   },
   robots: {
     index: true,
@@ -92,7 +107,14 @@ export const metadata: Metadata = {
     "apple-mobile-web-app-status-bar-style": "default",
     "theme-color": "#050B20",
     "msapplication-TileColor": "#050B20",
-    "application-name": "MaxSpeedLimit"
+    "application-name": "MaxSpeedLimit",
+    // WhatsApp specific metadata
+    "og:image:secure_url": `${process.env.NEXT_PUBLIC_BASE_URL || 'https://maxspeedlimit.com'}/api/og-image`,
+    "og:image:width": "1200",
+    "og:image:height": "630",
+    "og:image:alt": "MaxSpeedLimit - ضمن السرعه القانونيه | Premium Car Dealer",
+    "og:url": process.env.NEXT_PUBLIC_BASE_URL || 'https://maxspeedlimit.com',
+    "og:site_name": "MaxSpeedLimit - ضمن السرعه القانونيه"
   }
 };
 
