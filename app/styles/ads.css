@@ -133,10 +133,17 @@ div[class*="sidebar-ads-container"] {
 
 /* Responsive behavior for ads */
 @media (max-width: 1024px) {
-  .sidebar-ads-container {
+  .sidebar-ads-container,
+  .sidebar-ads-sticky,
+  .ads-fixed-container,
+  div[data-sidebar-position] {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 }
 
@@ -163,6 +170,13 @@ div[class*="sidebar-ads-container"] {
     border-color: transparent !important;
     outline: 0 !important;
     box-shadow: none !important;
+  }
+  
+  /* Override homepage sidebar hiding specifically */
+  .homepage-sidebar {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
   
   /* Force sidebar ads to be visible */
@@ -193,24 +207,46 @@ div[class*="sidebar-ads-container"] {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Force sidebar visibility in production */
-.sidebar-ads-container,
-.sidebar-ads-sticky,
-.ads-fixed-container {
-  display: flex !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  z-index: 50 !important;
+/* Force sidebar visibility in production - Desktop only */
+@media (min-width: 1025px) {
+  .sidebar-ads-container,
+  .sidebar-ads-sticky,
+  .ads-fixed-container {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 50 !important;
+  }
+
+  /* Override homepage sidebar hiding */
+  .homepage-sidebar {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
 }
 
-/* Target the specific sidebar classes */
-.w-\[12\%\].min-w-\[160px\].bg-white\/10.mt-\[4\%\].backdrop-blur-sm.p-3\.2.hidden.lg\:flex.lg\:flex-col.sidebar-ads-container.ads-fixed-container {
-  display: flex !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  z-index: 50 !important;
-  width: 12% !important;
-  min-width: 160px !important;
+/* Override any sidebar hiding rules - Desktop only */
+@media (min-width: 1025px) {
+  [class*="sidebar"],
+  [class*="w-[12%]"],
+  [class*="min-w-[160px]"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Target the specific sidebar classes - Desktop only */
+@media (min-width: 1025px) {
+  .w-\[12\%\].min-w-\[160px\].bg-white\/10.mt-\[4\%\].backdrop-blur-sm.p-3\.2.hidden.lg\:flex.lg\:flex-col.sidebar-ads-container.ads-fixed-container {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 50 !important;
+    width: 12% !important;
+    min-width: 160px !important;
+  }
 }
 
 /* Mobile layout fixes */

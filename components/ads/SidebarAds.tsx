@@ -21,10 +21,8 @@ export const SidebarAds: React.FC<SidebarAdsProps> = ({
   return (
     <div className={`w-[12%] min-w-[160px] bg-white/10 mt-[4%] backdrop-blur-sm p-3.2 hidden lg:flex lg:flex-col sidebar-ads-container ads-fixed-container ${className}`} data-sidebar-position={position}>
       <div className="sidebar-ads-sticky">
-        <h2 className="text-l text-blue-800 font-bold mb-3.2 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-1.6">
-          {title}
-        </h2>
-        <div className="space-y-6">
+       
+        <div className="space-y-6 mt-4">
           {ads.map((ad) => (
             <div key={ad.id} className="bg-white/5 rounded-lg overflow-hidden ad-card mb-4">
               <div className="aspect-video relative">
