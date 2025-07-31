@@ -1,5 +1,68 @@
 /* Ads Specific Styles */
 
+/* NUCLEAR BORDER REMOVAL - Override ANY red borders specifically for sidebars */
+[class*="sidebar-ads"],
+[class*="w-[15%]"],
+[class*="min-w-[200px]"],
+.sidebar-ads-container,
+.ads-fixed-container {
+  border: 0 !important;
+  border-style: none !important;
+  border-width: 0 !important;
+  border-color: transparent !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+
+
+}
+
+/* Remove all borders from ads */
+.sidebar-ads-container, 
+.sidebar-ads-container *,
+.ad-card,
+.ad-card * {
+  border: none !important;
+  outline: none !important;
+  border-color: transparent !important;
+
+}
+
+.sidebar-ads-container {
+  border: 0 !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+
+
+}
+
+/* Force remove any red borders specifically */
+div[class*="sidebar-ads-container"] {
+  border: 0 !important;
+  border-color: transparent !important;
+  border-style: none !important;
+  border-width: 0 !important;
+}
+
+/* Nuclear option - remove ALL possible borders */
+.w-\[15\%\].min-w-\[200px\] {
+  border: 0 !important;
+  border-color: transparent !important;
+  border-style: none !important;
+  border-width: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
 /* Ensure sticky positioning works correctly for sidebar ads */
 .sidebar-ads-container {
   position: relative;
@@ -12,28 +75,24 @@
 .sidebar-ads-sticky {
   position: sticky;
   top: 1rem;
-  max-height: calc(100vh - 2rem);
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+  max-height: none;
+  overflow: hidden !important;
+  overflow-y: hidden !important;
+  overflow-x: hidden !important;
 }
 
-/* Custom scrollbar for webkit browsers */
-.sidebar-ads-sticky::-webkit-scrollbar {
-  width: 4px;
-}
+/* Scrollbars removed - no longer needed */
 
-.sidebar-ads-sticky::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.sidebar-ads-sticky::-webkit-scrollbar-thumb {
-  background-color: rgba(156, 163, 175, 0.5);
-  border-radius: 2px;
-}
-
-.sidebar-ads-sticky::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(156, 163, 175, 0.7);
+/* Ensure NO scrolling anywhere in sidebar ads */
+.sidebar-ads-container,
+.sidebar-ads-container *,
+.sidebar-ads-sticky,
+.sidebar-ads-sticky * {
+  overflow: hidden !important;
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+  max-height: none !important;
+  height: auto !important;
 }
 
 /* Prevent ads from moving during scroll */
@@ -45,6 +104,8 @@
 /* Smooth transitions for ad interactions */
 .ad-card {
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border: none !important;
+  outline: none !important;
 }
 
 .ad-card:hover {
@@ -71,8 +132,26 @@
     flex-direction: column;
     visibility: visible;
     opacity: 1;
-    border: 2px solid red; /* Temporary debug border */
-    background: rgba(255, 255, 255, 0.9) !important; /* More visible background */
+    border: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    border-color: transparent !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+  }
+  
+  /* Additional nuclear border removal for desktop */
+  .w-\[15\%\].min-w-\[200px\] {
+    border: 0 !important;
+    border-color: transparent !important;
+    border-style: none !important;
+    border-width: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
   }
 }
 

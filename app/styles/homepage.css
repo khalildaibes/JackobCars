@@ -1,5 +1,7 @@
 /* Homepage Specific Styles */
-
+html {
+  zoom: 0.8;
+}
 /* Original Homepage Layout */
 .homepage-container {
   display: flex;

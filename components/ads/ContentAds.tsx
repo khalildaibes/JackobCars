@@ -44,14 +44,14 @@ export const ContentAds: React.FC<ContentAdsProps> = ({
             <div className="p-4">
               <div className="flex items-center gap-3">
                 <div className="w-16 h-16 rounded-lg overflow-hidden">
-                                  <Img
-                  src={`${ad.image}`}
-                  alt={ad.alt}
-                  width={64}
-                  height={64}
-                  className="object-cover w-full h-full"
-                  external={false}
-                />
+                                                    <Img
+                    src={`${ad.image}`}
+                    alt={ad.alt}
+                    width={64}
+                    height={64}
+                    className="object-cover w-full h-full"
+                    external={false}
+                  />
                 </div>
                 <div className="flex-1">
                   <h4 className="font-bold text-gray-900 text-sm mb-1">
