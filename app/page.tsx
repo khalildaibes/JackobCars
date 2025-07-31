@@ -794,11 +794,14 @@ function HomeContent() {
       {/* Main Layout Container */}
       <div className="flex w-full min-h-screen">
         {/* Left Ads Sidebar - Hide on mobile */}
-        <SidebarAds 
+        <div className="w-[15%] min-w-[200px] bg-red-500 p-4 hidden lg:block">
+          <div className="text-white">LEFT SIDEBAR TEST</div>
+        </div>
+        {/* <SidebarAds 
           ads={leftSidebarAds} 
           title="اعلانات ممولة" 
           position="left" 
-        />
+        /> */}
 
         {/* Main Content */}
         <div className="flex-1 lg:max-w-[70%] lg:mx-auto cd-container">
