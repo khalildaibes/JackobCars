@@ -790,7 +790,7 @@ function HomeContent() {
     .slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-gray-50 mt-[10%] lg:mt-[5%]">
+    <div className="min-h-screen bg-gray-50 mt-[8%] lg:mt-[4%]">
       {/* Main Layout Container */}
       <div className="flex w-full">
         {/* Left Ads Sidebar - Hide on mobile */}
@@ -801,7 +801,7 @@ function HomeContent() {
         />
 
         {/* Main Content */}
-        <div className="flex-1 lg:max-w-[70%] lg:mx-auto cd-container w-full">
+        <div className="flex-1 lg:max-w-[56%] lg:mx-auto cd-container w-full">
           <motion.main 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -813,7 +813,7 @@ function HomeContent() {
            <ContentAds 
              layout="mobile-banner" 
              ads={mobileAds} 
-             className="mt-[15%]" 
+             className="mt-[12%]" 
            />
           {/* Featured Stories Section */}
           <div className="flex flex-col w-full px-4 mb-8 lg:hidden">
@@ -852,8 +852,8 @@ function HomeContent() {
             </div>
             
           {/* 1. Hero Banner Section */}
-          <div className="relative z-10 flex flex-col lg:flex-row gap-2 px-2 lg:px-4 items-stretch min-h-0 justify-center items-center mb-8 w-full md:w-[80%] mx-auto">
-            <div className="w-full lg:w-full flex flex-col gap-2">
+          <div className="relative z-10 flex flex-col lg:flex-row gap-1.6 px-1.6 lg:px-3.2 items-stretch min-h-0 justify-center items-center mb-6.4 w-full md:w-[64%] mx-auto">
+            <div className="w-full lg:w-full flex flex-col gap-1.6">
              
               {/* Hero Section
               <div className="w-full bg-gradient-to-br h-full from-blue-100 via-blue-300 from-white rounded-lg shadow-lg p-1 flex items-center justify-center">
@@ -863,7 +863,7 @@ function HomeContent() {
               </div> */}
             </div>
 
-            <div className="w-full lg:w-[30%] flex flex-col gap-2">
+            <div className="w-full lg:w-[24%] flex flex-col gap-1.6">
               {/* <div className="w-full bg-gradient-to-br from-blue-100 via-blue-300 from-white rounded-lg shadow-lg p-1 h-[320px] min-h-[320px] max-h-[320px] hidden lg:block">
                  {transformedArticles
                     .filter(article => article.category.includes('featured'))

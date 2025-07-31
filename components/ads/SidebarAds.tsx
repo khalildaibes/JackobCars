@@ -19,27 +19,27 @@ export const SidebarAds: React.FC<SidebarAdsProps> = ({
   const t = useTranslations('HomePage');
 
   return (
-    <div className={`w-[15%] min-w-[200px] bg-white/10 mt-[5%] backdrop-blur-sm p-4 hidden lg:flex lg:flex-col sidebar-ads-container ads-fixed-container ${className}`} data-sidebar-position={position}>
+    <div className={`w-[12%] min-w-[160px] bg-white/10 mt-[4%] backdrop-blur-sm p-3.2 hidden lg:flex lg:flex-col sidebar-ads-container ads-fixed-container ${className}`} data-sidebar-position={position}>
       <div className="sidebar-ads-sticky">
-        <h2 className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">
+        <h2 className="text-l text-blue-800 font-bold mb-3.2 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-1.6">
           {title}
         </h2>
-        <div className="space-y-4">
+        <div className="space-y-6">
           {ads.map((ad) => (
-            <div key={ad.id} className="bg-white/5 rounded-lg overflow-hidden ad-card">
+            <div key={ad.id} className="bg-white/5 rounded-lg overflow-hidden ad-card mb-4">
               <div className="aspect-video relative">
                                   <Img
                     src={`${ad.image}`}
                     alt={ad.alt}
-                    width={256}
-                    height={144}
+                    width={205}
+                    height={115}
                     className="object-cover w-full h-full"
                   />
               </div>
               <div className="p-3 ads-arabic-text">
-                <h3 className="text-gray-800 font-medium">{ad.title}</h3>
-                <p className="text-sm text-gray-600 mt-1">{ad.description}</p>
-                <button className={`mt-2 w-full bg-${ad.categoryColor}-600 text-white py-2 rounded-lg hover:bg-${ad.categoryColor}-700 transition-colors arabic-ad-button`}>
+                <h3 className="text-gray-800 font-medium mb-2">{ad.title}</h3>
+                <p className="text-sm text-gray-600 mb-3">{ad.description}</p>
+                <button className={`w-full bg-${ad.categoryColor}-600 text-white py-2 rounded-lg hover:bg-${ad.categoryColor}-700 transition-colors arabic-ad-button`}>
                   {ad.buttonText}
                 </button>
               </div>

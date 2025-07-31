@@ -2,8 +2,8 @@
 
 /* NUCLEAR BORDER REMOVAL - Override ANY red borders specifically for sidebars */
 [class*="sidebar-ads"],
-[class*="w-[15%]"],
-[class*="min-w-[200px]"],
+[class*="w-[12%]"],
+[class*="min-w-[160px]"],
 .sidebar-ads-container,
 .ads-fixed-container {
   border: 0 !important;
@@ -54,7 +54,7 @@ div[class*="sidebar-ads-container"] {
 }
 
 /* Nuclear option - remove ALL possible borders */
-.w-\[15\%\].min-w-\[200px\] {
+.w-\[12\%\].min-w-\[160px\] {
   border: 0 !important;
   border-color: transparent !important;
   border-style: none !important;
@@ -70,6 +70,7 @@ div[class*="sidebar-ads-container"] {
   flex-shrink: 0;
   display: flex !important;
   flex-direction: column;
+  z-index: 50 !important;
 }
 
 .sidebar-ads-sticky {
@@ -79,6 +80,7 @@ div[class*="sidebar-ads-container"] {
   overflow: hidden !important;
   overflow-y: hidden !important;
   overflow-x: hidden !important;
+  z-index: 50 !important;
 }
 
 /* Scrollbars removed - no longer needed */
@@ -99,6 +101,7 @@ div[class*="sidebar-ads-container"] {
 .ads-fixed-container {
   transform: translateZ(0);
   will-change: auto;
+  z-index: 50 !important;
 }
 
 /* Smooth transitions for ad interactions */
@@ -106,16 +109,26 @@ div[class*="sidebar-ads-container"] {
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   border: none !important;
   outline: none !important;
+  margin-bottom: 1.5rem !important;
+  padding-bottom: 0.5rem !important;
+  z-index: 51 !important;
 }
 
 .ad-card:hover {
   transform: translateY(-2px);
 }
 
+/* Add subtle separator between ads */
+.ad-card:not(:last-child) {
+  border-bottom: 1px solid rgba(156, 163, 175, 0.1) !important;
+  padding-bottom: 1rem !important;
+}
+
 /* Ensure content doesn't jump during scroll */
 .main-content-container {
   min-height: 100vh;
   position: relative;
+  z-index: 10 !important;
 }
 
 /* Responsive behavior for ads */
@@ -134,8 +147,9 @@ div[class*="sidebar-ads-container"] {
     flex-direction: column !important;
     visibility: visible !important;
     opacity: 1 !important;
-    width: 15% !important;
-    min-width: 200px !important;
+    width: 12% !important;
+    min-width: 160px !important;
+    z-index: 50 !important;
     border: 0 !important;
     border-left: 0 !important;
     border-right: 0 !important;
@@ -149,7 +163,7 @@ div[class*="sidebar-ads-container"] {
   }
   
   /* Additional nuclear border removal for desktop */
-  .w-\[15\%\].min-w-\[200px\] {
+  .w-\[12\%\].min-w-\[160px\] {
     border: 0 !important;
     border-color: transparent !important;
     border-style: none !important;
@@ -188,7 +202,7 @@ div[class*="sidebar-ads-container"] {
   }
   
   /* Ensure main content takes full width on mobile */
-  [class*="flex-1"][class*="lg:max-w-[70%]"] {
+  [class*="flex-1"][class*="lg:max-w-[56%]"] {
     width: 100% !important;
     max-width: 100% !important;
     flex: 1 1 100% !important;
