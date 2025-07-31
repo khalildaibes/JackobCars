@@ -137,7 +137,6 @@ div[class*="sidebar-ads-container"] {
   .sidebar-ads-sticky,
   .ads-fixed-container,
   div[data-sidebar-position] {
-    display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
     width: 0 !important;
@@ -170,20 +169,6 @@ div[class*="sidebar-ads-container"] {
     border-color: transparent !important;
     outline: 0 !important;
     box-shadow: none !important;
-  }
-  
-  /* Nuclear option for production visibility */
-  div[class*="w-[12%]"],
-  div[class*="min-w-[160px]"],
-  div[class*="sidebar-ads"],
-  div[class*="ads-fixed"] {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    width: 12% !important;
-    min-width: 160px !important;
-    z-index: 50 !important;
-    position: relative !important;
   }
   
   /* Override homepage sidebar hiding specifically */
