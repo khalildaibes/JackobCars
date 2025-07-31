@@ -6,6 +6,13 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Facebook, Instagram, Twitter, Link as LinkIcon, MessageCircle } from "lucide-react";
 import Image from "next/image";
+import SidebarAds from "../../../components/ads/SidebarAds";
+import ContentAds from "../../../components/ads/ContentAds";
+import { 
+  leftSidebarAds, 
+  rightSidebarAds, 
+  mobileAds 
+} from "../../../data/ads-data";
 
 // Utility function to sanitize HTML content
 const sanitizeHtml = (html: string): string => {
@@ -327,7 +334,7 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
 
     return (
       <main className="min-h-screen bg-white text-gray-800">
-        {/* Hero Section */}
+        {/* Hero Section - Full Width */}
         <section className="relative w-full min-h-[60vh]">
           {cover?.url ? (
             <Image
@@ -432,185 +439,214 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
           </div>
         </section>
 
-        {/* Article Content */}
-        <article className="py-16">
-          <div className="container mx-auto px-4 max-w-4xl">
-            
-            {/* Videos Section - Simple iframe for now */}
-            {videos && videos.length > 0 && (
-              <section className="mb-12">
-                <div className="bg-gradient-to-br from-blue-50 via-white to-pink-50 rounded-2xl shadow-2xl p-8 border border-blue-100">
-                  <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
-                    {videos.includes('tiktok') ? 'الخبر على منصة تيكتوك' : 'فيديو الخبر'}
-                  </h2>
-                  <div className="flex justify-center">
-                    <div className="w-full max-w-md">
-                      <p className="text-center text-gray-600 p-4 bg-gray-100 rounded-lg">
-                        Video content: {videos}
-                      </p>
+        {/* Main Layout Container - After Banner */}
+        <div className="flex w-full">
+          {/* Left Ads Sidebar - Hide on mobile */}
+          <SidebarAds 
+            ads={leftSidebarAds} 
+            title="اعلانات ممولة" 
+            position="left" 
+          />
+
+          {/* Main Content */}
+          <div className="flex-1 lg:max-w-[56%] lg:mx-auto w-full">
+            {/* Mobile Banner Ad */}
+            <ContentAds 
+              layout="mobile-banner" 
+              ads={mobileAds} 
+              className="mt-8 mb-8 lg:hidden" 
+            />
+
+            {/* Article Content */}
+            <article className="py-16 bg-gradient-to-br from-gray-50 via-white to-blue-50">
+              <div className="container mx-auto px-4 max-w-4xl">
+                <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100">
+                  
+                  {/* Videos Section - Simple iframe for now */}
+                  {videos && videos.length > 0 && (
+                    <section className="mb-12">
+                      <div className="bg-gradient-to-br from-blue-50 via-white to-pink-50 rounded-2xl shadow-2xl p-8 border border-blue-100">
+                        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
+                          {videos.includes('tiktok') ? 'الخبر على منصة تيكتوك' : 'فيديو الخبر'}
+                        </h2>
+                        <div className="flex justify-center">
+                          <div className="w-full max-w-md">
+                            <p className="text-center text-gray-600 p-4 bg-gray-100 rounded-lg">
+                              Video content: {videos}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+                  )}
+
+                  {/* Content Blocks */}
+                  {blocks && blocks.length > 0 ? (
+                    <div className="rich-text-content">
+                      {blocks.map((block: any) => renderBlock(block))}
                     </div>
+                  ) : content && content.length > 0 ? (
+                    <div className="rich-text-content">
+                      {content.map((item: any, index: number) => {
+                        switch (item.type) {
+                          case 'paragraph':
+                            return (
+                              <p key={index} className="mb-4 text-gray-700 leading-relaxed">
+                                {item.children?.[0]?.text || ''}
+                              </p>
+                            );
+                          case 'heading':
+                            const HeadingTag = `h${item.level || 2}` as keyof JSX.IntrinsicElements;
+                            return (
+                              <HeadingTag key={index} className={`text-${Math.max(2, 5-item.level)}xl font-bold mb-4 text-gray-900`}>
+                                {item.children?.[0]?.text || ''}
+                              </HeadingTag>
+                            );
+                          default:
+                            return null;
+                        }
+                      })}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">No article content available.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </article>
+
+            {/* Comments Section */}
+            <section className="py-8 bg-gray-50">
+              <div className="container mx-auto px-4">
+                <div className="max-w-4xl mx-auto">
+                  <h2 className="text-2xl font-bold mb-6">{t('comments')} ({comments.length})</h2>
+                  
+                  {/* Comments List */}
+                  <div className="space-y-6 mb-8">
+                    {comments.map((comment) => (
+                      <div key={comment.id} className="bg-white p-6 rounded-lg shadow-sm">
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="flex items-center gap-3">
+                            {comment.admin_user?.name && (
+                              <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                <span className="text-gray-600 font-medium text-sm">
+                                  {comment.admin_user.name.charAt(0).toUpperCase()}
+                                </span>
+                              </div>
+                            )}
+                            <div>
+                              <h3 className="font-medium text-gray-900">{comment.admin_user?.name || 'Guest'}</h3>
+                              <p className="text-sm text-gray-500">{new Date(comment.date).toLocaleDateString()}</p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            <button 
+                              onClick={() => handleLike(comment.id)}
+                              className="text-gray-500 hover:text-blue-600 transition-colors"
+                              aria-label="Like comment"
+                            >
+                              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                              </svg>
+                            </button>
+                            <span className="text-sm text-gray-600">{comment.likes || 0}</span>
+                          </div>
+                        </div>
+                        <p className="text-gray-700">{comment.body}</p>
+                      </div>
+                    ))}
+                    
+                    {comments.length === 0 && (
+                      <div className="text-center py-8 text-gray-500">
+                        {t('no_comments')}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Add Comment Form */}
+                  <div className="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 className="text-xl font-semibold mb-4">{t('add_comment')}</h3>
+                    <form className="space-y-4" onSubmit={handleCommentSubmit}>
+                      <div>
+                        <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-1">
+                          {t('your_comment')}
+                        </label>
+                        <textarea
+                          id="comment"
+                          rows={4}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder={t('write_comment')}
+                          value={newComment}
+                          onChange={(e) => setNewComment(e.target.value)}
+                          required
+                        ></textarea>
+                      </div>
+                      <div className="flex justify-end">
+                        <button
+                          type="submit"
+                          disabled={submittingComment}
+                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed"
+                        >
+                          {submittingComment ? t('posting_comment') : t('post_comment')}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Related Articles Section */}
+            {relatedArticles.length > 0 && (
+              <section className="py-16 bg-gray-50">
+                <div className="container mx-auto px-4">
+                  <h2 className="text-3xl font-bold mb-8 text-center">{t('related_articles')}</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {relatedArticles.map((relatedArticle) => (
+                      <Link 
+                        key={relatedArticle.id} 
+                        href={`/news/${relatedArticle.slug}`}
+                        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                      >
+                        {relatedArticle.cover?.url && (
+                          <div className="relative h-48 w-full">
+                            <Image
+                              src={`http://64.227.112.249${relatedArticle.cover.url}`}
+                              alt={relatedArticle.title}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
+                        <div className="p-6">
+                          <div className="flex items-center space-x-2 text-sm text-gray-600 mb-2">
+                            {relatedArticle.categories?.[0]?.name && (
+                              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                                {relatedArticle.categories[0].name}
+                              </span>
+                            )}
+                            <span>{new Date(relatedArticle.publishedAt).toLocaleDateString()}</span>
+                          </div>
+                          <h3 className="text-xl font-bold mb-2 line-clamp-2">{relatedArticle.title}</h3>
+                          <p className="text-gray-600 line-clamp-3">{relatedArticle.description}</p>
+                        </div>
+                      </Link>
+                    ))}
                   </div>
                 </div>
               </section>
             )}
-
-            {/* Content Blocks */}
-            {blocks && blocks.length > 0 ? (
-              <div className="rich-text-content">
-                {blocks.map((block: any) => renderBlock(block))}
-              </div>
-            ) : content && content.length > 0 ? (
-              <div className="rich-text-content">
-                {content.map((item: any, index: number) => {
-                  switch (item.type) {
-                    case 'paragraph':
-                      return (
-                        <p key={index} className="mb-4 text-gray-700 leading-relaxed">
-                          {item.children?.[0]?.text || ''}
-                        </p>
-                      );
-                    case 'heading':
-                      const HeadingTag = `h${item.level || 2}` as keyof JSX.IntrinsicElements;
-                      return (
-                        <HeadingTag key={index} className={`text-${Math.max(2, 5-item.level)}xl font-bold mb-4 text-gray-900`}>
-                          {item.children?.[0]?.text || ''}
-                        </HeadingTag>
-                      );
-                    default:
-                      return null;
-                  }
-                })}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-gray-500">No article content available.</p>
-              </div>
-            )}
           </div>
-        </article>
 
-        {/* Comments Section */}
-        <section className="py-8 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl font-bold mb-6">{t('comments')} ({comments.length})</h2>
-              
-              {/* Comments List */}
-              <div className="space-y-6 mb-8">
-                {comments.map((comment) => (
-                  <div key={comment.id} className="bg-white p-6 rounded-lg shadow-sm">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-center gap-3">
-                        {comment.admin_user?.name && (
-                          <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                            <span className="text-gray-600 font-medium text-sm">
-                              {comment.admin_user.name.charAt(0).toUpperCase()}
-                            </span>
-                          </div>
-                        )}
-                        <div>
-                          <h3 className="font-medium text-gray-900">{comment.admin_user?.name || 'Guest'}</h3>
-                          <p className="text-sm text-gray-500">{new Date(comment.date).toLocaleDateString()}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <button 
-                          onClick={() => handleLike(comment.id)}
-                          className="text-gray-500 hover:text-blue-600 transition-colors"
-                          aria-label="Like comment"
-                        >
-                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
-                          </svg>
-                        </button>
-                        <span className="text-sm text-gray-600">{comment.likes || 0}</span>
-                      </div>
-                    </div>
-                    <p className="text-gray-700">{comment.body}</p>
-                  </div>
-                ))}
-                
-                {comments.length === 0 && (
-                  <div className="text-center py-8 text-gray-500">
-                    {t('no_comments')}
-                  </div>
-                )}
-              </div>
-
-              {/* Add Comment Form */}
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h3 className="text-xl font-semibold mb-4">{t('add_comment')}</h3>
-                <form className="space-y-4" onSubmit={handleCommentSubmit}>
-                  <div>
-                    <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-1">
-                      {t('your_comment')}
-                    </label>
-                    <textarea
-                      id="comment"
-                      rows={4}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder={t('write_comment')}
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      required
-                    ></textarea>
-                  </div>
-                  <div className="flex justify-end">
-                    <button
-                      type="submit"
-                      disabled={submittingComment}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed"
-                    >
-                      {submittingComment ? t('posting_comment') : t('post_comment')}
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Related Articles Section */}
-        {relatedArticles.length > 0 && (
-          <section className="py-16 bg-gray-50">
-            <div className="container mx-auto px-4">
-              <h2 className="text-3xl font-bold mb-8 text-center">{t('related_articles')}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {relatedArticles.map((relatedArticle) => (
-                  <Link 
-                    key={relatedArticle.id} 
-                    href={`/news/${relatedArticle.slug}`}
-                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-                  >
-                    {relatedArticle.cover?.url && (
-                      <div className="relative h-48 w-full">
-                        <Image
-                          src={`http://64.227.112.249${relatedArticle.cover.url}`}
-                          alt={relatedArticle.title}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    )}
-                    <div className="p-6">
-                      <div className="flex items-center space-x-2 text-sm text-gray-600 mb-2">
-                        {relatedArticle.categories?.[0]?.name && (
-                          <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
-                            {relatedArticle.categories[0].name}
-                          </span>
-                        )}
-                        <span>{new Date(relatedArticle.publishedAt).toLocaleDateString()}</span>
-                      </div>
-                      <h3 className="text-xl font-bold mb-2 line-clamp-2">{relatedArticle.title}</h3>
-                      <p className="text-gray-600 line-clamp-3">{relatedArticle.description}</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+          {/* Right Ads Section - Hide on mobile */}
+          <SidebarAds 
+            ads={rightSidebarAds} 
+            title="اعلانات ممولة" 
+            position="right" 
+          />
+        </div>
       </main>
     );
 } 
