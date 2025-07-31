@@ -114,6 +114,16 @@ div[class*="sidebar-ads-container"] {
   z-index: 51 !important;
 }
 
+/* Override global ad hiding rules for sidebar ads */
+.sidebar-ads-container .ad-card,
+.sidebar-ads-sticky .ad-card,
+.ads-fixed-container .ad-card,
+[data-sidebar-position] .ad-card {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
 .ad-card:hover {
   transform: translateY(-2px);
 }
@@ -231,6 +241,25 @@ div[class*="sidebar-ads-container"] {
   [class*="w-[12%]"],
   [class*="min-w-[160px]"] {
     display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* Override global ad hiding for sidebar ads */
+  .sidebar-ads-container,
+  .sidebar-ads-sticky,
+  .ads-fixed-container,
+  [data-sidebar-position] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .sidebar-ads-container .ad-card,
+  .sidebar-ads-sticky .ad-card,
+  .ads-fixed-container .ad-card,
+  [data-sidebar-position] .ad-card {
+    display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
   }
