@@ -24,7 +24,7 @@ export const SidebarAds: React.FC<SidebarAdsProps> = ({
        
         <div className="space-y-6 mt-4">
           {ads.map((ad) => (
-            <div key={ad.id} className="bg-white/5 rounded-lg overflow-hidden ad-card mb-4">
+            <div key={ad.id} className="bg-white/5 rounded-lg overflow-hidden mb-4">
               <div className="aspect-video relative">
                                   <Img
                     src={`${ad.image}`}

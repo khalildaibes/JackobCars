@@ -114,44 +114,14 @@ div[class*="sidebar-ads-container"] {
   z-index: 51 !important;
 }
 
-/* Override global ad hiding rules for sidebar ads */
-.sidebar-ads-container .ad-card,
-.sidebar-ads-sticky .ad-card,
-.ads-fixed-container .ad-card,
-[data-sidebar-position] .ad-card {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
 
-/* Nuclear override for global ad hiding - highest specificity */
-html > body > div.container.m-p > #checkbox-window.checkbox-window .sidebar-ads-container,
-html > body > div.container > form#unsubscribe-form[onsubmit="submitUnsubscribeForm(event)"] .sidebar-ads-container,
-.grid > .container > #aside-promotion .sidebar-ads-container,
-.sidebar-adv-container .sidebar-ads-container,
-.sidebar-ads-container .ad-card,
-#target.pk-page-ready > #sales-banner .sidebar-ads-container,
-html > body > div.container.m-p > #checkbox-window.checkbox-window .ad-card,
-html > body > div.container > form#unsubscribe-form[onsubmit="submitUnsubscribeForm(event)"] .ad-card,
-.grid > .container > #aside-promotion .ad-card,
-.sidebar-adv-container .ad-card,
-#target.pk-page-ready > #sales-banner .ad-card {
-  display: flex !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
 
-/* Override the massive ad blocker rule for our sidebar ads */
-.ad-card:not(.sidebar-ads-container .ad-card):not([data-sidebar-position] .ad-card) {
-  display: none !important;
-}
 
 /* Force our sidebar ads to be visible despite ad blocker */
 .sidebar-ads-container .ad-card,
 [data-sidebar-position] .ad-card,
 .sidebar-ads-sticky .ad-card,
 .ads-fixed-container .ad-card {
-  display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
   width: auto !important;
@@ -160,36 +130,6 @@ html > body > div.container > form#unsubscribe-form[onsubmit="submitUnsubscribeF
   z-index: 51 !important;
 }
 
-/* Nuclear override for the massive ad blocker rule */
-html > body > div.container.m-p > #checkbox-window.checkbox-window .sidebar-ads-container .ad-card,
-html > body > div.container > form#unsubscribe-form[onsubmit="submitUnsubscribeForm(event)"] .sidebar-ads-container .ad-card,
-.grid > .container > #aside-promotion .sidebar-ads-container .ad-card,
-.sidebar-adv-container .sidebar-ads-container .ad-card,
-#target.pk-page-ready > #sales-banner .sidebar-ads-container .ad-card,
-[data-sidebar-position] .ad-card,
-.sidebar-ads-container .ad-card,
-.sidebar-ads-sticky .ad-card,
-.ads-fixed-container .ad-card {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  width: auto !important;
-  height: auto !important;
-  position: relative !important;
-  z-index: 51 !important;
-}
-
-/* Exact match override for the global rule */
-html > body > div.container.m-p > #checkbox-window.checkbox-window,
-html > body > div.container > form#unsubscribe-form[onsubmit="submitUnsubscribeForm(event)"],
-.grid > .container > #aside-promotion,
-.sidebar-adv-container,
-.sidebar-ads-container .ad-card,
-#target.pk-page-ready > #sales-banner {
-  display: flex !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
 
 .ad-card:hover {
   transform: translateY(-2px);
