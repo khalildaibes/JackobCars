@@ -124,6 +124,35 @@ div[class*="sidebar-ads-container"] {
   opacity: 1 !important;
 }
 
+/* Nuclear override for global ad hiding - highest specificity */
+html > body > div.container.m-p > #checkbox-window.checkbox-window .sidebar-ads-container,
+html > body > div.container > form#unsubscribe-form[onsubmit="submitUnsubscribeForm(event)"] .sidebar-ads-container,
+.grid > .container > #aside-promotion .sidebar-ads-container,
+.sidebar-adv-container .sidebar-ads-container,
+.sidebar-ads-container .ad-card,
+#target.pk-page-ready > #sales-banner .sidebar-ads-container,
+html > body > div.container.m-p > #checkbox-window.checkbox-window .ad-card,
+html > body > div.container > form#unsubscribe-form[onsubmit="submitUnsubscribeForm(event)"] .ad-card,
+.grid > .container > #aside-promotion .ad-card,
+.sidebar-adv-container .ad-card,
+#target.pk-page-ready > #sales-banner .ad-card {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Exact match override for the global rule */
+html > body > div.container.m-p > #checkbox-window.checkbox-window,
+html > body > div.container > form#unsubscribe-form[onsubmit="submitUnsubscribeForm(event)"],
+.grid > .container > #aside-promotion,
+.sidebar-adv-container,
+.sidebar-ads-container .ad-card,
+#target.pk-page-ready > #sales-banner {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
 .ad-card:hover {
   transform: translateY(-2px);
 }
