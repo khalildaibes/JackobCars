@@ -14,7 +14,7 @@ export interface SearchManufacturerProps {
   manufacturer: string;
   setManufacturer: (manufacturer: string) => void;
 }
-
+ 
 export interface CarProps {
   mainImage: string;
   alt: string;
