@@ -792,7 +792,7 @@ function HomeContent() {
   return (
     <div className="min-h-screen bg-gray-50 mt-[10%] lg:mt-[5%]">
       {/* Main Layout Container */}
-      <div className="flex w-full min-h-screen">
+      <div className="flex w-full">
         {/* Left Ads Sidebar - Hide on mobile */}
         <SidebarAds 
           ads={leftSidebarAds} 
@@ -801,7 +801,7 @@ function HomeContent() {
         />
 
         {/* Main Content */}
-        <div className="flex-1 lg:max-w-[70%] lg:mx-auto cd-container">
+        <div className="flex-1 lg:max-w-[70%] lg:mx-auto cd-container w-full">
           <motion.main 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

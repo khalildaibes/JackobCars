@@ -122,6 +122,8 @@ div[class*="sidebar-ads-container"] {
 @media (max-width: 1024px) {
   .sidebar-ads-container {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
   }
 }
 
@@ -129,9 +131,11 @@ div[class*="sidebar-ads-container"] {
 @media (min-width: 1024px) {
   .sidebar-ads-container {
     display: flex !important;
-    flex-direction: column;
-    visibility: visible;
-    opacity: 1;
+    flex-direction: column !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 15% !important;
+    min-width: 200px !important;
     border: 0 !important;
     border-left: 0 !important;
     border-right: 0 !important;
@@ -160,6 +164,35 @@ div[class*="sidebar-ads-container"] {
   direction: rtl;
   text-align: right;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Mobile layout fixes */
+@media (max-width: 768px) {
+  .cd-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 1rem !important;
+  }
+  
+  .cd-section {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Prevent any flex expansion on mobile */
+  .flex.w-full {
+    min-height: auto !important;
+    height: auto !important;
+  }
+  
+  /* Ensure main content takes full width on mobile */
+  [class*="flex-1"][class*="lg:max-w-[70%]"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 100% !important;
+  }
 }
 
 /* Button hover effects for Arabic ads */
