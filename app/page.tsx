@@ -792,7 +792,7 @@ function HomeContent() {
   return (
     <div className="min-h-screen bg-gray-50 mt-[10%] lg:mt-[5%]">
       {/* Main Layout Container */}
-      <div className="flex w-full">
+      <div className="flex w-full min-h-screen">
         {/* Left Ads Sidebar - Hide on mobile */}
         <SidebarAds 
           ads={leftSidebarAds} 
@@ -801,7 +801,7 @@ function HomeContent() {
         />
 
         {/* Main Content */}
-        <div className="w-full lg:w-[70%] cd-container">
+        <div className="flex-1 lg:max-w-[70%] lg:mx-auto cd-container">
           <motion.main 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -1531,13 +1531,14 @@ function HomeContent() {
         </div>
 
         {/* Right Ads Section - Hide on mobile */}
-        {showcontrols && (
-          <SidebarAds 
-            ads={rightSidebarAds} 
-            title="اعلانات ممولة" 
-            position="right" 
-          />
-        )}
+        <div className="w-[15%] min-w-[200px] bg-blue-500 p-4 hidden lg:block">
+          <div className="text-white">RIGHT SIDEBAR TEST</div>
+        </div>
+        {/* <SidebarAds 
+          ads={rightSidebarAds} 
+          title="اعلانات ممولة" 
+          position="right" 
+        /> */}
       </div>
     </div>
   );
