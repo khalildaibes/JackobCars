@@ -249,3 +249,153 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Rich Text Content Styles */
+.rich-text-content {
+  @apply text-gray-800 leading-relaxed;
+}
+
+.rich-text-content h1,
+.rich-text-content h2,
+.rich-text-content h3,
+.rich-text-content h4,
+.rich-text-content h5,
+.rich-text-content h6 {
+  @apply font-bold text-gray-900 mb-4 mt-8;
+}
+
+.rich-text-content h1 {
+  @apply text-3xl md:text-4xl lg:text-5xl;
+}
+
+.rich-text-content h2 {
+  @apply text-2xl md:text-3xl lg:text-4xl;
+}
+
+.rich-text-content h3 {
+  @apply text-xl md:text-2xl lg:text-3xl;
+}
+
+.rich-text-content h4 {
+  @apply text-lg md:text-xl lg:text-2xl;
+}
+
+.rich-text-content h5 {
+  @apply text-base md:text-lg lg:text-xl;
+}
+
+.rich-text-content h6 {
+  @apply text-sm md:text-base lg:text-lg;
+}
+
+.rich-text-content p {
+  @apply mb-4 text-gray-700 leading-relaxed;
+}
+
+.rich-text-content ul,
+.rich-text-content ol {
+  @apply mb-4 pl-6;
+}
+
+.rich-text-content li {
+  @apply mb-2 text-gray-700;
+}
+
+.rich-text-content ul li {
+  @apply list-disc;
+}
+
+.rich-text-content ol li {
+  @apply list-decimal;
+}
+
+.rich-text-content table {
+  @apply w-full border-collapse mb-6 overflow-x-auto;
+}
+
+.rich-text-content th {
+  @apply bg-gray-100 p-3 border border-gray-300 text-left font-semibold text-gray-900;
+}
+
+.rich-text-content td {
+  @apply p-3 border border-gray-300 text-gray-700;
+}
+
+.rich-text-content tr:nth-child(even) {
+  @apply bg-gray-50;
+}
+
+.rich-text-content a {
+  @apply text-blue-600 hover:text-blue-800 underline transition-colors;
+}
+
+.rich-text-content strong {
+  @apply font-bold;
+}
+
+.rich-text-content em {
+  @apply italic;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .rich-text-content h1 {
+    @apply text-2xl;
+  }
+  
+  .rich-text-content h2 {
+    @apply text-xl;
+  }
+  
+  .rich-text-content h3 {
+    @apply text-lg;
+  }
+  
+  .rich-text-content h4 {
+    @apply text-base;
+  }
+  
+  .rich-text-content h5 {
+    @apply text-sm;
+  }
+  
+  .rich-text-content h6 {
+    @apply text-xs;
+  }
+  
+  .rich-text-content table {
+    @apply text-sm;
+  }
+  
+  .rich-text-content th,
+  .rich-text-content td {
+    @apply p-2;
+  }
+  
+  .rich-text-content ul,
+  .rich-text-content ol {
+    @apply pl-4;
+  }
+  
+  .rich-text-content p {
+    @apply text-sm leading-relaxed;
+  }
+}
+
+/* RTL support for Arabic content */
+.rich-text-content[dir="rtl"] {
+  @apply text-right;
+}
+
+.rich-text-content[dir="rtl"] ul,
+.rich-text-content[dir="rtl"] ol {
+  @apply pr-6 pl-0;
+}
+
+.rich-text-content[dir="rtl"] ul li {
+  @apply list-disc;
+}
+
+.rich-text-content[dir="rtl"] ol li {
+  @apply list-decimal;
+}

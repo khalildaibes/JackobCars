@@ -7,6 +7,22 @@ import { useTranslations } from "next-intl";
 import { Facebook, Instagram, Twitter, Link as LinkIcon, MessageCircle } from "lucide-react";
 import Image from "next/image";
 
+// Utility function to sanitize HTML content
+const sanitizeHtml = (html: string): string => {
+  // Basic HTML sanitization - you might want to use a library like DOMPurify for production
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+    .replace(/on\w+="[^"]*"/gi, '')
+    .replace(/javascript:/gi, '');
+};
+
+// Utility function to detect RTL content
+const isRTLContent = (text: string): boolean => {
+  const rtlRegex = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
+  return rtlRegex.test(text);
+};
+
 interface Comment {
   id: number;
   body: string;
@@ -174,57 +190,77 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
     const renderBlock = (block: any) => {
       switch (block?.__component) {
         case 'shared.rich-text':
-          const lines = block?.body?.split('\n') || [];
-          return (
-            <div key={block?.id} className="mb-6 prose prose-lg max-w-none">
-              {lines.map((line: string, index: number) => {
-                // Check if line is a heading
-                if (line.startsWith('# ')) {
-                  return <h1 key={index} className="text-4xl font-bold mb-4">{line.substring(2)}</h1>;
-                } else if (line.startsWith('## ')) {
-                  return <h2 key={index} className="text-3xl font-bold mb-4">{line.substring(3)}</h2>;
-                } else if (line.startsWith('### ')) {
-                  return <h3 key={index} className="text-2xl font-bold mb-4">{line.substring(4)}</h3>;
-                } else if (line.startsWith('#### ')) {
-                  return <h4 key={index} className="text-xl font-bold mb-4">{line.substring(5)}</h4>;
-                } else if (line.startsWith('##### ')) {
-                  return <h5 key={index} className="text-lg font-bold mb-4">{line.substring(6)}</h5>;
-                } else if (line.startsWith('###### ')) {
-                  return <h6 key={index} className="text-base font-bold mb-4">{line.substring(7)}</h6>;
-                }
-                
-                // Process markdown-style formatting
-                const boldRegex = /\*\*(.*?)\*\*/g;
-                const italicRegex = /\*(.*?)\*/g;
-                const linkRegex = /\[(.*?)\]\((.*?)\)/g;
-                
-                let processedLine = line;
-                
-                // Process links
-                processedLine = processedLine.replace(linkRegex, (match, text, url) => {
-                  return `<a href="${url}" class="text-blue-600 hover:text-blue-800 underline">${text}</a>`;
-                });
-                
-                // Process bold text
-                processedLine = processedLine.replace(boldRegex, (match, text) => {
-                  return `<strong class="font-bold">${text}</strong>`;
-                });
-                
-                // Process italic text
-                processedLine = processedLine.replace(italicRegex, (match, text) => {
-                  return `<em class="italic">${text}</em>`;
-                });
-                
-                return (
-                  <div 
-                    key={index} 
-                    className="mb-4 whitespace-pre-line"
-                    dangerouslySetInnerHTML={{ __html: processedLine }}
-                  />
-                );
-              })}
-            </div>
-          );
+          // Check if content contains HTML tags
+          const hasHtmlTags = /<[^>]*>/g.test(block?.body || '');
+          
+          if (hasHtmlTags) {
+            // Handle HTML content with proper styling
+            const isRTL = isRTLContent(block?.body || '');
+            return (
+              <div key={block?.id} className="mb-8">
+                <div 
+                  className="rich-text-content"
+                  dir={isRTL ? "rtl" : "ltr"}
+                  dangerouslySetInnerHTML={{ 
+                    __html: sanitizeHtml(block?.body || '') 
+                  }}
+                />
+              </div>
+            );
+          } else {
+            // Handle plain text with markdown-style formatting
+            const lines = block?.body?.split('\n') || [];
+            return (
+              <div key={block?.id} className="mb-6 prose prose-lg max-w-none">
+                {lines.map((line: string, index: number) => {
+                  // Check if line is a heading
+                  if (line.startsWith('# ')) {
+                    return <h1 key={index} className="text-4xl font-bold mb-4">{line.substring(2)}</h1>;
+                  } else if (line.startsWith('## ')) {
+                    return <h2 key={index} className="text-3xl font-bold mb-4">{line.substring(3)}</h2>;
+                  } else if (line.startsWith('### ')) {
+                    return <h3 key={index} className="text-2xl font-bold mb-4">{line.substring(4)}</h3>;
+                  } else if (line.startsWith('#### ')) {
+                    return <h4 key={index} className="text-xl font-bold mb-4">{line.substring(5)}</h4>;
+                  } else if (line.startsWith('##### ')) {
+                    return <h5 key={index} className="text-lg font-bold mb-4">{line.substring(6)}</h5>;
+                  } else if (line.startsWith('###### ')) {
+                    return <h6 key={index} className="text-base font-bold mb-4">{line.substring(7)}</h6>;
+                  }
+                  
+                  // Process markdown-style formatting
+                  const boldRegex = /\*\*(.*?)\*\*/g;
+                  const italicRegex = /\*(.*?)\*/g;
+                  const linkRegex = /\[(.*?)\]\((.*?)\)/g;
+                  
+                  let processedLine = line;
+                  
+                  // Process links
+                  processedLine = processedLine.replace(linkRegex, (match, text, url) => {
+                    return `<a href="${url}" class="text-blue-600 hover:text-blue-800 underline">${text}</a>`;
+                  });
+                  
+                  // Process bold text
+                  processedLine = processedLine.replace(boldRegex, (match, text) => {
+                    return `<strong class="font-bold">${text}</strong>`;
+                  });
+                  
+                  // Process italic text
+                  processedLine = processedLine.replace(italicRegex, (match, text) => {
+                    return `<em class="italic">${text}</em>`;
+                  });
+                  
+                  return (
+                    <div 
+                      key={index} 
+                      className="mb-4 whitespace-pre-line"
+                      dangerouslySetInnerHTML={{ __html: processedLine }}
+                    />
+                  );
+                })}
+              </div>
+            );
+          }
         case 'shared.media':
           return (
             <div key={block?.id} className="my-8">
@@ -420,11 +456,11 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
 
             {/* Content Blocks */}
             {blocks && blocks.length > 0 ? (
-              <div className="prose prose-lg max-w-none">
+              <div className="rich-text-content">
                 {blocks.map((block: any) => renderBlock(block))}
               </div>
             ) : content && content.length > 0 ? (
-              <div className="prose prose-lg max-w-none">
+              <div className="rich-text-content">
                 {content.map((item: any, index: number) => {
                   switch (item.type) {
                     case 'paragraph':
