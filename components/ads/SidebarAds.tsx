@@ -19,7 +19,19 @@ export const SidebarAds: React.FC<SidebarAdsProps> = ({
   const t = useTranslations('HomePage');
 
   return (
-    <div className={`w-[12%] min-w-[160px] bg-white/10 mt-[4%] backdrop-blur-sm p-3.2 hidden lg:flex lg:flex-col sidebar-ads-container ads-fixed-container ${className}`} data-sidebar-position={position}>
+    <div 
+      className={`w-[12%] min-w-[160px] bg-white/10 mt-[4%] backdrop-blur-sm p-3.2 hidden lg:flex lg:flex-col sidebar-ads-container ads-fixed-container ${className}`} 
+      data-sidebar-position={position}
+      style={{
+        display: 'flex',
+        visibility: 'visible',
+        opacity: 1,
+        zIndex: 50,
+        position: 'relative',
+        width: '12%',
+        minWidth: '160px'
+      }}
+    >
       <div className="sidebar-ads-sticky">
        
         <div className="space-y-6 mt-4">
