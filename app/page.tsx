@@ -36,6 +36,16 @@ import { UserActivityProvider } from "../context/UserActivityContext";
 import { formatDate } from "react-datepicker/dist/date_utils";
 import NewsArticleList from "../components/NewsArticleList";
 import { ResponsiveAd } from "../components/ads";
+import ContentAds from "../components/ads/ContentAds";
+import SidebarAds from "../components/ads/SidebarAds";
+import { 
+  heroAds, 
+  mobileAds, 
+  mainContentAds, 
+  betweenNewsAds, 
+  leftSidebarAds, 
+  rightSidebarAds 
+} from "../data/ads-data";
 import { 
   LatestCarReviews, 
   FeaturesFromJackob, 
@@ -45,6 +55,7 @@ import {
   Accessories 
 } from "../components/sections";
 import "./styles/homepage.css";
+import "./styles/ads.css";
 
 // Typs
 interface Deal {
@@ -477,8 +488,8 @@ function HomeContent() {
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string>('electric');
   const [isAdmin, setIsAdmin] = useState(false);
-  const [showads, setShowads] = useState(false);
-  const [showcontrols, setShowcontrols] = useState(false);
+  const [showads, setShowads] = useState(true);
+  const [showcontrols, setShowcontrols] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [newsIndex, setNewsIndex] = useState(0);
   const [newsIndex2, setNewsIndex2] = useState(Math.floor(Math.random() * 5));
@@ -780,29 +791,30 @@ function HomeContent() {
 
   return (
     <div className="min-h-screen bg-gray-50 mt-[10%] lg:mt-[5%]">
-      {/* Main Content */}
-      <div className="cd-container">
-        <motion.main 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="cd-section"
-        >
-          {/* Top Banner Ad */}
-          {/* <ResponsiveAd 
-            position="top-banner"
-            adSlot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOP_BANNER}
-            enableGoogleAds={process.env.NEXT_PUBLIC_ENABLE_GOOGLE_ADS === 'true'}
-            enableBannerAds={process.env.NEXT_PUBLIC_ENABLE_BANNER_ADS === 'true'}
-          /> */}
+      {/* Main Layout Container */}
+      <div className="flex w-full">
+        {/* Left Ads Sidebar - Hide on mobile */}
+        <SidebarAds 
+          ads={leftSidebarAds} 
+          title="اعلانات ممولة" 
+          position="left" 
+        />
 
-          {/* Mobile Banner Ad */}
-          {/* <ResponsiveAd 
-            position="mobile-banner"
-            adSlot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_MOBILE_BANNER}
-            enableGoogleAds={process.env.NEXT_PUBLIC_ENABLE_GOOGLE_ADS === 'true'}
-            enableBannerAds={process.env.NEXT_PUBLIC_ENABLE_BANNER_ADS === 'true'}
-          /> */}
+        {/* Main Content */}
+        <div className="w-full lg:w-[70%] cd-container">
+          <motion.main 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className="cd-section"
+          >
+          
+                     {/* Mobile Banner Ad - Compact Article Card */}
+           <ContentAds 
+             layout="mobile-banner" 
+             ads={mobileAds} 
+             className="mt-[15%]" 
+           />
           {/* Featured Stories Section */}
           <div className="flex flex-col w-full px-4 mb-8 lg:hidden">
           <h2 className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">{t('featured_stories')}</h2>
@@ -838,6 +850,7 @@ function HomeContent() {
                 ))}
               </div>
             </div>
+            
           {/* 1. Hero Banner Section */}
           <div className="relative z-10 flex flex-col lg:flex-row gap-2 px-2 lg:px-4 items-stretch min-h-0 justify-center items-center mb-8 w-full md:w-[80%] mx-auto">
             <div className="w-full lg:w-full flex flex-col gap-2">
@@ -1096,13 +1109,11 @@ function HomeContent() {
               <StorePromotion />
             </div>
 
-            {/* In-Content Ad */}
-            {/* <ResponsiveAd 
-              position="in-content"
-              adSlot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_IN_CONTENT}
-              enableGoogleAds={process.env.NEXT_PUBLIC_ENABLE_GOOGLE_ADS === 'true'}
-              enableBannerAds={process.env.NEXT_PUBLIC_ENABLE_BANNER_ADS === 'true'}
-            /> */}
+            {/* In-Content Ad as Article Card */}
+            <ContentAds 
+              layout="grid-3" 
+              ads={mainContentAds} 
+            />
 
             {/* Special Offers Section */}
             {/* <motion.section
@@ -1401,14 +1412,10 @@ function HomeContent() {
             </div>
 
             {/* In-Content Ad Between News Sections */}
-            {/* <div className="my-8">
-              <ResponsiveAd 
-                position="in-content"
-                adSlot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_IN_CONTENT}
-                enableGoogleAds={process.env.NEXT_PUBLIC_ENABLE_GOOGLE_ADS === 'true'}
-                enableBannerAds={process.env.NEXT_PUBLIC_ENABLE_BANNER_ADS === 'true'}
-              />
-            </div> */}
+            <ContentAds 
+              layout="grid-2" 
+              ads={betweenNewsAds} 
+            />
 
             {/* World News Section */}
             <div className="flex flex-col">
@@ -1513,82 +1520,25 @@ function HomeContent() {
           </div>
 
           {/* Bottom Banner Ad */}
-          <ResponsiveAd 
+          {/* <ResponsiveAd 
             position="bottom-banner"
             adSlot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM_BANNER}
             enableGoogleAds={process.env.NEXT_PUBLIC_ENABLE_GOOGLE_ADS === 'true'}
             enableBannerAds={process.env.NEXT_PUBLIC_ENABLE_BANNER_ADS === 'true'}
-          />
+          /> */}
           
         </motion.main>
-      </div>
-
-      {/* Right Ads Section - Hide on mobile */}
-      {showcontrols && (
-        <div className="w-[15%] bg-white/10 mt-[5%] backdrop-blur-sm border-l border-gray-200/20 p-4 hidden lg:block">
-          <div className="sticky top-4">
-          <h2 className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">{t('featured_ads')}</h2>
-            <div className="space-y-4">
-              <div className="bg-white/5 rounded-lg overflow-hidden">
-                <div className="aspect-video relative">
-                  <Img
-                    src="/images/ad1.jpg"
-                    alt="Car Insurance Ad"
-                    width={256}
-                    height={144}
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-                <div className="p-3">
-                  <h3 className="text-white font-medium">{t('car_insurance_offer')}</h3>
-                  <p className="text-sm text-white/60 mt-1">{t('limited_time_offer')}</p>
-                  <button className="mt-2 w-full bg-white text-white py-2 rounded-lg hover:bg-white transition-colors">
-                    {t('learn_more')}
-                  </button>
-                </div>
-              </div>
-
-              <div className="bg-white/5 rounded-lg overflow-hidden">
-                <div className="aspect-video relative">
-                  <Img
-                    src="/images/ad2.jpg"
-                    alt="Car Loan Ad"
-                    width={256}
-                    height={144}
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-                <div className="p-3">
-                  <h3 className="text-white font-medium">{t('low_interest_loans')}</h3>
-                  <p className="text-sm text-white/60 mt-1">{t('starting_apr')}</p>
-                  <button className="mt-2 w-full bg-white text-white py-2 rounded-lg hover:bg-white transition-colors">
-                    {t('apply_now')}
-                  </button>
-                </div>
-              </div>
-
-              <div className="bg-white/5 rounded-lg overflow-hidden">
-                <div className="aspect-video relative">
-                  <Img
-                    src="/images/ad3.jpg"
-                    alt="Car Service Ad"
-                    width={256}
-                    height={144}
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-                <div className="p-3">
-                  <h3 className="text-white font-medium">{t('premium_service')}</h3>
-                  <p className="text-sm text-white/60 mt-1">{t('free_inspection')}</p>
-                  <button className="mt-2 w-full bg-white text-white py-2 rounded-lg hover:bg-white transition-colors">
-                    {t('book_now')}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-      )}
+
+        {/* Right Ads Section - Hide on mobile */}
+        {showcontrols && (
+          <SidebarAds 
+            ads={rightSidebarAds} 
+            title="اعلانات ممولة" 
+            position="right" 
+          />
+        )}
+      </div>
     </div>
   );
 }
