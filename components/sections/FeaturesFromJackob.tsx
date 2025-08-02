@@ -132,8 +132,8 @@ const FeaturesFromJackob: React.FC<FeaturesFromJackobProps> = ({
                   src={featuredArticle.imageUrl ? `http://64.227.112.249${featuredArticle.imageUrl}` : '/images/default-feature.jpg'}
                   alt={featuredArticle.title}
                   className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
-                  width={600}
-                  height={320}
+                  width={1290}
+                  height={1290}
                   external={true}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
@@ -197,8 +197,8 @@ const FeaturesFromJackob: React.FC<FeaturesFromJackobProps> = ({
                       src={feature.imageUrl ? `http://64.227.112.249${feature.imageUrl}` : '/images/default-feature.jpg'}
                       alt={feature.title}
                       className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
-                      width={80}
-                      height={80}
+                      width={1290}
+                      height={1290}
                       external={true}
                     />
                   </div>

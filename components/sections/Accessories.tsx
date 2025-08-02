@@ -226,8 +226,8 @@ const Accessories: React.FC<AccessoriesProps> = ({
                 src={accessory.imageUrl ? `http://${accessory.store.hostname}${accessory.imageUrl}` : '/images/default-accessory.jpg'}
                 alt={accessory.name}
                 className="object-cover w-full h-48 group-hover:scale-105 transition-transform duration-300"
-                width={300}
-                height={192}
+                width={1290}
+                height={1290}
                 external={true}
               />
               

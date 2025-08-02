@@ -491,11 +491,35 @@ body {
   max-width: 100%;
   height: auto;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 .rich-text-content img:hover {
   transform: scale(1.02);
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* High DPI image support */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .rich-text-content img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: optimize-contrast;
+  }
+}
+
+/* Responsive image containers */
+.rich-text-content figure {
+  @apply my-8;
+}
+
+.rich-text-content figure img {
+  @apply w-full h-auto;
+  display: block;
+}
+
+.rich-text-content figcaption {
+  @apply text-sm text-gray-600 text-center mt-2 italic;
 }
 
 /* Divider styling */

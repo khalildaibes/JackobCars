@@ -29,7 +29,7 @@ const Img: React.FC<React.PropsWithChildren<ImgProps>> = ({
   width,
   height,
   priority = false,
-  quality = 90, // High quality by default
+  quality = 100, // Maximum quality by default
   placeholder = "empty",
   blurDataURL,
   ...restProps

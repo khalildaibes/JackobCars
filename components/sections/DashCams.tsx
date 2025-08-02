@@ -194,8 +194,8 @@ const DashCams: React.FC<DashCamsProps> = ({
                 src={dashcam.imageUrl ? `http://${dashcam.store.hostname}${dashcam.imageUrl}` : '/images/default-dashcam.jpg'}
                 alt={dashcam.name}
                 className="object-cover w-full h-48 group-hover:scale-105 transition-transform duration-300"
-                width={300}
-                height={192}
+                width={1290}
+                height={1290}
                 external={true}
               />
               

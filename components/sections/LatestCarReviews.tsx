@@ -195,8 +195,8 @@ const LatestCarReviews: React.FC<LatestCarReviewsProps> = ({
                   src={review.imageUrl ? `http://64.227.112.249${review.imageUrl}` : '/images/default-car-review.jpg'}
                   alt={review.title}
                   className="object-cover w-full h-full"
-                  width={400}
-                  height={192}
+                  width={1290}
+                  height={1290}
                   external={true}
                 />
                 <div className="absolute top-3 left-3">

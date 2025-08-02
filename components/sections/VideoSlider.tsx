@@ -219,8 +219,8 @@ const VideoSlider: React.FC<VideoSliderProps> = ({
                 src={video.thumbnailUrl ? `http://64.227.112.249${video.thumbnailUrl}` : '/images/default-video-thumbnail.jpg'}
                 alt={video.title}
                 className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                width={400}
-                height={225}
+                width={1290}
+                height={1290}
                 external={true}
               />
 

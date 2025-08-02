@@ -183,8 +183,8 @@ const ClassicCars: React.FC<ClassicCarsProps> = ({
                   src={car.imageUrl ? `http://${car.store.hostname}${car.imageUrl}` : '/images/default-classic-car.jpg'}
                   alt={`${car.year} ${car.make} ${car.model}`}
                   className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                  width={300}
-                  height={192}
+                  width={1290}
+                  height={1290}
                   external={true}
                 />
                 
@@ -272,8 +272,8 @@ const ClassicCars: React.FC<ClassicCarsProps> = ({
                   src={carsToShow[4].imageUrl ? `http://${carsToShow[4].store.hostname}${carsToShow[4].imageUrl}` : '/images/default-classic-car.jpg'}
                   alt={`${carsToShow[4].year} ${carsToShow[4].make} ${carsToShow[4].model}`}
                   className="object-cover w-full h-64 md:h-full"
-                  width={500}
-                  height={300}
+                  width={1290}
+                  height={1290}
                   external={true}
                 />
               </div>

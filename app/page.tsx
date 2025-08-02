@@ -819,7 +819,7 @@ function HomeContent() {
           <div className="flex flex-col w-full px-4 mb-8 lg:hidden">
           <h2 className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">{t('featured_stories')}</h2>
               <div className="space-y-4">
-                {transformedArticles.slice(1, 4).map((item) => (
+                {transformedArticles.slice(0, 4).map((item) => (
                   <article
                     key={item.id}
                     className="rounded-xl overflow-hidden cursor-pointer group relative"
@@ -831,8 +831,8 @@ function HomeContent() {
                           src={`http://64.227.112.249${item.cover.url}`}
                           alt={item.title}
                           external={true}
-                          width={800}
-                          height={600}
+                          width={1290}
+                          height={1290}
                           className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
                         />
                       )}
@@ -1004,8 +1004,8 @@ function HomeContent() {
                           src={visibleArticles[0]?.imageUrl ? `http://64.227.112.249${visibleArticles[0].imageUrl}` : '/default-article.jpg'}
                           alt={visibleArticles[0]?.title || 'Featured Article'}
                           className="object-cover w-full h-full"
-                          width={800}
-                          height={600}
+                          width={1290}
+                          height={1290}
                           external={true}
                         />
                       </div>
@@ -1071,8 +1071,8 @@ function HomeContent() {
                             src={`http://64.227.112.249${article.imageUrl}`}
                             alt={article.title}
                             className="object-cover w-full h-full"
-                            width={400}
-                            height={320}
+                            width={1290}
+                            height={1290}
                             external={true}
                           />
                         </div>
@@ -1390,8 +1390,8 @@ function HomeContent() {
                             src={`http://64.227.112.249${item.cover.url}`}
                             alt={item.title}
                             external={true}
-                            width={512}
-                            height={512}
+                            width={1290}
+                            height={1290}
                             className="object-cover w-full h-full md:h-48"
                           />
                         )}
@@ -1434,8 +1434,8 @@ function HomeContent() {
                             src={`http://64.227.112.249${item.cover.url}`}
                             alt={item.title}
                             external={true}
-                            width={512}
-                            height={512}
+                            width={1290}
+                            height={1290}
                             className="object-cover w-full h-full md:h-48"
                           />
                         )}
