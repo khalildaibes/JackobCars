@@ -271,7 +271,7 @@ export default function Navbar() {
         {/* Logo */}
 
         <Link href="/" className="flex items-center gap-2">
-          <div className="min-w-[80px] h-16 flex items-center justify-center rounded-2xl p-2 transition-all hover:scale-105 bg-white">
+          <div className="min-w-[80px] h-16 flex items-center justify-center rounded-2xl p-2 transition-all hover:scale-105 ">
             <Image src="/logo-transparent-1.png" alt={t("logo_alt")} width={80} height={200} className="object-fill w-[60px] md:w-[80px] p-[2px]" />
           </div>
         </Link>

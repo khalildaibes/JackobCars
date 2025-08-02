@@ -94,7 +94,8 @@ const FeaturesFromJackob: React.FC<FeaturesFromJackobProps> = ({
   }
 
   const featuredArticle = featuresToShow.find(f => f.featured) || featuresToShow[0];
-  const otherFeatures = featuresToShow.filter(f => f.id !== featuredArticle.id).slice(0, 5);
+  const featuredArticle2 = featuresToShow.find(f => f.featured && f.id !== featuredArticle.id) || featuresToShow[1];
+  const otherFeatures = featuresToShow.filter(f => f.id !== featuredArticle.id && f.id !== featuredArticle2.id).slice(0, 5);
 
   return (
     <motion.section 
@@ -119,12 +120,12 @@ const FeaturesFromJackob: React.FC<FeaturesFromJackobProps> = ({
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Featured Article */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 flex flex-col gap-4">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className="relative rounded-xl overflow-hidden group"
+            className="relative rounded-xl overflow-hidden group flex flex-col gap-4"
           >
             <Link href={`/news/${featuredArticle.slug}`}>
               <div className="relative h-80">
@@ -172,6 +173,58 @@ const FeaturesFromJackob: React.FC<FeaturesFromJackobProps> = ({
                         <span>{featuredArticle.likes}</span>
                       </div>
                       <span>{featuredArticle.readTime} min read</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Link>
+            
+            <Link href={`/news/${featuredArticle2.slug}`}>
+              <div className="relative h-80 ">
+                <Img
+                  src={featuredArticle2.imageUrl ? `http://64.227.112.249${featuredArticle2.imageUrl}` : '/images/default-feature.jpg'}
+                  alt={featuredArticle2.title}
+                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                  width={1290}
+                  height={1290}
+                  external={true}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                      {t('featured')}
+                    </span>
+                  </div>
+                  <div className="absolute bottom-6 left-6 right-6">
+                    <div className="flex items-center gap-2 text-white/80 text-sm mb-3">
+                      <span className="bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full text-xs">
+                        {featuredArticle2.category}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        <span>{new Date(featuredArticle2.publishDate).toLocaleDateString()}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <User className="w-3 h-3" />
+                        <span>{featuredArticle2.author}</span>
+                      </div>
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-2 line-clamp-2">
+                      {featuredArticle2.title}
+                    </h3>
+                    <p className="text-white/90 line-clamp-2">
+                      {featuredArticle2.excerpt}
+                    </p>
+                    <div className="flex items-center gap-4 mt-3 text-white/70 text-sm">
+                      <div className="flex items-center gap-1">
+                        <Eye className="w-4 h-4" />
+                        <span>{featuredArticle2.views?.toLocaleString()}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Heart className="w-4 h-4" />
+                        <span>{featuredArticle2.likes}</span>
+                      </div>
+                      <span>{featuredArticle2.readTime} min read</span>
                     </div>
                   </div>
                 </div>

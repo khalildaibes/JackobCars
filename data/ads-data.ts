@@ -10,7 +10,8 @@ export const heroAds: AdItem[] = [
     categoryColor: 'blue',
     buttonText: 'احجز الآن',
     buttonColor: 'blue',
-    alt: 'معهد رويال بسيخومتري'
+    alt: 'معهد رويال بسيخومتري',
+    url: 'https://api.whatsapp.com/send/?phone=0502244972&text&type=phone_number&app_absent=0'
   }
 ];
 
@@ -24,7 +25,8 @@ export const mobileAds: AdItem[] = [
     categoryColor: 'green',
     buttonText: 'احجز الآن',
     buttonColor: 'green',
-    alt: 'ASD Detailing'
+    alt: 'ASD Detailing',
+    url: 'https://api.whatsapp.com/send/?phone=0544603725&text&type=phone_number&app_absent=0'
   }
 ];
 
@@ -38,18 +40,20 @@ export const mainContentAds: AdItem[] = [
     categoryColor: 'blue',
     buttonText: 'تواصل معنا',
     buttonColor: 'blue',
-    alt: 'معهد رويال'
+    alt: 'معهد رويال',
+    url: 'https://api.whatsapp.com/send/?phone=0502244972&text&type=phone_number&app_absent=0'
   },
   {
     id: 'asd-pdr',
     image: 'autospa_pdr_ad.jpg',
     title: 'إصلاح الخدوش بدون طلاء (PDR)',
-    description: 'تقنية متقدمة لإزالة الانبعاجات والخدوش دون إعادة الطلاء - 8,500 شيكل',
+    description: 'تقنية متقدمة لإزالة الانبعاجات والخدوش دون إعادة الطلاء',
     category: 'إصلاح سيارات',
     categoryColor: 'green',
     buttonText: 'احجز الخدمة',
     buttonColor: 'green',
-    alt: 'إصلاح PDR'
+    alt: 'إصلاح PDR',
+    url: 'https://api.whatsapp.com/send/?phone=0544603725&text&type=phone_number&app_absent=0'
   },
   {
     id: 'daibes-law',
@@ -60,7 +64,8 @@ export const mainContentAds: AdItem[] = [
     categoryColor: 'purple',
     buttonText: 'استشارة قانونية',
     buttonColor: 'purple',
-    alt: 'مكتب دعيبس للمحاماة'
+    alt: 'مكتب دعيبس للمحاماة',
+    url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
   }
 ];
 
@@ -74,7 +79,8 @@ export const betweenNewsAds: AdItem[] = [
     categoryColor: 'red',
     buttonText: 'استشارة فورية',
     buttonColor: 'red',
-    alt: 'مكتب دعيبس للمحاماة'
+    alt: 'مكتب دعيبس للمحاماة',
+    url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
   },
   {
     id: 'asd-ceramic-ppf',
@@ -85,7 +91,8 @@ export const betweenNewsAds: AdItem[] = [
     categoryColor: 'orange',
     buttonText: 'استفسر الآن',
     buttonColor: 'orange',
-    alt: 'بي بي اف سيراميك'
+    alt: 'بي بي اف سيراميك',
+    url: 'https://api.whatsapp.com/send/?phone=0544603725&text&type=phone_number&app_absent=0'
   }
 ];
 
@@ -99,7 +106,8 @@ export const leftSidebarAds: AdItem[] = [
     categoryColor: 'blue',
     buttonText: 'احجز مكانك',
     buttonColor: 'blue',
-    alt: 'معهد رويال'
+    alt: 'معهد رويال',
+    url: 'https://api.whatsapp.com/send/?phone=0502244972&text&type=phone_number&app_absent=0'
   },
   {
     id: 'sidebar-asd-main',
@@ -110,7 +118,8 @@ export const leftSidebarAds: AdItem[] = [
     categoryColor: 'green',
     buttonText: 'تواصل معنا',
     buttonColor: 'green',
-    alt: 'ASD Detailing'
+    alt: 'ASD Detailing',
+    url: 'https://api.whatsapp.com/send/?phone=0544603725&text&type=phone_number&app_absent=0'
   },
   {
     id: 'sidebar-daibes-law',
@@ -121,7 +130,8 @@ export const leftSidebarAds: AdItem[] = [
     categoryColor: 'purple',
     buttonText: 'استشارة',
     buttonColor: 'purple',
-    alt: 'مكتب دعيبس'
+    alt: 'مكتب دعيبس',
+    url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
   }
 ];
 
@@ -130,23 +140,25 @@ export const rightSidebarAds: AdItem[] = [
     id: 'sidebar-asd-detailing',
     image: 'autospa_ad.jpg',
     title: 'ASD Detailing',
-    description: 'أفضل الأدوات والمواد',
+    description: 'البيت الحقيقي لسيارتك',
     category: 'تفصيل سيارات',
     categoryColor: 'orange',
     buttonText: 'احجز الآن',
     buttonColor: 'orange',
-    alt: 'ASD Detailing'
+    alt: 'ASD Detailing',
+    url: 'https://api.whatsapp.com/send/?phone=0544603725&text&type=phone_number&app_absent=0'
   },
   {
     id: 'sidebar-asd-pdr-service',
     image: 'autospa_pdr_ad.jpg',
     title: 'إصلاح PDR',
-    description: '8,500 شيكل - بدون طلاء',
+    description: 'تقنية متقدمة لإزالة الانبعاجات والخدوش دون إعادة الطلاء',
     category: 'إصلاح',
     categoryColor: 'teal',
     buttonText: 'احجز الخدمة',
     buttonColor: 'teal',
-    alt: 'إصلاح PDR'
+    alt: 'إصلاح PDR',
+    url: 'https://api.whatsapp.com/send/?phone=0544603725&text&type=phone_number&app_absent=0'
   },
   {
     id: 'sidebar-daibes-insurance',
@@ -157,7 +169,8 @@ export const rightSidebarAds: AdItem[] = [
     categoryColor: 'red',
     buttonText: 'استشارة',
     buttonColor: 'red',
-    alt: 'خدمات التأمين'
+    alt: 'خدمات التأمين',
+    url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
   }
 ];
 
@@ -172,7 +185,8 @@ export const daibesLawAds: AdItem[] = [
     categoryColor: 'red',
     buttonText: 'استشارة فورية',
     buttonColor: 'red',
-    alt: 'مخالفات مرورية'
+    alt: 'مخالفات مرورية',
+    url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
   },
   {
     id: 'daibes-accidents',
@@ -183,7 +197,8 @@ export const daibesLawAds: AdItem[] = [
     categoryColor: 'orange',
     buttonText: 'مساعدة فورية',
     buttonColor: 'orange',
-    alt: 'حوادث السيارات'
+    alt: 'حوادث السيارات',
+    url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
   },
   {
     id: 'daibes-insurance',
@@ -194,7 +209,8 @@ export const daibesLawAds: AdItem[] = [
     categoryColor: 'blue',
     buttonText: 'استشارة تأمين',
     buttonColor: 'blue',
-    alt: 'تأمين وتعويضات'
+    alt: 'تأمين وتعويضات',
+    url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
   },
   {
     id: 'daibes-workplace-accidents',
@@ -205,7 +221,8 @@ export const daibesLawAds: AdItem[] = [
     categoryColor: 'purple',
     buttonText: 'ضمان الحقوق',
     buttonColor: 'purple',
-    alt: 'حوادث عمل'
+    alt: 'حوادث عمل',
+    url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
   },
   {
     id: 'daibes-contact',
@@ -216,6 +233,7 @@ export const daibesLawAds: AdItem[] = [
     categoryColor: 'green',
     buttonText: 'اتصل الآن',
     buttonColor: 'green',
-    alt: 'تواصل مع دعيبس'
+    alt: 'تواصل مع دعيبس',
+    url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
   }
 ]; 

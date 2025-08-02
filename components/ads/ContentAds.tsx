@@ -13,6 +13,7 @@ export interface AdItem {
   buttonText: string;
   buttonColor: string;
   alt: string;
+  url?: string;
 }
 
 interface ContentAdsProps {
@@ -28,6 +29,12 @@ export const ContentAds: React.FC<ContentAdsProps> = ({
 }) => {
   const t = useTranslations('HomePage');
 
+  const handleAdClick = (url?: string) => {
+    if (url) {
+      window.open(url, '_blank');
+    }
+  };
+
   if (layout === 'mobile-banner') {
     return (
       <div className={`mb-6 px-4 lg:hidden ${className}`}>
@@ -36,7 +43,8 @@ export const ContentAds: React.FC<ContentAdsProps> = ({
             key={ad.id}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className={`bg-white rounded-xl shadow-lg overflow-hidden border-l-4 border-${ad.categoryColor}-500 relative`}
+            className={`bg-white rounded-xl shadow-lg overflow-hidden border-l-4 border-${ad.categoryColor}-500 relative cursor-pointer hover:shadow-xl transition-shadow`}
+            onClick={() => handleAdClick(ad.url)}
           >
             <div className={`absolute top-2 right-2 bg-${ad.categoryColor}-500 text-white text-xs px-2 py-1 rounded-full`}>
               {"اعلان ممول"}
@@ -44,7 +52,7 @@ export const ContentAds: React.FC<ContentAdsProps> = ({
             <div className="p-4">
               <div className="flex items-center gap-3">
                 <div className="w-16 h-16 rounded-lg overflow-hidden">
-                                                    <Img
+                  <Img
                     src={`${ad.image}`}
                     alt={ad.alt}
                     width={64}
@@ -81,7 +89,8 @@ export const ContentAds: React.FC<ContentAdsProps> = ({
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg overflow-hidden relative"
+          className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg overflow-hidden relative cursor-pointer hover:shadow-xl transition-shadow"
+          onClick={() => handleAdClick(ad.url)}
         >
           <div className="absolute top-2 right-2 bg-white/20 text-white text-xs px-2 py-1 rounded-full">
             {"اعلان ممول"}
@@ -124,7 +133,8 @@ export const ContentAds: React.FC<ContentAdsProps> = ({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow relative"
+              className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow relative cursor-pointer"
+              onClick={() => handleAdClick(ad.url)}
             >
               <div className={`absolute top-2 left-2 bg-${ad.categoryColor}-600 text-white text-xs px-2 py-1 rounded-full z-10`}>
                 {"اعلان ممول"}
@@ -174,7 +184,8 @@ export const ContentAds: React.FC<ContentAdsProps> = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow relative"
+            className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow relative cursor-pointer"
+            onClick={() => handleAdClick(ad.url)}
           >
             <div className={`absolute top-2 left-2 bg-${ad.categoryColor}-600 text-white text-xs px-2 py-1 rounded-full z-10`}>
               {"اعلان ممول"}
