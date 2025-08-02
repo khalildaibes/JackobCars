@@ -6,6 +6,7 @@ import "../app/styles/tailwind.css";
 import "../app/styles/font.css";
 import { NextIntlClientProvider } from 'next-intl';
 import { Toaster } from 'react-hot-toast';
+import { Toaster as ShadcnToaster } from '../components/ui/toaster';
 import { getLocale, getMessages } from 'next-intl/server';
 import TranslateChildren from "../components/TransltedChildren";
 import Navbar from "../components/Navbar";
@@ -219,6 +220,7 @@ export default async function RootLayout({
               </main>
               <Footer />
               <Toaster />
+              <ShadcnToaster />
               <div
                 className="
                   fixed z-50

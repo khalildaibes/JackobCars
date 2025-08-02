@@ -58,13 +58,13 @@ export const mainContentAds: AdItem[] = [
   {
     id: 'daibes-law',
     image: 'daibes_law_ad.jpg',
-    title: 'مكتب دعيبس للمحاماة',
+    title: 'مكتب دعيبس وعبد الغني للمحاماة',
     description: 'متخصصين بقضايا المخالفات المرورية والحوادث وكل ما يتعلق بالتأمين - 0509977084',
     category: 'خدمات قانونية',
     categoryColor: 'purple',
     buttonText: 'استشارة قانونية',
     buttonColor: 'purple',
-    alt: 'مكتب دعيبس للمحاماة',
+    alt: 'مكتب دعيبس وعبد الغني للمحاماة',
     url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
   }
 ];
@@ -73,13 +73,13 @@ export const betweenNewsAds: AdItem[] = [
   {
     id: 'daibes-law-detailed',
     image: 'daibes_law_ad.jpg',
-    title: 'مكتب دعيبس للمحاماة - خدمات قانونية شاملة',
+    title: 'مكتب دعيبس وعبد الغني للمحاماة - خدمات قانونية شاملة',
     description: 'نساعدك في حل مخالفات السرعة والسواقة المتهورة، نحافظ على رخصتك ونخفف العقوبات',
     category: 'محاماة',
     categoryColor: 'red',
     buttonText: 'استشارة فورية',
     buttonColor: 'red',
-    alt: 'مكتب دعيبس للمحاماة',
+    alt: 'مكتب دعيبس وعبد الغني للمحاماة',
     url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
   },
   {
@@ -124,13 +124,13 @@ export const leftSidebarAds: AdItem[] = [
   {
     id: 'sidebar-daibes-law',
     image: 'daibes_law_ad.jpg',
-    title: 'مكتب دعيبس للمحاماة',
+    title: 'مكتب دعيبس وعبد الغني للمحاماة',
     description: 'نحف العين- 0509977084',
     category: 'محاماة',
     categoryColor: 'purple',
     buttonText: 'استشارة',
     buttonColor: 'purple',
-    alt: 'مكتب دعيبس',
+    alt: 'مكتب دعيبس وعبد الغني',
     url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
   }
 ];
@@ -227,13 +227,13 @@ export const daibesLawAds: AdItem[] = [
   {
     id: 'daibes-contact',
     image: 'daibes_law_ad.jpg',
-    title: 'مكتب دعيبس للمحاماة - نحف',
+    title: 'مكتب دعيبس وعبد الغني للمحاماة - نحف',
     description: 'נחף כביש אלעין ישראל - اتصل على 0509977084 للحصول على استشارة قانونية متخصصة',
     category: 'تواصل',
     categoryColor: 'green',
     buttonText: 'اتصل الآن',
     buttonColor: 'green',
-    alt: 'تواصل مع دعيبس',
+    alt: 'تواصل مع دعيبس وعبد الغني',
     url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
   }
 ]; 

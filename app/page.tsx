@@ -34,6 +34,7 @@ import StorePromotion from "../components/StorePromotion";
 import { getCachedData, setCachedData } from "../utils/cacheUtils";
 import { UserActivityProvider } from "../context/UserActivityContext";
 import { formatDate } from "react-datepicker/dist/date_utils";
+import CarGroupSignup from "../components/CarGroupSignup";
 import NewsArticleList from "../components/NewsArticleList";
 import { ResponsiveAd } from "../components/ads";
 import ContentAds from "../components/ads/ContentAds";
@@ -1473,6 +1474,9 @@ function HomeContent() {
 
           {/* Car Accessories Section */}
           <Accessories />
+
+          {/* Car Group Signup Section */}
+          <CarGroupSignup />
           
             {/* Search Car by Plate Number Section */}
             <motion.section 
