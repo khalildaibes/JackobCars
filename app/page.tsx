@@ -248,30 +248,64 @@ interface TransformedArticle {
 
 // API fetch functions
 const fetchArticles = async () => {
-  // const cachedData = getCookie('articlesData');
-  // if (cachedData) {
-  //   return cachedData;
-  // }
-  console.log("Fetching articles...");
-  const [featuredResponse, newsResponse, storyResponse] = await Promise.all([
-    fetch('/api/articles?sort=createdAt:desc&pagination=100'),
-    fetch('/api/articles?sort=createdAt:desc&pagination=100'),
-    fetch('/api/articles?sort=createdAt:desc&pagination=100')
-  ]);
+  // Add debugging for production
+  console.log("Environment check:", {
+    NODE_ENV: process.env.NODE_ENV,
+    STRAPI_URL: process.env.NEXT_PUBLIC_STRAPI_URL,
+    HAS_TOKEN: !!process.env.NEXT_PUBLIC_STRAPI_TOKEN,
+    BASE_URL: process.env.NEXT_PUBLIC_BASE_URL
+  });
 
-  const [featuredData, newsData, storyData] = await Promise.all([
-    featuredResponse.json(),
-    newsResponse.json(),
-    storyResponse.json()
-  ]);
+  try {
+    console.log("Fetching articles...");
+    const [featuredResponse, newsResponse, storyResponse] = await Promise.all([
+      fetch('/api/articles?sort=createdAt:desc&pagination=100'),
+      fetch('/api/articles?sort=createdAt:desc&pagination=100'),
+      fetch('/api/articles?sort=createdAt:desc&pagination=100')
+    ]);
 
-  if (!featuredData.data || !newsData.data || !storyData.data) {
-    throw new Error('Invalid data format received from API');
+    // Check if responses are ok
+    if (!featuredResponse.ok) {
+      console.error("Featured response error:", featuredResponse.status, featuredResponse.statusText);
+      throw new Error(`Featured API failed: ${featuredResponse.status}`);
+    }
+    if (!newsResponse.ok) {
+      console.error("News response error:", newsResponse.status, newsResponse.statusText);
+      throw new Error(`News API failed: ${newsResponse.status}`);
+    }
+    if (!storyResponse.ok) {
+      console.error("Story response error:", storyResponse.status, storyResponse.statusText);
+      throw new Error(`Story API failed: ${storyResponse.status}`);
+    }
+
+    const [featuredData, newsData, storyData] = await Promise.all([
+      featuredResponse.json(),
+      newsResponse.json(),
+      storyResponse.json()
+    ]);
+
+    console.log("API Responses:", {
+      featured: featuredData?.data?.length || 0,
+      news: newsData?.data?.length || 0,
+      story: storyData?.data?.length || 0
+    });
+
+    if (!featuredData.data || !newsData.data || !storyData.data) {
+      throw new Error('Invalid data format received from API');
+    }
+
+    const data = { featuredData, newsData, storyData };
+    setCookie('articlesData', data);
+    return data;
+  } catch (error) {
+    console.error("Fetch articles error:", error);
+    // Return empty data structure to prevent crashes
+    return {
+      featuredData: { data: [] },
+      newsData: { data: [] },
+      storyData: { data: [] }
+    };
   }
-
-  const data = { featuredData, newsData, storyData };
-  setCookie('articlesData', data);
-  return data;
 };
 
 // Comment out other fetch functions for now
@@ -853,7 +887,7 @@ function HomeContent() {
                     <div className="relative h-[180px] w-full">
                       {item.cover?.url && (
                         <Img
-                          src={`http://64.227.112.249${item.cover.url}`}
+                          src={`https://64.227.112.249${item.cover.url}`}
                           alt={item.title}
                           external={true}
                           width={1290}
@@ -897,7 +931,7 @@ function HomeContent() {
                       <div key={article.id} className="flex gap-1 items-center bg-white/10 backdrop-blur-sm rounded-md p-0.5 hover:bg-white/20 transition-all">
                         <div className="relative w-10 h-10 rounded-md overflow-hidden">
                           <Img
-                            src={`http://64.227.112.249${article.imageUrl}`}
+                            src={`https://64.227.112.249${article.imageUrl}`}
                             alt={article.title}
                             width={1290}
                             external={true}
@@ -1026,7 +1060,7 @@ function HomeContent() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                       <div className="relative h-[400px] rounded-xl overflow-hidden">
                         <Img
-                          src={visibleArticles[0]?.imageUrl ? `http://64.227.112.249${visibleArticles[0].imageUrl}` : '/default-article.jpg'}
+                          src={visibleArticles[0]?.imageUrl ? `https://64.227.112.249${visibleArticles[0].imageUrl}` : '/default-article.jpg'}
                           alt={visibleArticles[0]?.title || 'Featured Article'}
                           className="object-cover w-full h-full"
                           width={1290}
@@ -1113,7 +1147,7 @@ function HomeContent() {
                                 {/* Vertical Video Thumbnail - TikTok Style */}
                                 <div className="relative h-80 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
                                   <Img
-                                    src={`http://64.227.112.249${video.imageUrl}`}
+                                    src={`https://64.227.112.249${video.imageUrl}`}
                                     alt={video.title}
                                     className="object-cover w-full h-full"
                                     width={256}
@@ -1283,7 +1317,7 @@ function HomeContent() {
                             >
                         <div className="relative h-48">
                           <Img
-                            src={`http://64.227.112.249${article.imageUrl}`}
+                            src={`https://64.227.112.249${article.imageUrl}`}
                             alt={article.title}
                             className="object-cover w-full h-full"
                             width={1290}
@@ -1605,7 +1639,7 @@ function HomeContent() {
                       <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
                         {item.cover?.url && (
                           <Img
-                            src={`http://64.227.112.249${item.cover.url}`}
+                            src={`https://64.227.112.249${item.cover.url}`}
                             alt={item.title}
                             external={true}
                             width={1290}
@@ -1649,7 +1683,7 @@ function HomeContent() {
                       <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
                         {item.cover?.url && (
                           <Img
-                            src={`http://64.227.112.249${item.cover.url}`}
+                            src={`https://64.227.112.249${item.cover.url}`}
                             alt={item.title}
                             external={true}
                             width={1290}
