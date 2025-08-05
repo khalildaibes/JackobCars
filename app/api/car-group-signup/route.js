@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://64.227.112.249:1337';
 const STRAPI_TOKEN = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
 
-export async function POST(request: Request) {
+export async function POST(request) {
   try {
     const { plateNumber, phoneNumber, ownerName, carNickname, locale } = await request.json();
 
@@ -79,7 +79,7 @@ export async function POST(request: Request) {
       data: result
     });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error in car-group-signup:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to sign up for car group' },

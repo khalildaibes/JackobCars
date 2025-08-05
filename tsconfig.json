@@ -34,7 +34,7 @@
     "app/api/services/route.js",
     "app/api/stories/route.js",
     "app/api/category/route.js"
-  ],
+, "app/api/car-group-signup/route.js"  ],
   "exclude": [
     "node_modules"
   ]
