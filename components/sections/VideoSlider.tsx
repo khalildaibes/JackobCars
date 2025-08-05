@@ -31,7 +31,7 @@ interface VideoSliderProps {
 
 // Fetch function for video articles
 const fetchVideoContent = async (): Promise<VideoContent[]> => {
-  const response = await fetch('/api/articles?sort=createdAt:desc');
+  const response = await fetch('/api/articles?sort=createdAt:desc&pagination=100');
   if (!response.ok) throw new Error('Failed to fetch video content');
   
   const data = await response.json();
