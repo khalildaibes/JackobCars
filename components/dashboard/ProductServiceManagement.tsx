@@ -131,7 +131,7 @@ export default function ProductServiceManagement({ storeId, store }: ProductServ
     description: "",
     price: "",
     duration: "",
-    category: "",
+    category: [] as string[], // Changed to array to support multiple categories
   });
 
   const [productForm, setProductForm] = useState({
@@ -303,7 +303,7 @@ export default function ProductServiceManagement({ storeId, store }: ProductServ
       description: "",
       price: "",
       duration: "",
-      category: "",
+      category: [] as string[], // Changed to array to support multiple categories
     });
     setEditingItem(null);
   };
@@ -314,7 +314,7 @@ export default function ProductServiceManagement({ storeId, store }: ProductServ
       description: service.description,
       price: service.price.toString(),
       duration: service.duration?.toString() || "60", // Default duration if not provided
-      category: service.category || "", // Default to empty if not provided
+      category: service.category ? [service.category] : [], // Convert string to array or empty array
     });
     setEditingItem(service);
     setIsServiceDialogOpen(true);
@@ -767,7 +767,7 @@ export default function ProductServiceManagement({ storeId, store }: ProductServ
                               const categoryId = cat.id;
                               setServiceForm(prev => ({
                                 ...prev,
-                                categories: e.target.checked
+                                category: e.target.checked
                                   ? [...(prev.category || []), categoryId]
                                   : (prev.category || []).filter(id => id !== categoryId)
                               }));
