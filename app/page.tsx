@@ -68,7 +68,6 @@ interface Deal {
   id: string;
   image: { url: string };
   name: string;
-  s
   details: {
     car: {
       fuel: string;
@@ -887,7 +886,7 @@ function HomeContent() {
                     <div className="relative h-[180px] w-full">
                       {item.cover?.url && (
                         <Img
-                          src={`https://64.227.112.249${item.cover.url}`}
+                          src={`http://64.227.112.249${item.cover.url}`}
                           alt={item.title}
                           external={true}
                           width={1290}
@@ -931,7 +930,7 @@ function HomeContent() {
                       <div key={article.id} className="flex gap-1 items-center bg-white/10 backdrop-blur-sm rounded-md p-0.5 hover:bg-white/20 transition-all">
                         <div className="relative w-10 h-10 rounded-md overflow-hidden">
                           <Img
-                            src={`https://64.227.112.249${article.imageUrl}`}
+                            src={`http://64.227.112.249${article.imageUrl}`}
                             alt={article.title}
                             width={1290}
                             external={true}
@@ -1060,7 +1059,7 @@ function HomeContent() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                       <div className="relative h-[400px] rounded-xl overflow-hidden">
                         <Img
-                          src={visibleArticles[0]?.imageUrl ? `https://64.227.112.249${visibleArticles[0].imageUrl}` : '/default-article.jpg'}
+                          src={visibleArticles[0]?.imageUrl ? `http://64.227.112.249${visibleArticles[0].imageUrl}` : '/default-article.jpg'}
                           alt={visibleArticles[0]?.title || 'Featured Article'}
                           className="object-cover w-full h-full"
                           width={1290}
@@ -1147,7 +1146,7 @@ function HomeContent() {
                                 {/* Vertical Video Thumbnail - TikTok Style */}
                                 <div className="relative h-80 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
                                   <Img
-                                    src={`https://64.227.112.249${video.imageUrl}`}
+                                    src={`http://64.227.112.249${video.imageUrl}`}
                                     alt={video.title}
                                     className="object-cover w-full h-full"
                                     width={256}
@@ -1317,7 +1316,7 @@ function HomeContent() {
                             >
                         <div className="relative h-48">
                           <Img
-                            src={`https://64.227.112.249${article.imageUrl}`}
+                            src={`http://64.227.112.249${article.imageUrl}`}
                             alt={article.title}
                             className="object-cover w-full h-full"
                             width={1290}
@@ -1639,7 +1638,7 @@ function HomeContent() {
                       <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
                         {item.cover?.url && (
                           <Img
-                            src={`https://64.227.112.249${item.cover.url}`}
+                            src={`http://64.227.112.249${item.cover.url}`}
                             alt={item.title}
                             external={true}
                             width={1290}
@@ -1683,7 +1682,7 @@ function HomeContent() {
                       <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
                         {item.cover?.url && (
                           <Img
-                            src={`https://64.227.112.249${item.cover.url}`}
+                            src={`http://64.227.112.249${item.cover.url}`}
                             alt={item.title}
                             external={true}
                             width={1290}
