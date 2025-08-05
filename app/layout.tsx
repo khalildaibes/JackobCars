@@ -204,6 +204,9 @@ export default async function RootLayout({
         {/* DNS Prefetch for better performance */}
         <link rel="dns-prefetch" href="//www.google-analytics.com" />
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+        
+        {/* TikTok Embed Script */}
+        <script async src="https://www.tiktok.com/embed.js"></script>
       </head>
       <body className="bg-[#050B20] min-h-screen text-black mobile-content">
         <Providers>

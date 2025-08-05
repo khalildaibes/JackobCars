@@ -10,7 +10,7 @@ export async function GET(req) {
         const { searchParams } = new URL(req.url);
 
         // Define allowed filters
-        const allowedFilters = ["title", "featured", "limit","slug"];
+        const allowedFilters = ["title", "featured", "limit","slug", "pagination", "categories"];
 
         // Build query parameters dynamically
         const queryParams = new URLSearchParams();
@@ -22,6 +22,8 @@ export async function GET(req) {
                 if (key === "featured") queryParams.append("filters[featured][$eq]", value);
                 if (key === "limit") queryParams.append("pagination[limit]", value);
                 if (key === "slug") queryParams.append("filters[slug][$contains]", value);
+                if (key === "categories") queryParams.append("filters[categories][name][$contains]", value);
+                if (key === "pagination") queryParams.append("pagination[limit]", value);
                 if (key === "sort") queryParams.append("sort", value);
                 }
         });
@@ -47,6 +49,7 @@ export async function GET(req) {
         }
 
         const data = await response.json();
+        console.log("articles Data:", data);
         return new Response(JSON.stringify(data), { status: 200 });
     } catch (error) {
         console.error("API Proxy Error:", error);

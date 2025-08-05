@@ -67,7 +67,7 @@
     "dompurify": "^3.2.4",
     "emailjs-com": "^3.2.0",
     "embla-carousel-react": "^8.5.2",
-    "framer-motion": "^12.5.0",
+    "framer-motion": "^12.23.12",
     "googleapis": "^148.0.0",
     "heroicons": "^2.2.0",
     "i18next": "^24.2.2",

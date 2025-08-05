@@ -193,6 +193,143 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
       }
     };
 
+    // Render video embeds for TikTok, Instagram, YouTube, etc.
+    const renderVideoEmbed = (videoData: any) => {
+      // Handle different video formats
+      if (typeof videoData === 'string') {
+        const videoUrl = videoData;
+        
+        // TikTok embed
+        if (videoUrl.includes('tiktok.com')) {
+          const videoId = extractTikTokVideoId(videoUrl);
+          if (videoId) {
+            return (
+              <div className="w-full max-w-md">
+                <blockquote 
+                  className="tiktok-embed" 
+                  cite={videoUrl}
+                  data-video-id={videoId}
+                  style={{ maxWidth: '325px', minWidth: '325px' }}
+                >
+                  <section></section>
+                </blockquote>
+                <script async src="https://www.tiktok.com/embed.js"></script>
+              </div>
+            );
+          }
+        }
+        
+        // Instagram embed
+        if (videoUrl.includes('instagram.com')) {
+          return (
+            <div className="w-full max-w-md">
+              <iframe
+                src={`${videoUrl}/embed`}
+                width="400"
+                height="480"
+                frameBorder="0"
+                scrolling="no"
+                allowTransparency={true}
+                className="rounded-lg"
+              ></iframe>
+            </div>
+          );
+        }
+        
+        // YouTube embed
+        if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
+          const videoId = extractYouTubeVideoId(videoUrl);
+          if (videoId) {
+            return (
+              <div className="w-full max-w-2xl">
+                <div className="relative aspect-video rounded-lg overflow-hidden">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${videoId}`}
+                    title="YouTube video player"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute inset-0 w-full h-full"
+                  ></iframe>
+                </div>
+              </div>
+            );
+          }
+        }
+        
+        // Generic iframe for other video platforms
+        return (
+          <div className="w-full max-w-2xl">
+            <div className="relative aspect-video rounded-lg overflow-hidden">
+              <iframe
+                src={videoUrl}
+                title="Video content"
+                frameBorder="0"
+                allowFullScreen
+                className="absolute inset-0 w-full h-full"
+              ></iframe>
+            </div>
+          </div>
+        );
+      }
+      
+      // Handle video object with metadata
+      if (typeof videoData === 'object' && videoData.url) {
+        return (
+          <div className="w-full max-w-2xl">
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+              {videoData.thumbnail && (
+                <div className="relative aspect-video">
+                  <img
+                    src={videoData.thumbnail}
+                    alt={videoData.title || 'Video thumbnail'}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+                    <div className="w-16 h-16 bg-white bg-opacity-90 rounded-full flex items-center justify-center">
+                      <svg className="w-8 h-8 text-gray-800 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className="p-4">
+                <h3 className="font-semibold text-gray-900 mb-2">{videoData.title || 'Video'}</h3>
+                {videoData.description && (
+                  <p className="text-gray-600 text-sm">{videoData.description}</p>
+                )}
+                <div className="mt-3">
+                  {renderVideoEmbed(videoData.url)}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+      
+      // Fallback for unknown video format
+      return (
+        <div className="w-full max-w-md">
+          <div className="bg-gray-100 rounded-lg p-4 text-center">
+            <p className="text-gray-600">Video content: {JSON.stringify(videoData)}</p>
+          </div>
+        </div>
+      );
+    };
+
+    // Helper functions to extract video IDs
+    const extractTikTokVideoId = (url: string): string | null => {
+      const match = url.match(/\/video\/(\d+)/);
+      return match ? match[1] : null;
+    };
+
+    const extractYouTubeVideoId = (url: string): string | null => {
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : null;
+    };
+
     // Render article content blocks
     const renderBlock = (block: any) => {
       switch (block?.__component) {
@@ -462,56 +599,66 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
               <div className="container mx-auto px-4 max-w-4xl">
                 <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100">
                   
-                  {/* Videos Section - Simple iframe for now */}
+                  {/* Videos Section - TikTok/Instagram Embeds */}
                   {videos && videos.length > 0 && (
                     <section className="mb-12">
                       <div className="bg-gradient-to-br from-blue-50 via-white to-pink-50 rounded-2xl shadow-2xl p-8 border border-blue-100">
                         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
-                          {videos.includes('tiktok') ? 'الخبر على منصة تيكتوك' : 'فيديو الخبر'}
+                          🎬 Video Content
                         </h2>
-                        <div className="flex justify-center">
-                          <div className="w-full max-w-md">
-                            <p className="text-center text-gray-600 p-4 bg-gray-100 rounded-lg">
-                              Video content: {videos}
-                            </p>
-                          </div>
+                        <div className="space-y-6">
+                          {Array.isArray(videos) ? videos.map((video, index) => (
+                            <div key={index} className="flex justify-center">
+                              {renderVideoEmbed(video)}
+                            </div>
+                          )) : (
+                            <div className="flex justify-center">
+                              {renderVideoEmbed(videos)}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </section>
                   )}
 
-                  {/* Content Blocks */}
-                  {blocks && blocks.length > 0 ? (
-                    <div className="rich-text-content">
-                      {blocks.map((block: any) => renderBlock(block))}
+                  {/* Article Content Section */}
+                  <section className="mb-12">
+                    <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                     
+                      {/* Content Blocks */}
+                      {blocks && blocks.length > 0 ? (
+                        <div className="rich-text-content">
+                          {blocks.map((block: any) => renderBlock(block))}
+                        </div>
+                      ) : content && content.length > 0 ? (
+                        <div className="rich-text-content">
+                          {content.map((item: any, index: number) => {
+                            switch (item.type) {
+                              case 'paragraph':
+                                return (
+                                  <p key={index} className="mb-4 text-gray-700 leading-relaxed">
+                                    {item.children?.[0]?.text || ''}
+                                  </p>
+                                );
+                              case 'heading':
+                                const HeadingTag = `h${item.level || 2}` as keyof JSX.IntrinsicElements;
+                                return (
+                                  <HeadingTag key={index} className={`text-${Math.max(2, 5-item.level)}xl font-bold mb-4 text-gray-900`}>
+                                    {item.children?.[0]?.text || ''}
+                                  </HeadingTag>
+                                );
+                              default:
+                                return null;
+                            }
+                          })}
+                        </div>
+                      ) : (
+                        <div className="text-center py-8">
+                          <p className="text-gray-500">No article content available.</p>
+                        </div>
+                      )}
                     </div>
-                  ) : content && content.length > 0 ? (
-                    <div className="rich-text-content">
-                      {content.map((item: any, index: number) => {
-                        switch (item.type) {
-                          case 'paragraph':
-                            return (
-                              <p key={index} className="mb-4 text-gray-700 leading-relaxed">
-                                {item.children?.[0]?.text || ''}
-                              </p>
-                            );
-                          case 'heading':
-                            const HeadingTag = `h${item.level || 2}` as keyof JSX.IntrinsicElements;
-                            return (
-                              <HeadingTag key={index} className={`text-${Math.max(2, 5-item.level)}xl font-bold mb-4 text-gray-900`}>
-                                {item.children?.[0]?.text || ''}
-                              </HeadingTag>
-                            );
-                          default:
-                            return null;
-                        }
-                      })}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <p className="text-gray-500">No article content available.</p>
-                    </div>
-                  )}
+                  </section>
                 </div>
               </div>
             </article>

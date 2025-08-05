@@ -55,6 +55,9 @@ import {
   DashCams, 
   Accessories 
 } from "../components/sections";
+import CelebrityEndorsement from "../components/CelebrityEndorsement";
+import FirstVisitPopup from "../components/FirstVisitPopup";
+import { useFirstVisit } from "../hooks/use-first-visit";
 import "./styles/homepage.css";
 import "./styles/ads.css";
 
@@ -249,11 +252,11 @@ const fetchArticles = async () => {
   // if (cachedData) {
   //   return cachedData;
   // }
-
+  console.log("Fetching articles...");
   const [featuredResponse, newsResponse, storyResponse] = await Promise.all([
-    fetch('/api/articles?limit=8&sort=createdAt:desc'),
-    fetch('/api/articles?limit=8&sort=createdAt:desc'),
-    fetch('/api/articles?limit=8&sort=createdAt:desc')
+    fetch('/api/articles?sort=createdAt:desc&pagination=100'),
+    fetch('/api/articles?sort=createdAt:desc&pagination=100'),
+    fetch('/api/articles?sort=createdAt:desc&pagination=100')
   ]);
 
   const [featuredData, newsData, storyData] = await Promise.all([
@@ -498,6 +501,10 @@ function HomeContent() {
   const [isLoadingCache, setIsLoadingCache] = useState(true);
   const [cachedArticles, setCachedArticles] = useState<TransformedArticle[]>([]);
   const [isLoadingArticlesCache, setIsLoadingArticlesCache] = useState(true);
+  
+  // First visit popup state
+  const { isFirstVisit, isLoading: isFirstVisitLoading, markAsVisited } = useFirstVisit();
+  const [showPopup, setShowPopup] = useState(false);
 
   // Get search params with memoization
   const { selectedFuel, selectedYear, selectedManufacturer, selectedLimit, selectedModel } = useMemo(() => ({
@@ -574,6 +581,18 @@ function HomeContent() {
 
     loadCachedArticles();
   }, [locale]);
+
+  // Show popup on first visit
+  useEffect(() => {
+    if (!isFirstVisitLoading && isFirstVisit) {
+      // Add a small delay to ensure the page has loaded
+      const timer = setTimeout(() => {
+        setShowPopup(true);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isFirstVisit, isFirstVisitLoading]);
 
   // Replace the listings useMemo with this updated version
   const listings = useMemo(() => {
@@ -810,6 +829,11 @@ function HomeContent() {
             className="cd-section"
           >
           
+
+          <div className="w-full h-[100px] flex items-center justify-center text-black text-center">
+            <h1 className="text-2xl font-bold border-4 bg-white border-red-500 rounded-xl px-6 py-2 inline-block">ضمن السرعه القانونية</h1>
+          </div>
+          
                      {/* Mobile Banner Ad - Compact Article Card */}
            <ContentAds 
              layout="mobile-banner" 
@@ -1026,6 +1050,196 @@ function HomeContent() {
                 </motion.section>
               </div>
 
+              {/* TikTok/Instagram Style Videos Section */}
+              <div className="col-span-12 mb-8">
+                <motion.section 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.8 }}
+                  className="w-full bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 py-8 rounded-3xl overflow-hidden"
+                >
+                  {/* Header */}
+                  <div className="px-6 mb-8">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                          <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                          </svg>
+                        </div>
+                        <div>
+                          <h2 className="text-2xl font-bold  ">
+                            🎬 Car Reviews
+                          </h2>
+                          <p className="text-gray-600 text-sm">Latest automotive content</p>
+                        </div>
+                      </div>
+                      <Link 
+                        href="/videos" 
+                        className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:shadow-lg transition-all duration-300 hover:scale-105"
+                      >
+                        View All
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Horizontal Scrolling Video Cards */}
+                  <div className="px-6">
+                    <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                      <style jsx>{`
+                        .scrollbar-hide::-webkit-scrollbar {
+                          display: none;
+                        }
+                      `}</style>
+                      {articlesData?.featuredData?.data.length}
+                      {transformedArticles
+                        .filter(article => article.categories?.some(cat => 
+                          cat.name.toLowerCase().includes('video') || 
+                          cat.name.toLowerCase().includes('review') || 
+                          cat.name.toLowerCase().includes('watch') ||
+                          cat.name.toLowerCase().includes('review video')
+                        ))
+                        .slice(0, 4)
+                        .map((video, index) => (
+                          <motion.div
+                            key={video.id}
+                            initial={{ opacity: 0, x: 50 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            className="flex-shrink-0 w-64 group cursor-pointer"
+                          >
+                            <Link href={`/news/${video.slug}`}>
+                              <div className="relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group-hover:scale-105">
+                                {/* Vertical Video Thumbnail - TikTok Style */}
+                                <div className="relative h-80 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
+                                  <Img
+                                    src={`http://64.227.112.249${video.imageUrl}`}
+                                    alt={video.title}
+                                    className="object-cover w-full h-full"
+                                    width={256}
+                                    height={320}
+                                    external={true}
+                                  />
+                                  
+                                  {/* Gradient Overlay */}
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                                  
+                                  {/* Play Button - Instagram Style */}
+                                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30">
+                                      <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z"/>
+                                      </svg>
+                                    </div>
+                                  </div>
+
+                                  {/* Duration Badge - TikTok Style */}
+                                  <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full border border-white/20">
+                                    {Math.floor(Math.random() * 10) + 2}:{String(Math.floor(Math.random() * 60)).padStart(2, '0')}
+                                  </div>
+
+                                  {/* Creator Profile - Instagram Style */}
+                                  <div className="absolute top-4 left-4 flex items-center gap-2">
+                                    <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                                      {video.author.charAt(0).toUpperCase()}
+                                    </div>
+                                    <span className="text-white text-xs font-medium bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full">
+                                      @{video.author.toLowerCase().replace(/\s+/g, '')}
+                                    </span>
+                                  </div>
+
+                                  {/* Bottom Content Overlay */}
+                                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                                    <div className="space-y-2">
+                                      {/* Category Tag */}
+                                      <div className="flex flex-wrap gap-1">
+                                        <span className="text-xs font-medium bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-full">
+                                          #CarReview
+                                        </span>
+                                        <span className="text-xs font-medium bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-2 py-1 rounded-full">
+                                          #Automotive
+                                        </span>
+                                      </div>
+                                      
+                                      {/* Title */}
+                                      <h3 className="text-white font-bold text-sm line-clamp-2 leading-tight">
+                                        {video.title}
+                                      </h3>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Social Media Style Engagement Bar */}
+                                <div className="bg-white p-3">
+                                  <div className="flex items-center justify-between">
+                                    {/* Left Side - Engagement */}
+                                    <div className="flex items-center gap-4">
+                                      {/* Like Button */}
+                                      <div className="flex items-center gap-1">
+                                        <svg className="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                        </svg>
+                                        <span className="text-xs text-gray-600 font-medium">{Math.floor(Math.random() * 2000) + 500}</span>
+                                      </div>
+                                      
+                                      {/* Views */}
+                                      <div className="flex items-center gap-1">
+                                        <svg className="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+                                          <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                                        </svg>
+                                        <span className="text-xs text-gray-600 font-medium">{Math.floor(Math.random() * 50000) + 10000}</span>
+                                      </div>
+
+                                      {/* Comments */}
+                                      <div className="flex items-center gap-1">
+                                        <svg className="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+                                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                        </svg>
+                                        <span className="text-xs text-gray-600 font-medium">{Math.floor(Math.random() * 100) + 10}</span>
+                                      </div>
+                                    </div>
+
+                                    {/* Right Side - Share */}
+                                    <div className="flex items-center gap-2">
+                                      <button className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors">
+                                        <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+                                          <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
+                                        </svg>
+                                      </button>
+                                      <span className="text-xs text-gray-500">{video.date}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                          </motion.div>
+                        ))}
+                    </div>
+                  </div>
+
+                  {/* Show message if no videos available */}
+                  {transformedArticles.filter(article => 
+                    article.categories?.some(cat => 
+                      cat.name.toLowerCase().includes('video') || 
+                      cat.name.toLowerCase().includes('watch') ||
+                      cat.name.toLowerCase().includes('review video')
+                    )
+                  ).length === 0 && (
+                    <div className="px-6">
+                      <div className="text-center py-12">
+                        <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                          </svg>
+                        </div>
+                        <h3 className="text-lg font-medium text-gray-900 mb-2">No Videos Available</h3>
+                        <p className="text-gray-500">Check back soon for the latest car review videos and automotive content.</p>
+                      </div>
+                    </div>
+                  )}
+                </motion.section>
+              </div>
+
               {/* Latest News Grid - 3 columns */}
               <div className="col-span-12">
                 <motion.section 
@@ -1109,6 +1323,9 @@ function HomeContent() {
             <div className="mb-12">
               <StorePromotion />
             </div>
+
+            {/* Celebrity Endorsement Section */}
+            {/* <CelebrityEndorsement /> */}
 
             {/* In-Content Ad as Article Card */}
             <ContentAds 
@@ -1541,6 +1758,15 @@ function HomeContent() {
           position="right" 
         />
       </div>
+      
+      {/* First Visit Popup */}
+      <FirstVisitPopup 
+        isVisible={showPopup}
+        onClose={() => {
+          setShowPopup(false);
+          markAsVisited();
+        }} 
+      />
     </div>
   );
 }

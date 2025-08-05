@@ -9,6 +9,9 @@ export async function GET(req) {
         // Extract query parameters from the request URL
         const { searchParams } = new URL(req.url);
         let storeHostname = searchParams.get('store_hostname');
+        if (storeHostname === 'default') {
+            storeHostname = 'ASD Auto Spa Detailing';
+        }
 
         // Define allowed filters
         const allowedFilters = ["category", "min_price", "max_price", "store", "slug"];

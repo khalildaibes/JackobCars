@@ -5,8 +5,6 @@ const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://64.227.112.249:
 const STRAPI_TOKEN = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
 
 export async function GET(req) {
-    console.log("Detected Locale:");
-
     try {
         const locale = await getLocale();
         console.log("Detected Locale:", locale);
@@ -16,7 +14,7 @@ export async function GET(req) {
         let storeHostname = searchParams.get('store_hostname');
 
         // Define allowed filters
-        const allowedFilters = ["category", "min_price", "max_price", "fuel", "body_type", "year", "mileage", "store_hostname"];
+        const allowedFilters = ["category", "min_price", "max_price", "brand", "store", "slug"];
 
         // Build query parameters dynamically
         const queryParams = new URLSearchParams();
@@ -27,10 +25,8 @@ export async function GET(req) {
                 if (key === "category") queryParams.append("filters[categories][$contains]", value);
                 if (key === "min_price") queryParams.append("filters[price][$gte]", value);
                 if (key === "max_price") queryParams.append("filters[price][$lte]", value);
-                if (key === "fuel") queryParams.append("filters[fuel][$contains]", value);
-                if (key === "body_type") queryParams.append("filters[body_type][$contains]", value);
-                if (key === "year") queryParams.append("filters[year][$contains]", value);
-                if (key === "mileage") queryParams.append("filters[mileage][$lte]", value);
+                if (key === "brand") queryParams.append("filters[brand][$contains]", value);
+                if (key === "store") queryParams.append("filters[store][$contains]", value);
                 if (key === "slug") queryParams.append("filters[slug][$contains]", value);
             }
         });
@@ -63,15 +59,16 @@ export async function GET(req) {
         }
         
         // Construct the final API URL with filters
-        let apiUrl =  storeHostname.includes('64.227.112.249') ? 
-            `http://${baseUrl}/api/partss?populate=*` : 
-            `http://${baseUrl}/api/partss?populate=*`;
+        let apiUrl = storeHostname.includes('64.227.112.249') ? 
+            `http://${baseUrl.replace('http://', '')}/api/products?populate=*` : 
+            `http://${baseUrl.replace('http://', '')}/api/products?populate=*`;
         if (queryParams.toString()) {
             apiUrl += `&${queryParams.toString()}`;
         }
 
         console.log("Fetching API:", apiUrl);
-
+        console.log("Store Hostname:", storeHostname);
+        console.log("API Token:", apiToken);
         // Fetch data from the appropriate store API
         const response = await fetch(apiUrl, {
             headers: {
@@ -79,9 +76,9 @@ export async function GET(req) {
                 Authorization: storeHostname.includes('64.227.112.249') ? `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}` : `Bearer ${apiToken}`,
             },
         });
-
+        console.log("Response:", response);
         if (!response.ok) {
-            return new Response(JSON.stringify({ message: "Failed to fetch parts", error: response.statusText }), { status: response.status });
+            return new Response(JSON.stringify({ message: "Failed to fetch products", error: response.statusText }), { status: response.status });
         }
 
         const data = await response.json();
@@ -94,18 +91,17 @@ export async function GET(req) {
 
 export async function POST(request) {
     try {
-        const partData = await request.json();
+        const productData = await request.json();
         let {
             storeId,
             name,
             description,
-            partNumber,
-            brand,
             price,
+            category,
+            brand,
             stock,
-            minStock,
-            category
-        } = partData;
+            sku
+        } = productData;
 
         // Handle default store mapping
         if (storeId === 'default') {
@@ -113,26 +109,25 @@ export async function POST(request) {
         }
 
         // Validate required fields
-        if (!storeId || !name || !partNumber || !price || !category) {
+        if (!storeId || !name || !price || !category) {
             return new Response(
                 JSON.stringify({ error: 'Missing required fields' }),
                 { status: 400 }
             );
         }
 
-        // Create part in Strapi using your existing structure
-        const apiUrl = `${STRAPI_URL}/api/partss`;
+        // Create product in Strapi using your existing structure
+        const apiUrl = `${STRAPI_URL}/api/products`;
         
         const strapiData = {
             data: {
                 name,
                 description: description || '',
-                partNumber,
-                brand: brand || '',
                 price: parseFloat(price),
-                stock: parseInt(stock) || 0,
-                minStock: parseInt(minStock) || 0,
                 category,
+                brand: brand || '',
+                stock: parseInt(stock) || 0,
+                sku: sku || '',
                 isActive: true,
                 stores: {
                     connect: [{ name: storeId }] // Connect to store by name
@@ -153,7 +148,7 @@ export async function POST(request) {
             const errorText = await response.text();
             console.error('Strapi API Error:', errorText);
             return new Response(
-                JSON.stringify({ error: 'Failed to create part in Strapi' }),
+                JSON.stringify({ error: 'Failed to create product in Strapi' }),
                 { status: 500 }
             );
         }
@@ -161,17 +156,16 @@ export async function POST(request) {
         const result = await response.json();
         
         // Transform response to expected format
-        const part = {
+        const product = {
             id: result.data.id,
             storeId: storeId,
             name: result.data.attributes.name,
             description: result.data.attributes.description,
-            partNumber: result.data.attributes.partNumber,
-            brand: result.data.attributes.brand,
             price: result.data.attributes.price,
-            stock: result.data.attributes.stock,
-            minStock: result.data.attributes.minStock,
             category: result.data.attributes.category,
+            brand: result.data.attributes.brand,
+            stock: result.data.attributes.stock,
+            sku: result.data.attributes.sku,
             isActive: result.data.attributes.isActive,
             createdAt: result.data.attributes.createdAt,
             updatedAt: result.data.attributes.updatedAt,
@@ -179,15 +173,15 @@ export async function POST(request) {
 
         return new Response(JSON.stringify({
             success: true,
-            message: 'Part created successfully',
-            part: part
+            message: 'Product created successfully',
+            product: product
         }), { status: 200 });
 
     } catch (error) {
-        console.error('Error creating part:', error);
+        console.error('Error creating product:', error);
         return new Response(
             JSON.stringify({ error: 'Internal server error' }),
             { status: 500 }
         );
     }
-} 
+}

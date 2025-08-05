@@ -71,7 +71,7 @@ const StoreInfo: React.FC<StoreInfoProps> = ({ isRTL }) => {
         className="mt-4 sm:mt-6"
       >
         <Link 
-          href="/book-appointment"
+          href="/book-appointment?storeId=default"
           className={`inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-white text-blue-700 rounded-xl font-semibold hover:bg-blue-50 transition-colors shadow-lg hover:shadow-xl text-sm sm:text-base ${isRTL ? 'flex-row-reverse' : ''}`}
         >
           {t('book_now')}

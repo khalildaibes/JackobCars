@@ -309,7 +309,17 @@ export default function Navbar() {
               {t(key)}
             </NavButton>
           ))}
-          <div className="md:hidden w-full mt-4 ">
+          <div className="md:hidden w-full mt-4 space-y-2">
+            {/* Store Manager Dashboard Link - Mobile */}
+            {/* <Link href="/dashboard/store-manager?storeId=default" className="w-full">
+              <Button
+                variant="outline"
+                className="text-white/80 border-transparent hover:border-blue-400 hover:text-white transition-all duration-500 ease-in-out w-full bg-blue-600/20 rounded-xl"
+              >
+                {t("store_dashboard")}
+              </Button>
+            </Link> */}
+            
             {user ? (
               <UserMenu user={user} onLogout={handleLogout} isMobile={true} />
             ) : (
@@ -329,6 +339,16 @@ export default function Navbar() {
 
         {/* Desktop Right Section */}
         <div className="hidden md:flex items-center gap-4">
+          {/* Store Manager Dashboard Link */}
+          {/* <Link href="/dashboard/store-manager?storeId=default">
+            <Button
+              variant="outline"
+              className="text-white/80 border-transparent hover:border-blue-400 hover:text-white transition-all duration-500 ease-in-out bg-blue-600/20 rounded-xl"
+            >
+              {t("store_dashboard")}
+            </Button>
+          </Link> */}
+          
           {user ? (
             <UserMenu user={user} onLogout={handleLogout} />
           ) : (

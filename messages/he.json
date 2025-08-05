@@ -1,4 +1,21 @@
 {
+  "FirstVisitPopup": {
+    "welcome": "ברוכים הבאים!",
+    "tagline": "המסע שלכם עם הרכבים מתחיל כאן",
+    "title": "גלו רכבים מדהימים",
+    "description": "מצאו את הרכב המושלם שלכם מתוך אלפי רישומים מאומתים. קבלו את המבצעים הטובים ביותר, ביקורות מומחים ושירות אמין.",
+    "verified_listings": "רישומים מאומתים",
+    "verified_listings_desc": "כל הרכבים נבדקו ואומתו",
+    "trusted_service": "שירות אמין",
+    "trusted_service_desc": "עסקאות בטוחות ותמיכה",
+    "expert_reviews": "ביקורות מומחים",
+    "expert_reviews_desc": "תובנות מקצועיות ודירוגי רכבים",
+    "community": "קהילה",
+    "community_desc": "הצטרפו לאלפי לקוחות מרוצים",
+    "start_exploring": "התחילו לחקור",
+    "dont_show_again": "אל תציגו זאת שוב",
+    "special_offer": "🎉 הצעת קבלת פנים מיוחדת: קבלו 10% הנחה על הזמנת השירות הראשונה שלכם!"
+  },
   "HomePage": {
     "electric_vehicles": "רכבים חשמליים",
     "luxury_cars": "רכבי יוקרה",
