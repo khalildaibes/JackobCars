@@ -172,42 +172,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <head>
-        {/* Favicon and App Icons - MaxSpeedLimit Logo */}
-        <link rel="icon" href="/logo.svg" type="image/svg+xml" />
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" href="/favicon-16x16.png" sizes="16x16" type="image/png" />
-        <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
-        <link rel="apple-touch-icon" href="/logo-transparent-small.png" sizes="180x180" />
-        <link rel="mask-icon" href="/logo.svg" color="#050B20" />
-        <link rel="manifest" href="/manifest.json" />
-        
-        {/* Additional SEO Meta Tags */}
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="geo.region" content="Your-Region" />
-        <meta name="geo.placename" content="Your-City" />
-        <meta name="theme-color" content="#050B20" />
-        <meta name="msapplication-TileColor" content="#050B20" />
-        <meta name="msapplication-TileImage" content="/logo-transparent-small.png" />
-        
-        {/* Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-        
-        {/* Preconnect to external domains for performance */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        
-        {/* DNS Prefetch for better performance */}
-        <link rel="dns-prefetch" href="//www.google-analytics.com" />
-        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
-        
-        {/* TikTok Embed Script */}
-        <script async src="https://www.tiktok.com/embed.js"></script>
-      </head>
+
       <body className="bg-[#050B20] min-h-screen text-black mobile-content">
         <Providers>
           <NextIntlClientProvider messages={messages}>
