@@ -8,6 +8,7 @@ import { Facebook, Instagram, Twitter, Link as LinkIcon, MessageCircle } from "l
 import Image from "next/image";
 import SidebarAds from "../../../components/ads/SidebarAds";
 import ContentAds from "../../../components/ads/ContentAds";
+import Header from "../../../components/Header";
 import { 
   leftSidebarAds, 
   rightSidebarAds, 
@@ -199,87 +200,159 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
       if (typeof videoData === 'string') {
         const videoUrl = videoData;
         
-        // TikTok embed
-        if (videoUrl.includes('tiktok.com')) {
-          const videoId = extractTikTokVideoId(videoUrl);
-          if (videoId) {
-            return (
-              <div className="w-full max-w-md">
-                <blockquote 
-                  className="tiktok-embed" 
-                  cite={videoUrl}
-                  data-video-id={videoId}
-                  style={{ maxWidth: '325px', minWidth: '325px' }}
-                >
-                  <section></section>
-                </blockquote>
-                <script async src="https://www.tiktok.com/embed.js"></script>
-              </div>
-            );
-          }
-        }
+                 // TikTok embed
+         if (videoUrl.includes('tiktok.com')) {
+           const videoId = extractTikTokVideoId(videoUrl);
+           if (videoId) {
+             return (
+               <div className="w-full relative group">
+                 <div className="relative w-full flex justify-center">
+                   <blockquote 
+                     className="tiktok-embed h-[600px] md:h-[700px] lg:h-[800px]" 
+                     cite={videoUrl}
+                     data-video-id={videoId}
+                     style={{ 
+                       width: '100%', 
+                       maxWidth: '400px'
+                     }}
+                   >
+                     <section></section>
+                   </blockquote>
+                   <script async src="https://www.tiktok.com/embed.js"></script>
+                   
+                   {/* Fullscreen overlay button */}
+                   <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                     <button
+                       onClick={() => {
+                         const embedElement = document.querySelector('.tiktok-embed');
+                         handleFullscreen(embedElement as HTMLElement);
+                       }}
+                       className="bg-black/80 hover:bg-black text-white p-3 rounded-full transition-all hover:scale-110 shadow-lg"
+                       title="View in Fullscreen (Press F)"
+                     >
+                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                       </svg>
+                     </button>
+                   </div>
+                 </div>
+               </div>
+             );
+           }
+         }
         
-        // Instagram embed
-        if (videoUrl.includes('instagram.com')) {
-          return (
-            <div className="w-full max-w-md">
-              <iframe
-                src={`${videoUrl}/embed`}
-                width="400"
-                height="480"
-                frameBorder="0"
-                scrolling="no"
-                allowTransparency={true}
-                className="rounded-lg"
-              ></iframe>
-            </div>
-          );
-        }
+                 // Instagram embed
+         if (videoUrl.includes('instagram.com')) {
+           return (
+             <div className="w-full relative group">
+               <div className="relative w-full flex justify-center">
+                 <iframe
+                   src={`${videoUrl}/embed`}
+                   width="100%"
+                   height="600"
+                   frameBorder="0"
+                   scrolling="no"
+                   allowTransparency={true}
+                   className="rounded-lg h-[600px] md:h-[700px] lg:h-[800px]"
+                   style={{ maxWidth: '400px' }}
+                 ></iframe>
+                 
+                 {/* Fullscreen overlay button */}
+                 <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                   <button
+                     onClick={() => {
+                       const iframe = document.querySelector('iframe[src*="instagram.com"]');
+                       handleFullscreen(iframe as HTMLElement);
+                     }}
+                     className="bg-black/80 hover:bg-black text-white p-3 rounded-full transition-all hover:scale-110 shadow-lg"
+                     title="View in Fullscreen (Press F)"
+                   >
+                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                     </svg>
+                   </button>
+                 </div>
+               </div>
+             </div>
+           );
+         }
         
-        // YouTube embed
-        if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
-          const videoId = extractYouTubeVideoId(videoUrl);
-          if (videoId) {
-            return (
-              <div className="w-full max-w-2xl">
-                <div className="relative aspect-video rounded-lg overflow-hidden">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${videoId}`}
-                    title="YouTube video player"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="absolute inset-0 w-full h-full"
-                  ></iframe>
-                </div>
-              </div>
-            );
-          }
-        }
+                 // YouTube embed
+         if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
+           const videoId = extractYouTubeVideoId(videoUrl);
+           if (videoId) {
+             return (
+               <div className="w-full relative group">
+                 <div className="relative w-full h-[400px] md:h-[500px] lg:h-[600px]">
+                   <iframe
+                     src={`https://www.youtube.com/embed/${videoId}`}
+                     title="YouTube video player"
+                     frameBorder="0"
+                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                     allowFullScreen
+                     className="absolute inset-0 w-full h-full rounded-lg"
+                   ></iframe>
+                   
+                   {/* Fullscreen overlay button */}
+                   <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                     <button
+                       onClick={() => {
+                         const iframe = document.querySelector('iframe[src*="youtube.com"]');
+                         handleFullscreen(iframe as HTMLElement);
+                       }}
+                       className="bg-black/80 hover:bg-black text-white p-3 rounded-full transition-all hover:scale-110 shadow-lg"
+                       title="View in Fullscreen (Press F)"
+                     >
+                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                       </svg>
+                     </button>
+                   </div>
+                 </div>
+               </div>
+             );
+           }
+         }
         
-        // Generic iframe for other video platforms
-        return (
-          <div className="w-full max-w-2xl">
-            <div className="relative aspect-video rounded-lg overflow-hidden">
-              <iframe
-                src={videoUrl}
-                title="Video content"
-                frameBorder="0"
-                allowFullScreen
-                className="absolute inset-0 w-full h-full"
-              ></iframe>
-            </div>
-          </div>
-        );
+                 // Generic iframe for other video platforms
+         return (
+           <div className="w-full relative group">
+             <div className="relative w-full h-[400px] md:h-[500px] lg:h-[600px]">
+               <iframe
+                 src={videoUrl}
+                 title="Video content"
+                 frameBorder="0"
+                 allowFullScreen
+                 className="absolute inset-0 w-full h-full rounded-lg"
+               ></iframe>
+               
+               {/* Fullscreen overlay button */}
+               <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                 <button
+                   onClick={() => {
+                     const iframe = document.querySelector('iframe[src*="' + videoUrl.split('/')[2] + '"]');
+                     handleFullscreen(iframe as HTMLElement);
+                   }}
+                   className="bg-black/80 hover:bg-black text-white p-3 rounded-full transition-all hover:scale-110 shadow-lg"
+                   title="View in Fullscreen (Press F)"
+                 >
+                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                   </svg>
+                 </button>
+               </div>
+             </div>
+           </div>
+         );
       }
       
       // Handle video object with metadata
       if (typeof videoData === 'object' && videoData.url) {
         return (
-          <div className="w-full max-w-2xl">
+          <div className="w-full">
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
               {videoData.thumbnail && (
-                <div className="relative aspect-video">
+                <div className="relative" style={{ height: '300px' }}>
                   <img
                     src={videoData.thumbnail}
                     alt={videoData.title || 'Video thumbnail'}
@@ -329,6 +402,78 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
       const match = url.match(regExp);
       return (match && match[2].length === 11) ? match[2] : null;
     };
+
+         // Fullscreen handler function
+     const handleFullscreen = (element: HTMLElement | null) => {
+       if (!element) return;
+       
+       // Add fullscreen styles to the element
+       element.style.width = '100vw';
+       element.style.height = '100vh';
+       element.style.position = 'fixed';
+       element.style.top = '0';
+       element.style.left = '0';
+       element.style.zIndex = '9999';
+       element.style.backgroundColor = 'black';
+       
+       if (element.requestFullscreen) {
+         element.requestFullscreen();
+       } else if ((element as any).webkitRequestFullscreen) {
+         (element as any).webkitRequestFullscreen();
+       } else if ((element as any).msRequestFullscreen) {
+         (element as any).msRequestFullscreen();
+       }
+     };
+
+         // Handle fullscreen exit and reset styles
+     const handleFullscreenExit = () => {
+       const fullscreenElement = document.querySelector('iframe, .tiktok-embed') as HTMLElement;
+       if (fullscreenElement) {
+         fullscreenElement.style.width = '';
+         fullscreenElement.style.height = '';
+         fullscreenElement.style.position = '';
+         fullscreenElement.style.top = '';
+         fullscreenElement.style.left = '';
+         fullscreenElement.style.zIndex = '';
+         fullscreenElement.style.backgroundColor = '';
+       }
+     };
+
+     // Keyboard shortcuts for fullscreen
+     useEffect(() => {
+       const handleKeyDown = (e: KeyboardEvent) => {
+         if (e.key === 'f' || e.key === 'F') {
+           e.preventDefault();
+           const activeElement = document.activeElement;
+           if (activeElement && (activeElement.tagName === 'IFRAME' || activeElement.classList.contains('tiktok-embed'))) {
+             handleFullscreen(activeElement as HTMLElement);
+           }
+         }
+         // Handle escape key to exit fullscreen
+         if (e.key === 'Escape') {
+           handleFullscreenExit();
+         }
+       };
+
+       // Listen for fullscreen change events
+       const handleFullscreenChange = () => {
+         if (!document.fullscreenElement && !(document as any).webkitFullscreenElement && !(document as any).msFullscreenElement) {
+           handleFullscreenExit();
+         }
+       };
+
+       document.addEventListener('keydown', handleKeyDown);
+       document.addEventListener('fullscreenchange', handleFullscreenChange);
+       document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+       document.addEventListener('msfullscreenchange', handleFullscreenChange);
+
+       return () => {
+         document.removeEventListener('keydown', handleKeyDown);
+         document.removeEventListener('fullscreenchange', handleFullscreenChange);
+         document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+         document.removeEventListener('msfullscreenchange', handleFullscreenChange);
+       };
+     }, []);
 
     // Render article content blocks
     const renderBlock = (block: any) => {
@@ -470,9 +615,13 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
     const authorName = author?.name || author?.email || '';
 
     return (
-      <main className="min-h-screen bg-white text-gray-800">
-        {/* Hero Section - Full Width */}
-        <section className="relative w-full min-h-[60vh]">
+      <div className="min-h-screen bg-white text-gray-800">
+        {/* Header */}
+        
+        
+        <main>
+          {/* Hero Section - Full Width */}
+          <section className="relative w-full min-h-[60vh]">
           {cover?.url ? (
             <Image
               src={`http://64.227.112.249${cover.url}`}
@@ -606,7 +755,7 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
                         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
                           🎬 Video Content
                         </h2>
-                        <div className="space-y-6">
+                        <div className="space-y-6 mb-12">
                           {Array.isArray(videos) ? videos.map((video, index) => (
                             <div key={index} className="flex justify-center">
                               {renderVideoEmbed(video)}
@@ -794,6 +943,7 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
             position="right" 
           />
         </div>
-      </main>
+        </main>
+      </div>
     );
 } 

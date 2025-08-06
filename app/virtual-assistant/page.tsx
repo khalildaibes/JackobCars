@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { Play, Pause, RotateCcw, Volume2, VolumeX } from 'lucide-react';
+import VideoPlayer from '@/components/VideoPlayer';
 
 interface Script {
   id: number;
@@ -152,62 +152,45 @@ export default function VirtualAssistantPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg"
               >
-                <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden mb-4">
-                  {isLoading ? (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500"></div>
-                    </div>
-                  ) : error ? (
-                    <div className="w-full h-full flex items-center justify-center text-white">
-                      <p>{error}</p>
-                    </div>
-                  ) : videoUrl ? (
-                    <video
-                      src={videoUrl}
-                      className="w-full h-full object-cover"
-                      autoPlay={isPlaying}
-                      muted={isMuted}
-                      controls={false}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-800 text-white">
-                      <p>{t('click_play')}</p>
-                    </div>
-                  )}
-                </div>
+                {isLoading ? (
+                  <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden mb-4 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500"></div>
+                  </div>
+                ) : error ? (
+                  <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden mb-4 flex items-center justify-center text-white">
+                    <p>{error}</p>
+                  </div>
+                ) : videoUrl ? (
+                  <VideoPlayer
+                    src={videoUrl}
+                    title={selectedScript.title}
+                    className="aspect-video mb-4"
+                    autoPlay={isPlaying}
+                    muted={isMuted}
+                    onPlay={() => setIsPlaying(true)}
+                    onPause={() => setIsPlaying(false)}
+                    onEnded={() => setIsPlaying(false)}
+                  />
+                ) : (
+                  <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden mb-4 flex items-center justify-center text-white">
+                    <p>{t('click_play')}</p>
+                  </div>
+                )}
 
-                {/* Video Controls */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
+                {/* Generate Video Button */}
+                {!videoUrl && !isLoading && (
+                  <div className="flex justify-center mb-4">
                     <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={handlePlayPause}
-                      className="p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={generateVideo}
+                      className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                       disabled={isLoading}
                     >
-                      {isPlaying ? <Pause size={24} /> : <Play size={24} />}
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={handleRestart}
-                      className="p-3 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 transition-colors"
-                      disabled={!videoUrl || isLoading}
-                    >
-                      <RotateCcw size={24} />
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={() => setIsMuted(!isMuted)}
-                      className="p-3 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 transition-colors"
-                      disabled={!videoUrl || isLoading}
-                    >
-                      {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+                      {isLoading ? 'Generating...' : 'Generate Video'}
                     </motion.button>
                   </div>
-                </div>
+                )}
 
                 {/* Script Content */}
                 <div className="mt-6">

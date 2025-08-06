@@ -59,6 +59,7 @@ import FirstVisitPopup from "../components/FirstVisitPopup";
 import { useFirstVisit } from "../hooks/use-first-visit";
 import "./styles/homepage.css";
 import "./styles/ads.css";
+import CarGroupSignup from "../components/CarGroupSignup";
 
 // Typs
 interface Deal {
@@ -1248,7 +1249,7 @@ function HomeContent() {
                         ))}
                     </div>
                   </div>
-
+                    <CarGroupSignup/>
                   {/* Show message if no videos available */}
                   {transformedArticles.filter(article => 
                     article.categories?.some(cat => 
