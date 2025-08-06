@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
-import { Car, Users, Phone, User, Hash } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 
 
@@ -87,7 +86,6 @@ export default function CarGroupSignup() {
         >
           <div className="flex items-center justify-center mb-4">
             <div className={`bg-blue-600 p-3 rounded-full ${isRTL ? 'ml-3' : 'mr-3'}`}>
-              <Users className="h-6 w-6 text-white" />
             </div>
             <h2 className="text-3xl font-bold text-gray-900">
               {t('car_group_title')}
@@ -107,7 +105,6 @@ export default function CarGroupSignup() {
           <div className="shadow-lg border-0 bg-white/70 backdrop-blur-sm rounded-lg border border-gray-200">
             <div className="p-6 border-b border-gray-200">
               <h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                <Car className="h-5 w-5 text-blue-600" />
                 {t('car_group_signup_title')}
               </h3>
               <p className="text-gray-600 mt-2">
@@ -119,7 +116,6 @@ export default function CarGroupSignup() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                      <Hash className="h-4 w-4" />
                       {t('car_group_signup_plate_label')}
                     </label>
                     <input
@@ -147,7 +143,6 @@ export default function CarGroupSignup() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                      <Phone className="h-4 w-4" />
                       {t('car_group_signup_phone_label')}
                     </label>
                     <input
@@ -176,7 +171,6 @@ export default function CarGroupSignup() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                      <User className="h-4 w-4" />
                       {t('car_group_signup_owner_label')}
                     </label>
                     <input
@@ -203,7 +197,6 @@ export default function CarGroupSignup() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                      <Car className="h-4 w-4" />
                       {t('car_group_signup_nickname_label')}
                     </label>
                     <input
@@ -241,7 +234,6 @@ export default function CarGroupSignup() {
                       </div>
                     ) : (
                       <div className="flex items-center gap-2 justify-center">
-                        <Users className="h-4 w-4" />
                         {t('car_group_signup_button')}
                       </div>
                     )}
@@ -302,7 +294,6 @@ export default function CarGroupSignup() {
         >
           <div className="text-center p-6 bg-white/50 rounded-lg backdrop-blur-sm">
             <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Users className="h-6 w-6 text-green-600" />
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">{t('car_group_benefits_community')}</h3>
             <p className="text-gray-600 text-sm">
@@ -312,7 +303,6 @@ export default function CarGroupSignup() {
           
           <div className="text-center p-6 bg-white/50 rounded-lg backdrop-blur-sm">
             <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Car className="h-6 w-6 text-blue-600" />
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">{t('car_group_benefits_events')}</h3>
             <p className="text-gray-600 text-sm">
@@ -322,7 +312,6 @@ export default function CarGroupSignup() {
           
           <div className="text-center p-6 bg-white/50 rounded-lg backdrop-blur-sm">
             <div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Phone className="h-6 w-6 text-purple-600" />
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">{t('car_group_benefits_support')}</h3>
             <p className="text-gray-600 text-sm">
