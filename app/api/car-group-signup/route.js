@@ -3,9 +3,17 @@ import { NextResponse } from 'next/server';
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://64.227.112.249:1337';
 const STRAPI_TOKEN = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
 
-export async function POST(request) {
+// Next.js app router API routes use the new Request object, not Express-style req.query
+export async function GET(request) {
   try {
-    const { plateNumber, phoneNumber, ownerName, carNickname, locale } = await request.json();
+    // Parse query params from the URL
+    const { searchParams } = new URL(request.url);
+
+    const plateNumber = searchParams.get('plateNumber');
+    const phoneNumber = searchParams.get('phoneNumber');
+    const ownerName = searchParams.get('ownerName');
+    const carNickname = searchParams.get('carNickname');
+    const locale = searchParams.get('locale');
 
     // Validate required fields
     if (!plateNumber || !phoneNumber || !ownerName) {
@@ -46,13 +54,13 @@ export async function POST(request) {
 
     // Submit to Strapi (assuming there's a car-group-signups collection)
     console.log(`🔗 Attempting to connect to Strapi: ${STRAPI_URL}/api/car-group-signups`);
-    console.log(`🔑 Using token: ${process.env.NEXT_PUBLIC_STRAPI_TOKEN ? 'Token exists' : 'No token found'}`);
+    console.log(`🔑 Using token: ${STRAPI_TOKEN ? 'Token exists' : 'No token found'}`);
     
     const strapiResponse = await fetch(`${STRAPI_URL}/api/car-group-signups`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`
+        'Authorization': STRAPI_TOKEN ? `Bearer ${STRAPI_TOKEN}` : undefined
       },
       body: JSON.stringify(carGroupData)
     });

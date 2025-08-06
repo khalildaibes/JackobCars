@@ -50,16 +50,7 @@ export default function CarGroupSignup() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/car-group-signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          locale: locale
-        }),
-      });
+      const response = await fetch("/api/car-group-signup?plateNumber=" + formData.plateNumber + "&phoneNumber=" + formData.phoneNumber + "&ownerName=" + formData.ownerName + "&carNickname=" + formData.carNickname + "&locale=" + locale);
 
       const result = await response.json();
 
