@@ -24,7 +24,6 @@ import {
   DashCams, 
   Accessories 
 } from "../components/sections";
-import FirstVisitPopup from "../components/FirstVisitPopup";
 import { useFirstVisit } from "../hooks/use-first-visit";
 import "./styles/homepage.css";
 import "./styles/ads.css";
@@ -1494,7 +1493,7 @@ function HomeContent() {
               </div>
             </div>
           </div>
-          <CarGroupSignup/>
+                      <CarGroupSignup/>
 
 
           {/* Latest Car Reviews Section */}
@@ -1586,15 +1585,7 @@ function HomeContent() {
           position="right" 
         />
       </div>
-      
-      {/* First Visit Popup */}
-      <FirstVisitPopup 
-        isVisible={showPopup}
-        onClose={() => {
-          setShowPopup(false);
-          markAsVisited();
-        }} 
-      />
+
     </div>
   );
 }
