@@ -538,7 +538,7 @@ function HomeContent() {
       }));
     };
   
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: any) => {
       event.preventDefault();
       
       setIsSubmitting(true);
