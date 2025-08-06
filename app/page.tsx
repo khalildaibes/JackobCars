@@ -34,6 +34,7 @@ import { QueryClient, QueryClientProvider, useQueries } from "@tanstack/react-qu
 import { getCachedData, setCachedData } from "../utils/cacheUtils";
 import { motion } from "framer-motion";
 import { UserActivityProvider } from "../context/UserActivityContext";
+import FirstVisitPopup from "../components/FirstVisitPopup";
 
 // Typs
 interface Deal {
@@ -1773,7 +1774,15 @@ function HomeContent() {
           position="right" 
         />
       </div>
-
+      
+      {/* First Visit Popup */}
+      <FirstVisitPopup 
+        isVisible={showPopup}
+        onClose={() => {
+          setShowPopup(false);
+          markAsVisited();
+        }} 
+      />
     </div>
   );
 }
