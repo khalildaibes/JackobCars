@@ -2,38 +2,28 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useQuery, useQueries, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import CarCard from "../components/CarCard";
 import ShowMore from "../components/ShowMore";
-import Hero from "../components/Hero";
 import { fetchCars } from "../utils";
 import { CarProps } from "../types";
 import MobileFilters from "../components/SearchCar";
-import dynamic from "next/dynamic";
-import { motion } from "framer-motion";
 import Image from "next/image";
-import React, { createContext, useContext } from "react";
 import CustomerTestimonialsSection from "../components/homeeight/CustomerTestimonialsSection";
 import LatestBlogPostsSection from "../components/homeeight/LatestBlogPostsSection";
 import RecentlyAddedSection from "../components/homeeight/RecentlyAddedSection";
-import {  useTranslations, useLocale } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import ResponsiveNewsLayout from "../components/Responsivenews";
 import SearchBar from "../components/SearchBar";
 import { Img } from "../components/Img";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Car, Settings, Wrench, Tag, CheckCircle, Shield, Database } from "lucide-react";
 import ServiceCard from "../components/ServiceCard";
 import PartCard from "../components/PartCard";
-import { setCookie, getCookie } from "../utils/cookieUtils";
 import StoriesCarousel from "../components/StoriesCarousel";
-import AliceCarousel, { EventObject } from "react-alice-carousel";
+import AliceCarousel from "react-alice-carousel";
 import { Slider } from "../components/Slider";
 import CategoryButtons from "../components/CategoryButtons";
 import HeroSection from "../components/HeroSection";
 import StorePromotion from "../components/StorePromotion";
-import { getCachedData, setCachedData } from "../utils/cacheUtils";
-import { UserActivityProvider } from "../context/UserActivityContext";
-import { formatDate } from "react-datepicker/dist/date_utils";
 import NewsArticleList from "../components/NewsArticleList";
 import { ResponsiveAd } from "../components/ads";
 import ContentAds from "../components/ads/ContentAds";
@@ -60,6 +50,12 @@ import { useFirstVisit } from "../hooks/use-first-visit";
 import "./styles/homepage.css";
 import "./styles/ads.css";
 import CarGroupSignup from "../components/CarGroupSignup";
+import { setCookie } from "../utils/cookieUtils";
+import dynamic from "next/dynamic";
+import { QueryClient, QueryClientProvider, useQueries } from "@tanstack/react-query";
+import { getCachedData, setCachedData } from "../utils/cacheUtils";
+import { motion } from "framer-motion";
+import { UserActivityProvider } from "../context/UserActivityContext";
 
 // Typs
 interface Deal {
@@ -574,8 +570,6 @@ function HomeContent() {
 
   // Check if any query is still loading
   const isLoading = queryResults.some(result => result.isLoading);
-  const [sliderState, setSliderState] = React.useState(0);
-  const sliderRef = React.useRef<AliceCarousel>(null);
 
   // Add this useEffect for cache handling
   useEffect(() => {
@@ -1289,13 +1283,17 @@ function HomeContent() {
                           onClick={prevSlide}
                           className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                         >
-                          <ChevronRight className="w-5 h-5" />
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                          </svg>
                         </button>
                         <button
                           onClick={nextSlide}
                           className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                         >
-                          <ChevronLeft className="w-5 h-5" />
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                          </svg>
                         </button>
                       </div>
                     </div>
@@ -1755,15 +1753,21 @@ function HomeContent() {
 
                 <div className="mt-8 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                     <span>{t('instant_results')}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-blue-500" />
+                    <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
                     <span>{t('secure_search')}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Database className="w-5 h-5 text-purple-500" />
+                    <svg className="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 12h.01M12 15h.01M12 18h.01M12 8h.01M12 5h.01M12 21a9 9 0 110-18 9 9 0 010 18z" />
+                    </svg>
                     <span>{t('comprehensive_data')}</span>
                   </div>
                 </div>
