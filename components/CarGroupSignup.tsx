@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
 
 interface CarGroupSignupFormData {
@@ -30,6 +30,12 @@ export default function CarGroupSignup() {
     ownerName: "",
     carNickname: "",
   });
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Ensure component is mounted before rendering
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleInputChange = (field: keyof CarGroupSignupFormData, value: string) => {
     setFormData(prev => ({
@@ -44,13 +50,28 @@ export default function CarGroupSignup() {
     setIsSubmitting(true);
 
     try {
+      const response = await fetch("/api/car-group-signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          locale: locale
+        }),
+      });
 
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to sign up");
+      }
 
       // Show success message
       setToastMessage({
         type: 'success',
         title: t('car_group_signup_success_title'),
-        message:  t('car_group_signup_success')
+        message: result.message || t('car_group_signup_success')
       });
       
       // Reset form
@@ -74,6 +95,22 @@ export default function CarGroupSignup() {
   const closeToast = () => {
     setToastMessage(null);
   };
+
+  // Don't render until mounted to prevent hydration issues
+  if (!isMounted) {
+    return (
+      <section className="w-full py-12 bg-gradient-to-br from-blue-50 to-white">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center">
+            <div className="animate-pulse">
+              <div className="h-8 bg-gray-200 rounded w-1/3 mx-auto mb-4"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
