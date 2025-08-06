@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { X, Car, Star, Shield, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 interface FirstVisitPopupProps {
@@ -103,7 +102,9 @@ const FirstVisitPopup: React.FC<FirstVisitPopupProps> = ({ onClose, isVisible = 
             onClick={onClose}
             className={`fade-in animate-delay-18 absolute top-4 right-4 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-300 z-10 border-2 border-red-500 hover:scale-110 ${animate ? 'animate' : ''}`}
           >
-            <X className="w-5 h-5 text-black" />
+            <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
 
           {/* Header with Logo/Image */}
@@ -112,7 +113,9 @@ const FirstVisitPopup: React.FC<FirstVisitPopupProps> = ({ onClose, isVisible = 
             <div className="relative z-10 flex items-center justify-center h-full">
               <div className={`fade-in animate-delay-1 text-center text-white ${animate ? 'animate' : ''}`}>
                 <div className={`fade-in animate-delay-2 ${animate ? 'animate' : ''}`}>
-                  <Car className="w-16 h-16 mx-auto mb-4" />
+                <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
                 </div>
                 <h1 
                   className={`fade-in animate-delay-3 text-3xl font-bold text-black border-2 border-red-500 rounded-lg px-4 py-2 mb-4 ${animate ? 'animate' : ''}`}
@@ -154,7 +157,9 @@ const FirstVisitPopup: React.FC<FirstVisitPopupProps> = ({ onClose, isVisible = 
             <div className={`fade-in animate-delay-8 space-y-4 mb-6 ${animate ? 'animate' : ''}`}>
               <div className={`fade-in animate-delay-9 flex items-center gap-3 ${animate ? 'animate' : ''}`}>
                 <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Car className="w-5 h-5 text-blue-600" />
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
                 </div>
                 <div className="border-2 border-red-500 rounded-lg px-3 py-2" style={{ backgroundColor: 'transparent' }}>
                   <h3 className="font-semibold text-black">{t('verified_listings')}</h3>
@@ -164,7 +169,9 @@ const FirstVisitPopup: React.FC<FirstVisitPopupProps> = ({ onClose, isVisible = 
 
               <div className={`fade-in animate-delay-10 flex items-center gap-3 ${animate ? 'animate' : ''}`}>
                 <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-green-600" />
+                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
                 </div>
                 <div className="border-2 border-red-500 rounded-lg px-3 py-2" style={{ backgroundColor: 'transparent' }}>
                   <h3 className="font-semibold text-black">{t('trusted_service')}</h3>
@@ -174,7 +181,9 @@ const FirstVisitPopup: React.FC<FirstVisitPopupProps> = ({ onClose, isVisible = 
 
               <div className={`fade-in animate-delay-11 flex items-center gap-3 ${animate ? 'animate' : ''}`}>
                 <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-                  <Star className="w-5 h-5 text-yellow-600" />
+                  <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
                 </div>
                 <div className="border-2 border-red-500 rounded-lg px-3 py-2" style={{ backgroundColor: 'transparent' }}>
                   <h3 className="font-semibold text-black">{t('expert_reviews')}</h3>
@@ -184,7 +193,9 @@ const FirstVisitPopup: React.FC<FirstVisitPopupProps> = ({ onClose, isVisible = 
 
               <div className={`fade-in animate-delay-12 flex items-center gap-3 ${animate ? 'animate' : ''}`}>
                 <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                  <Users className="w-5 h-5 text-purple-600" />
+                    <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
                 </div>
                 <div className="border-2 border-red-500 rounded-lg px-3 py-2" style={{ backgroundColor: 'transparent' }}>
                   <h3 className="font-semibold text-black">{t('community')}</h3>
