@@ -28,7 +28,6 @@ import FirstVisitPopup from "../components/FirstVisitPopup";
 import { useFirstVisit } from "../hooks/use-first-visit";
 import "./styles/homepage.css";
 import "./styles/ads.css";
-import CarGroupSignup from "../components/CarGroupSignup";
 import { setCookie } from "../utils/cookieUtils";
 import dynamic from "next/dynamic";
 import { QueryClient, QueryClientProvider, useQueries } from "@tanstack/react-query";
@@ -1222,7 +1221,6 @@ function HomeContent() {
                         ))}
                     </div>
                   </div>
-                    <CarGroupSignup/>
                   {/* Show message if no videos available */}
                   {transformedArticles.filter(article => 
                     article.categories?.some(cat => 
