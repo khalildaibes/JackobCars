@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import VideoPlayer from '@/components/VideoPlayer';
 
 interface Script {
   id: number;
@@ -161,16 +160,9 @@ export default function VirtualAssistantPage() {
                     <p>{error}</p>
                   </div>
                 ) : videoUrl ? (
-                  <VideoPlayer
-                    src={videoUrl}
-                    title={selectedScript.title}
-                    className="aspect-video mb-4"
-                    autoPlay={isPlaying}
-                    muted={isMuted}
-                    onPlay={() => setIsPlaying(true)}
-                    onPause={() => setIsPlaying(false)}
-                    onEnded={() => setIsPlaying(false)}
-                  />
+                 <div className="relative aspect-video">
+                  <iframe src={videoUrl} title="Video Player" className="w-full h-full" />
+                 </div>
                 ) : (
                   <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden mb-4 flex items-center justify-center text-white">
                     <p>{t('click_play')}</p>
