@@ -2,34 +2,14 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import CarCard from "../components/CarCard";
-import ShowMore from "../components/ShowMore";
-import { fetchCars } from "../utils";
-import { CarProps } from "../types";
-import MobileFilters from "../components/SearchCar";
-import Image from "next/image";
-import CustomerTestimonialsSection from "../components/homeeight/CustomerTestimonialsSection";
-import LatestBlogPostsSection from "../components/homeeight/LatestBlogPostsSection";
-import RecentlyAddedSection from "../components/homeeight/RecentlyAddedSection";
 import { useTranslations, useLocale } from "next-intl";
-import ResponsiveNewsLayout from "../components/Responsivenews";
-import SearchBar from "../components/SearchBar";
 import { Img } from "../components/Img";
 import Link from "next/link";
-import ServiceCard from "../components/ServiceCard";
-import PartCard from "../components/PartCard";
-import StoriesCarousel from "../components/StoriesCarousel";
-import AliceCarousel from "react-alice-carousel";
-import { Slider } from "../components/Slider";
-import CategoryButtons from "../components/CategoryButtons";
-import HeroSection from "../components/HeroSection";
 import StorePromotion from "../components/StorePromotion";
-import NewsArticleList from "../components/NewsArticleList";
-import { ResponsiveAd } from "../components/ads";
+
 import ContentAds from "../components/ads/ContentAds";
 import SidebarAds from "../components/ads/SidebarAds";
 import { 
-  heroAds, 
   mobileAds, 
   mainContentAds, 
   betweenNewsAds, 
@@ -44,7 +24,6 @@ import {
   DashCams, 
   Accessories 
 } from "../components/sections";
-import CelebrityEndorsement from "../components/CelebrityEndorsement";
 import FirstVisitPopup from "../components/FirstVisitPopup";
 import { useFirstVisit } from "../hooks/use-first-visit";
 import "./styles/homepage.css";
