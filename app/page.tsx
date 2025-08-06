@@ -24,9 +24,11 @@ import {
   DashCams, 
   Accessories 
 } from "../components/sections";
+import FirstVisitPopup from "../components/FirstVisitPopup";
 import { useFirstVisit } from "../hooks/use-first-visit";
 import "./styles/homepage.css";
 import "./styles/ads.css";
+import CarGroupSignup from "../components/CarGroupSignup";
 import { setCookie } from "../utils/cookieUtils";
 import dynamic from "next/dynamic";
 import { QueryClient, QueryClientProvider, useQueries } from "@tanstack/react-query";
@@ -1408,7 +1410,6 @@ function HomeContent() {
               </div>
             </motion.section>
             */}
-            
           {/* Latest News and Featured Stories - Different layouts for mobile and desktop */}
           <div className="flex flex-col gap-8">
             {/* Local News Section */}
@@ -1493,6 +1494,8 @@ function HomeContent() {
               </div>
             </div>
           </div>
+          <CarGroupSignup/>
+
 
           {/* Latest Car Reviews Section */}
           <LatestCarReviews />
@@ -1585,7 +1588,13 @@ function HomeContent() {
       </div>
       
       {/* First Visit Popup */}
-
+      <FirstVisitPopup 
+        isVisible={showPopup}
+        onClose={() => {
+          setShowPopup(false);
+          markAsVisited();
+        }} 
+      />
     </div>
   );
 }
