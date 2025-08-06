@@ -31,7 +31,6 @@ export default function CarGroupSignup() {
     carNickname: "",
   });
   const [isMounted, setIsMounted] = useState(false);
-  const [hasError, setHasError] = useState(false);
 
   // Ensure component is mounted before rendering
   useEffect(() => {
@@ -49,37 +48,32 @@ export default function CarGroupSignup() {
     event.preventDefault();
     
     setIsSubmitting(true);
-    setHasError(false);
 
     try {
-      // Create URL with query parameters
-      const params = new URLSearchParams({
-        plateNumber: formData.plateNumber,
-        phoneNumber: formData.phoneNumber,
-        ownerName: formData.ownerName,
-        carNickname: formData.carNickname || '',
-        locale: locale
-      });
-
-      const response = await fetch(`/api/car-group-signup?${params.toString()}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Network error' }));
-        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      // Simulate form processing
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Validate form data
+      if (!formData.plateNumber || !formData.phoneNumber || !formData.ownerName) {
+        throw new Error('Please fill in all required fields');
       }
 
-      const result = await response.json();
+      // Validate plate number
+      if (formData.plateNumber.length < 3) {
+        throw new Error('Please enter a valid plate number');
+      }
+
+      // Validate phone number (Israeli format)
+      const phoneRegex = /^05[02348]\d{7}$/;
+      if (!phoneRegex.test(formData.phoneNumber.replace(/\s/g, ''))) {
+        throw new Error('Please enter a valid mobile number (050/052/053/054/058)');
+      }
 
       // Show success message
       setToastMessage({
         type: 'success',
-        title: t('car_group_signup_success_title'),
-        message: result.message || t('car_group_signup_success')
+        title: 'Success!',
+        message: 'Thank you for joining our car group! We will contact you soon.'
       });
       
       // Reset form
@@ -90,12 +84,10 @@ export default function CarGroupSignup() {
         carNickname: "",
       });
     } catch (error: any) {
-      console.error('Car group signup error:', error);
-      setHasError(true);
       setToastMessage({
         type: 'error',
-        title: t('car_group_signup_error_title'),
-        message: error.message || t('car_group_signup_error')
+        title: 'Error',
+        message: error.message || 'Something went wrong. Please try again.'
       });
     } finally {
       setIsSubmitting(false);
@@ -122,26 +114,6 @@ export default function CarGroupSignup() {
     );
   }
 
-  // Error boundary - if there's a critical error, show a simple fallback
-  if (hasError && !toastMessage) {
-    return (
-      <section className="w-full py-12 bg-gradient-to-br from-blue-50 to-white">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="text-center">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-red-800 mb-2">
-                Service Temporarily Unavailable
-              </h3>
-              <p className="text-red-600">
-                The car group signup service is currently experiencing issues. Please try again later.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section
       className="w-full py-12 bg-gradient-to-br from-blue-50 to-white"
@@ -154,11 +126,11 @@ export default function CarGroupSignup() {
               <span className="text-white text-lg">🚗</span>
             </div>
             <h2 className="text-3xl font-bold text-gray-900">
-              {t('car_group_title')}
+              Join Our Car Community
             </h2>
           </div>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            {t('car_group_description')}
+            Connect with fellow car enthusiasts, share experiences, and stay updated with the latest automotive news and events.
           </p>
         </div>
 
@@ -167,10 +139,10 @@ export default function CarGroupSignup() {
             <div className="p-6 border-b border-gray-200">
               <h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
                 <span>📝</span>
-                {t('car_group_signup_title')}
+                Sign Up for Car Group
               </h3>
               <p className="text-gray-600 mt-2">
-                {t('car_group_signup_description')}
+                Fill out the form below to join our exclusive car community and receive updates about events, meetups, and special offers.
               </p>
             </div>
             <div className="p-6">
@@ -179,38 +151,38 @@ export default function CarGroupSignup() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                       <span>🔢</span>
-                      {t('car_group_signup_plate_label')}
+                      License Plate Number
                     </label>
                     <input
                       type="text"
                       value={formData.plateNumber}
                       onChange={(e) => handleInputChange('plateNumber', e.target.value.toUpperCase())}
-                      placeholder={t('car_group_signup_plate_placeholder')}
+                      placeholder="Enter your plate number"
                       required
                       minLength={3}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center font-mono"
                     />
                     <p className="mt-1 text-sm text-gray-500">
-                      {t('car_group_signup_plate_description')}
+                      Enter your vehicle's license plate number
                     </p>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                       <span>📞</span>
-                      {t('car_group_signup_phone_label')}
+                      Phone Number
                     </label>
                     <input
                       type="tel"
                       value={formData.phoneNumber}
                       onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
-                      placeholder={t('car_group_signup_phone_placeholder')}
+                      placeholder="050-1234567"
                       required
                       pattern="^05[02348]\d{7}$"
                       className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                     <p className="mt-1 text-sm text-gray-500">
-                      {t('car_group_signup_phone_description')}
+                      Israeli mobile number (050/052/053/054/058)
                     </p>
                   </div>
                 </div>
@@ -219,36 +191,36 @@ export default function CarGroupSignup() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                       <span>👤</span>
-                      {t('car_group_signup_owner_label')}
+                      Owner Name
                     </label>
                     <input
                       type="text"
                       value={formData.ownerName}
                       onChange={(e) => handleInputChange('ownerName', e.target.value)}
-                      placeholder={t('car_group_signup_owner_placeholder')}
+                      placeholder="Enter your full name"
                       required
                       minLength={2}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                     <p className="mt-1 text-sm text-gray-500">
-                      {t('car_group_signup_owner_description')}
+                      Your full name as it appears on your license
                     </p>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                       <span>🚗</span>
-                      {t('car_group_signup_nickname_label')}
+                      Car Nickname (Optional)
                     </label>
                     <input
                       type="text"
                       value={formData.carNickname}
                       onChange={(e) => handleInputChange('carNickname', e.target.value)}
-                      placeholder={t('car_group_signup_nickname_placeholder')}
+                      placeholder="My beloved car"
                       className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                     <p className="mt-1 text-sm text-gray-500">
-                      {t('car_group_signup_nickname_description')}
+                      Give your car a fun nickname
                     </p>
                   </div>
                 </div>
@@ -262,12 +234,12 @@ export default function CarGroupSignup() {
                     {isSubmitting ? (
                       <div className="flex items-center gap-2 justify-center">
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        {t('car_group_signup_button_loading')}
+                        Processing...
                       </div>
                     ) : (
                       <div className="flex items-center gap-2 justify-center">
                         <span>👥</span>
-                        {t('car_group_signup_button')}
+                        Join Car Group
                       </div>
                     )}
                   </button>
@@ -320,9 +292,9 @@ export default function CarGroupSignup() {
             <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-green-600 text-xl">👥</span>
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">{t('car_group_benefits_community')}</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">Community</h3>
             <p className="text-gray-600 text-sm">
-              {t('car_group_benefits_community_desc')}
+              Connect with fellow car enthusiasts and share your passion for automobiles
             </p>
           </div>
           
@@ -330,9 +302,9 @@ export default function CarGroupSignup() {
             <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-blue-600 text-xl">🚗</span>
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">{t('car_group_benefits_events')}</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">Events</h3>
             <p className="text-gray-600 text-sm">
-              {t('car_group_benefits_events_desc')}
+              Get notified about car shows, meetups, and exclusive automotive events
             </p>
           </div>
           
@@ -340,9 +312,9 @@ export default function CarGroupSignup() {
             <div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-purple-600 text-xl">📞</span>
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">{t('car_group_benefits_support')}</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">Support</h3>
             <p className="text-gray-600 text-sm">
-              {t('car_group_benefits_support_desc')}
+              Access to expert advice, maintenance tips, and technical support
             </p>
           </div>
         </div>

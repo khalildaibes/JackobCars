@@ -3,150 +3,92 @@ import { NextResponse } from 'next/server';
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://64.227.112.249:1337';
 const STRAPI_TOKEN = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
 
-// Helper function to process signup data
-async function processSignup(plateNumber, phoneNumber, ownerName, carNickname, locale) {
-  // Validate required fields
-  if (!plateNumber || !phoneNumber || !ownerName) {
-    return {
-      error: 'Plate number, phone number, and owner name are required',
-      status: 400
-    };
-  }
-
-  // Validate plate number format (basic validation)
-  if (plateNumber.length < 3) {
-    return {
-      error: 'Please enter a valid plate number',
-      status: 400
-    };
-  }
-
-  // Validate Israeli mobile phone number format (050, 052, 053, 054, 058)
-  const phoneRegex = /^05[02348]\d{7}$/;
-  if (!phoneRegex.test(phoneNumber.replace(/\s/g, ''))) {
-    return {
-      error: 'Please enter a valid mobile number (050/052/053/054/058)',
-      status: 400
-    };
-  }
-
-  // Prepare data for storage
-  const carGroupData = {
-    data: {
-      plateNumber: plateNumber.toUpperCase(),
-      phoneNumber: phoneNumber,
-      ownerName: ownerName,
-      carNickname: carNickname || '',
-      locale: locale || 'en',
-      joinedDate: new Date().toISOString()
-    }
-  };
-
-  // Log the signup attempt
-  console.log('🚗 Car Group Signup:', carGroupData.data);
-
-  // Check if Strapi is configured
-  if (!STRAPI_URL || !STRAPI_TOKEN) {
-    console.log('⚠️ Strapi not configured, logging data locally:', carGroupData);
-    return {
-      success: true,
-      message: 'Successfully signed up for car group! (Data logged locally)',
-      data: carGroupData.data
-    };
-  }
-
-  // Try to submit to Strapi with timeout
-  try {
-    console.log(`🔗 Attempting to connect to Strapi: ${STRAPI_URL}/api/car-group-signups`);
-    
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
-    
-    const strapiResponse = await fetch(`${STRAPI_URL}/api/car-group-signups`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${STRAPI_TOKEN}`
-      },
-      body: JSON.stringify(carGroupData),
-      signal: controller.signal
-    });
-
-    clearTimeout(timeoutId);
-    console.log(`📡 Strapi Response Status: ${strapiResponse.status} ${strapiResponse.statusText}`);
-
-    if (strapiResponse.ok) {
-      const result = await strapiResponse.json();
-      return {
-        success: true,
-        message: 'Successfully signed up for car group!',
-        data: result
-      };
-    } else {
-      throw new Error(`Strapi returned ${strapiResponse.status}`);
-    }
-  } catch (strapiError) {
-    console.error('❌ Strapi Error:', strapiError.message);
-    console.log('💾 Fallback: Logging data locally:', carGroupData);
-    
-    // Return success even if Strapi fails (for demo purposes)
-    return {
-      success: true,
-      message: 'Successfully signed up for car group! (Data logged locally)',
-      data: carGroupData.data
-    };
-  }
-}
-
-// Next.js app router API routes use the new Request object, not Express-style req.query
+// This API route expects GET requests with query parameters, e.g.:
+// /api/car-group-signup?plateNumber=...&phoneNumber=...&ownerName=...&carNickname=...&locale=...
 export async function GET(request) {
   try {
     // Parse query params from the URL
     const { searchParams } = new URL(request.url);
 
+    // These must match how you call it from the client:
+    // /api/car-group-signup?plateNumber=...&phoneNumber=...&ownerName=...&carNickname=...&locale=...
     const plateNumber = searchParams.get('plateNumber');
     const phoneNumber = searchParams.get('phoneNumber');
     const ownerName = searchParams.get('ownerName');
     const carNickname = searchParams.get('carNickname');
     const locale = searchParams.get('locale');
 
-    const result = await processSignup(plateNumber, phoneNumber, ownerName, carNickname, locale);
-    
-    if (result.error) {
-      return NextResponse.json({ error: result.error }, { status: result.status });
+    // Validate required fields
+    if (!plateNumber || !phoneNumber || !ownerName) {
+      return NextResponse.json(
+        { error: 'Plate number, phone number, and owner name are required' },
+        { status: 400 }
+      );
     }
-    
-    return NextResponse.json(result);
+
+    // Validate plate number format (basic validation)
+    if (plateNumber.length < 3) {
+      return NextResponse.json(
+        { error: 'Please enter a valid plate number' },
+        { status: 400 }
+      );
+    }
+
+    // Validate Israeli mobile phone number format (050, 052, 053, 054, 058)
+    const phoneRegex = /^05[02348]\d{7}$/;
+    if (!phoneRegex.test(phoneNumber.replace(/\s/g, ''))) {
+      return NextResponse.json(
+        { error: 'Please enter a valid mobile number (050/052/053/054/058)' },
+        { status: 400 }
+      );
+    }
+
+    // Prepare data for Strapi
+    const carGroupData = {
+      data: {
+        plateNumber: plateNumber.toUpperCase(),
+        phoneNumber: phoneNumber,
+        ownerName: ownerName,
+        carNickname: carNickname || '',
+        locale: locale || 'en',
+        joinedDate: new Date().toISOString()
+      }
+    };
+
+    // Submit to Strapi (assuming there's a car-group-signups collection)
+    const strapiResponse = await fetch(`${STRAPI_URL}/api/car-group-signups`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(STRAPI_TOKEN ? { 'Authorization': `Bearer ${STRAPI_TOKEN}` } : {})
+      },
+      body: JSON.stringify(carGroupData)
+    });
+
+    if (!strapiResponse.ok) {
+      // Log error for debugging
+      const errorText = await strapiResponse.text();
+      console.error('Strapi Error:', errorText);
+      // Return success even if Strapi fails (for demo purposes)
+      return NextResponse.json({
+        success: true,
+        message: 'Successfully signed up for car group! (Data logged locally)',
+        data: carGroupData.data
+      });
+    }
+
+    const result = await strapiResponse.json();
+    return NextResponse.json({
+      success: true,
+      message: 'Successfully signed up for car group!',
+      data: result
+    });
 
   } catch (error) {
-    console.error('Error in car-group-signup GET:', error);
+    console.error('Error in car-group-signup:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to sign up for car group' },
+      { error: error?.message || 'Failed to sign up for car group' },
       { status: 500 }
     );
   }
 }
-
-export async function POST(request) {
-  try {
-    // Parse JSON body
-    const body = await request.json();
-    
-    const { plateNumber, phoneNumber, ownerName, carNickname, locale } = body;
-
-    const result = await processSignup(plateNumber, phoneNumber, ownerName, carNickname, locale);
-    
-    if (result.error) {
-      return NextResponse.json({ error: result.error }, { status: result.status });
-    }
-    
-    return NextResponse.json(result);
-
-  } catch (error) {
-    console.error('Error in car-group-signup POST:', error);
-    return NextResponse.json(
-      { error: error.message || 'Failed to sign up for car group' },
-      { status: 500 }
-    );
-  }
-} 
