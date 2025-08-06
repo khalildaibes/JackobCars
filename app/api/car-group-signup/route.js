@@ -52,24 +52,51 @@ export async function GET(request) {
       }
     };
 
-    // Submit to Strapi (assuming there's a car-group-signups collection)
-    console.log(`🔗 Attempting to connect to Strapi: ${STRAPI_URL}/api/car-group-signups`);
-    console.log(`🔑 Using token: ${STRAPI_TOKEN ? 'Token exists' : 'No token found'}`);
-    
-    const strapiResponse = await fetch(`${STRAPI_URL}/api/car-group-signups`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': STRAPI_TOKEN ? `Bearer ${STRAPI_TOKEN}` : undefined
-      },
-      body: JSON.stringify(carGroupData)
-    });
+    // Log the signup attempt
+    console.log('🚗 Car Group Signup:', carGroupData.data);
 
-    console.log(`📡 Strapi Response Status: ${strapiResponse.status} ${strapiResponse.statusText}`);
+    // Check if Strapi is configured
+    if (!STRAPI_URL || !STRAPI_TOKEN) {
+      console.log('⚠️ Strapi not configured, logging data locally:', carGroupData);
+      return NextResponse.json({
+        success: true,
+        message: 'Successfully signed up for car group! (Data logged locally)',
+        data: carGroupData.data
+      });
+    }
 
-    if (!strapiResponse.ok) {
-      const errorText = await strapiResponse.text();
-      console.error('❌ Strapi Error:', errorText);
+    // Try to submit to Strapi with timeout
+    try {
+      console.log(`🔗 Attempting to connect to Strapi: ${STRAPI_URL}/api/car-group-signups`);
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+      
+      const strapiResponse = await fetch(`${STRAPI_URL}/api/car-group-signups`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${STRAPI_TOKEN}`
+        },
+        body: JSON.stringify(carGroupData),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+      console.log(`📡 Strapi Response Status: ${strapiResponse.status} ${strapiResponse.statusText}`);
+
+      if (strapiResponse.ok) {
+        const result = await strapiResponse.json();
+        return NextResponse.json({
+          success: true,
+          message: 'Successfully signed up for car group!',
+          data: result
+        });
+      } else {
+        throw new Error(`Strapi returned ${strapiResponse.status}`);
+      }
+    } catch (strapiError) {
+      console.error('❌ Strapi Error:', strapiError.message);
       console.log('💾 Fallback: Logging data locally:', carGroupData);
       
       // Return success even if Strapi fails (for demo purposes)
@@ -79,13 +106,6 @@ export async function GET(request) {
         data: carGroupData.data
       });
     }
-
-    const result = await strapiResponse.json();
-    return NextResponse.json({
-      success: true,
-      message: 'Successfully signed up for car group!',
-      data: result
-    });
 
   } catch (error) {
     console.error('Error in car-group-signup:', error);

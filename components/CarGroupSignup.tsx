@@ -31,6 +31,7 @@ export default function CarGroupSignup() {
     carNickname: "",
   });
   const [isMounted, setIsMounted] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   // Ensure component is mounted before rendering
   useEffect(() => {
@@ -48,15 +49,31 @@ export default function CarGroupSignup() {
     event.preventDefault();
     
     setIsSubmitting(true);
+    setHasError(false);
 
     try {
-      const response = await fetch("/api/car-group-signup?plateNumber=" + formData.plateNumber + "&phoneNumber=" + formData.phoneNumber + "&ownerName=" + formData.ownerName + "&carNickname=" + formData.carNickname + "&locale=" + locale);
+      // Create URL with query parameters
+      const params = new URLSearchParams({
+        plateNumber: formData.plateNumber,
+        phoneNumber: formData.phoneNumber,
+        ownerName: formData.ownerName,
+        carNickname: formData.carNickname || '',
+        locale: locale
+      });
 
-      const result = await response.json();
+      const response = await fetch(`/api/car-group-signup?${params.toString()}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
       if (!response.ok) {
-        throw new Error(result.error || "Failed to sign up");
+        const errorData = await response.json().catch(() => ({ error: 'Network error' }));
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
       }
+
+      const result = await response.json();
 
       // Show success message
       setToastMessage({
@@ -73,6 +90,8 @@ export default function CarGroupSignup() {
         carNickname: "",
       });
     } catch (error: any) {
+      console.error('Car group signup error:', error);
+      setHasError(true);
       setToastMessage({
         type: 'error',
         title: t('car_group_signup_error_title'),
@@ -96,6 +115,26 @@ export default function CarGroupSignup() {
             <div className="animate-pulse">
               <div className="h-8 bg-gray-200 rounded w-1/3 mx-auto mb-4"></div>
               <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Error boundary - if there's a critical error, show a simple fallback
+  if (hasError && !toastMessage) {
+    return (
+      <section className="w-full py-12 bg-gradient-to-br from-blue-50 to-white">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-red-800 mb-2">
+                Service Temporarily Unavailable
+              </h3>
+              <p className="text-red-600">
+                The car group signup service is currently experiencing issues. Please try again later.
+              </p>
             </div>
           </div>
         </div>

@@ -26,6 +26,7 @@ import {
 } from "../components/sections";
 import "./styles/homepage.css";
 import "./styles/ads.css";
+import CarGroupSignup from "../components/CarGroupSignup";
 import { setCookie } from "../utils/cookieUtils";
 import dynamic from "next/dynamic";
 import { QueryClient, QueryClientProvider, useQueries } from "@tanstack/react-query";
@@ -1478,6 +1479,7 @@ function HomeContent() {
               </div>
             </div>
           </div>
+          <CarGroupSignup/>
 
 
           {/* Latest Car Reviews Section */}
