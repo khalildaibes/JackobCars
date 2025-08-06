@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { useTranslations, useLocale } from "next-intl";
-
-
 
 interface CarGroupSignupFormData {
   plateNumber: string;
@@ -17,9 +15,15 @@ interface CarGroupSignupFormData {
 export default function CarGroupSignup() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [toastMessage, setToastMessage] = useState<{ type: 'success' | 'error', title: string, message: string } | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const t = useTranslations("HomePage");
   const locale = useLocale(); // Get current locale for dynamic translations
   const isRTL = locale === 'ar' || locale === 'he-IL'; // Check if RTL language
+
+  // Ensure component is mounted to prevent SSR/CSR mismatch
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const form = useForm<CarGroupSignupFormData>({
     defaultValues: {
@@ -69,6 +73,11 @@ export default function CarGroupSignup() {
     }
   };
 
+  // Don't render until mounted to prevent hydration issues
+  if (!isMounted) {
+    return null;
+  }
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
@@ -86,6 +95,7 @@ export default function CarGroupSignup() {
         >
           <div className="flex items-center justify-center mb-4">
             <div className={`bg-blue-600 p-3 rounded-full ${isRTL ? 'ml-3' : 'mr-3'}`}>
+              <span className="text-white text-lg">🚗</span>
             </div>
             <h2 className="text-3xl font-bold text-gray-900">
               {t('car_group_title')}
@@ -105,6 +115,7 @@ export default function CarGroupSignup() {
           <div className="shadow-lg border-0 bg-white/70 backdrop-blur-sm rounded-lg border border-gray-200">
             <div className="p-6 border-b border-gray-200">
               <h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                <span>📝</span>
                 {t('car_group_signup_title')}
               </h3>
               <p className="text-gray-600 mt-2">
@@ -116,6 +127,7 @@ export default function CarGroupSignup() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                      <span>🔢</span>
                       {t('car_group_signup_plate_label')}
                     </label>
                     <input
@@ -143,6 +155,7 @@ export default function CarGroupSignup() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                      <span>📞</span>
                       {t('car_group_signup_phone_label')}
                     </label>
                     <input
@@ -171,6 +184,7 @@ export default function CarGroupSignup() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                      <span>👤</span>
                       {t('car_group_signup_owner_label')}
                     </label>
                     <input
@@ -197,6 +211,7 @@ export default function CarGroupSignup() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                      <span>🚗</span>
                       {t('car_group_signup_nickname_label')}
                     </label>
                     <input
@@ -234,6 +249,7 @@ export default function CarGroupSignup() {
                       </div>
                     ) : (
                       <div className="flex items-center gap-2 justify-center">
+                        <span>👥</span>
                         {t('car_group_signup_button')}
                       </div>
                     )}
@@ -294,6 +310,7 @@ export default function CarGroupSignup() {
         >
           <div className="text-center p-6 bg-white/50 rounded-lg backdrop-blur-sm">
             <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-green-600 text-xl">👥</span>
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">{t('car_group_benefits_community')}</h3>
             <p className="text-gray-600 text-sm">
@@ -303,6 +320,7 @@ export default function CarGroupSignup() {
           
           <div className="text-center p-6 bg-white/50 rounded-lg backdrop-blur-sm">
             <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-blue-600 text-xl">🚗</span>
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">{t('car_group_benefits_events')}</h3>
             <p className="text-gray-600 text-sm">
@@ -312,6 +330,7 @@ export default function CarGroupSignup() {
           
           <div className="text-center p-6 bg-white/50 rounded-lg backdrop-blur-sm">
             <div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-purple-600 text-xl">📞</span>
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">{t('car_group_benefits_support')}</h3>
             <p className="text-gray-600 text-sm">
