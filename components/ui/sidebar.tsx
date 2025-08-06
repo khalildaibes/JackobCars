@@ -477,11 +477,11 @@ const sidebarMenuButtonVariants = cva(
   }
 )
 
-interface SidebarMenuButtonProps extends React.ComponentProps<"button"> {
+interface SidebarMenuButtonProps extends React.ComponentProps<"button">, VariantProps<typeof sidebarMenuButtonVariants> {
   asChild?: boolean
   isActive?: boolean
   tooltip?: string | React.ComponentProps<typeof TooltipContent>
-} & VariantProps<typeof sidebarMenuButtonVariants>
+}
 
 const SidebarMenuButton: React.FC<SidebarMenuButtonProps> = ({
   asChild = false,
