@@ -97,6 +97,7 @@ const ToastDescription: React.FC<ToastDescriptionProps> = ({ className, ...props
 type ToastActionElement = React.ReactElement<typeof ToastAction>
 
 export {
+  type ToastProps,
   type ToastActionElement,
   ToastProvider,
   ToastViewport,
