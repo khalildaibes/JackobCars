@@ -44,28 +44,13 @@ export default function CarGroupSignup() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/car-group-signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          locale: locale
-        }),
-      });
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || "Failed to sign up");
-      }
 
       // Show success message
       setToastMessage({
         type: 'success',
         title: t('car_group_signup_success_title'),
-        message: result.message || t('car_group_signup_success')
+        message:  t('car_group_signup_success')
       });
       
       // Reset form

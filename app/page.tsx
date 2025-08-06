@@ -24,7 +24,6 @@ import {
   DashCams, 
   Accessories 
 } from "../components/sections";
-import { useFirstVisit } from "../hooks/use-first-visit";
 import "./styles/homepage.css";
 import "./styles/ads.css";
 import CarGroupSignup from "../components/CarGroupSignup";
@@ -510,7 +509,6 @@ function HomeContent() {
   const [isLoadingArticlesCache, setIsLoadingArticlesCache] = useState(true);
   
   // First visit popup state
-  const { isFirstVisit, isLoading: isFirstVisitLoading, markAsVisited } = useFirstVisit();
   const [showPopup, setShowPopup] = useState(false);
 
   // Get search params with memoization
@@ -586,18 +584,6 @@ function HomeContent() {
 
     loadCachedArticles();
   }, [locale]);
-
-  // Show popup on first visit
-  useEffect(() => {
-    if (!isFirstVisitLoading && isFirstVisit) {
-      // Add a small delay to ensure the page has loaded
-      const timer = setTimeout(() => {
-        setShowPopup(true);
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [isFirstVisit, isFirstVisitLoading]);
 
   // Replace the listings useMemo with this updated version
   const listings = useMemo(() => {
