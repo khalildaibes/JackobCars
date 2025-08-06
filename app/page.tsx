@@ -1592,7 +1592,7 @@ function HomeContent() {
               </p>
             </div>
             <div className="p-6">
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
@@ -1673,7 +1673,7 @@ function HomeContent() {
 
                 <div className="pt-4">
                   <button
-                    type="submit"
+                    onClick={handleSubmit}
                     disabled={isSubmitting}
                     className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:transform-none disabled:cursor-not-allowed"
                   >
