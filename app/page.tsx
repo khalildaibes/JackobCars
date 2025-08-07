@@ -738,6 +738,34 @@ function HomeContent() {
     router.push(`?${params.toString()}`);
   };
 
+  // Scroll to top and progress bar functionality
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset;
+      const docHeight = document.body.offsetHeight - window.innerHeight;
+      const scrollPercent = (scrollTop / docHeight) * 100;
+      
+      // Update progress bar
+      const progressBar = document.getElementById('progress-bar');
+      if (progressBar) {
+        progressBar.style.width = scrollPercent + '%';
+      }
+      
+      // Show/hide scroll to top button
+      const scrollToTopBtn = document.getElementById('scroll-to-top');
+      if (scrollToTopBtn) {
+        if (scrollTop > 300) {
+          scrollToTopBtn.classList.add('visible');
+        } else {
+          scrollToTopBtn.classList.remove('visible');
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   // Add error display
   if (error) {
     return (
@@ -801,6 +829,18 @@ function HomeContent() {
 
   return (
     <div className="min-h-screen bg-gray-50 mt-[25%] lg:mt-[4%]">
+      {/* Progress Bar */}
+      <div className="progress-bar" id="progress-bar"></div>
+      
+      {/* Scroll to Top Button */}
+      <button 
+        className="scroll-to-top" 
+        id="scroll-to-top"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      >
+        ↑
+      </button>
+
       {/* Main Layout Container */}
       <div className="flex w-full">
         {/* Left Ads Sidebar - Hide on mobile */}
@@ -812,17 +852,23 @@ function HomeContent() {
 
         {/* Main Content */}
         <div className="flex-1 lg:max-w-[56%] lg:mx-auto cd-container w-full ">
-          <motion.main 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            className="cd-section"
-          >
+
           
 
-          <div className="w-full h-[100px] flex items-center justify-center text-black text-center ">
-            <h1 className="text-2xl font-bold border-4 bg-white border-red-500 rounded-xl px-6 py-2 inline-block">ضمن السرعه القانونية</h1>
-          </div>
+          <motion.div 
+            className="w-full h-[100px] flex items-center justify-center text-black text-center"
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <motion.h1 
+              className="text-2xl font-bold border-4 bg-white border-red-500 rounded-xl px-6 py-2 inline-block hover-lift"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              ضمن السرعه القانونية
+            </motion.h1>
+          </motion.div>
           
                      {/* Mobile Banner Ad - Compact Article Card */}
            <ContentAds 
@@ -831,14 +877,28 @@ function HomeContent() {
              className="mt-[12%]" 
            />
           {/* Featured Stories Section */}
-          <div className="flex flex-col w-full px-4 mb-8 lg:hidden">
-          <h2 className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">{t('featured_stories')}</h2>
+          <motion.div 
+            className="flex flex-col w-full px-4 mb-8 lg:hidden"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <motion.h2 
+              className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2 hover-lift"
+              whileHover={{ scale: 1.02 }}
+            >
+              {t('featured_stories')}
+            </motion.h2>
               <div className="space-y-4">
-                {transformedArticles.slice(0, 4).map((item) => (
-                  <article
+                {transformedArticles.slice(0, 4).map((item, index) => (
+                  <motion.article
                     key={item.id}
-                    className="rounded-xl overflow-hidden cursor-pointer group relative"
+                    className="rounded-xl overflow-hidden cursor-pointer group relative hover-lift"
                     onClick={() => router.push(`/news/${item.slug}`)}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1, duration: 0.6 }}
+                    whileHover={{ scale: 1.02, y: -5 }}
                   >
                     <div className="relative h-[180px] w-full">
                       {item.cover?.url && (
@@ -861,10 +921,10 @@ function HomeContent() {
                         </div>
                       </div>
                     </div>
-                  </article>
+                  </motion.article>
                 ))}
               </div>
-            </div>
+            </motion.div>
             
           {/* 1. Hero Banner Section */}
           <div className="relative z-10 flex flex-col lg:flex-row gap-1.6 px-1.6 lg:px-3.2 items-stretch min-h-0 justify-center items-center mb-6.4 w-full md:w-[64%] mx-auto">
@@ -1397,14 +1457,30 @@ function HomeContent() {
           {/* Latest News and Featured Stories - Different layouts for mobile and desktop */}
           <div className="flex flex-col gap-8">
             {/* Local News Section */}
-            <div className="flex flex-col">
-              <h2 className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2">{t('local_news')}</h2>
+            <motion.div 
+              className="flex flex-col"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <motion.h2 
+                className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2 hover-lift"
+                whileHover={{ scale: 1.02 }}
+              >
+                {t('local_news')}
+              </motion.h2>
+            {/* The rest of the Local News Section content goes here */}
+            </motion.div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {localNews.slice(0, 4).map((item) => (
-                  <article
+                {localNews.slice(0, 4).map((item, index) => (
+                  <motion.article
                     key={item.id}
-                    className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
+                    className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl hover-lift"
                     onClick={() => router.push(`/news/${item.slug}`)}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1, duration: 0.6 }}
+                    whileHover={{ scale: 1.02, y: -3 }}
                   >
                     <div className="md:flex bg-white rounded-xl">
                       <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
@@ -1429,7 +1505,7 @@ function HomeContent() {
                         </div>
                       </div>
                     </div>
-                  </article>
+                  </motion.article>
                 ))}
               </div>
             </div>
@@ -1441,14 +1517,28 @@ function HomeContent() {
             />
 
             {/* World News Section */}
-            <div className="flex flex-col">
-              <h2 className="text-l text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-2">{t('world_news')}</h2>
+            <motion.div 
+              className="flex flex-col"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <motion.h2 
+                className="text-l text-white font-bold mb-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded-xl p-2 hover-lift"
+                whileHover={{ scale: 1.02 }}
+              >
+                {t('world_news')}
+              </motion.h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {worldNews.slice(0, 4).map((item) => (
-                  <article
+                {worldNews.slice(0, 4).map((item, index) => (
+                  <motion.article
                     key={item.id}
-                    className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl"
+                    className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl hover-lift"
                     onClick={() => router.push(`/news/${item.slug}`)}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1, duration: 0.6 }}
+                    whileHover={{ scale: 1.02, y: -3 }}
                   >
                     <div className="md:flex bg-white rounded-xl">
                       <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
@@ -1473,10 +1563,10 @@ function HomeContent() {
                         </div>
                       </div>
                     </div>
-                  </article>
+                  </motion.article>
                 ))}
               </div>
-            </div>
+            </motion.div>
           </div>
 
 
@@ -1557,10 +1647,9 @@ function HomeContent() {
             adSlot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM_BANNER}
             enableGoogleAds={process.env.NEXT_PUBLIC_ENABLE_GOOGLE_ADS === 'true'}
             enableBannerAds={process.env.NEXT_PUBLIC_ENABLE_BANNER_ADS === 'true'}
-          /> */}
+          /> 
           
         </motion.main>
-        </div>
 
         {/* Right Ads Section - Hide on mobile */}
         <SidebarAds 
