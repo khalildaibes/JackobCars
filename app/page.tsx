@@ -800,7 +800,7 @@ function HomeContent() {
     .slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-gray-50 mt-[8%] lg:mt-[4%]">
+    <div className="min-h-screen bg-gray-50 mt-[25%] lg:mt-[4%]">
       {/* Main Layout Container */}
       <div className="flex w-full">
         {/* Left Ads Sidebar - Hide on mobile */}
@@ -811,7 +811,7 @@ function HomeContent() {
         />
 
         {/* Main Content */}
-        <div className="flex-1 lg:max-w-[56%] lg:mx-auto cd-container w-full">
+        <div className="flex-1 lg:max-w-[56%] lg:mx-auto cd-container w-full ">
           <motion.main 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -820,7 +820,7 @@ function HomeContent() {
           >
           
 
-          <div className="w-full h-[100px] flex items-center justify-center text-black text-center pt-0 sm:pt-[5%]">
+          <div className="w-full h-[100px] flex items-center justify-center text-black text-center ">
             <h1 className="text-2xl font-bold border-4 bg-white border-red-500 rounded-xl px-6 py-2 inline-block">ضمن السرعه القانونية</h1>
           </div>
           
