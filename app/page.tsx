@@ -820,7 +820,7 @@ function HomeContent() {
           >
           
 
-          <div className="w-full h-[100px] flex items-center justify-center text-black text-center">
+          <div className="w-full h-[100px] flex items-center justify-center text-black text-center pt-0 sm:pt-[5%]">
             <h1 className="text-2xl font-bold border-4 bg-white border-red-500 rounded-xl px-6 py-2 inline-block">ضمن السرعه القانونية</h1>
           </div>
           
