@@ -38,7 +38,7 @@ export const ContentAds: React.FC<ContentAdsProps> = ({
   if (layout === 'mobile-banner') {
     return (
       <div className={`mb-6 px-4 lg:hidden ${className}`}>
-        {ads.slice(0, 1).map((ad, index) => (
+        {/* {ads.slice(0, 1).map((ad, index) => (
           <motion.div
             key={ad.id}
             initial={{ opacity: 0, scale: 0.95 }}
@@ -75,7 +75,7 @@ export const ContentAds: React.FC<ContentAdsProps> = ({
               </div>
             </div>
           </motion.div>
-        ))}
+        ))} */}
       </div>
     );
   }
