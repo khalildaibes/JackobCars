@@ -14,14 +14,16 @@ export async function GET(request) {
     // /api/car-group-signup?plateNumber=...&phoneNumber=...&ownerName=...&carNickname=...&locale=...
     const plateNumber = searchParams.get('plateNumber');
     const phoneNumber = searchParams.get('phoneNumber');
-    const ownerName = searchParams.get('ownerName');
-    const carNickname = searchParams.get('carNickname');
-    const locale = searchParams.get('locale');
+    const username = searchParams.get('username');
+    const email = searchParams.get('email');
+    const city = searchParams.get('city');
+    const interestedInVip = searchParams.get('interestedInVip');
+    const source = searchParams.get('source');
 
     // Validate required fields
-    if (!plateNumber || !phoneNumber || !ownerName) {
+    if (!plateNumber || !phoneNumber || !username || !email || !city || !interestedInVip || !source) {
       return NextResponse.json(
-        { error: 'Plate number, phone number, and owner name are required' },
+        { error: 'Plate number, phone number, username, email, city, interestedInVip, and source are required' },
         { status: 400 }
       );
     }
@@ -48,9 +50,11 @@ export async function GET(request) {
       data: {
         plateNumber: plateNumber.toUpperCase(),
         phoneNumber: phoneNumber,
-        ownerName: ownerName,
-        carNickname: carNickname || '',
-        locale: locale || 'en',
+        username: username,
+        email: email,
+        city: city,
+        interestedInVip: interestedInVip,
+        source: source,
         joinedDate: new Date().toISOString()
       }
     };

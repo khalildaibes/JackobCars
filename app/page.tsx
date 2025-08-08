@@ -24,6 +24,7 @@ import {
   DashCams, 
   Accessories 
 } from "../components/sections";
+import VipCarCommunity from "../components/VipCarCommunity";
 import "./styles/homepage.css";
 import "./styles/ads.css";
 import { setCookie } from "../utils/cookieUtils";
@@ -1186,9 +1187,29 @@ function HomeContent() {
             </div>
 
             {/* Store Promotion Section */}
-            <div className="mb-12">
-              <StorePromotion />
-            </div>
+            {/* <div className="mb-12"> */}
+              {/* <StorePromotion /> */}
+            {/* </div> */}
+            {/* VIP Car Community Section */}
+          <motion.section 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className="w-full py-12 mb-6"
+          >
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ 
+                duration: 0.8,
+                ease: [0.6, -0.05, 0.01, 0.99],
+                delay: 0.2
+              }}
+              className="max-w-4xl mx-auto px-4"
+            >
+              <VipCarCommunity />
+            </motion.div>
+          </motion.section>
 
             {/* Celebrity Endorsement Section */}
             {/* <CelebrityEndorsement /> */}
@@ -1588,6 +1609,7 @@ function HomeContent() {
           {/* Car Accessories Section */}
           <Accessories />
 
+          
 
           
             {/* Search Car by Plate Number Section */}

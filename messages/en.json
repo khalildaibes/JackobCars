@@ -31,6 +31,28 @@
     "required_note": "Please provide your phone number to continue",
     "required_indicator": "Required"
   },
+  "VipCarCommunity": {
+    "title": "VIP Car Community",
+    "description": "Join our exclusive car club and get access to premium vehicles, special offers, and VIP events.",
+    "phone_label": "Phone Number",
+    "phone_placeholder": "Enter your phone number",
+    "username_label": "Username",
+    "username_placeholder": "Enter your username",
+    "email_label": "Email",
+    "email_placeholder": "Enter your email address",
+    "plate_label": "Plate Number",
+    "plate_placeholder": "Enter your car plate number",
+    "city_label": "City",
+    "city_placeholder": "Enter your city",
+    "vip_interest_label": "Interested in VIP membership?",
+    "submit_button": "Join VIP Community",
+    "submitting": "Joining...",
+    "success_message": "Welcome to the VIP Car Community! You'll receive exclusive updates soon.",
+    "error_message": "Something went wrong. Please try again.",
+    "network_error": "Network error. Please try again.",
+    "validation_error": "Please fill in all required fields",
+    "footer_text": "By joining, you agree to receive VIP updates and exclusive offers from MaxSpeedLimit."
+  },
   "HomePage": {
     "find_car_plate_heading": "Find your car by plate number",
     "explore_car_specs": "Explore the car specs",
