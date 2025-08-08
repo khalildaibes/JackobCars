@@ -34,7 +34,7 @@ export const ContentAds: React.FC<ContentAdsProps> = ({
       window.open(url, '_blank');
     }
   };
-
+ 
   if (layout === 'mobile-banner') {
     return (
       <div className={`mb-6 px-4 lg:hidden ${className}`}>
