@@ -12,7 +12,7 @@ const VipCarCommunity: React.FC<VipCarCommunityProps> = ({ className = '' }) => 
   const t = useTranslations('VipCarCommunity');
   const [formData, setFormData] = useState({
     phoneNumber: '',
-    username: '',
+    ownerName: '',
     email: '',
     plateNumber: '',
     city: '',
@@ -36,7 +36,7 @@ const VipCarCommunity: React.FC<VipCarCommunityProps> = ({ className = '' }) => 
     e.preventDefault();
     
     // Basic validation
-    if (!formData.phoneNumber.trim() || !formData.email.trim() || !formData.username.trim()) {
+    if (!formData.phoneNumber.trim() || !formData.email.trim() || !formData.ownerName.trim()) {
       setMessage(t('validation_error'));
       setMessageType('error');
       return;
@@ -46,7 +46,7 @@ const VipCarCommunity: React.FC<VipCarCommunityProps> = ({ className = '' }) => 
     setMessage('');
 
     try {
-      const response = await fetch(`/api/car-group-signup?phoneNumber=${formData.phoneNumber.trim()}&username=${formData.username.trim()}&email=${formData.email.trim()}&plateNumber=${formData.plateNumber.trim()}&city=${formData.city.trim()}&interestedInVip=${formData.interestedInVip}&source=vip_car_community`);
+      const response = await fetch(`/api/car-group-signup?phoneNumber=${formData.phoneNumber.trim()}&ownerName=${formData.ownerName.trim()}&email=${formData.email.trim()}&plateNumber=${formData.plateNumber.trim()}&city=${formData.city.trim()}&interestedInVip=${formData.interestedInVip}&source=vip_car_community`);
 
       const data = await response.json();
 
@@ -61,7 +61,7 @@ const VipCarCommunity: React.FC<VipCarCommunityProps> = ({ className = '' }) => 
         // Reset form
         setFormData({
           phoneNumber: '',
-          username: '',
+          ownerName: '',
           email: '',
           plateNumber: '',
           city: '',
@@ -115,18 +115,18 @@ const VipCarCommunity: React.FC<VipCarCommunityProps> = ({ className = '' }) => 
             />
           </div>
 
-          {/* Username */}
+          {/* ownerName */}
           <div>
-            <label htmlFor="username" className="block text-sm font-medium mb-2">
-              {t('username_label')} *
+            <label htmlFor="ownerName" className="block text-sm font-medium mb-2">
+              {t('ownerName_label')} *
             </label>
             <input
               type="text"
-              id="username"
-              name="username"
-              value={formData.username}
+              id="ownerName"
+              name="ownerName"
+              value={formData.ownerName}
               onChange={handleInputChange}
-              placeholder={t('username_placeholder')}
+              placeholder={t('ownerName_placeholder')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
               required
             />
