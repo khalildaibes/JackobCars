@@ -16,6 +16,21 @@
     "dont_show_again": "Don't show this again",
     "special_offer": "🎉 Special Welcome Offer: Get 10% off your first service booking!"
   },
+  "WelcomePopup": {
+    "title": "Welcome to MaxSpeedLimit!",
+    "description": "Get exclusive offers and updates about our latest vehicles and services.",
+    "phone_label": "Phone Number",
+    "phone_placeholder": "Enter your phone number",
+    "submit_button": "Get Started",
+    "submitting": "Saving...",
+    "success_message": "Thank you! Your phone number has been saved.",
+    "error_message": "Something went wrong. Please try again.",
+    "network_error": "Network error. Please try again.",
+    "validation_error": "Please enter a phone number",
+    "footer_text": "By providing your phone number, you agree to receive updates from MaxSpeedLimit.",
+    "required_note": "Please provide your phone number to continue",
+    "required_indicator": "Required"
+  },
   "HomePage": {
     "find_car_plate_heading": "Find your car by plate number",
     "explore_car_specs": "Explore the car specs",

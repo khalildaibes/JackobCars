@@ -18,6 +18,7 @@ import { ComparisonProvider } from "../context/ComparisonContext";
 import AccessibilityControls from "../components/AccessibilityControls";
 import GlobalChatPopup from "../components/GlobalChatPopup";
 import { UserActivityProvider } from "../context/UserActivityContext";
+import WelcomePopupWrapper from "../components/WelcomePopupWrapper";
 
 // Initialize store configurations
 initializeStoreConfigs().catch(console.error);
@@ -222,6 +223,7 @@ export default async function RootLayout({
               </main>
               <Footer />
               <Toaster />
+              <WelcomePopupWrapper />
               <div
                 className="
                   fixed z-50
