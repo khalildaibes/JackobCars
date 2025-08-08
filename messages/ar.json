@@ -168,7 +168,7 @@
     "view_more": "عرض المزيد من المقالات",
     "expert_review": "مراجعة خبير",
     "by": "بواسطة",
-    "unknown_author": "",
+    "unknown_author": "يعقوب خازن",
     "share_article": "مشاركة المقال",
     "add_comment": "إضافة تعليق",
     "your_comment": "تعليقك",
@@ -177,7 +177,7 @@
     "comments": "التعليقات"
   },
   "HomePage": {
-    "unknown_author": "",
+    "unknown_author": "يعقوب خازن",
     "find_car_plate_heading": "ابحث عن سيارتك عن طريق رقم اللوحة",
     "explore_car_specs": "اكتشف مواصفات السيارة",
     "car_catalogue_heading": "كتالوج السيارات",
@@ -1117,7 +1117,7 @@
     "courseBenefits": {
       "whatYoullLearn": "ماذا ستتعلم"
     },
-    "unknown_author": "",
+    "unknown_author": "يعقوب خازن",
     "requirements": {
       "heading": "المتطلبات",
       "item1": "لا نحتاج إلى خبرة سابقة أو مهارات محددة مسبقًا لأخذ هذه الدورة. التوجيه الجيد سيكون كافيًا لإتقان تصميم واجهة المستخدم وتجربة المستخدم.",
@@ -1630,7 +1630,7 @@
   "exclusive": "حصري",
   "luxury_rental": "تأجير سيارات فاخرة",
   "luxury_rental_description": "تجربة قيادة السيارات الفاخرة لعطلة نهاية الأسبوع مع تغطية تأمينية كاملة وخدمة كونسيرج",
-  "unknown_author": "",
+  "unknown_author": "يعقوب خازن",
   "Navbar": {
     "logo_alt": "شعار MaxSpeedLimit",
     "parts": "قطع الغيار",
@@ -1938,7 +1938,7 @@
     "view_all_reviews": "عرض كل المراجعات",
     "expert_review": "مراجعة خبير",
     "by": "بواسطة",
-    "unknown_author": "مؤلف غير معروف",
+    "unknown_author": "يعقوب خازن",
     "pros": "المزايا",
     "cons": "العيوب",
     "road_test": "اختبار طريق",
@@ -2003,7 +2003,7 @@
   },
   "FeaturesFromJackob": {
     "by": "بواسطة",
-    "unknown_author": "مؤلف غير معروف",
+    "unknown_author": "يعقوب خازن",
     "read_time": "دقيقة قراءة",
     "views": "مشاهدة",
     "likes": "معجب",

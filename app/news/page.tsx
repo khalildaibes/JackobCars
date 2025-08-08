@@ -484,7 +484,7 @@ export default function NewsPage() {
   );
 
   // Fallback logic - if no categorized news, use all news
-  const displayFeaturedStories = featuredStories.length > 0 ? featuredStories : filteredNews.slice(0, 3);
+  const displayFeaturedStories = featuredStories.length > 0 ? featuredStories : filteredNews.slice(0, 4);
   const displayLocalNews = localNews.length > 0 ? localNews : filteredNews.filter(item => 
     item.categories?.some(tag => tag.name === "local news")
   );
@@ -626,7 +626,7 @@ I notice there's a lint error indicating that `TikTokEmbed` is not defined. We n
 
             {/* Hero Featured Article */}
             {displayFeaturedStories.length > 0 && (
-              <div className="news-feature-article mb-12">
+              <div className="news-feature-article mb-12 cursor-pointer" onClick={() => router.push(`/news/${displayFeaturedStories[0].slug}`)}>
                 <div 
                   className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                   style={{
@@ -756,9 +756,9 @@ I notice there's a lint error indicating that `TikTokEmbed` is not defined. We n
                     className="news-card group cursor-pointer"
                     onClick={() => router.push(`/news/${item.slug}`)}
                   >
-                    <div className="md:flex">
-                      <div className="md:w-1/3">
-                        <div className="news-card-image news-card-small">
+                    <div className="md:flex h-full">
+                      <div className="md:w-1/3  h-full">
+                        <div className="news-card-image news-card-small  h-full">
                           {item.cover?.url && (
                             <Img
                               src={`http://64.227.112.249${item.cover.url}`}
@@ -885,7 +885,7 @@ I notice there's a lint error indicating that `TikTokEmbed` is not defined. We n
           {filteredNews.length > 0 && (
             <section className="mt-12">
               <h2 className="news-heading-md mb-8">
-                {t('all_news')} ({filteredNews.length} {t('articles')})
+                {t('all_news')} ({filteredNews.length} )
               </h2>
               <div className="news-grid news-grid-1 gap-6">
                 {filteredNews.map((item) => (

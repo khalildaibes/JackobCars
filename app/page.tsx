@@ -1136,7 +1136,7 @@ function HomeContent() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6 ">
-                    {transformedArticles.slice(0, 3).map((article: TransformedArticle, index) => (
+                    {featuredNews.slice(0, 3).map((article: TransformedArticle, index) => (
                       <motion.div
                         key={article.id}
                         initial={{ opacity: 0, y: 20 }}
@@ -1161,7 +1161,9 @@ function HomeContent() {
                         <div className="p-6">
                           <div className="flex items-center gap-2 mb-3">
                             <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
-                              {article.category}
+                              {article.category.length > 15
+                                ? article.category.slice(0, 15).toUpperCase() + "..."
+                                : article.category.toUpperCase()}
                             </span>
                             <span className="text-xs text-gray-500">{article.date}</span>
                           </div>
@@ -1503,8 +1505,8 @@ function HomeContent() {
                     transition={{ delay: index * 0.1, duration: 0.6 }}
                     whileHover={{ scale: 1.02, y: -3 }}
                   >
-                    <div className="md:flex bg-white rounded-xl">
-                      <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
+                    <div className="md:flex bg-white rounded-xl cursor-pointer  h-full" onClick={() => router.push(`/news/${item.slug}`)}>
+                      <div className="md:w-1/3 relative aspect-[16/9] md:aspect-auto flex items-stretch">
                         {item.cover?.url && (
                           <Img
                             src={`http://64.227.112.249${item.cover.url}`}
@@ -1512,7 +1514,7 @@ function HomeContent() {
                             external={true}
                             width={1290}
                             height={1290}
-                            className="object-cover w-full h-full md:h-48"
+                            className="object-cover w-full h-full"
                           />
                         )}
                       </div>
@@ -1561,8 +1563,8 @@ function HomeContent() {
                     transition={{ delay: index * 0.1, duration: 0.6 }}
                     whileHover={{ scale: 1.02, y: -3 }}
                   >
-                    <div className="md:flex bg-white rounded-xl">
-                      <div className="md:w-1/3 aspect-[16/9] md:aspect-auto relative">
+                    <div className="md:flex bg-white rounded-xl h-full cursor-pointer" onClick={() => router.push(`/news/${item.slug}`)}>
+                      <div className="md:w-1/3 relative aspect-[16/9] md:aspect-auto flex items-stretch">
                         {item.cover?.url && (
                           <Img
                             src={`http://64.227.112.249${item.cover.url}`}
@@ -1570,7 +1572,7 @@ function HomeContent() {
                             external={true}
                             width={1290}
                             height={1290}
-                            className="object-cover w-full h-full md:h-48"
+                            className="object-cover w-full h-full"
                           />
                         )}
                       </div>

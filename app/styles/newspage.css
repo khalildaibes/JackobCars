@@ -109,7 +109,8 @@
 }
 
 .news-card-content {
-  padding: var(--card-padding);
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .news-card-image {
@@ -162,13 +163,13 @@
 /* News Magazine Layout */
 .news-magazine-layout {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 2fr;
   gap: 2rem;
 }
 
 @media (min-width: 1024px) {
   .news-magazine-layout {
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 4fr 1fr;
     gap: 3rem;
   }
 }
