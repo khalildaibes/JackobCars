@@ -294,7 +294,7 @@ export default function Navbar() {
             ${isMenuOpen ? "flex" : "hidden"}
             md:flex flex-col md:flex-row gap-4 items-stretch md:items-center 
             absolute md:static top-20 left-0 w-full md:w-auto 
-            bg-black/50 md:bg-transparent backdrop-blur-lg
+            bg-black md:bg-transparent backdrop-blur-lg
             p-6 md:p-0 
             transition-all duration-300 ease-in-out
           `}
