@@ -97,16 +97,15 @@ const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose }) => {
       onClick={handleBackdropClick}
     >
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
-        {/* Close button - only show after successful submission */}
-        {messageType === 'success' && (
-          <button
-            onClick={handleClose}
-            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold"
-            aria-label="Close popup"
-          >
-            ×
-          </button>
-        )}
+        {/* Close button - always visible; closes only after successful submission */}
+        <button
+          onClick={messageType === 'success' ? handleClose : () => { setMessage(t('required_note')); setMessageType('error'); }}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold"
+          aria-label="Close popup"
+          title={messageType === 'success' ? 'Close' : t('required_indicator')}
+        >
+          ×
+        </button>
         
         {/* Visual indicator that popup cannot be closed */}
         {messageType !== 'success' && (

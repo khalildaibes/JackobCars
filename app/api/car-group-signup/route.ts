@@ -4,7 +4,7 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const phoneNumber = searchParams.get('phoneNumber');
-    const username = searchParams.get('username');
+    const ownerName = searchParams.get('ownerName');
     const email = searchParams.get('email');
     const plateNumber = searchParams.get('plateNumber');
     const city = searchParams.get('city');
@@ -12,9 +12,9 @@ export async function GET(req: NextRequest) {
     const source = searchParams.get('source');
 
     // Validate required fields
-    if (!phoneNumber || !username || !email) {
+    if (!phoneNumber || !ownerName || !email) {
       return NextResponse.json(
-        { error: 'Phone number, username, and email are required' },
+        { error: 'Phone number, ownerName, and email are required' },
         { status: 400 }
       );
     }
@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
       body: JSON.stringify({
         data: {
           phoneNumber: phoneNumber,
-          username: username,
+          ownerName: ownerName,
           email: email,
           plateNumber: plateNumber || '',
           city: city || '',
