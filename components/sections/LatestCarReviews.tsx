@@ -11,18 +11,22 @@ import { useQuery } from '@tanstack/react-query';
 interface CarReview {
   id: string;
   title: string;
+  excerpt?: string;
+  cover?: { url: string };
+  categories?: Array<{ name: string }>;
+  publishedAt: string;
+  author?: {
+    data?: {
+      attributes?: {
+        name: string;
+        email?: string;
+      };
+    };
+  };
+  description?: string;
+  locale?: string;
   slug: string;
-  excerpt: string;
-  rating: number;
-  imageUrl: string;
-  carMake: string;
-  carModel: string;
-  carYear: number;
-  reviewDate: string;
-  author: string;
-  reviewType: 'road-test' | 'first-drive' | 'comparison' | 'long-term';
-  pros: string[];
-  cons: string[];
+  blocks?: any[];
 }
 
 interface LatestCarReviewsProps {
@@ -47,66 +51,7 @@ const fetchCarReviews = async (): Promise<CarReview[]> => {
     )
   );
   
-  // Transform Strapi articles to CarReview format
-  return carReviewArticles.slice(0, 4).map((article: any) => ({
-    id: article.id,
-    title: article.title || '',
-    slug: article.slug || '',
-    excerpt: article.excerpt || article.description || '',
-    rating: 4.5, // Default rating, could be added to Strapi schema
-    imageUrl: article.cover?.url || '',
-    carMake: extractCarMake(article.title),
-    carModel: extractCarModel(article.title),
-    carYear: extractCarYear(article.title),
-    reviewDate: article.publishedAt || article.createdAt,
-    author: article.author?.data?.attributes?.name || 'Editorial Team',
-    reviewType: determineReviewType(article.title, article.categories),
-    pros: extractProsFromContent(article.description || article.excerpt),
-    cons: extractConsFromContent(article.description || article.excerpt)
-  }));
-};
-
-// Helper functions to extract car info from article content
-const extractCarMake = (title: string): string => {
-  const makes = ['Toyota', 'BMW', 'Mercedes', 'Tesla', 'Honda', 'Ford', 'Audi', 'Volkswagen'];
-  const found = makes.find(make => title.toLowerCase().includes(make.toLowerCase()));
-  return found || 'Various';
-};
-
-const extractCarModel = (title: string): string => {
-  const models = ['Camry', 'X5', 'GLE', 'Model 3', 'CR-V', 'Prius', 'Q7', 'Golf'];
-  const found = models.find(model => title.toLowerCase().includes(model.toLowerCase()));
-  return found || 'Multiple';
-};
-
-const extractCarYear = (title: string): number => {
-  const yearMatch = title.match(/20\d{2}/);
-  return yearMatch ? parseInt(yearMatch[0]) : new Date().getFullYear();
-};
-
-const determineReviewType = (title: string, categories: any[]): 'road-test' | 'first-drive' | 'comparison' | 'long-term' => {
-  const titleLower = title.toLowerCase();
-  if (titleLower.includes('vs') || titleLower.includes('comparison')) return 'comparison';
-  if (titleLower.includes('first drive')) return 'first-drive';
-  if (titleLower.includes('long term') || titleLower.includes('months')) return 'long-term';
-  return 'road-test';
-};
-
-const extractProsFromContent = (content: string): string[] => {
-  // Simple extraction - in real implementation, you might parse content better
-  return [
-    'Great performance',
-    'Excellent fuel economy',
-    'Advanced features'
-  ];
-};
-
-const extractConsFromContent = (content: string): string[] => {
-  // Simple extraction - in real implementation, you might parse content better
-  return [
-    'High price point',
-    'Complex controls'
-  ];
+  return carReviewArticles.slice(0, 4);
 };
 
 const LatestCarReviews: React.FC<LatestCarReviewsProps> = ({
@@ -116,14 +61,16 @@ const LatestCarReviews: React.FC<LatestCarReviewsProps> = ({
 }) => {
   const t = useTranslations('CarReviews');
   
-  // Use React Query to fetch car reviews
+  // Use React Query to fetch car reviews if none provided
   const { data: fetchedReviews, isLoading, error } = useQuery({
     queryKey: ['carReviews'],
     queryFn: fetchCarReviews,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    enabled: !reviews || reviews.length === 0, // Only fetch if no reviews provided
   });
   
   const reviewsToShow = reviews || fetchedReviews || [];
+  console.log("reviewsToShow", reviewsToShow);
 
   const getReviewTypeColor = (type: string) => {
     switch (type) {
@@ -145,7 +92,7 @@ const LatestCarReviews: React.FC<LatestCarReviewsProps> = ({
     }
   };
 
-  if (isLoading) {
+  if (isLoading && (!reviews || reviews.length === 0)) {
     return (
       <motion.section className="w-full bg-white rounded-2xl p-6 mb-8">
         <div className="flex items-center justify-center py-12">
@@ -155,7 +102,11 @@ const LatestCarReviews: React.FC<LatestCarReviewsProps> = ({
     );
   }
 
-  if (error || reviewsToShow.length === 0) {
+  if (error && (!reviews || reviews.length === 0)) {
+    return null; // Don't render if no reviews available and fetch failed
+  }
+
+  if (reviewsToShow.length === 0) {
     return null; // Don't render if no reviews available
   }
 
@@ -192,7 +143,7 @@ const LatestCarReviews: React.FC<LatestCarReviewsProps> = ({
             <Link href={`/news/${review.slug}`}>
               <div className="relative h-48">
                 <Img
-                  src={review.imageUrl ? `http://64.227.112.249${review.imageUrl}` : '/images/default-car-review.jpg'}
+                  src={review.cover?.url ? `http://64.227.112.249${review.cover.url}` : '/images/default-car-review.jpg'}
                   alt={review.title}
                   className="object-cover w-full h-full"
                   width={1290}
@@ -200,14 +151,14 @@ const LatestCarReviews: React.FC<LatestCarReviewsProps> = ({
                   external={true}
                 />
                 <div className="absolute top-3 left-3">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getReviewTypeColor(review.reviewType)}`}>
-                    {getReviewTypeLabel(review.reviewType)}
+                  <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {t('review')}
                   </span>
                 </div>
                 <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1">
                   <div className="flex items-center gap-1">
                     <Star className="w-3 h-3 text-yellow-500 fill-current" />
-                    <span className="text-xs font-medium">{review.rating}</span>
+                    <span className="text-xs font-medium">4.5</span>
                   </div>
                 </div>
               </div>
@@ -215,9 +166,9 @@ const LatestCarReviews: React.FC<LatestCarReviewsProps> = ({
               <div className="p-4">
                 <div className="flex items-center gap-2 mb-2 text-xs text-gray-500">
                   <Calendar className="w-3 h-3" />
-                  <span>{new Date(review.reviewDate).toLocaleDateString()}</span>
+                  <span>{review.publishedAt ? new Date(review.publishedAt).toLocaleDateString() : 'N/A'}</span>
                   <User className="w-3 h-3 ml-2" />
-                  <span>{review.author}</span>
+                  <span>{review.author?.data?.attributes?.name || 'Editorial Team'}</span>
                 </div>
                 
                 <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">
@@ -225,26 +176,16 @@ const LatestCarReviews: React.FC<LatestCarReviewsProps> = ({
                 </h3>
                 
                 <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                  {review.excerpt}
+                  {review.excerpt || review.description || 'No description available'}
                 </p>
                 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <h4 className="text-xs font-semibold text-green-600 mb-1">{t('pros')}</h4>
-                    <ul className="text-xs text-gray-600">
-                      {review.pros.slice(0, 2).map((pro, i) => (
-                        <li key={i} className="line-clamp-1">• {pro}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-semibold text-red-600 mb-1">{t('cons')}</h4>
-                    <ul className="text-xs text-gray-600">
-                      {review.cons.slice(0, 2).map((con, i) => (
-                        <li key={i} className="line-clamp-1">• {con}</li>
-                      ))}
-                    </ul>
-                  </div>
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span className="bg-gray-100 px-2 py-1 rounded">
+                    {review.categories?.[0]?.name || 'General'}
+                  </span>
+                  <span className="text-blue-600 hover:text-blue-800">
+                    Read More →
+                  </span>
                 </div>
               </div>
             </Link>

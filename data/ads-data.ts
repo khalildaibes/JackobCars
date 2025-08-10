@@ -17,15 +17,15 @@ export const heroAds: AdItem[] = [
 
 export const mobileAds: AdItem[] = [
   {
-    id: 'mobile-asd',
-    image: 'autospa_ad.jpg',
-    title: 'ASD Detailing - البيت الحقيقي لسيارتك',
-    description: 'العناية الكاملة والاهتمام بأدق التفاصيل - إصلاح الخدوش بدون طلاء',
-    category: 'تفصيل سيارات',
-    categoryColor: 'green',
-    buttonText: 'احجز الآن',
-    buttonColor: 'green',
-    alt: 'ASD Detailing',
+    id: 'adham-andraws',
+    image: 'adham_andraws.jpg',
+    title: 'مكتب أدهم أندراوس للمحاماة',
+    description: 'متخصصين بقضايا المخالفات المرورية والحوادث وكل ما يتعلق بالتأمين - 0509977084',
+    category: 'محاماة',
+    categoryColor: 'purple',
+    buttonText: 'استشارة قانونية',
+    buttonColor: 'purple',
+    alt: 'مكتب أدهم أندراوس للمحاماة',  
     url: 'https://api.whatsapp.com/send/?phone=0544603725&text&type=phone_number&app_absent=0'
   }
 ];
@@ -56,16 +56,16 @@ export const mainContentAds: AdItem[] = [
     url: 'https://api.whatsapp.com/send/?phone=0544603725&text&type=phone_number&app_absent=0'
   },
   {
-    id: 'daibes-law',
-    image: 'daibes_law_ad.jpg',
-    title: 'مكتب دعيبس وعبد الغني للمحاماة',
+    id: 'adham-andraws',
+    image: 'adham_andraws.jpg',
+    title: 'مكتب أدهم أندراوس للمحاماة',
     description: 'متخصصين بقضايا المخالفات المرورية والحوادث وكل ما يتعلق بالتأمين - 0509977084',
-    category: 'خدمات قانونية',
+    category: 'محاماة',
     categoryColor: 'purple',
     buttonText: 'استشارة قانونية',
     buttonColor: 'purple',
-    alt: 'مكتب دعيبس وعبد الغني للمحاماة',
-    url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
+    alt: 'مكتب أدهم أندراوس للمحاماة',  
+    url: 'https://api.whatsapp.com/send/?phone=0544603725&text&type=phone_number&app_absent=0'
   }
 ];
 

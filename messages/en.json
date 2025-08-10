@@ -62,7 +62,11 @@
     "explore_cars_like": "Explore the cars you might like",
     "loading_cars": "Loading cars...",
     "featured_stories": "Featured stories",
-
+    "jack_latest_car_reviews": "Latest Car Reviews",
+    "jack_featuredNews": "Featured News",
+    "jack_supercars": "Supercars",
+    "jack_localNews": "Local News",
+    "jack_worldNews": "World News",
     "oops_no_results": "Oops, no results",
     "select_car_spec": "Select car spec",
     "tab_search_by_plate": "Search by plate number",

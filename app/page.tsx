@@ -801,32 +801,63 @@ function HomeContent() {
 
 
 
+    
+  const reviews = (transformedArticles || [])
+    .sort((a: any, b: any) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+    .filter(item => 
+      item.categories?.some(tag => tag.name === "review")
+    )
+    .slice(0, 3);
+
+    const supercars = (transformedArticles || [])
+    .sort((a: any, b: any) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+    .filter(item => item.categories?.some(tag => tag.name === "supercars"))
+    .slice(0, 3);
 
   // Sort all articles by latest first (newest publishedAt), then filter by category
   const featuredNews = (transformedArticles || [])
     .sort((a: any, b: any) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
-    .filter(item => item.categories?.some(tag => tag.name === "featured"))
+    .filter(item => item.categories?.some(tag => tag.name === "featured") &&
+    !supercars.some(supercarItem => supercarItem.id === item.id) &&
+    !reviews.some(reviewItem => reviewItem.id === item.id)
+    )
     .slice(0, 6);
 
-  const latestNews = (transformedArticles || [])
-    .sort((a: any, b: any) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
-    .filter(item => item.categories?.some(tag => tag.name === "latest news"))
-    .slice(0, 6);
-    
-  const localNews = (transformedArticles || [])
+    const localNews = (transformedArticles || [])
     .sort((a: any, b: any) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
     .filter(item => item.categories?.some(tag => tag.name === "local news"))
+    .filter(item => 
+    !supercars.some(supercarItem => supercarItem.id === item.id) &&
+    !reviews.some(reviewItem => reviewItem.id === item.id) && 
+    !featuredNews.some(featuredItem => featuredItem.id === item.id)
+    )
     .slice(0, 4);
     
   const worldNews = (transformedArticles || [])
     .sort((a: any, b: any) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
-    .filter(item => item.categories?.some(tag => tag.name === "world news"))
+    .filter(item => 
+      item.categories?.some(tag => tag.name === "world news") &&
+      !localNews.some(localItem => localItem.id === item.id) &&
+      !supercars.some(supercarItem => supercarItem.id === item.id) &&
+      !reviews.some(reviewItem => reviewItem.id === item.id) &&
+      !featuredNews.some(featuredItem => featuredItem.id === item.id)
+    )
     .slice(0, 4);
-    
-  const featuredStories = (transformedArticles || [])
+
+
+  const latestNews = (transformedArticles || [])
     .sort((a: any, b: any) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
-    .filter(item => item.categories?.some(tag => tag.name === "featured stories"))
-    .slice(0, 3);
+    .filter(item => item.categories?.some(tag => tag.name === "local news"))
+    .filter(item => 
+    !localNews.some(localItem => localItem.id === item.id) &&
+    !worldNews.some(worldItem => worldItem.id === item.id) &&
+    !supercars.some(supercarItem => supercarItem.id === item.id) &&
+    !reviews.some(reviewItem => reviewItem.id === item.id) &&
+    !featuredNews.some(featuredItem => featuredItem.id === item.id)
+    )
+    .slice(0, 6);
+    
+
 
   return (
     <div className="min-h-screen bg-gray-50 mt-[25%] lg:mt-[4%]">
@@ -877,56 +908,7 @@ function HomeContent() {
              ads={mobileAds} 
              className="mt-[12%]" 
            />
-          {/* Featured Stories Section */}
-          <motion.div 
-            className="flex flex-col w-full px-4 mb-8 lg:hidden"
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <motion.h2 
-              className="text-l text-blue-800 font-bold mb-4 bg-gradient-to-r from-gray-50 to-gray-50 rounded-xl p-2 hover-lift"
-              whileHover={{ scale: 1.02 }}
-            >
-              {t('featured_stories')}
-            </motion.h2>
-              <div className="space-y-4">
-                {transformedArticles.slice(0, 4).map((item, index) => (
-                  <motion.article
-                    key={item.id}
-                    className="rounded-xl overflow-hidden cursor-pointer group relative hover-lift"
-                    onClick={() => router.push(`/news/${item.slug}`)}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1, duration: 0.6 }}
-                    whileHover={{ scale: 1.02, y: -5 }}
-                  >
-                    <div className="relative h-[180px] w-full">
-                      {item.cover?.url && (
-                        <Img
-                          src={`http://64.227.112.249${item.cover.url}`}
-                          alt={item.title}
-                          external={true}
-                          width={1290}
-                          height={1290}
-                          className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                        />
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-                        <div className="absolute bottom-0 left-0 right-0 p-4">
-                          <div className="text-[10px] text-white mb-1 font-bold uppercase tracking-wider bg-white/5 rounded-full px-2 py-0.5 inline-block">{t('expert_review')}</div>
-                          <h3 className="font-bold text-base text-white mb-1 line-clamp-2">{item.title}</h3>
-                          <div className="text-xs text-gray-300">
-                            By {item.author || t('unknown_author')}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.article>
-                ))}
-              </div>
-            </motion.div>
-            
+         
           {/* 1. Hero Banner Section */}
           <div className="relative z-10 flex flex-col lg:flex-row gap-1.6 px-1.6 lg:px-3.2 items-stretch min-h-0 justify-center items-center mb-6.4 w-full md:w-[64%] mx-auto">
             <div className="w-full lg:w-full flex flex-col gap-1.6">
@@ -1060,9 +1042,19 @@ function HomeContent() {
 
           {/* Main Content Container */}
           <div className="container mx-auto w-full px-4 sm:px-6 lg:px-8 max-w-7xl overflow-x-hidden">
-            
+                      {/* Features from Jackob Section */}
+          <FeaturesFromJackob features={featuredNews as any} title={t('jack_featuredNews')} viewAllLink={'/news'} />
+          <LatestCarReviews reviews={reviews as any} title={t('jack_latest_car_reviews')} viewAllLink={'/news'} />
+
+
+          <ContentAds 
+              layout="grid-3" 
+              ads={mainContentAds} 
+            />
+
             {/* Magazine-style Grid Layout */}
             <div className="grid grid-cols-1 gap-6 mb-8">
+            {/* Latest Car Reviews Section */}
 
               {/* Featured Article - Spans full width */}
               <div className="col-span-12 mb-8 hidden ">
@@ -1102,10 +1094,11 @@ function HomeContent() {
               </div>
 
 
-
               {/* Latest News Grid - 3 columns */}
               <div className="col-span-12">
-                <motion.section 
+              <LatestCarReviews reviews={localNews as any} title={t('jack_localNews')} viewAllLink={'/news'} />
+
+                {/* <motion.section 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.8 }}
@@ -1184,7 +1177,7 @@ function HomeContent() {
                       </motion.div>
                     ))}
                   </div>
-                </motion.section>
+                </motion.section> */}
               </div>
             </div>
 
@@ -1216,11 +1209,7 @@ function HomeContent() {
             {/* Celebrity Endorsement Section */}
             {/* <CelebrityEndorsement /> */}
 
-            {/* In-Content Ad as Article Card */}
-            <ContentAds 
-              layout="grid-3" 
-              ads={mainContentAds} 
-            />
+          
 
             {/* Special Offers Section */}
             {/* <motion.section
@@ -1495,7 +1484,7 @@ function HomeContent() {
             {/* The rest of the Local News Section content goes here */}
             </motion.div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {localNews.slice(0, 4).map((item, index) => (
+                {latestNews.slice(0, 4).map((item, index) => (
                   <motion.article
                     key={item.id}
                     className="md:rounded-xl md:shadow-sm overflow-hidden cursor-pointer bg-white rounded-xl hover-lift"
@@ -1593,14 +1582,8 @@ function HomeContent() {
           </div>
 
 
-          {/* Latest Car Reviews Section */}
-          <LatestCarReviews />
-
-          {/* Features from Jackob Section */}
-          <FeaturesFromJackob />
-
           {/* Video Slider Section */}
-          <VideoSlider />
+          {/* <VideoSlider videos={vedioreviews as any} title={t('jack_vedioreviews')} viewAllLink={'/news'} /> */}
 
           {/* Classic Cars Section */}
           <ClassicCars />

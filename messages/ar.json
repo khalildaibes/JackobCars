@@ -181,6 +181,12 @@
     "comments": "التعليقات"
   },
   "HomePage": {
+    "jack_latest_car_reviews": "آخر المراجعات",
+    "jack_featuredNews": "الأخبار المميزة",
+    "jack_supercars": "السيارات الفاخرة",
+    "jack_localNews": "أخبار محلية",
+    "jack_worldNews": "الأخبار العالمية",
+    "jack_latest_car_reviews": "آخر المراجعات",
     "unknown_author": "يعقوب خازن",
     "find_car_plate_heading": "ابحث عن سيارتك عن طريق رقم اللوحة",
     "explore_car_specs": "اكتشف مواصفات السيارة",

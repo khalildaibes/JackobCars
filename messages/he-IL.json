@@ -34,6 +34,11 @@
     "required_indicator": "נדרש"
   },
   "HomePage": {
+    "jack_latest_car_reviews": "ביקורות רכבים אחרונות",
+    "jack_featuredNews": "חדשות מומלצות",
+    "jack_supercars": "רכבים מדהימים",
+    "jack_localNews": "חדשות מקומיות",
+    "jack_worldNews": "חדשות עולמיות",
     "find_car_plate_heading": "מצא את הרכב שלך לפי מספר לוחית",
     "explore_car_specs": "גלה את מפרט הרכב",
     "car_catalogue_heading": "קטלוג רכב",
