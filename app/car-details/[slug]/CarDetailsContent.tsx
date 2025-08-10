@@ -34,6 +34,7 @@ import { Input } from "../../../components/ui/input";
 import { Textarea } from "../../../components/ui/textarea";
 import emailjs from '@emailjs/browser';
 import { Toaster } from "react-hot-toast";
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface CarDetailsContentProps {
   slug: string;
@@ -179,7 +180,7 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
         condition: product.details?.car.condition || "Used",
         transmission: product.details?.car.transmission || "Unknown",
         details: product.details?.car || "Unknown",
-        price: `$${product.price.toLocaleString()}`,
+        price: `${product.price.toLocaleString()}`,
         mileage: product.details?.car.miles || "N/A",
         year: product.details.car.year,
         pros: product.details.car.pros,
@@ -218,6 +219,24 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
     }
   }, []);
 
+// In your component
+const router = useRouter();
+const searchParams = useSearchParams();
+
+useEffect(() => {
+  if (searchParams.has('hostname')) {
+    // Create new URLSearchParams without hostname
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete('hostname');
+    
+    // Get the current pathname
+    const pathname = window.location.pathname;
+    
+    // Replace the URL without the hostname parameter
+    const newUrl = newParams.toString() ? `${pathname}?${newParams.toString()}` : pathname;
+    router.replace(newUrl, { scroll: false });
+  }
+}, [searchParams, router]);
   const add_to_favorites = (slug: number) => {
     let updatedFavorites;
     if (favorites.includes(slug)) {
@@ -570,8 +589,8 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
                       <User className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">khalil daibes</p>
-                      <p className="text-xs sm:text-sm text-gray-500">{t('or_call')} 0509977084</p>
+                      <p className="font-medium text-gray-900">{car.owner ? car.owner : ''}</p>
+                      <p className="text-xs sm:text-sm text-gray-500">{t('or_call')} {car.phone ? car.phone : ''}</p>
                     </div>
                   </div>
                   <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
@@ -765,17 +784,15 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
                 </div>
               </div>
             </div>
-      {/* Video Section */}
+      {/* 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-12">
+         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('car_reviews')}</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             {t('watch_reviews_description')}
           </p>
         </div>
-        
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Main Review Video */}
           <div className="space-y-6">
             <div className="aspect-video rounded-xl overflow-hidden shadow-lg bg-gray-900">
             <iframe 
@@ -790,11 +807,9 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
           </div>
           </div>
 
-          {/* Comparison Section */}
           <div className="space-y-6">
             
 
-            {/* Additional Reviews */}
             <div className="grid grid-cols-2 gap-4">
               <div className="aspect-video rounded-xl overflow-hidden shadow-lg">
             <iframe 
@@ -819,11 +834,12 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
             ></iframe>
           </div>
         </div>
-      </div>
+        </div>
+                 
+
         </div>
       </div>
 
-      {/* Email Dialog */}
       <Dialog open={isEmailDialogOpen} onOpenChange={setIsEmailDialogOpen}>
         <DialogContent className="sm:max-w-[425px] bg-white">
           <DialogHeader>
@@ -865,8 +881,11 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
               {sendingEmail ? t('sending') : t('send_contact_request')}
             </button>
           </form>
+          
         </DialogContent>
+        
       </Dialog>
+      */}
     </div>
   );
 };

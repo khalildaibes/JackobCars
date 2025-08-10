@@ -58,24 +58,22 @@ const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose }) => {
   };
 
   const handleClose = () => {
-    // Only allow closing after successful submission
-    if (messageType === 'success') {
-      setPhoneNumber('');
-      setMessage('');
-      setMessageType('');
-      onClose();
-    }
+    // Allow closing at any time - popup is no longer mandatory
+    setPhoneNumber('');
+    setMessage('');
+    setMessageType('');
+    onClose();
   };
 
-  // Prevent closing by clicking outside or pressing escape
+  // Allow closing by clicking outside or pressing escape at any time
   const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget && messageType === 'success') {
+    if (e.target === e.currentTarget) {
       handleClose();
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape' && messageType === 'success') {
+    if (e.key === 'Escape') {
       handleClose();
     }
   };
@@ -97,23 +95,16 @@ const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose }) => {
       onClick={handleBackdropClick}
     >
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
-        {/* Close button - always visible; closes only after successful submission */}
+        {/* Close button - always visible and always functional */}
         <button
-          onClick={messageType === 'success' ? handleClose : () => { setMessage(t('required_note')); setMessageType('error'); }}
+          onClick={handleClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold"
           aria-label="Close popup"
-          title={messageType === 'success' ? 'Close' : t('required_indicator')}
+          title="Close"
         >
           ×
         </button>
         
-        {/* Visual indicator that popup cannot be closed */}
-        {messageType !== 'success' && (
-          <div className="absolute top-4 right-4 text-gray-400 text-xs">
-            {t('required_indicator')}
-          </div>
-        )}
-
         {/* Header */}
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -121,9 +112,6 @@ const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose }) => {
           </h2>
           <p className="text-gray-600">
             {t('description')}
-          </p>
-          <p className="text-sm text-gray-500 mt-2">
-            {t('required_note')}
           </p>
         </div>
 
@@ -162,6 +150,15 @@ const WelcomePopup: React.FC<WelcomePopupProps> = ({ isOpen, onClose }) => {
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isSubmitting ? t('submitting') : t('submit_button')}
+          </button>
+
+          {/* Skip button */}
+          <button
+            type="button"
+            onClick={handleClose}
+            className="w-full bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+          >
+            Skip
           </button>
         </form>
 

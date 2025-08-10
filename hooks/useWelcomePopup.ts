@@ -8,14 +8,8 @@ export const useWelcomePopup = () => {
     // Check if user has already seen the popup
     const hasSeenPopup = localStorage.getItem('welcomePopupSeen');
     
-    // Check if user has agreed to cookies and has phone number
-    const cookieConsent = getCookie('cookieConsent');
-    const userPhoneNumber = getCookie('userPhoneNumber');
-    
-    // Only show popup if:
-    // 1. User hasn't seen the popup before
-    // 2. User hasn't agreed to cookies OR user agreed but doesn't have phone number
-    if (!hasSeenPopup && (!cookieConsent || !userPhoneNumber)) {
+    // Only show popup if user hasn't seen it before
+    if (!hasSeenPopup) {
       // Show popup after a short delay
       const timer = setTimeout(() => {
         setIsOpen(true);
@@ -27,7 +21,7 @@ export const useWelcomePopup = () => {
 
   const closePopup = () => {
     setIsOpen(false);
-    // Mark as seen in localStorage
+    // Mark as seen in localStorage - this ensures it only shows once per device
     localStorage.setItem('welcomePopupSeen', 'true');
   };
 

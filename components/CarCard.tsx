@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback, memo } from "react";
 import { motion } from "framer-motion";
 import dynamic from 'next/dynamic';
-import { Car, Fuel, Heart, MessageSquare, Scale, Calendar, Gauge, Check, MapPin } from "lucide-react";
+import { Car, Fuel, Heart, MessageSquare, Scale, Gauge, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { useTranslations, useLocale } from "next-intl";
@@ -43,6 +43,8 @@ interface CarCardProps {
   };
   variant?: "grid" | "list";
 }
+
+const IMAGE_HEIGHT = 220; // px, static height for all images
 
 const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   const router = useRouter();
@@ -107,7 +109,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
     if (isNaN(numPrice)) return price;
     return new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency: locale === 'ar' ? 'SAR' : locale === 'he-IL' ? 'ILS' : 'USD',
+      currency: locale === 'ar' ? 'ILS' : locale === 'he-IL' ? 'ILS' : 'USD',
       maximumFractionDigits: 0
     }).format(numPrice);
   };
@@ -122,100 +124,123 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   const isFavorite = favorites.includes(car.slug);
   const inComparison = isInComparison(car.slug.toString());
 
+  // Modern style classes
+  const cardBase =
+    "cd-card group cursor-pointer bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-2xl transition-shadow duration-300 overflow-hidden";
+  const imageWrapper =
+    "cd-card-image relative flex items-center justify-center w-full bg-gradient-to-br from-gray-50 to-gray-200";
+  const contentBase =
+    "cd-card-content flex flex-col items-center justify-center text-center w-full px-5 py-4";
+  const badgeClass =
+    "absolute top-3 left-3 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow";
+  const favoriteBtn =
+    "absolute top-3 right-3 p-2 rounded-full transition-colors shadow bg-white/80 hover:bg-white";
+  const favoriteActive =
+    "bg-red-500 text-white shadow-lg";
+  const compareBtn =
+    "p-2 rounded-lg transition-colors hover:bg-blue-50 text-blue-600";
+  const compareActive =
+    "bg-blue-600 text-white";
+  const contactBtn =
+    "p-2 rounded-lg transition-colors hover:bg-gray-100 text-gray-500";
+  const priceClass =
+    "cd-heading-md font-bold text-gray-900";
+  const viewDetailsBtn =
+    "w-full mt-4 cd-btn cd-btn-outline border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors font-semibold rounded-lg py-2";
+
   if (variant === "list") {
     return (
       <motion.article
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        whileHover={{ y: -2 }}
-        className="cd-card group cursor-pointer"
+        whileHover={{ y: -4 }}
+        className={cardBase + " flex flex-col md:flex-row"}
         onClick={handleViewDetails}
       >
-        <div className="md:flex">
-          <div className="md:w-2/5 relative">
-            <div className="cd-card-image relative overflow-hidden">
-              <Img
-                src={car.mainImage}
-                alt={car.title}
-                width={400}
-                height={250}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-              {isNew && (
-                <span className="absolute top-3 left-3 cd-tag">
-                  {t('new')}
-                </span>
-              )}
-              <button
-                onClick={handleFavoriteToggle}
-                className={`absolute top-3 right-3 p-2 rounded-full transition-colors ${
-                  isFavorite 
-                    ? 'bg-red-500 text-white' 
-                    : 'bg-white/80 text-gray-600 hover:bg-white'
-                }`}
-              >
-                <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
-              </button>
+        <div className="md:w-2/5 flex items-center justify-center">
+          <div
+            className={imageWrapper}
+            style={{ height: IMAGE_HEIGHT, minHeight: IMAGE_HEIGHT, maxHeight: IMAGE_HEIGHT }}
+          >
+            <Img
+              src={car.mainImage}
+              alt={car.title}
+              width={400}
+              height={IMAGE_HEIGHT}
+              external={true}
+              className="w-full h-full object-cover rounded-xl transition-transform duration-300 group-hover:scale-105"
+            />
+            {isNew && (
+              <span className={badgeClass}>
+                {t('new')}
+              </span>
+            )}
+            <button
+              onClick={handleFavoriteToggle}
+              className={
+                favoriteBtn +
+                (isFavorite ? " " + favoriteActive : " text-gray-600")
+              }
+              aria-label={isFavorite ? t('remove_from_favorites') : t('add_to_favorites')}
+            >
+              <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+            </button>
+          </div>
+        </div>
+        <div className={contentBase + " md:w-3/5"}>
+          <div className="flex flex-col items-center justify-center mb-3 w-full">
+            <h3 className="cd-heading-md mb-1 line-clamp-1 group-hover:text-red-600 transition-colors font-semibold">
+              {car.title}
+            </h3>
+            <p className="cd-caption mb-2 text-gray-500">
+              {car.year} • {car.make} • {car.bodyType}
+            </p>
+            <div className={priceClass + " mb-1"}>
+              {formatPrice(car.price)}
             </div>
           </div>
-          
-          <div className="md:w-3/5 cd-card-content">
-            <div className="flex items-start justify-between mb-3">
-              <div>
-                <h3 className="cd-heading-xs mb-1 line-clamp-1 group-hover:text-red-600 transition-colors">
-                  {car.title}
-                </h3>
-                <p className="cd-caption mb-2">
-                  {car.year} • {car.make} • {car.bodyType}
-                </p>
-              </div>
-              <div className="text-right">
-                <div className="cd-heading-sm text-red-600 mb-1">
-                  {formatPrice(car.price)}
-                </div>
-              </div>
+          <div className="grid grid-cols-3 gap-4 mb-4 w-full justify-items-center">
+            <div className="flex flex-col items-center gap-1">
+              <Gauge className="w-5 h-5 text-gray-400" />
+              <span className="cd-body-sm text-gray-700">{formatMileage(car.mileage)}</span>
             </div>
-
-            <div className="grid grid-cols-3 gap-4 mb-4">
-              <div className="flex items-center gap-2">
-                <Gauge className="w-4 h-4 text-gray-400" />
-                <span className="cd-body-sm">{formatMileage(car.mileage)}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Fuel className="w-4 h-4 text-gray-400" />
-                <span className="cd-body-sm">{car.fuelType}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Car className="w-4 h-4 text-gray-400" />
-                <span className="cd-body-sm">{car.transmission}</span>
-              </div>
+            <div className="flex flex-col items-center gap-1">
+              <Fuel className="w-5 h-5 text-gray-400" />
+              <span className="cd-body-sm text-gray-700">{car.fuelType}</span>
             </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handleCompareToggle}
-                  className={`cd-btn-secondary p-2 rounded-lg transition-colors ${
-                    inComparison ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
-                  }`}
-                  title={t('compare')}
-                >
-                  <Scale className="w-4 h-4" />
-                </button>
-                <button
-                  className="cd-btn-secondary p-2 rounded-lg"
-                  title={t('contact')}
-                >
-                  <MessageSquare className="w-4 h-4" />
-                </button>
-              </div>
-              <button 
-                onClick={handleViewDetails}
-                className="text-red-600 font-medium text-sm hover:text-red-700 transition-colors"
+            <div className="flex flex-col items-center gap-1">
+              <Car className="w-5 h-5 text-gray-400" />
+              <span className="cd-body-sm text-gray-700">{car.transmission}</span>
+            </div>
+          </div>
+          <div className="flex items-center justify-between w-full mt-2">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleCompareToggle}
+                className={
+                  compareBtn +
+                  (inComparison ? " " + compareActive : "")
+                }
+                title={t('compare')}
+                aria-label={t('compare')}
               >
-                {t('view_details')} →
+                <Scale className="w-5 h-5" />
+              </button>
+              <button
+                className={contactBtn}
+                title={t('contact')}
+                aria-label={t('contact')}
+              >
+                <MessageSquare className="w-5 h-5" />
               </button>
             </div>
+            <button 
+              onClick={handleViewDetails}
+              className="text-red-500 font-semibold text-sm hover:text-red-700 transition-colors flex items-center gap-1"
+            >
+              {t('view_details')}
+              <span aria-hidden>→</span>
+            </button>
           </div>
         </div>
       </motion.article>
@@ -228,96 +253,107 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4 }}
-      className="cd-card group cursor-pointer"
+      className={cardBase + " flex flex-col items-center"}
       onClick={handleViewDetails}
     >
-      <div className="relative">
-        <div className="cd-card-image relative overflow-hidden">
+      <div className="relative w-full flex items-center justify-center">
+        <div
+          className={imageWrapper}
+          style={{ height: IMAGE_HEIGHT, minHeight: IMAGE_HEIGHT, maxHeight: IMAGE_HEIGHT }}
+        >
           <Img
             src={car.mainImage}
+            external={true}
             alt={car.title}
             width={400}
-            height={250}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            height={IMAGE_HEIGHT}
+            className="w-full h-full object-cover rounded-xl transition-transform duration-300 group-hover:scale-105"
           />
           {isNew && (
-            <span className="absolute top-3 left-3 cd-tag">
+            <span className={badgeClass}>
               {t('new')}
             </span>
           )}
           <button
             onClick={handleFavoriteToggle}
-            className={`absolute top-3 right-3 p-2 rounded-full transition-colors ${
-              isFavorite 
-                ? 'bg-red-500 text-white' 
-                : 'bg-white/80 text-gray-600 hover:bg-white'
-            }`}
+            className={
+              favoriteBtn +
+              (isFavorite ? " " + favoriteActive : " text-gray-600")
+            }
+            aria-label={isFavorite ? t('remove_from_favorites') : t('add_to_favorites')}
           >
-            <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+            <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
           </button>
         </div>
       </div>
-
-      <div className="cd-card-content">
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex-1">
-            <h3 className="cd-heading-xs mb-1 line-clamp-2 group-hover:text-red-600 transition-colors">
-              {car.title}
-            </h3>
-            <p className="cd-caption mb-2">
-              {car.year} • {car.make} • {car.bodyType}
-            </p>
+      <div className={contentBase}>
+        <div className="flex flex-col items-center justify-center mb-3 w-full">
+          <h3 className="cd-heading-md mb-1 line-clamp-2 group-hover:text-red-600 transition-colors font-semibold">
+            {car.title}
+          </h3>
+          <p className="cd-caption mb-2 text-gray-500">
+            {car.year} • {car.make} • {car.bodyType}
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-4 mb-4 text-sm w-full justify-items-center">
+          <div className="flex flex-col items-center gap-1">
+            <Gauge className="w-5 h-5 text-gray-400" />
+            <span className="cd-body-sm text-gray-700">{formatMileage(car.mileage)}</span>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <Fuel className="w-5 h-5 text-gray-400" />
+            <span className="cd-body-sm text-gray-700">{car.fuelType}</span>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <Car className="w-5 h-5 text-gray-400" />
+            <span className="cd-body-sm text-gray-700">{car.transmission}</span>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <Check className="w-5 h-5 text-gray-400" />
+            <span className="cd-body-sm text-gray-700">{car.condition}</span>
           </div>
         </div>
-
-        <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
-          <div className="flex items-center gap-2">
-            <Gauge className="w-4 h-4 text-gray-400" />
-            <span className="cd-body-sm">{formatMileage(car.mileage)}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Fuel className="w-4 h-4 text-gray-400" />
-            <span className="cd-body-sm">{car.fuelType}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Car className="w-4 h-4 text-gray-400" />
-            <span className="cd-body-sm">{car.transmission}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-gray-400" />
-            <span className="cd-body-sm">{car.condition}</span>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div className="cd-heading-sm text-red-600">
-            {formatPrice(car.price)}
-          </div>
-          
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center w-full mt-2">
+         
+          <div className="flex items-center gap-4 justify-center w-full">
             <button
               onClick={handleCompareToggle}
-              className={`p-2 rounded-lg transition-colors ${
-                inComparison 
-                  ? 'bg-blue-50 text-blue-600' 
-                  : 'hover:bg-gray-50 text-gray-400'
-              }`}
-              title={t('compare')}
+              className={
+                compareBtn +
+                (inComparison ? " " + compareActive : "") +
+                " bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg px-3 py-2 transition-colors duration-200"
+              }
+              title={t('add_to_compare')}
+              aria-label={t('add_to_compare')}
+              type="button"
             >
-              <Scale className="w-4 h-4" />
+              <div className="flex items-center justify-center">
+                <Scale className="w-5 h-5" />
+                <span className="ml-1">{t('add_to_compare')}</span>
+              </div>
             </button>
             <button
-              className="p-2 rounded-lg hover:bg-gray-50 text-gray-400"
-              title={t('contact')}
+              className={
+                contactBtn +
+                " bg-green-100 hover:bg-green-200 text-green-700 rounded-lg px-3 py-2 transition-colors duration-200"
+              }
+              title={t('message_owner')}
+              aria-label={t('message_owner')}
+              type="button"
             >
-              <MessageSquare className="w-4 h-4" />
+              <div className="flex items-center justify-center">
+                <MessageSquare className="w-5 h-5" />
+                <span className="ml-1">{t('message_owner')}</span>
+              </div>
             </button>
           </div>
         </div>
-
+        <div className={priceClass}>
+            {formatPrice(car.price)}
+          </div>
         <button 
           onClick={handleViewDetails}
-          className="w-full mt-4 cd-btn cd-btn-outline"
+          className={viewDetailsBtn}
         >
           {t('view_details')}
         </button>

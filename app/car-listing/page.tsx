@@ -422,12 +422,12 @@ const CarListings: React.FC = () => {
                       <span className="sr-only md:not-sr-only md:inline-block">{t('grid')}</span>
                     </div>
                   </TabsTrigger>
-                  <TabsTrigger value="list" className="data-[state=active]:bg-white">
+                  {/* <TabsTrigger value="list" className="data-[state=active]:bg-white">
                     <div className="flex items-center space-x-1">
                       <Plus className="h-4 w-4 rotate-90" />
                       <span className="sr-only md:not-sr-only md:inline-block">{t('list')}</span>
                     </div>
-                  </TabsTrigger>
+                  </TabsTrigger> */}
                 </TabsList>
 
           

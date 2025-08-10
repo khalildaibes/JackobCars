@@ -116,7 +116,6 @@ export default function Navbar() {
     // carsMarket: [
     //   { label: t("dropdown.cars_market.new_cars"), href: "/car-listing" },
     //   { label: t("dropdown.cars_market.used_cars"), href: "/car-listing" },
-    //   { label: t("dropdown.cars_market.electric_vehicles"), href: "/car-listing" },
     //   { label: t("dropdown.cars_market.luxury_cars"), href: "/car-listing" }
     // ],
     plate_search: [
@@ -302,7 +301,7 @@ export default function Navbar() {
           {Object.keys(dropdownItems).map((key) => (
             <NavButton
               key={key}
-              href={`/${key}`}
+              href={`/${key === "carsMarket" ? `car-listing` : key}`}
               gradient={buttonStyles[key as keyof typeof buttonStyles]}
               dropdownKey={key as keyof typeof dropdownItems}
             >

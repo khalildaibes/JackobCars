@@ -785,6 +785,11 @@
     "default_currency": "$"
   },
   "CarListing": {
+    "add_to_compare": "أضف للمقارنة",
+    "message_owner": "اتصل بالبائع",
+    "added_to_favorites": "أضف للمفضلة",
+    "removed_from_favorites": "إزالة من المفضلة",
+    "add_to_favorites": "أضف للمفضلة",
     "currency_symbol": "شيكل",
     "find_perfect_car": "اعثر على سيارتك المثالية",
     "browse_collection": "تصفح مجموعتنا الواسعة من السيارات عالية الجودة واعثر على السيارة المناسبة لك.",
@@ -801,8 +806,15 @@
     "grid": "شبكة",
     "list": "قائمة",
     "contact": "اتصال",
+    "warranty": "الضمان",
+    "price": "السعر",
     "view_details": "التفاصيل",
     "contact_seller": "اتصال بالبائع",
+    
+    "listed_days_ago": "تم الإعلان منذ {days} يوم",
+    "listed_hours_ago": "تم الإعلان منذ {hours} ساعة",
+    "listed_minutes_ago": "تم الإعلان منذ {minutes} دقيقة",
+    "listed_months_ago": "تم الإعلان منذ {months} شهر",
     "features": "المميزات",
     "more_features": "مميزات إضافية",
     "makes": {
@@ -895,6 +907,7 @@
     "submitting": "جاري الإرسال..."
   },
   "CarDetails": {
+    "month": "شهر",
     "financing_options": "خيارات التمويل",
     "estimated_monthly_payment": "الدفعة الشهرية المقدرة",
     "month": "شهر",
@@ -905,6 +918,11 @@
     "check_your_rate": "تحقق من معدلك",
     "no_credit_score_impact": "لن يؤثر هذا على درجة ائتمانك",
     "contact_seller": "اتصل بالبائع",
+    "warranty": "الضمان",
+    "price": "السعر",
+    "listed_hours_ago": "تم الإعلان منذ {hours} ساعة",
+    "listed_minutes_ago": "تم الإعلان منذ {minutes} دقيقة",
+    "listed_months_ago": "تم الإعلان منذ {months} شهر",
     "or_call": "أو اتصل",
     "save": "حفظ",
     "share": "مشاركة",
@@ -1526,6 +1544,7 @@
   "CarDetails": {
     "excellent_performance": "أداء ممتاز",
     "comfortable_interior": "داخلية ريحة",
+    "month": "شهر",
     "advanced_tech": "تكنولوجيا متقدمة",
     "higher_price": "سعر مرتفع",
     "firm_ride": "قيادة صلبة",
@@ -1555,6 +1574,12 @@
     "full_service": "خدمة كاملة",
     "full_service_details": "تم إجراء فحص شامل وتغيير جميع السوائل",
     "contact_seller": "اتصل بالبائع",
+    "warranty": "الضمان",
+    "price": "السعر",
+    "listed_days_ago": "تم الإعلان منذ {days} يوم",
+    "listed_hours_ago": "تم الإعلان منذ {hours} ساعة",
+    "listed_minutes_ago": "تم الإعلان منذ {minutes} دقيقة",
+    "listed_months_ago": "تم الإعلان منذ {months} شهر",
     "warranty_period": "مدة الضمان",
     "or_call": "أو اتصل على",
     "save": "حفظ",
