@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useLocale } from 'next-intl';
-import { motion, AnimatePresence } from "framer-motion";
 import axios from 'axios';
-import { manufacturers_arabic, manufacturers_english, manufacturers_hebrew } from '../../../data/manufacturers_multilingual';
+import { 
+  // manufacturers_arabic, manufacturers_english,
+   manufacturers_hebrew } from '../../../data/manufacturers_multilingual';
+import { motion } from "framer-motion";
 
 // Use based on locale
 // locale is not defined yet here, so we must export a function to get manufacturers based on locale
@@ -815,9 +817,7 @@ export default function AddCarListing() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <AnimatePresence mode="wait">
             {renderStepContent()}
-          </AnimatePresence>
 
           {/* Navigation Buttons */}
           <motion.div
