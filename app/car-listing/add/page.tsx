@@ -3,19 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useLocale } from 'next-intl';
-import { Input } from "../../../components/ui/input";
-import { Button } from "../../../components/ui/button";
 import { Upload, Plus, Car, X, Camera, ArrowLeft, ArrowRight } from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../components/ui/select";
-import { RadioGroup, RadioGroupItem } from "../../../components/ui/radio-group";
-import { Label } from "../../../components/ui/label";
-import { Textarea } from "../../../components/ui/textarea";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from 'axios';
 import { manufacturers_arabic, manufacturers_english, manufacturers_hebrew } from '../../../data/manufacturers_multilingual';
@@ -360,23 +348,25 @@ export default function AddCarListing() {
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('basic_information')}</h2>
             <div className="space-y-4">
               <div>
-                <Input
+                <input
+                  type="text"
                   placeholder={t('title_placeholder')}
                   value={formData.title}
                   onChange={(e) => {
                     setFormData(prev => ({ ...prev, title: e.target.value }));
                     setErrors(prev => ({ ...prev, title: '' }));
                   }}
-                  className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.title ? 'border-red-500' : ''}`}
+                  className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 border ${errors.title ? 'border-red-500' : 'border-gray-300'}`}
                 />
                 {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white">
                 <div>
-                  <Select
+                  <select
                     value={selectedManufacturer}
-                    onValueChange={(value) => {
+                    onChange={(e) => {
+                      const value = e.target.value;
                       if (value && manufacturers[value]) {
                         const models = manufacturers[value].submodels || [];
                         setAvailableModels(models);
@@ -389,145 +379,132 @@ export default function AddCarListing() {
                       setSelectedManufacturer(value);
                       setErrors(prev => ({ ...prev, manufacturer: '' }));
                     }}
+                    className="w-full rounded-xl py-5 px-4 bg-white border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <SelectTrigger className="rounded-xl py-5 bg-white">
-                      <SelectValue placeholder={t('select_manufacturer') || 'Select Manufacturer'} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white">
-                      {Object.keys(manufacturers).length === 0 ? (
-                        <SelectItem value="loading_manufacturers" disabled>
-                          Loading manufacturers...
-                        </SelectItem>
-                      ) : (
-                        Object.keys(manufacturers).map((manufacturer) => (
-                          <SelectItem key={manufacturer} value={manufacturer}>
-                            {manufacturers[manufacturer].submodels[0].manufacturer.title}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
+                    <option value="">{t('select_manufacturer') || 'Select Manufacturer'}</option>
+                    {Object.keys(manufacturers).length === 0 ? (
+                      <option value="loading_manufacturers" disabled>
+                        Loading manufacturers...
+                      </option>
+                    ) : (
+                      Object.keys(manufacturers).map((manufacturer) => (
+                        <option key={manufacturer} value={manufacturer}>
+                          {manufacturers[manufacturer].submodels[0].manufacturer.title}
+                        </option>
+                      ))
+                    )}
+                  </select>
                   {errors.manufacturer && <p className="mt-1 text-sm text-red-500">{errors.manufacturer}</p>}
                 </div>
 
                 <div>
-                  <Select
+                  <select
                     value={selectedModel}
-                    onValueChange={(value) => {
-                      setSelectedModel(value);
+                    onChange={(e) => {
+                      setSelectedModel(e.target.value);
                       setErrors(prev => ({ ...prev, model: '' }));
                     }}
                     disabled={!selectedManufacturer || availableModels.length === 0}
+                    className="w-full rounded-xl py-5 px-4 bg-white border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <SelectTrigger className="rounded-xl py-5">
-                      <SelectValue placeholder={t('select_model') || 'Select Model'} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white">
-                      {!selectedManufacturer ? (
-                        <SelectItem value="select_manufacturer_first" disabled>
-                          Select manufacturer first
-                        </SelectItem>
-                      ) : availableModels.length === 0 ? (
-                        <SelectItem value="no_models_available" disabled>
-                          No models available
-                        </SelectItem>
-                      ) : (
-                        availableModels.map((model) => (
-                          <SelectItem key={model.id} value={model.id?.toString()}>
-                            {model.title || 'Unknown Model'}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
+                    <option value="">{t('select_model') || 'Select Model'}</option>
+                    {!selectedManufacturer ? (
+                      <option value="select_manufacturer_first" disabled>
+                        Select manufacturer first
+                      </option>
+                    ) : availableModels.length === 0 ? (
+                      <option value="no_models_available" disabled>
+                        No models available
+                      </option>
+                    ) : (
+                      availableModels.map((model) => (
+                        <option key={model.id} value={model.id?.toString()}>
+                          {model.title || 'Unknown Model'}
+                        </option>
+                      ))
+                    )}
+                  </select>
                   {errors.model && <p className="mt-1 text-sm text-red-500">{errors.model}</p>}
                 </div>
 
                 <div>
-                  <Select
+                  <select
                     value={formData.year}
-                    onValueChange={(value) => {
-                      setFormData(prev => ({ ...prev, year: value }));
+                    onChange={(e) => {
+                      setFormData(prev => ({ ...prev, year: e.target.value }));
                       setErrors(prev => ({ ...prev, year: '' }));
                     }}
                     disabled={!selectedManufacturer || !selectedModel || availableYears.length === 0}
+                    className={`w-full rounded-xl py-5 px-4 bg-white border focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed ${errors.year ? 'border-red-500' : 'border-gray-300'}`}
                   >
-                    <SelectTrigger className={`rounded-xl py-5 ${errors.year ? 'border-red-500' : ''}`}>
-                      <SelectValue placeholder={t('year') || 'Year'} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white">
-                      {availableYears.length === 0 ? (
-                        <SelectItem value="no_years_available" disabled>
-                          {!selectedManufacturer ? 'Select manufacturer first' : 
-                           !selectedModel ? 'Select model first' : 'No years available'}
-                        </SelectItem>
-                      ) : (
-                        availableYears.map((year) => (
-                          <SelectItem key={year} value={year.toString()}>
-                            {year}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
+                    <option value="">{t('year') || 'Year'}</option>
+                    {availableYears.length === 0 ? (
+                      <option value="no_years_available" disabled>
+                        {!selectedManufacturer ? 'Select manufacturer first' : 
+                         !selectedModel ? 'Select model first' : 'No years available'}
+                      </option>
+                    ) : (
+                      availableYears.map((year) => (
+                        <option key={year} value={year.toString()}>
+                          {year}
+                        </option>
+                      ))
+                    )}
+                  </select>
                   {errors.year && <p className="mt-1 text-sm text-red-500">{errors.year}</p>}
                 </div>
 
                 <div>
-                  <Input
+                  <input
+                    type="text"
                     placeholder={t('plate_number')}
                     value={formData.plateNumber}
                     onChange={(e) => {
                       setFormData(prev => ({ ...prev, plateNumber: e.target.value }));
                       setErrors(prev => ({ ...prev, plateNumber: '' }));
                     }}
-                    className={`rounded-xl py-5 ${errors.plateNumber ? 'border-red-500' : ''}`}
+                    className={`w-full rounded-xl py-5 px-4 border focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.plateNumber ? 'border-red-500' : 'border-gray-300'}`}
                   />
                   {errors.plateNumber && <p className="mt-1 text-sm text-red-500">{errors.plateNumber}</p>}
                 </div>
 
-                <Input
+                <input
+                  type="text"
                   placeholder={t('mileage')}
                   value={formData.mileage}
                   onChange={(e) => setFormData(prev => ({ ...prev, mileage: e.target.value }))}
-                  className="rounded-xl py-5"
+                  className="w-full rounded-xl py-5 px-4 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
 
-                <Input
+                <input
+                  type="text"
                   placeholder={t('color')}
                   value={formData.color}
                   onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
-                  className="rounded-xl py-5"
+                  className="w-full rounded-xl py-5 px-4 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
 
-                <Select
+                <select
                   value={formData.engineType}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, engineType: value }))}
+                  onChange={(e) => setFormData(prev => ({ ...prev, engineType: e.target.value }))}
+                  className="w-full rounded-xl py-5 px-4 bg-white border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <SelectTrigger className="rounded-xl py-5">
-                    <SelectValue placeholder={t('engine_type')} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white">
-                    {engineTypes.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {t(`fuel_types.${type}`)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  <option value="">{t('engine_type')}</option>
+                  {engineTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {t(`fuel_types.${type}`)}
+                    </option>
+                  ))}
+                </select>
 
-                <Select
+                <select
                   value={formData.transmission}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, transmission: value }))}
+                  onChange={(e) => setFormData(prev => ({ ...prev, transmission: e.target.value }))}
+                  className="w-full rounded-xl py-5 px-4 bg-white border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <SelectTrigger className="rounded-xl py-5">
-                    <SelectValue placeholder={t('transmission')} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white">
-                    <SelectItem value="automatic">{t('transmission_automatic')}</SelectItem>
-                    <SelectItem value="manual">{t('transmission_manual')}</SelectItem>
-                  </SelectContent>
-                </Select>
+                  <option value="automatic">{t('transmission_automatic')}</option>
+                  <option value="manual">{t('transmission_manual')}</option>
+                </select>
               </div>
             </div>
           </motion.div>
@@ -544,49 +521,46 @@ export default function AddCarListing() {
           >
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('condition')}</h2>
             <div className="space-y-4">
-              <Select
+              <select
                 value={formData.currentCondition}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, currentCondition: value }))}
+                onChange={(e) => setFormData(prev => ({ ...prev, currentCondition: e.target.value }))}
+                className="w-full rounded-xl py-5 px-4 bg-white border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                <SelectTrigger className="rounded-xl py-5">
-                  <SelectValue placeholder={t('current_condition')} />
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                  {conditions.map((condition) => (
-                    <SelectItem key={condition} value={condition}>
-                      {t(`condition_${condition}`)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                <option value="">{t('current_condition')}</option>
+                {conditions.map((condition) => (
+                  <option key={condition} value={condition}>
+                    {t(`condition_${condition}`)}
+                  </option>
+                ))}
+              </select>
               
               <div>
-                <Label className="text-sm font-medium text-gray-700 mb-2 block">{t('known_problems')}</Label>
-                <Textarea
+                <label className="text-sm font-medium text-gray-700 mb-2 block">{t('known_problems')}</label>
+                <textarea
                   placeholder={t('known_problems_placeholder') || 'Describe any known problems...'}
                   value={formData.knownProblems}
                   onChange={(e) => setFormData(prev => ({ ...prev, knownProblems: e.target.value }))}
-                  className="min-h-[100px] rounded-xl"
+                  className="w-full min-h-[100px] rounded-xl px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
 
               <div>
-                <Label className="text-sm font-medium text-gray-700 mb-2 block">{t('pros')}</Label>
-                <Textarea
+                <label className="text-sm font-medium text-gray-700 mb-2 block">{t('pros')}</label>
+                <textarea
                   placeholder={t('pros_placeholder') || 'List the pros (one per line)...'}
                   value={formData.pros}
                   onChange={(e) => setFormData(prev => ({ ...prev, pros: e.target.value }))}
-                  className="min-h-[100px] rounded-xl"
+                  className="w-full min-h-[100px] rounded-xl px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
 
               <div>
-                <Label className="text-sm font-medium text-gray-700 mb-2 block">{t('cons')}</Label>
-                <Textarea
+                <label className="text-sm font-medium text-gray-700 mb-2 block">{t('cons')}</label>
+                <textarea
                   placeholder={t('cons_placeholder') || 'List the cons (one per line)...'}
                   value={formData.cons}
                   onChange={(e) => setFormData(prev => ({ ...prev, cons: e.target.value }))}
-                  className="min-h-[100px] rounded-xl"
+                  className="w-full min-h-[100px] rounded-xl px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
             </div>
@@ -603,22 +577,44 @@ export default function AddCarListing() {
             className={`bg-white rounded-2xl shadow-sm p-6 border border-gray-100 ${locale === 'ar' ? 'rtl' : ''}`}
           >
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('trade_in_option')}</h2>
-            <RadioGroup
-              value={formData.tradeIn}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, tradeIn: value }))}>
+            <div className="space-y-3">
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="yes" id="yes" />
-                <Label htmlFor="yes">{t('yes')}</Label>
+                <input
+                  type="radio"
+                  id="yes"
+                  name="tradeIn"
+                  value="yes"
+                  checked={formData.tradeIn === 'yes'}
+                  onChange={(e) => setFormData(prev => ({ ...prev, tradeIn: e.target.value }))}
+                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                />
+                <label htmlFor="yes" className="text-sm font-medium text-gray-700">{t('yes')}</label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="no" id="no" />
-                <Label htmlFor="no">{t('no')}</Label>
+                <input
+                  type="radio"
+                  id="no"
+                  name="tradeIn"
+                  value="no"
+                  checked={formData.tradeIn === 'no'}
+                  onChange={(e) => setFormData(prev => ({ ...prev, tradeIn: e.target.value }))}
+                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                />
+                <label htmlFor="no" className="text-sm font-medium text-gray-700">{t('no')}</label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="maybe" id="maybe" />
-                <Label htmlFor="maybe">{t('maybe')}</Label>
+                <input
+                  type="radio"
+                  id="maybe"
+                  name="tradeIn"
+                  value="maybe"
+                  checked={formData.tradeIn === 'maybe'}
+                  onChange={(e) => setFormData(prev => ({ ...prev, tradeIn: e.target.value }))}
+                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                />
+                <label htmlFor="maybe" className="text-sm font-medium text-gray-700">{t('maybe')}</label>
               </div>
-            </RadioGroup>
+            </div>
           </motion.div>
         );
 
@@ -632,12 +628,12 @@ export default function AddCarListing() {
             className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
           >
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('price')}</h2>
-            <Input
-              placeholder={t('asking_price_placeholder')}
+            <input
               type="number"
+              placeholder={t('asking_price_placeholder')}
               value={formData.askingPrice}
               onChange={(e) => setFormData(prev => ({ ...prev, askingPrice: e.target.value }))}
-              className="w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+              className="w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 border border-gray-300 focus:border-blue-500"
             />
           </motion.div>
         );
@@ -654,41 +650,43 @@ export default function AddCarListing() {
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('contact_info')}</h2>
             <div className="space-y-4">
               <div>
-                <Input
+                <input
+                  type="text"
                   placeholder={t('name_placeholder')}
                   value={formData.name}
                   onChange={(e) => {
                     setFormData(prev => ({ ...prev, name: e.target.value }));
                     setErrors(prev => ({ ...prev, name: '' }));
                   }}
-                  className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.name ? 'border-red-500' : ''}`}
+                  className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 border focus:border-blue-500 ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
                 />
                 {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
               </div>
 
               <div>
-                <Input
-                  placeholder={t('email_placeholder')}
+                <input
                   type="email"
+                  placeholder={t('email_placeholder')}
                   value={formData.email}
                   onChange={(e) => {
                     setFormData(prev => ({ ...prev, email: e.target.value }));
                     setErrors(prev => ({ ...prev, email: '' }));
                   }}
-                  className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : ''}`}
+                  className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 border focus:border-blue-500 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
                 />
                 {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
               </div>
 
               <div>
-                <Input
+                <input
+                  type="tel"
                   placeholder={t('phone_placeholder')}
                   value={formData.phone}
                   onChange={(e) => {
                     setFormData(prev => ({ ...prev, phone: e.target.value }));
                     setErrors(prev => ({ ...prev, phone: '' }));
                   }}
-                  className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.phone ? 'border-red-500' : ''}`}
+                  className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 border focus:border-blue-500 ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}
                 />
                 {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
               </div>
@@ -828,34 +826,33 @@ export default function AddCarListing() {
             animate={{ opacity: 1 }}
             className="flex justify-between items-center bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg"
           >
-            <Button
+            <button
               type="button"
               onClick={prevStep}
               disabled={currentStep === 0}
-              variant="outline"
-              className="flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
               <ArrowLeft className="h-4 w-4" />
               Previous
-            </Button>
+            </button>
 
             {currentStep === STEPS.length - 1 ? (
-              <Button
+              <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex items-center gap-2 px-8 py-3 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-200 transform hover:scale-[1.01] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-8 py-3 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-200 transform hover:scale-[1.01] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-blue-500 focus:outline-none"
               >
                 {isSubmitting ? t('submitting') : t('submit_listing')}
-              </Button>
+              </button>
             ) : (
-              <Button
+              <button
                 type="button"
                 onClick={nextStep}
-                className="flex items-center gap-2 px-8 py-3 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-200 transform hover:scale-[1.01] hover:shadow-lg"
+                className="flex items-center gap-2 px-8 py-3 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-200 transform hover:scale-[1.01] hover:shadow-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               >
                 Next
                 <ArrowRight className="h-4 w-4" />
-              </Button>
+              </button>
             )}
           </motion.div>
         </form>
