@@ -31,12 +31,12 @@ const conditions = ['excellent', 'good', 'fair', 'poor'] as const;
 
 // Define the steps for the wizard
 const STEPS = [
-  { id: 'basic', title: 'Basic Information', icon: 'img_icon_indigo_a400.svg' },
-  { id: 'condition', title: 'Condition', icon: 'img_icon_indigo_a400.svg' },
-  { id: 'trade-in', title: 'Trade-in Option', icon: 'img_icon_indigo_a400.svg' },
-  { id: 'price', title: 'Price', icon: 'img_icon_indigo_a400.svg' },
-  { id: 'contact', title: 'Contact Info', icon: 'img_icon_indigo_a400.svg' },
-  { id: 'images', title: 'Upload Images', icon: 'img_icon_indigo_a400.svg' },
+  { id: 'basic', title: 'Basic Information', icon: 'img_icon_indigo_a400.png' },
+  { id: 'condition', title: 'Condition', icon: 'img_icon_indigo_a400.png' },
+  { id: 'trade-in', title: 'Trade-in Option', icon: 'img_icon_indigo_a400.png' },
+  { id: 'price', title: 'Price', icon: 'img_icon_indigo_a400.png' },
+  { id: 'contact', title: 'Contact Info', icon: 'img_icon_indigo_a400.png' },
+  { id: 'images', title: 'Upload Images', icon: 'img_icon_indigo_a400.png' },
 ];
 
 export default function AddCarListing() {
@@ -220,22 +220,18 @@ export default function AddCarListing() {
           cons: formData.cons.split('\n').filter(item => item.trim() !== ''),
           features: [
             {
-              icon: "img_calendar_indigo_a400.svg",
               label: t('year'),
               value: formData.year.toString()
             },
             {
-              icon: "img_icon_indigo_a400.svg",
               label: t('mileage'),
               value: `${formData.mileage} KM`
             },
             {
-              icon: "img_icon_indigo_a400_18x18.svg",
               label: t('transmission'),
               value: formData.transmission
             },
             {
-              icon: "img_icon_4.svg",
               label: t('fuel_type'),
               value: formData.engineType
             }
@@ -718,7 +714,7 @@ export default function AddCarListing() {
                 className="cursor-pointer flex flex-col items-center justify-center"
               >
                 <div className="bg-blue-50 rounded-full p-4 mb-4">
-                  <img src="/img_icon_indigo_a400.svg" alt="Camera" className="h-8 w-8 text-blue-500" />
+                  <img src="/img_icon_indigo_a400.png" alt="Camera" className="h-8 w-8 text-blue-500" />
                 </div>
                 <p className="text-lg font-medium text-gray-700 mb-2">{t('drag_drop')}</p>
                 <p className="text-sm text-gray-500">{t('image_requirements')}</p>
@@ -750,7 +746,7 @@ export default function AddCarListing() {
                         className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                         aria-label={t('remove_image')}
                       >
-                        <img src="/img_icon_indigo_a400.svg" alt="X" className="h-4 w-4" />
+                        <img src="/img_icon_indigo_a400.png" alt="X" className="h-4 w-4" />
                       </button>
                     </motion.div>
                   ))}
@@ -774,7 +770,7 @@ export default function AddCarListing() {
       >
         <div className="flex items-center gap-6 mb-8">
           <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-4 shadow-lg">
-            <img src="/img_icon_indigo_a400.svg" alt="Car" className="h-8 w-8 text-white" />
+            <img src="/img_icon_indigo_a400.png" alt="Car" className="h-8 w-8 text-white" />
           </div>
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('add_car_listing')}</h1>
@@ -793,9 +789,8 @@ export default function AddCarListing() {
                     : 'bg-white border-gray-300 text-gray-500'
                 }`}>
                   {index < currentStep ? (
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
+                    <img src={`/${step.icon}`} alt={step.title} className="w-6 h-6" />
+
                   ) : (
                     <img src={`/${step.icon}`} alt={step.title} className="w-6 h-6" />
                   )}
@@ -830,7 +825,7 @@ export default function AddCarListing() {
               disabled={currentStep === 0}
               className="flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
-              <img src="/img_icon_indigo_a400.svg" alt="Arrow Left" className="h-4 w-4" />
+              <img src="/img_icon_indigo_a400.png" alt="Arrow Left" className="h-4 w-4" />
               Previous
             </button>
 
@@ -849,7 +844,7 @@ export default function AddCarListing() {
                 className="flex items-center gap-2 px-8 py-3 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-200 transform hover:scale-[1.01] hover:shadow-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               >
                 Next
-                <img src="/img_icon_indigo_a400.svg" alt="Arrow Right" className="h-4 w-4" />
+                <img src="/img_icon_indigo_a400.png" alt="Arrow Right" className="h-4 w-4" />
               </button>
             )}
           </motion.div>
