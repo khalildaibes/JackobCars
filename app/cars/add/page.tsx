@@ -40,6 +40,16 @@ export default function AddCarListing() {
   const t = useTranslations('CarListing');
   const locale = useLocale();
   const isRTL = locale === 'ar' || locale === 'he-IL';
+  const STEPS = [
+    'Basic Information',
+    'Condition',
+    'Trade-in Option',
+    'Target Buyer',
+    'Price',
+    'Contact Info',
+    'Upload Images',
+  ];
+  const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [manufacturersData, setManufacturersData] = useState<ManufacturersData>({});
   const [selectedManufacturer, setSelectedManufacturer] = useState('');
@@ -327,7 +337,7 @@ export default function AddCarListing() {
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8 ${isRTL ? 'rtl' : 'ltr'}`}>
+    <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-[5%] py-8 px-4 sm:px-6 lg:px-8 ${isRTL ? 'rtl' : 'ltr'}`}>
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -343,8 +353,33 @@ export default function AddCarListing() {
           </div>
         </div>
 
+        {/* Steps indicator (clickable) */}
+        <div className="mb-8">
+          <ol className="flex items-center text-xs sm:text-sm text-gray-700 gap-2 overflow-hidden" role="list">
+            {STEPS.map((_, index) => (
+              <li key={index} className="flex items-center">
+                <button
+                  type="button"
+                  onClick={() => setCurrentStep(index)}
+                  className={`flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+                    currentStep === index ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
+                  }`}
+                  aria-current={currentStep === index ? 'step' : undefined}
+                  aria-label={`Step ${index + 1}`}
+                >
+                  {index + 1}
+                </button>
+                {index < STEPS.length - 1 && (
+                  <span className="w-6 sm:w-8 h-px bg-gray-300 mx-2" aria-hidden="true"></span>
+                )}
+              </li>
+            ))}
+          </ol>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Information */}
+          {currentStep === 0 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -524,8 +559,10 @@ export default function AddCarListing() {
               </div>
             </div>
           </motion.div>
+          )}
 
           {/* Condition */}
+          {currentStep === 1 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -553,8 +590,10 @@ export default function AddCarListing() {
               
             </div>
           </motion.div>
+          )}
 
           {/* Trade-in Option */}
+          {currentStep === 2 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -578,8 +617,10 @@ export default function AddCarListing() {
               </div>
             </RadioGroup>
           </motion.div>
+          )}
 
           {/* Target Buyer */}
+          {currentStep === 3 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -593,8 +634,10 @@ export default function AddCarListing() {
               className="h-24 rounded-xl py-5"
             />
           </motion.div>
+          )}
 
           {/* Price */}
+          {currentStep === 4 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -609,8 +652,10 @@ export default function AddCarListing() {
               className="w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500"
             />
           </motion.div>
+          )}
 
           {/* Contact Info */}
+          {currentStep === 5 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -659,8 +704,10 @@ export default function AddCarListing() {
               </div>
             </div>
           </motion.div>
+          )}
 
           {/* Image Upload */}
+          {currentStep === 6 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -721,8 +768,33 @@ export default function AddCarListing() {
               )}
             </div>
           </motion.div>
+          )}
+
+          {/* Navigation Buttons */}
+          <div className="flex items-center justify-between gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
+              disabled={currentStep === 0}
+              className="px-6"
+            >
+              Previous
+            </Button>
+
+            {currentStep < STEPS.length - 1 && (
+              <Button
+                type="button"
+                onClick={() => setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))}
+                className="px-6"
+              >
+                Next
+              </Button>
+            )}
+          </div>
 
           {/* Submit Button */}
+          {currentStep === STEPS.length - 1 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -736,6 +808,7 @@ export default function AddCarListing() {
               {isSubmitting ? t('submitting') : t('submit_listing')}
             </Button>
           </motion.div>
+          )}
         </form>
       </motion.div>
     </div>
