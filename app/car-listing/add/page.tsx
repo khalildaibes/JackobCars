@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useLocale } from 'next-intl';
-import axios from 'axios';
 import { 
   // manufacturers_arabic, manufacturers_english,
    manufacturers_hebrew } from '../../../data/manufacturers_multilingual';
@@ -20,15 +19,15 @@ function getManufacturers(locale: string) {
 const engineTypes = ['petrol', 'diesel', 'hybrid', 'electric'] as const;
 const conditions = ['excellent', 'good', 'fair', 'poor'] as const;
 
-interface ManufacturerData {
-  submodels: any[];
-  manufacturerImage: string;
-  year: {
-    from: number;
-    to: number;
-    step: number;
-  };
-}
+// interface ManufacturerData {
+//   submodels: any[];
+//   manufacturerImage: string;
+//   year: {
+//     from: number;
+//     to: number;
+//     step: number;
+//   };
+// }
 
 // Define the steps for the wizard
 const STEPS = [
