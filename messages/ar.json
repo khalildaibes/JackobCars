@@ -791,6 +791,21 @@
     "default_currency": "$"
   },
   "CarListing": {
+    "fuel_type":{
+      "petrol": "بنزين",
+      "diesel": "ديزل",
+      "hybrid": "هجين",
+      "electric": "كهربائي"
+    },
+    "select_manufacturer": "اختر الشركة المصنعة",
+    "select_model": "اختر الموديل",
+    "select_year": "اختر السنة",
+    "select_fuel_type": "اختر نوع الوقود",
+    "select_transmission": "اختر ناقل الحركة",
+    "select_drive_type": "اختر نوع الدفع",
+    "select_engine_type": "اختر نوع المحرك",
+    "select_engine_size": "اختر سعة المحرك",
+    "plate_number": "رقم اللوحة",
     "add_to_compare": "أضف للمقارنة",
     "message_owner": "اتصل بالبائع",
     "added_to_favorites": "أضف للمفضلة",

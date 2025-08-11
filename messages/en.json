@@ -934,6 +934,21 @@
     "Accessories": "Accessories"
   },
   "CarListing": {
+    "fuel_type":{
+      "petrol": "Petrol",
+      "diesel": "Diesel",
+      "hybrid": "Hybrid",
+      "electric": "Electric"
+    },
+    "select_year": "Select Year",
+    "select_fuel_type": "Select Fuel Type",
+    "select_transmission": "Select Transmission",
+    "select_drive_type": "Select Drive Type",
+    "select_engine_type": "Select Engine Type",
+    "select_engine_size": "Select Engine Size",
+    "select_model": "Select Model",
+    "plate_number": "Plate Number",
+    "add_car_listing": "Add Car Listing",
     "add_to_compare": "Add to Compare",
     "message_owner": "Message Owner",
     "find_perfect_car": "Find Your Perfect Car",

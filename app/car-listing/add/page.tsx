@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useLocale } from 'next-intl';
 import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
-import { Upload, Plus, Car, X, Camera } from 'lucide-react';
+import { Upload, Plus, Car, X, Camera, ArrowLeft, ArrowRight } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -16,8 +16,17 @@ import {
 import { RadioGroup, RadioGroupItem } from "../../../components/ui/radio-group";
 import { Label } from "../../../components/ui/label";
 import { Textarea } from "../../../components/ui/textarea";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import axios from 'axios';
+import { manufacturers_arabic, manufacturers_english, manufacturers_hebrew } from '../../../data/manufacturers_multilingual';
+
+// Use based on locale
+// locale is not defined yet here, so we must export a function to get manufacturers based on locale
+function getManufacturers(locale: string) {
+  // if (locale === 'ar') return manufacturers_arabic;
+  // if (locale === 'en') return manufacturers_hebrew;
+  return manufacturers_hebrew;
+}
 
 const engineTypes = ['petrol', 'diesel', 'hybrid', 'electric'] as const;
 const conditions = ['excellent', 'good', 'fair', 'poor'] as const;
@@ -32,16 +41,24 @@ interface ManufacturerData {
   };
 }
 
-interface ManufacturersData {
-  [key: string]: ManufacturerData;
-}
+// Define the steps for the wizard
+const STEPS = [
+  { id: 'basic', title: 'Basic Information', icon: Car },
+  { id: 'condition', title: 'Condition', icon: Car },
+  { id: 'trade-in', title: 'Trade-in Option', icon: Car },
+  { id: 'price', title: 'Price', icon: Car },
+  { id: 'contact', title: 'Contact Info', icon: Car },
+  { id: 'images', title: 'Upload Images', icon: Camera },
+];
 
 export default function AddCarListing() {
   const t = useTranslations('CarListing');
   const locale = useLocale();
+  const manufacturers = getManufacturers(locale);
+
   const isRTL = locale === 'ar' || locale === 'he-IL';
+  const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [manufacturersData, setManufacturersData] = useState<ManufacturersData>({});
   const [selectedManufacturer, setSelectedManufacturer] = useState('');
   const [selectedModel, setSelectedModel] = useState('');
   const [availableModels, setAvailableModels] = useState<any[]>([]);
@@ -71,29 +88,10 @@ export default function AddCarListing() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Load manufacturers data from JSON file
-  useEffect(() => {
-    const loadManufacturersData = async () => {
-      try {
-        const response = await fetch('/data/manufacturers_new_structure.json');
-        if (response.ok) {
-          const data = await response.json();
-          setManufacturersData(data);
-        } else {
-          console.error('Failed to load manufacturers data');
-        }
-      } catch (error) {
-        console.error('Error loading manufacturers data:', error);
-      }
-    };
-
-    loadManufacturersData();
-  }, []);
-
   // Update available models when manufacturer changes
   useEffect(() => {
-    if (selectedManufacturer && manufacturersData[selectedManufacturer]) {
-      const models = manufacturersData[selectedManufacturer].submodels || [];
+    if (selectedManufacturer && manufacturers[selectedManufacturer]) {
+      const models = manufacturers[selectedManufacturer].submodels || [];
       setAvailableModels(models);
       setSelectedModel(''); // Reset model selection
       setAvailableYears([]); // Clear years until model is selected
@@ -101,12 +99,12 @@ export default function AddCarListing() {
       setAvailableModels([]);
       setAvailableYears([]);
     }
-  }, [selectedManufacturer, manufacturersData]);
+  }, [selectedManufacturer, manufacturers]);
 
   // Update available years when model changes
   useEffect(() => {
-    if (selectedManufacturer && selectedModel && manufacturersData[selectedManufacturer]) {
-      const manufacturer = manufacturersData[selectedManufacturer];
+    if (selectedManufacturer && selectedModel && manufacturers[selectedManufacturer]) {
+      const manufacturer = manufacturers[selectedManufacturer];
       
       // Generate year options based on manufacturer data
       const yearData = manufacturer.year;
@@ -127,13 +125,13 @@ export default function AddCarListing() {
     } else {
       setAvailableYears([]);
     }
-  }, [selectedManufacturer, selectedModel, manufacturersData]);
+  }, [selectedManufacturer, selectedModel, manufacturers]);
 
   // Update formData.makeModel when both manufacturer and model are selected
   useEffect(() => {
     if (selectedManufacturer && selectedModel) {
-      const manufacturerName = manufacturersData[selectedManufacturer]?.manufacturerImage ? 
-        Object.keys(manufacturersData).find(key => key === selectedManufacturer) : selectedManufacturer;
+      const manufacturerName = manufacturers[selectedManufacturer]?.manufacturerImage ? 
+        Object.keys(manufacturers).find(key => key === selectedManufacturer) : selectedManufacturer;
       const modelName = availableModels.find(model => model.id?.toString() === selectedModel)?.title || selectedModel;
       
       setFormData(prev => ({
@@ -141,26 +139,45 @@ export default function AddCarListing() {
         makeModel: `${manufacturerName} ${modelName}`.trim()
       }));
     }
-  }, [selectedManufacturer, selectedModel, availableModels, manufacturersData]);
+  }, [selectedManufacturer, selectedModel, availableModels, manufacturers]);
 
-  const validateForm = () => {
+  const validateCurrentStep = () => {
     const newErrors: Record<string, string> = {};
+    const currentStepId = STEPS[currentStep].id;
 
-    if (!formData.title) newErrors.title = t('validation_required');
-    if (!selectedManufacturer) newErrors.manufacturer = t('validation_required');
-    if (!selectedModel) newErrors.model = t('validation_required');
-    if (!formData.year) newErrors.year = t('validation_required');
-    if (!formData.plateNumber) newErrors.plateNumber = t('validation_required');
-    if (!formData.email) {
-      newErrors.email = t('validation_required');
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = t('validation_email');
+    switch (currentStepId) {
+      case 'basic':
+        if (!formData.title) newErrors.title = t('validation_required');
+        if (!selectedManufacturer) newErrors.manufacturer = t('validation_required');
+        if (!selectedModel) newErrors.model = t('validation_required');
+        if (!formData.year) newErrors.year = t('validation_required');
+        if (!formData.plateNumber) newErrors.plateNumber = t('validation_required');
+        break;
+      case 'contact':
+        if (!formData.email) {
+          newErrors.email = t('validation_required');
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+          newErrors.email = t('validation_email');
+        }
+        if (!formData.phone) newErrors.phone = t('validation_required');
+        break;
+      case 'images':
+        if (!formData.images.length) newErrors.images = t('validation_images');
+        break;
     }
-    if (!formData.phone) newErrors.phone = t('validation_required');
-    if (!formData.images.length) newErrors.images = t('validation_images');
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const nextStep = () => {
+    if (validateCurrentStep()) {
+      setCurrentStep(prev => Math.min(prev + 1, STEPS.length - 1));
+    }
+  };
+
+  const prevStep = () => {
+    setCurrentStep(prev => Math.max(prev - 1, 0));
   };
 
   const uploadImages = async (files: File[]) => {
@@ -193,7 +210,7 @@ export default function AddCarListing() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    if (!validateCurrentStep()) return;
 
     setIsSubmitting(true);
 
@@ -299,6 +316,7 @@ export default function AddCarListing() {
         setAvailableModels([]);
         setAvailableYears([]);
         setErrors(prev => ({ ...prev, manufacturer: '', model: '' }));
+        setCurrentStep(0);
       }
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -326,28 +344,17 @@ export default function AddCarListing() {
     }));
   };
 
-  return (
-    <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8 ${isRTL ? 'rtl' : 'ltr'}`}>
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-3xl mx-auto"
-      >
-        <div className="flex items-center gap-6 mb-8">
-          <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-4 shadow-lg">
-            <Car className="h-8 w-8 text-white" />
-          </div>
-          <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('add_car_listing')}</h1>
-            <p className="text-gray-600">{t('fill_details')}</p>
-          </div>
-        </div>
+  const renderStepContent = () => {
+    const currentStepId = STEPS[currentStep].id;
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Information */}
+    switch (currentStepId) {
+      case 'basic':
+        return (
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            key="basic"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
             className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
           >
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('basic_information')}</h2>
@@ -365,13 +372,13 @@ export default function AddCarListing() {
                 {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white">
                 <div>
                   <Select
                     value={selectedManufacturer}
                     onValueChange={(value) => {
-                      if (value && manufacturersData[value]) {
-                        const models = manufacturersData[value].submodels || [];
+                      if (value && manufacturers[value]) {
+                        const models = manufacturers[value].submodels || [];
                         setAvailableModels(models);
                         setSelectedModel(''); // Reset model selection
                         setAvailableYears([]); // Clear years until model is selected
@@ -383,18 +390,18 @@ export default function AddCarListing() {
                       setErrors(prev => ({ ...prev, manufacturer: '' }));
                     }}
                   >
-                    <SelectTrigger className="rounded-xl py-5">
+                    <SelectTrigger className="rounded-xl py-5 bg-white">
                       <SelectValue placeholder={t('select_manufacturer') || 'Select Manufacturer'} />
                     </SelectTrigger>
                     <SelectContent className="bg-white">
-                      {Object.keys(manufacturersData).length === 0 ? (
+                      {Object.keys(manufacturers).length === 0 ? (
                         <SelectItem value="loading_manufacturers" disabled>
                           Loading manufacturers...
                         </SelectItem>
                       ) : (
-                        Object.keys(manufacturersData).map((manufacturer) => (
+                        Object.keys(manufacturers).map((manufacturer) => (
                           <SelectItem key={manufacturer} value={manufacturer}>
-                            {manufacturersData[manufacturer]?.submodels?.[0]?.manufacturer?.title || manufacturer}
+                            {manufacturers[manufacturer].submodels[0].manufacturer.title}
                           </SelectItem>
                         ))
                       )}
@@ -524,11 +531,15 @@ export default function AddCarListing() {
               </div>
             </div>
           </motion.div>
+        );
 
-          {/* Condition */}
+      case 'condition':
+        return (
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            key="condition"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
             className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
           >
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('condition')}</h2>
@@ -549,16 +560,47 @@ export default function AddCarListing() {
                 </SelectContent>
               </Select>
               
-              
-              
+              <div>
+                <Label className="text-sm font-medium text-gray-700 mb-2 block">{t('known_problems')}</Label>
+                <Textarea
+                  placeholder={t('known_problems_placeholder') || 'Describe any known problems...'}
+                  value={formData.knownProblems}
+                  onChange={(e) => setFormData(prev => ({ ...prev, knownProblems: e.target.value }))}
+                  className="min-h-[100px] rounded-xl"
+                />
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium text-gray-700 mb-2 block">{t('pros')}</Label>
+                <Textarea
+                  placeholder={t('pros_placeholder') || 'List the pros (one per line)...'}
+                  value={formData.pros}
+                  onChange={(e) => setFormData(prev => ({ ...prev, pros: e.target.value }))}
+                  className="min-h-[100px] rounded-xl"
+                />
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium text-gray-700 mb-2 block">{t('cons')}</Label>
+                <Textarea
+                  placeholder={t('cons_placeholder') || 'List the cons (one per line)...'}
+                  value={formData.cons}
+                  onChange={(e) => setFormData(prev => ({ ...prev, cons: e.target.value }))}
+                  className="min-h-[100px] rounded-xl"
+                />
+              </div>
             </div>
           </motion.div>
+        );
 
-          {/* Trade-in Option */}
+      case 'trade-in':
+        return (
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
+            key="trade-in"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className={`bg-white rounded-2xl shadow-sm p-6 border border-gray-100 ${locale === 'ar' ? 'rtl' : ''}`}
           >
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('trade_in_option')}</h2>
             <RadioGroup
@@ -578,26 +620,15 @@ export default function AddCarListing() {
               </div>
             </RadioGroup>
           </motion.div>
+        );
 
-          {/* Target Buyer */}
+      case 'price':
+        return (
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
-          >
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('target_buyer')}</h2>
-            <Textarea
-              placeholder={t('target_buyer_placeholder')}
-              value={formData.targetBuyer}
-              onChange={(e) => setFormData(prev => ({ ...prev, targetBuyer: e.target.value }))}
-              className="h-24 rounded-xl py-5"
-            />
-          </motion.div>
-
-          {/* Price */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            key="price"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
             className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
           >
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('price')}</h2>
@@ -609,11 +640,15 @@ export default function AddCarListing() {
               className="w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500"
             />
           </motion.div>
+        );
 
-          {/* Contact Info */}
+      case 'contact':
+        return (
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            key="contact"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
             className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
           >
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('contact_info')}</h2>
@@ -659,11 +694,15 @@ export default function AddCarListing() {
               </div>
             </div>
           </motion.div>
+        );
 
-          {/* Image Upload */}
+      case 'images':
+        return (
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            key="images"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
             className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
           >
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('upload_images')}</h2>
@@ -721,20 +760,103 @@ export default function AddCarListing() {
               )}
             </div>
           </motion.div>
+        );
 
-          {/* Submit Button */}
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8 ${isRTL ? 'rtl' : 'ltr'}`}>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-4xl mx-auto"
+      >
+        <div className="flex items-center gap-6 mb-8">
+          <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-4 shadow-lg">
+            <Car className="h-8 w-8 text-white" />
+          </div>
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('add_car_listing')}</h1>
+            <p className="text-gray-600">{t('fill_details')}</p>
+          </div>
+        </div>
+
+        {/* Progress Steps */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            {STEPS.map((step, index) => (
+              <div key={step.id} className="flex items-center">
+                <div className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-200 ${
+                  index <= currentStep 
+                    ? 'bg-blue-600 border-blue-600 text-white' 
+                    : 'bg-white border-gray-300 text-gray-500'
+                }`}>
+                  {index < currentStep ? (
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    <step.icon className="w-6 h-6" />
+                  )}
+                </div>
+                {index < STEPS.length - 1 && (
+                  <div className={`w-16 h-0.5 mx-2 transition-all duration-200 ${
+                    index < currentStep ? 'bg-blue-600' : 'bg-gray-300'
+                  }`} />
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-4">
+            <p className="text-lg font-medium text-gray-700">
+              Step {currentStep + 1} of {STEPS.length}: {STEPS[currentStep].title}
+            </p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <AnimatePresence mode="wait">
+            {renderStepContent()}
+          </AnimatePresence>
+
+          {/* Navigation Buttons */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="sticky bottom-4 bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg"
+            className="flex justify-between items-center bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg"
           >
             <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-200 transform hover:scale-[1.01] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              type="button"
+              onClick={prevStep}
+              disabled={currentStep === 0}
+              variant="outline"
+              className="flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? t('submitting') : t('submit_listing')}
+              <ArrowLeft className="h-4 w-4" />
+              Previous
             </Button>
+
+            {currentStep === STEPS.length - 1 ? (
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="flex items-center gap-2 px-8 py-3 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-200 transform hover:scale-[1.01] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? t('submitting') : t('submit_listing')}
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={nextStep}
+                className="flex items-center gap-2 px-8 py-3 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-200 transform hover:scale-[1.01] hover:shadow-lg"
+              >
+                Next
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            )}
           </motion.div>
         </form>
       </motion.div>

@@ -318,6 +318,22 @@
     "book_now": "הזמן עכשיו"
   },
   "CarListing": {
+
+    "fuel_type":{
+      "petrol": "דלק",
+      "diesel": "דיזל",
+      "hybrid": "מערבל",
+      "electric": "חשמלי"
+    },
+    "select_year": "בחר שנה",
+    "select_fuel_type": "בחר סוג הכיר",
+    "select_transmission": "בחר מערכת ההפעלה",
+    "select_drive_type": "בחר סוג הדיפלייט",
+    "select_engine_type": "בחר סוג המנוע",
+    "select_engine_size": "בחר גודל המנוע",
+    "select_model": "בחר דגם",
+    "plate_number": "מספר לוחית",
+    "add_car_listing": "הוסף רכב",
     "month": "חודש",
     "add_to_compare": "הוסף להשוואה",
     "message_owner": "הודעת בעל הרכב",
