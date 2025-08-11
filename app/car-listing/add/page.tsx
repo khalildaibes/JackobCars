@@ -170,24 +170,24 @@ export default function AddCarListing() {
   };
 
   const uploadImages = async (files: File[]) => {
-    const uploadPromises = files.map(async (file) => {
-      const formData = new FormData();
-      formData.append('files', file);
+    // const uploadPromises = files.map(async (file) => {
+    //   const formData = new FormData();
+    //   formData.append('files', file);
       
-      try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        return response.data[0].id; // Return the uploaded file ID
-      } catch (error) {
-        console.error('Error uploading image:', error);
-        throw error;
-      }
-    });
+    //   try {
+    //     const response = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, formData, {
+    //       headers: {
+    //         'Content-Type': 'multipart/form-data',
+    //       },
+    //     });
+    //     return response.data[0].id; // Return the uploaded file ID
+    //   } catch (error) {
+    //     console.error('Error uploading image:', error);
+    //     throw error;
+    //   }
+    // });
 
-    return Promise.all(uploadPromises);
+    // return Promise.all(uploadPromises);
   };
 
   const generateSlug = (title: string) => {
@@ -242,10 +242,10 @@ export default function AddCarListing() {
             }
           ],
           description: formData.knownProblems,
-          images: {
-            main: imageIds[0] || '',
-            additional: imageIds.slice(1)
-          }
+          // images: {
+          //   main: imageIds[0] || '',
+          //   additional: imageIds.slice(1)
+          // }
         }
       };
 
@@ -266,47 +266,47 @@ export default function AddCarListing() {
       };
 
       // Send the data to Strapi
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/car-listings`, 
-        carListingData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      // const response = await axios.post(
+      //   `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/car-listings`, 
+      //   carListingData,
+      //   {
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     },
+      //   }
+      // );
 
-      if (response.data) {
-        alert(t('success_message'));
-        // Reset form
-        setFormData({
-          title: '',
-          makeModel: '',
-          year: '',
-          plateNumber: '',
-          mileage: '',
-          color: '',
-          engineType: '',
-          transmission: 'Automatic',
-          currentCondition: '',
-          knownProblems: '',
-          pros: '',
-          cons: '',
-          tradeIn: '',
-          targetBuyer: '',
-          askingPrice: '',
-          name: '',
-          email: '',
-          phone: '',
-          images: []
-        });
+      // if (response.data) {
+      //   alert(t('success_message'));
+      //   // Reset form
+      //   setFormData({
+      //     title: '',
+      //     makeModel: '',
+      //     year: '',
+      //     plateNumber: '',
+      //     mileage: '',
+      //     color: '',
+      //     engineType: '',
+      //     transmission: 'Automatic',
+      //     currentCondition: '',
+      //     knownProblems: '',
+      //     pros: '',
+      //     cons: '',
+      //     tradeIn: '',
+      //     targetBuyer: '',
+      //     askingPrice: '',
+      //     name: '',
+      //     email: '',
+      //     phone: '',
+      //     images: []
+      //   });
         setSelectedManufacturer('');
         setSelectedModel('');
         setAvailableModels([]);
         setAvailableYears([]);
         setErrors(prev => ({ ...prev, manufacturer: '', model: '' }));
         setCurrentStep(0);
-      }
+      // }
     } catch (error) {
       console.error('Error submitting form:', error);
       alert(t('error_message'));
