@@ -11,76 +11,27 @@ const STRAPI_TOKEN = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
 
 export async function POST(request: Request) {
   try {
-    const { brand, model, year, specs, images, video } = await request.json();
+    const {
+      brand,
+      model,
+      year,
+      specs,
+      images,
+      video,
+      name,
+      slug,
+      store,
+      publisher,
+      services,
+      category
+    } = await request.json();
     const locale = await getLocale();
 
     // First, generate car details using ChatGPT
     const prompt = `
       Analyze this ${year} ${brand} ${model} car and provide a detailed response in the following JSON format:
       {
-        "pros": [
-          "5 specific advantages of this car model"
-        ],
-        "cons": [
-          "5 specific disadvantages of this car model"
-        ],
-        "engine_transmission_details": [
-          {
-            "label": "Engine Type",
-            "value": "specific engine type"
-          },
-          {
-            "label": "Horsepower",
-            "value": "estimated HP"
-          },
-          {
-            "label": "Torque",
-            "value": "estimated torque"
-          },
-          {
-            "label": "Transmission",
-            "value": "${specs.transmission}"
-          },
-          {
-            "label": "Drivetrain",
-            "value": "drivetrain type"
-          },
-          {
-            "label": "Fuel Economy",
-            "value": "${specs.mileage}"
-          },
-          {
-            "label": "Emissions",
-            "value": "emissions standard"
-          }
-        ],
-        "dimensions_capacity": [
-          {
-            "label": "Width",
-            "value": "estimated width in mm"
-          },
-          {
-            "label": "Width (including mirrors)",
-            "value": "estimated total width in mm"
-          },
-          {
-            "label": "Gross Vehicle Weight (kg)",
-            "value": "estimated weight in kg"
-          },
-          {
-            "label": "Max. Loading Weight (kg)",
-            "value": "estimated max load in kg"
-          },
-          {
-            "label": "Max. Roof Load (kg)",
-            "value": "estimated roof load in kg"
-          },
-          {
-            "label": "No. of Seats",
-            "value": "typical seat count"
-          }
-        ],
-        "description": "A detailed one-line description of the ${year} ${brand} ${model}"
+        "description": "A concise one-line description of the ${year} ${brand} ${model}"
       }
 
       Base the response on typical specifications and features of this car model.
@@ -97,74 +48,69 @@ export async function POST(request: Request) {
 
     const generatedData = JSON.parse(completion.choices[0].message.content || '{}');
 
-    // Now prepare the data for Strapi
+    const derivedName = name || `${brand} ${model} ${year}`;
+    const generateSlug = (text: string) =>
+      text
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]+/g, '')
+        .replace(/--+/g, '-')
+        .replace(/^-+/, '')
+        .replace(/-+$/, '');
+    const derivedSlug = slug || `${generateSlug(derivedName)}-${Date.now().toString().slice(-6)}`;
+
+    const mainImage = Array.isArray(images) ? images[0] : images?.main ?? null;
+    const additionalImages = Array.isArray(images) ? images.slice(1) : images?.additional ?? [];
+
+    // Now prepare the data for Strapi to match the requested JSON shape
+    const carDetails = {
+      car: {
+        fuel: specs?.fuel ?? 'غير محدد',
+        name: derivedName,
+        year: year,
+        miles: specs?.miles ?? '',
+        price: specs?.price ?? 0,
+        images: {
+          main: mainImage ?? '',
+          additional: additionalImages ?? []
+        },
+        features: [
+          { label: 'سنة الصنع', value: year?.toString?.() ?? '' },
+          { label: 'عدد الكيلومترات', value: specs?.miles ?? '' },
+          { label: 'ناقل الحركة', value: specs?.transmission ?? 'غير محدد' },
+          { label: 'نوع الوقود', value: specs?.fuel ?? 'غير محدد' }
+        ],
+        body_type: specs?.body_type ?? 'غير محدد',
+        description: generatedData?.description ?? '',
+        transmission: specs?.transmission ?? 'غير محدد'
+      }
+    } as const;
+
     const productData = {
       data: {
-        car: {
-          name: `${brand} ${model} ${year}`,
-          description: generatedData.description,
-          price: specs.price,
-          year: year,
-          miles: specs.miles,
-          mileage: specs.mileage,
-          fuel: specs.fuel,
-          transmission: specs.transmission,
-          body_type: specs.body_type,
-          pros: generatedData.pros,
-          cons: generatedData.cons,
-          features: [
-            { icon: 'img_calendar.svg', label: 'Year', value: year.toString() },
-            { icon: 'img_mileage.svg', label: 'Mileage', value: specs.miles },
-            { icon: 'img_transmission.svg', label: 'Transmission', value: specs.transmission },
-            { icon: 'img_fuel.svg', label: 'Fuel', value: specs.fuel },
-            { icon: 'img_offer.svg', label: 'Offer', value: 'Make an Offer Price' }
-          ],
-          badges: [
-            {
-              color: 'blue-400',
-              label: 'Best Seller',
-              textColor: 'white'
-            }
-          ],
-          dimensions_capacity: generatedData.dimensions_capacity,
-          engine_transmission_details: generatedData.engine_transmission_details,
-          images: images,
-          video: video,
-          actions: {
-            save: {
-              icon: 'img_bookmark.svg',
-              label: 'Save'
-            },
-            share: {
-              icon: 'img_share.svg',
-              label: 'Share'
-            },
-            compare: {
-              icon: 'img_compare.svg',
-              label: 'Compare'
-            }
-          },
-          breadcrumb: [
-            {
-              link: '#',
-              name: 'Home'
-            },
-            {
-              link: '#',
-              name: 'Listings'
-            },
-            {
-              link: '#',
-              name: `${brand} ${model} ${year}`,
-              current: true
-            }
-          ]
-        }
+        categories: 'car-listing',
+        quantity: 1,
+        name: derivedName,
+        slug: derivedSlug,
+        price: specs?.price ?? 0,
+        details: carDetails,
+        locale,
+        clicks: 0,
+        visits: 0,
+        shares: 0,
+        image: mainImage ?? undefined,
+        store: store ?? undefined,
+        services: services ?? [],
+        publisher: publisher ?? undefined,
+        category: category ?? [],
+        video: video ?? undefined,
       }
     };
 
     // Submit to Strapi
-    const strapiResponse = await fetch(`${STRAPI_URL}/api/products`, {
+    const strapiResponse = await fetch(`${STRAPI_URL}/api/car-listings`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

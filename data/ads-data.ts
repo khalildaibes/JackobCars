@@ -20,13 +20,13 @@ export const mobileAds: AdItem[] = [
     id: 'adham-andraws',
     image: 'adham_andraws.jpg',
     title: 'مكتب أدهم أندراوس للمحاماة',
-    description: 'متخصصين بقضايا المخالفات المرورية والحوادث وكل ما يتعلق بالتأمين - 0509977084',
+    description: 'متخصصين بقضايا المخالفات المرورية والحوادث وكل ما يتعلق بالتأمين - 0526866062',
     category: 'محاماة',
     categoryColor: 'purple',
     buttonText: 'استشارة قانونية',
     buttonColor: 'purple',
     alt: 'مكتب أدهم أندراوس للمحاماة',  
-    url: 'https://api.whatsapp.com/send/?phone=0544603725&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send/?phone=0526866062&text&type=phone_number&app_absent=0'
   }
 ];
 
@@ -59,13 +59,13 @@ export const mainContentAds: AdItem[] = [
     id: 'adham-andraws',
     image: 'adham_andraws.jpg',
     title: 'مكتب أدهم أندراوس للمحاماة',
-    description: 'متخصصين بقضايا المخالفات المرورية والحوادث وكل ما يتعلق بالتأمين - 0509977084',
+    description: 'متخصصين بقضايا المخالفات المرورية والحوادث وكل ما يتعلق بالتأمين - 0526866062',
     category: 'محاماة',
     categoryColor: 'purple',
     buttonText: 'استشارة قانونية',
     buttonColor: 'purple',
     alt: 'مكتب أدهم أندراوس للمحاماة',  
-    url: 'https://api.whatsapp.com/send/?phone=0544603725&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send/?phone=0526866062&text&type=phone_number&app_absent=0'
   }
 ];
 
