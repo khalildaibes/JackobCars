@@ -11,7 +11,7 @@ export const heroAds: AdItem[] = [
     buttonText: 'احجز الآن',
     buttonColor: 'blue',
     alt: 'معهد رويال بسيخومتري',
-    url: 'https://api.whatsapp.com/send/?phone=0502244972&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send?phone=0502244972&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   }
 ];
 
@@ -26,7 +26,7 @@ export const mobileAds: AdItem[] = [
     buttonText: 'استشارة قانونية',
     buttonColor: 'purple',
     alt: 'مكتب أدهم أندراوس للمحاماة',  
-    url: 'https://api.whatsapp.com/send/?phone=0526866062&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send?phone=0526866062&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   }
 ];
 
@@ -41,7 +41,7 @@ export const mainContentAds: AdItem[] = [
     buttonText: 'تواصل معنا',
     buttonColor: 'blue',
     alt: 'معهد رويال',
-    url: 'https://api.whatsapp.com/send/?phone=0502244972&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send?phone=0502244972&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   },
   {
     id: 'asd-pdr',
@@ -53,7 +53,7 @@ export const mainContentAds: AdItem[] = [
     buttonText: 'احجز الخدمة',
     buttonColor: 'green',
     alt: 'إصلاح PDR',
-    url: 'https://api.whatsapp.com/send/?phone=0544603725&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send?phone=0544603725&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   },
   {
     id: 'adham-andraws',
@@ -65,7 +65,7 @@ export const mainContentAds: AdItem[] = [
     buttonText: 'استشارة قانونية',
     buttonColor: 'purple',
     alt: 'مكتب أدهم أندراوس للمحاماة',  
-    url: 'https://api.whatsapp.com/send/?phone=0526866062&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send?phone=0526866062&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   }
 ];
 
@@ -80,7 +80,7 @@ export const betweenNewsAds: AdItem[] = [
     buttonText: 'استشارة فورية',
     buttonColor: 'red',
     alt: 'مكتب دعيبس وعبد الغني للمحاماة',
-    url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send?phone=0509977084&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   },
   {
     id: 'asd-ceramic-ppf',
@@ -92,7 +92,7 @@ export const betweenNewsAds: AdItem[] = [
     buttonText: 'استفسر الآن',
     buttonColor: 'orange',
     alt: 'بي بي اف سيراميك',
-    url: 'https://api.whatsapp.com/send/?phone=0544603725&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send?phone=0544603725&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   }
 ];
 
@@ -107,7 +107,7 @@ export const leftSidebarAds: AdItem[] = [
     buttonText: 'احجز مكانك',
     buttonColor: 'blue',
     alt: 'معهد رويال',
-    url: 'https://api.whatsapp.com/send/?phone=0502244972&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send?phone=0502244972&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   },
   {
     id: 'sidebar-asd-main',
@@ -119,7 +119,7 @@ export const leftSidebarAds: AdItem[] = [
     buttonText: 'تواصل معنا',
     buttonColor: 'green',
     alt: 'ASD Detailing',
-    url: 'https://api.whatsapp.com/send/?phone=0544603725&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send?phone=0544603725&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   },
   {
     id: 'sidebar-daibes-law',
@@ -131,7 +131,7 @@ export const leftSidebarAds: AdItem[] = [
     buttonText: 'استشارة',
     buttonColor: 'purple',
     alt: 'مكتب دعيبس وعبد الغني',
-    url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send?phone=0509977084&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   }
 ];
 
@@ -146,7 +146,7 @@ export const rightSidebarAds: AdItem[] = [
     buttonText: 'احجز الآن',
     buttonColor: 'orange',
     alt: 'ASD Detailing',
-    url: 'https://api.whatsapp.com/send/?phone=0544603725&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send?phone=0544603725&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   },
   {
     id: 'sidebar-asd-pdr-service',
@@ -158,7 +158,7 @@ export const rightSidebarAds: AdItem[] = [
     buttonText: 'احجز الخدمة',
     buttonColor: 'teal',
     alt: 'إصلاح PDR',
-    url: 'https://api.whatsapp.com/send/?phone=0544603725&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send?phone=0544603725&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   },
   {
     id: 'sidebar-daibes-insurance',
@@ -170,7 +170,7 @@ export const rightSidebarAds: AdItem[] = [
     buttonText: 'استشارة',
     buttonColor: 'red',
     alt: 'خدمات التأمين',
-    url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send?phone=0509977084&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   }
 ];
 
@@ -186,7 +186,7 @@ export const daibesLawAds: AdItem[] = [
     buttonText: 'استشارة فورية',
     buttonColor: 'red',
     alt: 'مخالفات مرورية',
-    url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send?phone=0509977084&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   },
   {
     id: 'daibes-accidents',
@@ -198,7 +198,7 @@ export const daibesLawAds: AdItem[] = [
     buttonText: 'مساعدة فورية',
     buttonColor: 'orange',
     alt: 'حوادث السيارات',
-    url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send?phone=0509977084&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   },
   {
     id: 'daibes-insurance',
@@ -210,7 +210,7 @@ export const daibesLawAds: AdItem[] = [
     buttonText: 'استشارة تأمين',
     buttonColor: 'blue',
     alt: 'تأمين وتعويضات',
-    url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send?phone=0509977084&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   },
   {
     id: 'daibes-workplace-accidents',
@@ -222,7 +222,7 @@ export const daibesLawAds: AdItem[] = [
     buttonText: 'ضمان الحقوق',
     buttonColor: 'purple',
     alt: 'حوادث عمل',
-    url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send?phone=0509977084&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   },
   {
     id: 'daibes-contact',
@@ -234,6 +234,6 @@ export const daibesLawAds: AdItem[] = [
     buttonText: 'اتصل الآن',
     buttonColor: 'green',
     alt: 'تواصل مع دعيبس وعبد الغني',
-    url: 'https://api.whatsapp.com/send/?phone=0509977084&text&type=phone_number&app_absent=0'
+    url: 'https://api.whatsapp.com/send?phone=0509977084&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   }
 ]; 
