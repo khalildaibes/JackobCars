@@ -573,7 +573,7 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
                   <div className="relative w-full h-[300px] sm:h-auto sm:aspect-video rounded-none sm:rounded-xl overflow-hidden shadow-none sm:shadow-lg">
                     <Image
                       src={`http://64.227.112.249${block?.file.url}`}
-                      alt={block?.file.alternativeText || 'Media content'}
+                      alt={'Media content'}
                       fill
                       className="object-contain"
                     />
@@ -985,7 +985,12 @@ export function Lightbox({ src, onClose }: { src: string; onClose: () => void })
       </button>
       <div className="relative w-full h-full sm:h-auto sm:w-auto max-w-6xl max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt="Media preview" className="w-full h-full object-contain" />
+        <Image
+                      src={`${src}`}
+                      alt={'Media content'}
+                      fill
+                      className="object-contain"
+                    />
       </div>
     </div>
   );
