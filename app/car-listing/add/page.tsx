@@ -543,24 +543,25 @@ export default function AddCarListing() {
     setError(null);
   };
   const uploadImages = async (files: File[]) => {
-    const uploadPromises = files.map(async (file) => {
-      const formData = new FormData();
-      formData.append('files', file);
+  //   const uploadPromises = files.map(async (file) => {
+  //     const formData = new FormData();
+  //     formData.append('files', file);
       
-      try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        return response.data[0].id; // Return the uploaded file ID
-      } catch (error) {
-        console.error('Error uploading image:', error);
-        throw error;
-      }
-    });
+  //     try {
+  //       const response = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, formData, {
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //         },
+  //       });
+  //       return response.data[0].id; // Return the uploaded file ID
+  //     } catch (error) {
+  //       console.error('Error uploading image:', error);
+  //       throw error;
+  //     }
+  //   }
+  // );
 
-    return Promise.all(uploadPromises);
+    // return Promise.all(uploadPromises);
   };
 
   const generateSlug = (title: string) => {
@@ -571,120 +572,120 @@ export default function AddCarListing() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+    // e.preventDefault();
+    // if (!validateForm()) return;
 
-    setIsSubmitting(true);
+    // setIsSubmitting(true);
 
-    try {
-      // First upload all images
-      const imageIds = await uploadImages(formData.images);
+    // try {
+    //   // First upload all images
+    //   const imageIds = await uploadImages(formData.images);
 
-      // Format the car details object
-      const carDetails = {
-        car: {
-          name: formData.title,
-          year: parseInt(formData.year),
-          fuel: formData.engineType,
-          transmission: formData.transmission,
-          mileage: `${formData.mileage} KM`,
-          price: parseFloat(formData.askingPrice),
-          body_type: formData.makeModel.split(' ')[0], // This is a simplification
-          pros: formData.pros.split('\n').filter(item => item.trim() !== ''),
-          cons: formData.cons.split('\n').filter(item => item.trim() !== ''),
-          features: [
-            {
-              icon: "img_calendar_indigo_a400.svg",
-              label: t('year'),
-              value: formData.year.toString()
-            },
-            {
-              icon: "img_icon_indigo_a400.svg",
-              label: t('mileage'),
-              value: `${formData.mileage} KM`
-            },
-            {
-              icon: "img_icon_indigo_a400_18x18.svg",
-              label: t('transmission'),
-              value: formData.transmission
-            },
-            {
-              icon: "img_icon_4.svg",
-              label: t('fuel_type'),
-              value: formData.engineType
-            }
-          ],
-          description: formData.knownProblems,
-          images: {
-            main: imageIds[0] || '',
-            additional: imageIds.slice(1)
-          }
-        }
-      };
+    //   // Format the car details object
+    //   const carDetails = {
+    //     car: {
+    //       name: formData.title,
+    //       year: parseInt(formData.year),
+    //       fuel: formData.engineType,
+    //       transmission: formData.transmission,
+    //       mileage: `${formData.mileage} KM`,
+    //       price: parseFloat(formData.askingPrice),
+    //       body_type: formData.makeModel.split(' ')[0], // This is a simplification
+    //       pros: formData.pros.split('\n').filter(item => item.trim() !== ''),
+    //       cons: formData.cons.split('\n').filter(item => item.trim() !== ''),
+    //       features: [
+    //         {
+    //           icon: "img_calendar_indigo_a400.svg",
+    //           label: t('year'),
+    //           value: formData.year.toString()
+    //         },
+    //         {
+    //           icon: "img_icon_indigo_a400.svg",
+    //           label: t('mileage'),
+    //           value: `${formData.mileage} KM`
+    //         },
+    //         {
+    //           icon: "img_icon_indigo_a400_18x18.svg",
+    //           label: t('transmission'),
+    //           value: formData.transmission
+    //         },
+    //         {
+    //           icon: "img_icon_4.svg",
+    //           label: t('fuel_type'),
+    //           value: formData.engineType
+    //         }
+    //       ],
+    //       description: formData.knownProblems,
+    //       images: {
+    //         main: imageIds[0] || '',
+    //         additional: imageIds.slice(1)
+    //       }
+    //     }
+    //   };
 
-      // Prepare the data for Strapi
-      const carListingData = {
-        data: {
-          image: imageIds[0], // First image as main image
-          categories: ['car-listing'],
-          quantity: 1,
-          name: formData.title,
-          slug: generateSlug(formData.title),
-          price: parseFloat(formData.askingPrice),
-          details: carDetails,
-          store: 'khalil store', // You might want to make this dynamic
-          locale: locale,
-          publishedAt: null // Will be published after admin approval
-        }
-      };
+    //   // Prepare the data for Strapi
+    //   const carListingData = {
+    //     data: {
+    //       image: imageIds[0], // First image as main image
+    //       categories: ['car-listing'],
+    //       quantity: 1,
+    //       name: formData.title,
+    //       slug: generateSlug(formData.title),
+    //       price: parseFloat(formData.askingPrice),
+    //       details: carDetails,
+    //       store: 'khalil store', // You might want to make this dynamic
+    //       locale: locale,
+    //       publishedAt: null // Will be published after admin approval
+    //     }
+    //   };
 
-      // Send the data to Strapi
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/car-listings`, 
-        carListingData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+    //   // Send the data to Strapi
+    //   const response = await axios.post(
+    //     `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/car-listings`, 
+    //     carListingData,
+    //     {
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       },
+    //     }
+    //   );
 
-      if (response.data) {
-        alert(t('success_message'));
-        // Reset form
-        setFormData({
-          title: '',
-          makeModel: '',
-          year: '',
-          plateNumber: '',
-          mileage: '',
-          color: '',
-          engineType: '',
-          transmission: 'Automatic',
-          currentCondition: '',
-          knownProblems: '',
-          pros: '',
-          cons: '',
-          tradeIn: '',
-          targetBuyer: '',
-          askingPrice: '',
-          name: '',
-          email: '',
-          phone: '',
-          images: []
-        });
-        setSelectedManufacturer('');
-        setSelectedModel('');
-        setAvailableModels([]);
-        setAvailableYears([]);
-        setErrors(prev => ({ ...prev, manufacturer: '', model: '' }));
-      }
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      alert(t('error_message'));
-    } finally {
-      setIsSubmitting(false);
-    }
+    //   if (response.data) {
+    //     alert(t('success_message'));
+    //     // Reset form
+    //     setFormData({
+    //       title: '',
+    //       makeModel: '',
+    //       year: '',
+    //       plateNumber: '',
+    //       mileage: '',
+    //       color: '',
+    //       engineType: '',
+    //       transmission: 'Automatic',
+    //       currentCondition: '',
+    //       knownProblems: '',
+    //       pros: '',
+    //       cons: '',
+    //       tradeIn: '',
+    //       targetBuyer: '',
+    //       askingPrice: '',
+    //       name: '',
+    //       email: '',
+    //       phone: '',
+    //       images: []
+    //     });
+    //     setSelectedManufacturer('');
+    //     setSelectedModel('');
+    //     setAvailableModels([]);
+    //     setAvailableYears([]);
+    //     setErrors(prev => ({ ...prev, manufacturer: '', model: '' }));
+    //   }
+    // } catch (error) {
+    //   console.error('Error submitting form:', error);
+    //   alert(t('error_message'));
+    // } finally {
+    //   setIsSubmitting(false);
+    // }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
