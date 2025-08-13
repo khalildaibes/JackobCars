@@ -805,20 +805,7 @@ export default function AddCarListing() {
                       </div>
                       <div className="mt-3">
                         <div className="relative h-3 rounded-full overflow-hidden bg-gradient-to-r from-green-400 via-yellow-300 to-red-500" aria-label="Price heatmap" />
-                        {(() => {
-                          const min = Number(yad2PriceInfo.data.minPrice) || 0;
-                          const max = Number(yad2PriceInfo.data.maxPrice) || 0;
-                          const pred = Number(yad2PriceInfo.data.predictedPrice) || 0;
-                          const range = Math.max(max - min, 1);
-                          const pct = Math.min(100, Math.max(0, ((pred - min) / range) * 100));
-                          return (
-                            <div className="relative h-6">
-                              <div className="absolute top-0 -mt-2" style={{ left: `${pct}%`, transform: 'translateX(-50%)' }}>
-                                <div className="h-4 w-4 rounded-full bg-blue-600 border-2 border-white shadow" />
-                              </div>
-                            </div>
-                          );
-                        })()}
+
                       </div>
                       <div className="mt-2 text-xs text-gray-500">
                         Accuracy: {String(yad2PriceInfo.data.accuracyId)}
