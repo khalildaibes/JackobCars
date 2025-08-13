@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import React from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Facebook, Instagram, Twitter, Link as LinkIcon, MessageCircle } from "lucide-react";
+import { Facebook, Instagram, Twitter, Link as LinkIcon, MessageCircle, X } from "lucide-react";
 import Image from "next/image";
 import SidebarAds from "../../../components/ads/SidebarAds";
 import ContentAds from "../../../components/ads/ContentAds";
@@ -50,6 +50,7 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
     const [comments, setComments] = useState<Comment[]>([]);
     const [newComment, setNewComment] = useState('');
     const [submittingComment, setSubmittingComment] = useState(false);
+    const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
     const t = useTranslations('NewsPage');
   
     useEffect(() => {
@@ -138,6 +139,15 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
         };
       }
     }, [article, params.id]);
+
+    // Close lightbox on Escape key
+    useEffect(() => {
+      const onKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') setLightboxSrc(null);
+      };
+      window.addEventListener('keydown', onKeyDown);
+      return () => window.removeEventListener('keydown', onKeyDown);
+    }, []);
 
     const handleCommentSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -554,14 +564,21 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
           return (
             <div key={block?.id} className="my-8">
               {block?.file && (
-                <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg">
-                  <Image
-                    src={`http://64.227.112.249${block?.file.url}`}
-                    alt={block?.file.alternativeText || 'Media content'}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setLightboxSrc(`http://64.227.112.249${block?.file.url}`)}
+                  className="block w-full text-left"
+                  aria-label="Open image in fullscreen"
+                >
+                  <div className="relative w-full h-[300px] sm:h-auto sm:aspect-video rounded-none sm:rounded-xl overflow-hidden shadow-none sm:shadow-lg">
+                    <Image
+                      src={`http://64.227.112.249${block?.file.url}`}
+                      alt={block?.file.alternativeText || 'Media content'}
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                </button>
               )}
             </div>
           );
@@ -745,12 +762,12 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
 
             {/* Article Content */}
             <article className="py-16 bg-gradient-to-br from-gray-50 via-white to-blue-50">
-                <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100">
+                <div className="bg-white rounded-2xl shadow-xl p-2 sm:p-8 md:p-12 border border-gray-100">
                   
                   {/* Videos Section - TikTok/Instagram Embeds */}
                   {videos && videos.length > 0 && (
                     <section className="mb-12">
-                      <div className="bg-gradient-to-br from-blue-50 via-white to-pink-50 rounded-2xl shadow-2xl p-8 border border-blue-100">
+                      <div className="bg-gradient-to-br from-blue-50 via-white to-pink-50 rounded-2xl shadow-2xl p-4 sm:p-8 border border-blue-100">
                         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
                           🎬 Video Content
                         </h2>
@@ -771,7 +788,7 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
 
                   {/* Article Content Section */}
                   <section className="mb-12">
-                    <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8 border border-gray-100">
                      
                       {/* Content Blocks */}
                       {blocks && blocks.length > 0 ? (
@@ -905,7 +922,7 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
                         className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
                       >
                         {relatedArticle.cover?.url && (
-                          <div className="relative h-48 w-full">
+                          <div className="relative h-56 sm:h-48 w-full">
                             <Image
                               src={`http://64.227.112.249${relatedArticle.cover.url}`}
                               alt={relatedArticle.title}
@@ -940,8 +957,36 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
             title="اعلانات ممولة" 
             position="right" 
           />
-        </div>
-        </main>
+          </div>
+          </main>
+          {lightboxSrc && (
+            <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />
+          )}
       </div>
     );
 } 
+ 
+// Lightbox Overlay
+export function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
+  return (
+    <div
+      className="fixed inset-0 z-[1000] bg-black/90 flex items-center justify-center p-0 sm:p-6"
+      role="dialog"
+      aria-modal="true"
+      onClick={onClose}
+    >
+      <button
+        type="button"
+        onClick={onClose}
+        className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white"
+        aria-label="Close"
+      >
+        <X className="w-6 h-6" />
+      </button>
+      <div className="relative w-full h-full sm:h-auto sm:w-auto max-w-6xl max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={src} alt="Media preview" className="w-full h-full object-contain" />
+      </div>
+    </div>
+  );
+}
