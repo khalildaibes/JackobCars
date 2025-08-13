@@ -3,11 +3,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useLocale } from 'next-intl';
-import { Input } from "../../../components/ui/input";
-import { Button } from "../../../components/ui/button";
+import { Input } from "../../../../components/ui/input";
+import { Button } from "../../../../components/ui/button";
 import { Upload, Plus,  X, Camera } from 'lucide-react';
-import { Alert, AlertDescription } from "../../../components/ui/alert";
-import { Card, CardContent } from "../../../components/ui/card";
+import { Alert, AlertDescription } from "../../../../components/ui/alert";
+import { Card, CardContent } from "../../../../components/ui/card";
 
 
 import {
@@ -16,7 +16,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../../components/ui/select";
+} from "../../../../components/ui/select";
 import {
   Loader2,
   Search,
@@ -41,12 +41,12 @@ import {
   Activity,
   ShieldCheck
 } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "../../../components/ui/radio-group";
-import { Label } from "../../../components/ui/label";
-import { Textarea } from "../../../components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "../../../../components/ui/radio-group";
+import { Label } from "../../../../components/ui/label";
+import { Textarea } from "../../../../components/ui/textarea";
 import { motion } from "framer-motion";
 import { useRouter } from 'next/navigation';
-import {manufacturers_hebrew} from '../../../data/manufacturers_multilingual';
+import {manufacturers_hebrew} from '../../../../data/manufacturers_multilingual';
 const conditions = ['excellent', 'good', 'fair', 'poor'] as const;
 import React from 'react';
 
