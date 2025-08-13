@@ -315,30 +315,28 @@ export default function AddCarListing() {
   };
   const fetchCarPerformanceData = async (manufacturer: string, model: string, year: string, trim: string) => {
     try {
-      setLoadingPerformance(true);
-      const response = await fetch('/api/generate-car-information', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          manufacturer,
-          model,
-          year,
-          locale,
-          trim
-        }),
-      });
+      // setLoadingPerformance(true);
+      // const response = await fetch('/api/generate-car-information', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({
+      //     manufacturer,
+      //     model,
+      //     year,
+      //     locale,
+      //     trim
+      //   }),
+      // });
      
 
-      if (!response.ok) throw new Error('Failed to fetch performance data');
-      const data = await response.json();
-      setPerformanceData(data);
+      // const data = await response.json();
+      // setPerformanceData(data);
     } catch (error) {
-      console.error('Error fetching performance data:', error);
       setError(t('error_loading_info'));
     } finally {
-      setLoadingPerformance(false);
+      // setLoadingPerformance(false);
     }
   };
 
