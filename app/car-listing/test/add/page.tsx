@@ -803,13 +803,7 @@ export default function AddCarListing() {
                         <span>Predicted {Number(yad2PriceInfo.data.predictedPrice).toLocaleString()}</span>
                         <span>Max {Number(yad2PriceInfo.data.maxPrice).toLocaleString()}</span>
                       </div>
-                      <div className="mt-3">
-                        <div className="relative h-3 rounded-full overflow-hidden bg-gradient-to-r from-green-400 via-yellow-300 to-red-500" aria-label="Price heatmap" />
-
-                      </div>
-                      <div className="mt-2 text-xs text-gray-500">
-                        Accuracy: {String(yad2PriceInfo.data.accuracyId)}
-                      </div>
+                     
                     </div>
                   )}
 
