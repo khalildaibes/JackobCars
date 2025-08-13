@@ -54,6 +54,8 @@ import React from 'react';
 
 // Move these to environment variables
 const API_BASE_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&q=";
+const YAD2_API_BASE_URL = "https://gw.yad2.co.il/car-data-gov/model-master/?licensePlate=";
+const YAD2_API_BASE_URL_PRICE = "https://gw.yad2.co.il/price-list/calculate-price?";
 const ALTERNATE_API_BASE_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=03adc637-b6fe-402b-9937-7c3d3afc9140&q=";
 const OWNERSHIP_HISTORY_API_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=bb2355dc-9ec7-4f06-9c3f-3344672171da&q=";
 const VEHICLE_SPECS_API_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=142afde2-6228-49f9-8a29-9b6c3a0cbe40&q=";
@@ -141,6 +143,8 @@ export default function AddCarListing() {
   const resultsRef = React.useRef<HTMLDivElement>(null);
 
   const [carData, setCarData] = useState<CarData | null>(null);
+  const [yad2ModelInfo, setYad2ModelInfo] = useState<any | null>(null);
+  const [yad2PriceInfo, setYad2PriceInfo] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
   const [carImage, setCarImage] = useState<string | null>(null);
   const [performanceData, setPerformanceData] = useState<CarPerformanceData | null>(null);
@@ -325,19 +329,7 @@ export default function AddCarListing() {
           trim
         }),
       });
-      const responsePrice = await fetch('/api/get-car-price', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          manufacturer,
-          model,
-          year,
-          locale,
-          trim
-        }),
-      });
+     
 
       if (!response.ok) throw new Error('Failed to fetch performance data');
       const data = await response.json();
@@ -402,16 +394,57 @@ export default function AddCarListing() {
     setLoading(true);
     setError(null);
     setCarImage(null);
+    setYad2ModelInfo(null);
+    setYad2PriceInfo(null);
     setOwnershipHistory([]);
     setVehicleSpecs(null);
     let data = null;
-
+    let primaryData = null;
+    let yad2Info: any = null;
     try {
       // First fetch with the primary API
       const response = await fetch(`${API_BASE_URL}${cleanPlateNumber}`);
-      const primaryData = await response.json();
+      primaryData  = await response.json();
       console.log("primaryData is", primaryData);
+      try {
+        const yad2Res = await fetch(`/api/yad2/model-master?licensePlate=${cleanPlateNumber}`);
+        if (yad2Res.ok) {
+          yad2Info = await yad2Res.json();
+          console.log('yad2 model-master:', yad2Info);
+          setYad2ModelInfo(yad2Info);
+        } else {
+          const err = await yad2Res.json().catch(() => ({}));
+          console.warn('yad2 model-master failed', err);
+        }
+      } catch (error) {
+        console.error("Error fetching Yad2 data:", error);
+      }
       // If no records were returned, try the alternate API
+      let ascentYearOnRoad = null;
+      let ascentMonthOnRoad = null;
+      if (yad2Info?.data?.subModelId) {
+        if (yad2Info?.data?.dateOnRoad) {
+           ascentYearOnRoad = yad2Info?.data?.dateOnRoad.split('-')[0];
+          ascentMonthOnRoad = yad2Info?.data?.dateOnRoad.split('-')[1];
+        } else {
+          ascentYearOnRoad = yad2Info?.data?.carYear;
+          ascentMonthOnRoad = 1;
+        }
+
+        try {
+              const priceRes = await fetch('/api/yad2/price?subModelId='+yad2Info.data.subModelId+'&kilometers=0&ascentYearOnRoad='+ascentYearOnRoad+'&ascentMonthOnRoad='+ascentMonthOnRoad);
+          if (priceRes.ok) {
+            const priceData = await priceRes.json();
+            console.log('yad2 price:', priceData);
+            setYad2PriceInfo(priceData);
+          } else {
+            const err = await priceRes.json().catch(() => ({}));
+            console.warn('yad2 price failed', err);
+          }
+        } catch (err) {
+          console.error('Error fetching Yad2 price:', err);
+        }
+      }
       if (primaryData?.result?.records?.length) {
         data = primaryData;
       } else {
@@ -762,6 +795,88 @@ export default function AddCarListing() {
                     
                   </Button>
             </div>
+
+              {/* Yad2 Price Heatmap and Details */}
+              {(yad2PriceInfo?.data || yad2ModelInfo?.data) && (
+                <div className="mt-6 space-y-4">
+                  {yad2PriceInfo?.data && (
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="flex items-center justify-between text-sm text-gray-700 font-medium">
+                        <span>Min {Number(yad2PriceInfo.data.minPrice).toLocaleString()}</span>
+                        <span>Predicted {Number(yad2PriceInfo.data.predictedPrice).toLocaleString()}</span>
+                        <span>Max {Number(yad2PriceInfo.data.maxPrice).toLocaleString()}</span>
+                      </div>
+                      <div className="mt-3">
+                        <div className="relative h-3 rounded-full overflow-hidden bg-gradient-to-r from-green-400 via-yellow-300 to-red-500" aria-label="Price heatmap" />
+                        {(() => {
+                          const min = Number(yad2PriceInfo.data.minPrice) || 0;
+                          const max = Number(yad2PriceInfo.data.maxPrice) || 0;
+                          const pred = Number(yad2PriceInfo.data.predictedPrice) || 0;
+                          const range = Math.max(max - min, 1);
+                          const pct = Math.min(100, Math.max(0, ((pred - min) / range) * 100));
+                          return (
+                            <div className="relative h-6">
+                              <div className="absolute top-0 -mt-2" style={{ left: `${pct}%`, transform: 'translateX(-50%)' }}>
+                                <div className="h-4 w-4 rounded-full bg-blue-600 border-2 border-white shadow" />
+                              </div>
+                            </div>
+                          );
+                        })()}
+                      </div>
+                      <div className="mt-2 text-xs text-gray-500">
+                        Accuracy: {String(yad2PriceInfo.data.accuracyId)}
+                      </div>
+                    </div>
+                  )}
+
+                  {yad2ModelInfo?.data && (
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h4 className="text-sm font-semibold text-gray-800">Yad2</h4>
+                        <span className="text-xs text-gray-500">model</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {yad2ModelInfo.data.carTitle && (
+                          <div>
+                            <div className="text-xs text-gray-500">Car</div>
+                            <div className="font-medium text-gray-900">{yad2ModelInfo.data.carTitle}</div>
+                          </div>
+                        )}
+                        {yad2ModelInfo.data.subModelTitle && (
+                          <div>
+                            <div className="text-xs text-gray-500">Submodel</div>
+                            <div className="font-medium text-gray-900">{yad2ModelInfo.data.subModelTitle}</div>
+                          </div>
+                        )}
+                        {yad2ModelInfo.data.carYear && (
+                          <div>
+                            <div className="text-xs text-gray-500">Year</div>
+                            <div className="font-medium text-gray-900">{yad2ModelInfo.data.carYear}</div>
+                          </div>
+                        )}
+                        {yad2ModelInfo.data.owner && (
+                          <div>
+                            <div className="text-xs text-gray-500">Owner</div>
+                            <div className="font-medium text-gray-900">{yad2ModelInfo.data.owner}</div>
+                          </div>
+                        )}
+                        {yad2ModelInfo.data.tokefTestDate && (
+                          <div>
+                            <div className="text-xs text-gray-500">Test Valid Until</div>
+                            <div className="font-medium text-gray-900">{yad2ModelInfo.data.tokefTestDate}</div>
+                          </div>
+                        )}
+                        {yad2ModelInfo.data.yad2CarTitle && (
+                          <div>
+                            <div className="text-xs text-gray-500">Color</div>
+                            <div className="font-medium text-gray-900">{yad2ModelInfo.data.yad2CarTitle}</div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             
             </div>
              {/* Results Section */}

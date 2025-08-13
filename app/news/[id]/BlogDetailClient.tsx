@@ -634,8 +634,8 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
           )}
           <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-black/30" />
           
-          {/* Content Container */}
-          <div className="relative container mx-auto px-4 pt-32 pb-20">
+         {/* Content Container */}
+         <div className="relative container mx-auto px-0 sm:px-4 pt-32 pb-20">
             <div className="max-w-4xl mx-auto">
               {/* Meta Information */}
               <div className="flex flex-wrap items-center gap-4 mb-6 text-sm text-white/90">
@@ -673,7 +673,7 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
               </div>
 
               {/* Social Sharing Options */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-4 sm:py-6">
                 <div className="bg-white rounded-xl p-4 sm:p-6 shadow-lg w-full">
                   <h3 className="text-lg sm:text-xl font-semibold mb-4 text-center">{t('share_article')}</h3>
                   <div className="flex flex-wrap items-center justify-center gap-4">
@@ -745,7 +745,6 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
 
             {/* Article Content */}
             <article className="py-16 bg-gradient-to-br from-gray-50 via-white to-blue-50">
-              <div className="container mx-auto px-4 max-w-4xl">
                 <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100">
                   
                   {/* Videos Section - TikTok/Instagram Embeds */}
@@ -809,12 +808,11 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
                     </div>
                   </section>
                 </div>
-              </div>
             </article>
 
             {/* Comments Section */}
             <section className="py-8 bg-gray-50">
-              <div className="container mx-auto px-4">
+              <div className="container mx-auto px-0 sm:px-4">
                 <div className="max-w-4xl mx-auto">
                   <h2 className="text-2xl font-bold mb-6">{t('comments')} ({comments.length})</h2>
                   
@@ -897,7 +895,7 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
             {/* Related Articles Section */}
             {relatedArticles.length > 0 && (
               <section className="py-16 bg-gray-50">
-                <div className="container mx-auto px-4">
+                <div className="container mx-auto px-0 sm:px-4">
                   <h2 className="text-3xl font-bold mb-8 text-center">{t('related_articles')}</h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {relatedArticles.map((relatedArticle) => (
