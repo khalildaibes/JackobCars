@@ -143,6 +143,9 @@ export default function AddCarListing() {
   const [carData, setCarData] = useState<CarData | null>(null);
   const [yad2ModelInfo, setYad2ModelInfo] = useState<any | null>(null);
   const [yad2PriceInfo, setYad2PriceInfo] = useState<any | null>(null);
+  const [captchaRequired, setCaptchaRequired] = useState(false);
+  const [captchaUrl, setCaptchaUrl] = useState<string | null>(null);
+  const [showCaptchaPrompt, setShowCaptchaPrompt] = useState(false);
   const [loading, setLoading] = useState(false);
   const [carImage, setCarImage] = useState<string | null>(null);
   const [performanceData, setPerformanceData] = useState<CarPerformanceData | null>(null);
@@ -392,6 +395,9 @@ export default function AddCarListing() {
     setCarImage(null);
     setYad2ModelInfo(null);
     setYad2PriceInfo(null);
+    setCaptchaRequired(false);
+    setCaptchaUrl(null);
+    setShowCaptchaPrompt(false);
     setOwnershipHistory([]);
     setVehicleSpecs(null);
     let data = null;
@@ -409,8 +415,19 @@ export default function AddCarListing() {
           console.log('yad2 model-master:', yad2Info);
           setYad2ModelInfo(yad2Info);
         } else {
-          const err = await yad2Res.json().catch(() => ({}));
+          let err: any = {};
+          try { err = await yad2Res.json(); } catch {}
           console.warn('yad2 model-master failed', err);
+          const errText = JSON.stringify(err).toLowerCase();
+          if (errText.includes('radware') || errText.includes('captcha') || errText.includes('<head')) {
+            setCaptchaRequired(true);
+            const upstreamUrl = `https://gw.yad2.co.il/car-data-gov/model-master/?licensePlate=${cleanPlateNumber}`;
+            setCaptchaUrl(upstreamUrl);
+            setShowCaptchaPrompt(true);
+            // Stop further processing until user solves captcha and retries
+            setLoading(false);
+            return;
+          }
         }
       } catch (error) {
         console.error("Error fetching Yad2 data:", error);
@@ -792,6 +809,34 @@ export default function AddCarListing() {
                     
                   </Button>
             </div>
+
+              {showCaptchaPrompt && captchaRequired && (
+                <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+                  <p className="text-red-700 font-semibold mb-2">Robot check required</p>
+                  <p className="text-sm text-red-700 mb-4">Please complete the captcha challenge to continue.</p>
+                  <div className="flex items-center justify-center gap-3">
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        if (captchaUrl) window.open(captchaUrl, '_blank', 'width=480,height=720');
+                      }}
+                      className="bg-red-600 hover:bg-red-700 text-white"
+                    >
+                      Open Captcha
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        setShowCaptchaPrompt(false);
+                        fetchCarData();
+                      }}
+                      variant="outline"
+                    >
+                      I completed it, retry
+                    </Button>
+                  </div>
+                </div>
+              )}
 
               {/* Yad2 Price Heatmap and Details */}
               {(yad2PriceInfo?.data || yad2ModelInfo?.data) && (
