@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import fetch from 'node-fetch';
-
+// 675b8fa0b33b7e65fce8501057f7dd775af36b2e31ce8e9dd34ba075f1f6f48d
 const YAD2_PRICE_BASE_URL = 'https://gw.yad2.co.il/price-list/calculate-price?';
 
 export async function GET(request) {

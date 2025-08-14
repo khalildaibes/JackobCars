@@ -385,6 +385,23 @@ export default function AddCarListing() {
       console.error("Error fetching vehicle specs:", error);
     }
   };
+  async function fetchCarDataDirect(plate: string) {
+    const upstreamUrl =
+      `https://gw.yad2.co.il/car-data-gov/model-master/?licensePlate=${encodeURIComponent(plate)}`;
+  
+    // Must use credentials if upstream uses them (often not needed here)
+    const r = await fetch(upstreamUrl, {
+      method: "GET",
+      credentials: "include",
+    });
+  
+    if (!r.ok) {
+      const t = await r.text();
+      throw new Error(`Upstream ${r.status}: ${t.slice(0, 500)}`);
+    }
+  
+    return r.json();
+  }
 
   const fetchCarData = async () => {
     if (!plateNumber) return;
@@ -818,20 +835,34 @@ export default function AddCarListing() {
                     <Button
                       type="button"
                       onClick={() => {
-                        if (captchaUrl) window.open(captchaUrl, '_blank', 'width=480,height=720');
+                        if (captchaUrl) {
+                          const popup = window.open(captchaUrl, 'captchaPopup', 'width=480,height=720');
+                          if (popup) {
+                            popup.focus();
+                          }
+                        }
                       }}
                       className="bg-red-600 hover:bg-red-700 text-white"
                     >
-                      Open Captcha
+                      Open to see data.
                     </Button>
-                    <Button
-                      type="button"
-                      onClick={() => {
+                 <Button
+                    type="button"
+                    onClick={async () => {
+                      try {
                         setShowCaptchaPrompt(false);
-                        fetchCarData();
-                      }}
-                      variant="outline"
-                    >
+                        setLoading(true);
+                        const data = await fetchCarDataDirect(plateNumber);
+                        setYad2ModelInfo(data);
+                      } catch (e) {
+                        console.error(e);
+                        // fallback UI
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}
+                    variant="outline"
+                  >
                       I completed it, retry
                     </Button>
                   </div>

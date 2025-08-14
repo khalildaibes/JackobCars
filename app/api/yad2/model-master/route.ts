@@ -18,14 +18,14 @@ export async function GET(request) {
 
 
     const url = `${YAD2_API_BASE_URL}${encodeURIComponent(licensePlate)}`;
-    fetch(`https://api.scraperapi.com/?api_key=0a06de12ff661cc5e1da2364c97be83b&url=${url}`)
-      .then(response => {
-        console.log("response is", response);
-        return NextResponse.json(response); 
-      })
-      .catch(error => {
-        console.log(error)
-      });
+    // fetch(`https://api.scraperapi.com/?api_key=0a06de12ff661cc5e1da2364c97be83b&url=${url}`)
+    //   .then(response => {
+    //     console.log("response is", response);
+    //     return NextResponse.json(response); 
+    //   })
+    //   .catch(error => {
+    //     console.log(error)
+    //   });
 
     const response = await fetch(url, {
       headers: {
