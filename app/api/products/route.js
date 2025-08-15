@@ -159,16 +159,16 @@ export async function POST(request) {
         const product = {
             id: result.data.id,
             storeId: storeId,
-            name: result.data.attributes.name,
-            description: result.data.attributes.description,
-            price: result.data.attributes.price,
-            category: result.data.attributes.category,
-            brand: result.data.attributes.brand,
-            stock: result.data.attributes.stock,
-            sku: result.data.attributes.sku,
-            isActive: result.data.attributes.isActive,
-            createdAt: result.data.attributes.createdAt,
-            updatedAt: result.data.attributes.updatedAt,
+            name: result.data.name,
+            description: result.data.description,
+            price: result.data.price,
+            category: result.data.category,
+            brand: result.data.brand,
+            stock: result.data.stock,
+            sku: result.data.sku,
+            isActive: result.data.isActive,
+            createdAt: result.data.createdAt,
+            updatedAt: result.data.updatedAt,
         };
 
         return new Response(JSON.stringify({

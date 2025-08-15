@@ -57,6 +57,8 @@ const YAD2_API_BASE_URL_PRICE = "https://gw.yad2.co.il/price-list/calculate-pric
 const ALTERNATE_API_BASE_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=03adc637-b6fe-402b-9937-7c3d3afc9140&q=";
 const OWNERSHIP_HISTORY_API_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=bb2355dc-9ec7-4f06-9c3f-3344672171da&q=";
 const VEHICLE_SPECS_API_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=142afde2-6228-49f9-8a29-9b6c3a0cbe40&q=";
+const DEFAULT_STORE_ID = 18; // Update if needed
+const DEFAULT_PUBLISHER_ID = 1; // Update if needed
 
 interface CarData {
   [key: string]: string;
@@ -125,7 +127,6 @@ export default function AddCarListing() {
     'Basic Information',
     'Condition',
     'Trade-in Option',
-    'Target Buyer',
     'Price',
     'Contact Info',
     'Upload Images',
@@ -206,12 +207,16 @@ export default function AddCarListing() {
     pros: '',
     cons: '',
     tradeIn: '',
-    targetBuyer: '',
     askingPrice: '',
     name: '',
     email: '',
     phone: '',
-    images: [] as File[]
+    images: [] as File[],
+    manufacturerName: '',
+    commercialNickname: '',
+    yearOfProduction: '',
+    fuelType: '',
+    car_data: {}
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -288,31 +293,31 @@ export default function AddCarListing() {
 
 
   const translationMap: Record<string, string> = {
-    _id: t("id"),
-    mispar_rechev: t("plate_number"),
-    tozeret_cd: t("manufacturer_code"),
-    sug_degem: t("model_type"),
-    tozeret_nm: t("manufacturer_name"),
-    degem_cd: t("model_code"),
-    degem_nm: t("model_name"),
-    ramat_gimur: t("trim_level"),
-    ramat_eivzur_betihuty: t("safety_equipment_level"),
-    kvutzat_zihum: t("pollution_group"),
-    shnat_yitzur: t("year_of_production"),
-    degem_manoa: t("engine_model"),
-    mivchan_acharon_dt: t("last_inspection_date"),
-    tokef_dt: t("validity_date"),
-    baalut: t("ownership"),
-    misgeret: t("chassis"),
-    tzeva_cd: t("color_code"),
-    tzeva_rechev: t("car_color"),
-    zmig_kidmi: t("front_tire"),
-    zmig_ahori: t("rear_tire"),
-    sug_delek_nm: t("fuel_type"),
-    horaat_rishum: t("registration_order"),
-    moed_aliya_lakvish: t("road_entry_date"),
-    kinuy_mishari: t("commercial_nickname"),
-    rank: t("rank"),
+    _id: "id",
+    mispar_rechev: "plate_number",
+    tozeret_cd: "manufacturer_code",
+    sug_degem: "model_type",
+    tozeret_nm: "manufacturer_name",
+    degem_cd: "model_code",
+    degem_nm: "model_name",
+    ramat_gimur: "trim_level",
+    ramat_eivzur_betihuty: "safety_equipment_level",
+    kvutzat_zihum: "pollution_group",
+    shnat_yitzur: "year_of_production",
+    degem_manoa: "engine_model",
+    mivchan_acharon_dt: "last_inspection_date",
+    tokef_dt: "validity_date",
+    baalut: "ownership",
+    misgeret: "chassis",
+    tzeva_cd: "color_code",
+    tzeva_rechev: "car_color",
+    zmig_kidmi: "front_tire",
+    zmig_ahori: "rear_tire",
+    sug_delek_nm: "fuel_type",
+    horaat_rishum: "registration_order",
+    moed_aliya_lakvish: "road_entry_date",
+    kinuy_mishari: "commercial_nickname",
+    rank: "rank",
   };
   const fetchCarPerformanceData = async (manufacturer: string, model: string, year: string, trim: string) => {
     try {
@@ -437,10 +442,10 @@ export default function AddCarListing() {
           console.warn('yad2 model-master failed', err);
           const errText = JSON.stringify(err).toLowerCase();
           if (errText.includes('radware') || errText.includes('captcha') || errText.includes('<head')) {
-            setCaptchaRequired(true);
-            const upstreamUrl = `https://gw.yad2.co.il/car-data-gov/model-master/?licensePlate=${cleanPlateNumber}`;
-            setCaptchaUrl(upstreamUrl);
-            setShowCaptchaPrompt(true);
+            // setCaptchaRequired(true);
+            // const upstreamUrl = `https://gw.yad2.co.il/car-data-gov/model-master/?licensePlate=${cleanPlateNumber}`;
+            // setCaptchaUrl(upstreamUrl);
+            // setShowCaptchaPrompt(true);
             // Stop further processing until user solves captcha and retries
             setLoading(false);
             return;
@@ -493,6 +498,15 @@ export default function AddCarListing() {
         );
 
         setCarData(translatedData);
+        formData.car_data = translatedData;
+        // Persist key fields into formData until submission
+        setFormData(prev => ({
+          ...prev,
+          manufacturerName: String(record.tozeret_nm || translatedData.manufacturer_name || ''),
+          commercialNickname: String(record.kinuy_mishari || translatedData.commercial_nickname || ''),
+          yearOfProduction: String(record.shnat_yitzur || translatedData.year_of_production || ''),
+          fuelType: String(record.sug_delek_nm || translatedData.fuel_type || '')
+        }));
         
         // Fetch car image, performance data, and ownership history
         if (record.tozeret_nm && record.kinuy_mishari && record.shnat_yitzur) {
@@ -552,11 +566,57 @@ export default function AddCarListing() {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-
+    // Fill formData fields from carData if they are undefined or empty
+    if (carData) {
+      if (!formData.title) formData.title = `${carData.manufacturer_name || ""} ${carData.commercial_nickname || ""} ${carData.year_of_production || ""}`.trim();
+      if (!formData.makeModel) formData.makeModel = `${carData.manufacturer_name || ""} ${carData.model_name || ""}`.trim();
+      if (!formData.mileage) formData.mileage = carData.mileage;
+      if (!formData.color) formData.color = carData.color;
+      if (!formData.engineType) formData.engineType = carData.engine_type;
+      if (!formData.transmission) formData.transmission = carData.transmission;
+      if (!formData.currentCondition) formData.currentCondition = carData.condition;
+      if (!formData.knownProblems) formData.knownProblems = carData.known_problems;
+      if (!formData.pros) formData.pros = carData.pros;
+      if (!formData.cons) formData.cons = carData.cons;
+      if (!formData.tradeIn) formData.tradeIn = carData.trade_in;
+      if (!formData.askingPrice) formData.askingPrice = carData.asking_price;
+      if (!formData.name) formData.name = carData.name;
+      if (!formData.email) formData.email = carData.email;
+      if (!formData.phone) formData.phone = carData.phone;
+      if (!formData.manufacturerName) formData.manufacturerName = carData.manufacturer_name;
+      if (!formData.commercialNickname) formData.commercialNickname = carData.commercial_nickname;
+      if (!formData.yearOfProduction) formData.yearOfProduction = carData.year_of_production;
+      if (!formData.fuelType) formData.fuelType = carData.fuel_type;
+      if (!formData.car_data) formData.car_data = carData;
+      if (!formData.plateNumber) formData.plateNumber = carData.plate_number;
+      if (!formData.year) formData.year = carData.year_of_production;
+    }
+         formData.title = carData.manufacturer_name + ' ' + carData.commercial_nickname + ' ' + carData.year_of_production + (carData.trim_level || '');
+    formData.makeModel = carData.manufacturer_name + ' ' + carData.commercial_nickname;
+    formData.mileage = formData.mileage ?? carData.mileage;
+    formData.color = formData.color ?? carData.color;
+    formData.engineType = formData.engineType ?? carData.engine_type;
+    formData.transmission = formData.transmission ?? carData.transmission;
+    formData.currentCondition = formData.currentCondition ?? carData.condition;
+    formData.knownProblems = formData.knownProblems ?? carData.known_problems;
+    formData.pros =  formData.pros ?? carData.pros;
+    formData.cons = formData.cons ?? carData.cons;
+    formData.tradeIn = formData.tradeIn ?? carData.trade_in;
+    formData.askingPrice = formData.askingPrice ?? carData.asking_price;
+    formData.name = formData.name ?? carData.name;
+    formData.email = formData.email ?? carData.email;
+    formData.phone = formData.phone ?? carData.phone;
+    formData.manufacturerName = formData.manufacturerName ?? carData.manufacturer_name;
+    formData.commercialNickname = formData.commercialNickname ?? carData.commercial_nickname;
+    formData.yearOfProduction = formData.yearOfProduction ?? carData.year_of_production;
+    formData.fuelType = formData.fuelType ?? carData.fuel_type;
+    formData.car_data = formData.car_data ?? carData;
+    // console.log("formData is", formData);
+    // console.log("carData   is", carData);
     if (!formData.title) newErrors.title = t('validation_required');
-    if (!selectedManufacturer) newErrors.manufacturer = t('validation_required');
-    if (!selectedModel) newErrors.model = t('validation_required');
-    if (!formData.year) newErrors.year = t('validation_required');
+    if (!formData.manufacturerName) newErrors.manufacturer = t('validation_required');
+    if (!formData.commercialNickname) newErrors.model = t('validation_required');
+    if (!formData.yearOfProduction) newErrors.year = t('validation_required');
     if (!formData.plateNumber) newErrors.plateNumber = t('validation_required');
     if (!formData.email) {
       newErrors.email = t('validation_required');
@@ -604,120 +664,138 @@ export default function AddCarListing() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    // e.preventDefault();
-    // if (!validateForm()) return;
+    e.preventDefault();
+    if (!validateForm()) return;
 
-    // setIsSubmitting(true);
+    setIsSubmitting(true);
 
-    // try {
-    //   // First upload all images
-    //   const imageIds = await uploadImages(formData.images);
+    try {
+      // First upload all images
+      // const imageIds = await uploadImages(formData.images);
 
-    //   // Format the car details object
-    //   const carDetails = {
-    //     car: {
-    //       name: formData.title,
-    //       year: parseInt(formData.year),
-    //       fuel: formData.engineType,
-    //       transmission: formData.transmission,
-    //       mileage: `${formData.mileage} KM`,
-    //       price: parseFloat(formData.askingPrice),
-    //       body_type: formData.makeModel.split(' ')[0], // This is a simplification
-    //       pros: formData.pros.split('\n').filter(item => item.trim() !== ''),
-    //       cons: formData.cons.split('\n').filter(item => item.trim() !== ''),
-    //       features: [
-    //         {
-    //           icon: "img_calendar_indigo_a400.svg",
-    //           label: t('year'),
-    //           value: formData.year.toString()
-    //         },
-    //         {
-    //           icon: "img_icon_indigo_a400.svg",
-    //           label: t('mileage'),
-    //           value: `${formData.mileage} KM`
-    //         },
-    //         {
-    //           icon: "img_icon_indigo_a400_18x18.svg",
-    //           label: t('transmission'),
-    //           value: formData.transmission
-    //         },
-    //         {
-    //           icon: "img_icon_4.svg",
-    //           label: t('fuel_type'),
-    //           value: formData.engineType
-    //         }
-    //       ],
-    //       description: formData.knownProblems,
-    //       images: {
-    //         main: imageIds[0] || '',
-    //         additional: imageIds.slice(1)
-    //       }
-    //     }
-    //   };
+      // Format the car details object per requested structure
+      const cd: any = (formData as any).car_data || {};
+      const composedName = [
+        cd.manufacturer_name || formData.manufacturerName,
+        cd.model_name || formData.commercialNickname,
+        cd.year_of_production || formData.yearOfProduction || formData.year,
+        cd.fuel_type || formData.fuelType || formData.engineType,
+      ]
+        .filter(Boolean)
+        .join(' ');
+              let imageId = null;
+        if (formData.images && formData.images.length > 0) {
+          console.log("formData.images[0] is", formData.images[0]);
+          const formDataToSend = new FormData();
+          formDataToSend.append('image', formData.images[0]);
+          
+          const imagesupload_response = await fetch('/api/upload/image', {
+            method: 'POST',
+            body: formDataToSend
+          });
+          console.log("imagesupload_response is", imagesupload_response);
+          if (imagesupload_response.ok) {
+            const uploadResult = await imagesupload_response.json();
+            // Handle different possible Strapi response structures
+            imageId = uploadResult[0].id;
+            console.log("Extracted imageId is", imageId);
+          } else {
+            console.error("Image upload failed:", imagesupload_response.statusText);
+            // Continue without image if upload fails
+            imageId = null;
+          }
+        }
+      const carDetails = {
+        car: {
+          fuel: cd.fuel_type || formData.fuelType || formData.engineType || '',
+          name: composedName,
+          year: String(cd.year_of_production || formData.yearOfProduction || formData.year || ''),
+          miles: String(formData.mileage || ''),
+          price: parseFloat(formData.askingPrice) || 0,
+                     images: imageId ? {
+             main: [imageId],
+             additional: [imageId],
+           } : {},
+           cover: imageId ? [imageId] : [],
+          features: [
+            { label: 'العنوان', value: String(formData.title || '') },
+            { label: 'الشركة المصنعة والموديل', value: String(formData.makeModel || '') },
+                         { label: 'سنة الصنع', value: String(cd.year_of_production || formData.yearOfProduction || formData.year || '') },
+            { label: 'رقم اللوحة', value: String(formData.plateNumber || '') },
+            { label: 'عدد الكيلومترات', value: String(formData.mileage || '') },
+            { label: 'اللون', value: String(formData.color || '') },
+            { label: 'نوع المحرك', value: String(formData.engineType || '') },
+            { label: 'ناقل الحركة', value: String(formData.transmission || '') },
+            { label: 'الحالة الحالية', value: String(formData.currentCondition || '') },
+            { label: 'المشاكل المعروفة', value: String(formData.knownProblems || '') },
+            { label: 'المميزات', value: String(formData.pros || '') },
+            { label: 'العيوب', value: String(formData.cons || '') },
+            { label: 'خيار الاستبدال', value: String(formData.tradeIn || '') },
+            { label: 'السعر المطلوب', value: String(formData.askingPrice || '') },
+            { label: 'الاسم', value: String(formData.name || '') },
+            { label: 'البريد الإلكتروني', value: String(formData.email || '') },
+            { label: 'رقم الهاتف', value: String(formData.phone || '') },
+            { label: 'نوع الوقود', value: String(cd.fuel_type || formData.fuelType || formData.engineType || '') },
+                         ...(imageId ? [{ label: 'الصورة', value: imageId }] : []),
+          ],
+          body_type: 'غير محدد',
+          description: 'غير محدد',
+          transmission: 'غير محدد',
+        }
+      };
 
-    //   // Prepare the data for Strapi
-    //   const carListingData = {
-    //     data: {
-    //       image: imageIds[0], // First image as main image
-    //       categories: ['car-listing'],
-    //       quantity: 1,
-    //       name: formData.title,
-    //       slug: generateSlug(formData.title),
-    //       price: parseFloat(formData.askingPrice),
-    //       details: carDetails,
-    //       store: 'khalil store', // You might want to make this dynamic
-    //       locale: locale,
-    //       publishedAt: null // Will be published after admin approval
-    //     }
-    //   };
+      // Send to our new API endpoint
+      const response = await fetch('/api/addListing', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(carDetails)
+      });
 
-    //   // Send the data to Strapi
-    //   const response = await axios.post(
-    //     `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/car-listings`, 
-    //     carListingData,
-    //     {
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //       },
-    //     }
-    //   );
-
-    //   if (response.data) {
-    //     alert(t('success_message'));
-    //     // Reset form
-    //     setFormData({
-    //       title: '',
-    //       makeModel: '',
-    //       year: '',
-    //       plateNumber: '',
-    //       mileage: '',
-    //       color: '',
-    //       engineType: '',
-    //       transmission: 'Automatic',
-    //       currentCondition: '',
-    //       knownProblems: '',
-    //       pros: '',
-    //       cons: '',
-    //       tradeIn: '',
-    //       targetBuyer: '',
-    //       askingPrice: '',
-    //       name: '',
-    //       email: '',
-    //       phone: '',
-    //       images: []
-    //     });
-    //     setSelectedManufacturer('');
-    //     setSelectedModel('');
-    //     setAvailableModels([]);
-    //     setAvailableYears([]);
-    //     setErrors(prev => ({ ...prev, manufacturer: '', model: '' }));
-    //   }
-    // } catch (error) {
-    //   console.error('Error submitting form:', error);
-    //   alert(t('error_message'));
-    // } finally {
-    //   setIsSubmitting(false);
-    // }
+      console.log("Final API response:", response);
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log("Final API response data:", responseData);
+        alert(t('success_message'));
+        // Reset form
+        setFormData({
+          title: '',
+          makeModel: '',
+          year: '',
+          plateNumber: '',
+          mileage: '',
+          color: '',
+          engineType: '',
+          transmission: 'Automatic',
+          currentCondition: '',
+          knownProblems: '',
+          pros: '',
+          cons: '',
+          tradeIn: '',
+          askingPrice: '',
+          name: '',
+          email: '',
+          phone: '',
+          images: [],
+          manufacturerName: '',
+          commercialNickname: '',
+          yearOfProduction: '',
+          fuelType: '',
+          car_data: {}
+        });
+        setSelectedManufacturer('');
+        setSelectedModel('');
+        setAvailableModels([]);
+        setAvailableYears([]);
+        setErrors(prev => ({ ...prev, manufacturer: '', model: '' }));
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert(t('error_message'));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -964,194 +1042,29 @@ export default function AddCarListing() {
         {carData && !loading && (
           <Card>
             <CardContent className="p-6">
-              {carImage && (
-                <div className="mb-8 rounded-lg overflow-hidden">
-                  <img 
-                    src={carImage} 
-                    alt={`${carData.manufacturer_name} ${carData.model_name}`}
-                    className="w-full h-[400px] object-cover"
-                  />
-                </div>
-              )}
-
-              {/* Performance Data */}
-              {loadingPerformance && (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-                  <span className="ml-3 text-lg">{t('loading_info')}</span>
-                </div>
-              )}
-
-              {performanceData && (
-                <div className="mb-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Performance Section */}
-                    <div className="bg-gray-50 rounded-lg p-6">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <Gauge className="h-6 w-6 text-blue-600" />
-                        </div>
-                        <h3 className="text-xl font-semibold">{t('performance')}</h3>
-                      </div>
-                      <div className="space-y-3">
-                        {Object.entries(performanceData.performance).map(([key, value]) => (
-                          <div key={key} className="flex justify-between">
-                            <span className="text-gray-600">{t(key)}</span>
-                            <span className="font-semibold">{value}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Tuning Section */}
-                    <div className="bg-gray-50 rounded-lg p-6">
-                      <div 
-                        className="flex items-center gap-3 mb-4 cursor-pointer"
-                        onClick={() => setExpandedSections(prev => ({ ...prev, tuning: !prev.tuning }))}
-                      >
-                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <Sparkles className="h-6 w-6 text-blue-600" />
-                        </div>
-                        <h3 className="text-xl font-semibold">{t('tuning')}</h3>
-                        <div className="ml-auto">
-                          <svg 
-                            className={`w-6 h-6 transform transition-transform ${expandedSections.tuning ? 'rotate-180' : ''}`} 
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-                      {expandedSections.tuning && (
-                        <div className="space-y-3">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">{t('tuning_potential')}</span>
-                            <span className="font-semibold">{renderRating(performanceData.tuning.tuning_potential)}</span>
-                          </div>
-                          <div>
-                            <span className="text-gray-600">{t('tuning_notes')}</span>
-                            <p className="mt-1 font-semibold">{performanceData.tuning.tuning_notes}</p>
-                          </div>
-                          <div>
-                            <span className="text-gray-600">{t('common_upgrades')}</span>
-                            <ul className="mt-1 list-disc list-inside">
-                              {performanceData.tuning.common_upgrades.map((upgrade, index) => (
-                                <li key={index} className="font-semibold">{upgrade}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Handling Section */}
-                    <div className="bg-gray-50 rounded-lg p-6">
-                      <div 
-                        className="flex items-center gap-3 mb-4 cursor-pointer"
-                        onClick={() => setExpandedSections(prev => ({ ...prev, handling: !prev.handling }))}
-                      >
-                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <Activity className="h-6 w-6 text-blue-600" />
-                        </div>
-                        <h3 className="text-xl font-semibold">{t('handling')}</h3>
-                        <div className="ml-auto">
-                          <svg 
-                            className={`w-6 h-6 transform transition-transform ${expandedSections.handling ? 'rotate-180' : ''}`} 
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-                      {expandedSections.handling && (
-                        <div className="space-y-3">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">{t('handling_rating')}</span>
-                            <span className="font-semibold">{renderRating(performanceData.handling.handling_rating)}</span>
-                          </div>
-                          <div>
-                            <span className="text-gray-600">{t('suspension_type')}</span>
-                            <p className="mt-1 font-semibold">{performanceData.handling.suspension_type}</p>
-                          </div>
-                          <div>
-                            <span className="text-gray-600">{t('driving_characteristics')}</span>
-                            <p className="mt-1 font-semibold">{performanceData.handling.driving_characteristics}</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Reliability Section */}
-                    <div className="bg-gray-50 rounded-lg p-6">
-                      <div 
-                        className="flex items-center gap-3 mb-4 cursor-pointer"
-                        onClick={() => setExpandedSections(prev => ({ ...prev, reliability: !prev.reliability }))}
-                      >
-                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <ShieldCheck className="h-6 w-6 text-blue-600" />
-                        </div>
-                        <h3 className="text-xl font-semibold">{t('reliability')}</h3>
-                        <div className="ml-auto">
-                          <svg 
-                            className={`w-6 h-6 transform transition-transform ${expandedSections.reliability ? 'rotate-180' : ''}`} 
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-                      {expandedSections.reliability && (
-                        <div className="space-y-3">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">{t('reliability_rating')}</span>
-                            <span className="font-semibold">{renderRating(performanceData.reliability.reliability_rating)}</span>
-                          </div>
-                          <div>
-                            <span className="text-gray-600">{t('common_issues')}</span>
-                            <ul className="mt-1 list-disc list-inside">
-                              {performanceData.reliability.common_issues.map((issue, index) => (
-                                <li key={index} className="font-semibold">{issue}</li>
-                              ))}
-                            </ul>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">{t('maintenance_cost')}</span>
-                            <span className="font-semibold">{renderRating(performanceData.reliability.maintenance_cost)}</span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
+             
               
-              {/* Priority Fields */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                {priorityFields.map((key) => (
-                  carData[key] && (
-                    <div key={key} className="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg">
-                      {iconMap[key as keyof typeof iconMap] && (
-                        <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-2">
-                          {React.createElement(iconMap[key as keyof typeof iconMap], {
-                            className: "h-6 w-6 text-blue-600"
-                          })}
-                        </div>
-                      )}
-                      <p className="text-sm font-medium text-gray-500 text-center">{t(key)}</p>
-                      <p className="font-semibold text-gray-900 text-center">{carData[`${key}_value`] || carData[key]}</p>
-                    </div>
-                  )
-                ))}
-              </div>
 
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                  <div className="text-xs text-gray-500">{t('manufacturer_name')}</div>
+                  <div className="font-medium text-gray-900">{carData.manufacturer_name}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">{t('commercial_nickname')}</div>
+                  <div className="font-medium text-gray-900">{carData.commercial_nickname}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">{t('year_of_production')}</div>
+                  <div className="font-medium text-gray-900">{carData.year_of_production}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">{t('fuel_type')}</div>
+                  <div className="font-medium text-gray-900">{carData.fuel_type}</div>
+                </div>
+              </div>
               {/* Other Fields */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {/* <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {Object.entries(carData).map(([key, value]) => (
                   !priorityFields.includes(key) && !key.endsWith('_value') && (
                     <div key={key} className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
@@ -1178,68 +1091,13 @@ export default function AddCarListing() {
                     </div>
                   )
                 ))}
-              </div>
+              </div> */}
 
               {/* Ownership History Section */}
-              {ownershipHistory.length > 0 && (
-                <div className="mt-8">
-                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-white">
-                    <User className="h-6 w-6 text-blue-600" />
-                    {t('ownership_history')} ({ownershipHistory.length} {t('records')})
-                  </h3>
-                  <div className="bg-gray-50 rounded-lg p-6">
-                    <div className="space-y-4">
-                      {ownershipHistory.map((record, index) => (
-                        <div key={record._id} className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                              <User className="h-5 w-5 text-blue-600" />
-                            </div>
-                            <div>
-                              <p className="font-semibold">{t(record.baalut)}</p>
-                              <p className="text-sm text-gray-500">
-                                {record.baalut_dt.toString().slice(0, 4)}/{record.baalut_dt.toString().slice(4)}
-                              </p>
-                            </div>
-                          </div>
-                          {index === 0 && (
-                            <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                              {t('current_owner')}
-                            </span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
+              
 
               {/* Vehicle Specs Section */}
-              {vehicleSpecs && (
-                <div className="mt-8">
-                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-white">
-                    <Tag className="h-6 w-6 text-blue-600" />
-                    {t('vehicle_specs')}
-                  </h3>
-                  <div className="bg-gray-50 rounded-lg p-6">
-                    <div className="space-y-4">
-                      {Object.entries(vehicleSpecs).map(([key, value]) => (
-                        <div key={key} className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                              <Tag className="h-5 w-5 text-blue-600" />
-                            </div>
-                            <div>
-                              <p className="font-semibold">{t(key)}</p>
-                              <p className="text-sm text-gray-500">{value}</p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
+             
             </CardContent>
           </Card>
         )}
@@ -1306,31 +1164,45 @@ export default function AddCarListing() {
           </motion.div>
           )}
 
-          {/* Target Buyer */}
+
+
+          {/* Price */}
           {currentStep === 3 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
           >
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('target_buyer')}</h2>
-            <Textarea
-              placeholder={t('target_buyer_placeholder')}
-              value={formData.targetBuyer}
-              onChange={(e) => setFormData(prev => ({ ...prev, targetBuyer: e.target.value }))}
-              className="h-24 rounded-xl py-5"
-            />
-          </motion.div>
-          )}
-
-          {/* Price */}
-          {currentStep === 4 && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
-          >
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('price')}</h2>
+            {yad2PriceInfo?.data && (
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="flex items-center justify-between text-sm text-gray-700 font-medium">
+                        <span>Min {Number(yad2PriceInfo.data.minPrice).toLocaleString()}</span>
+                        <span>Predicted {Number(yad2PriceInfo.data.predictedPrice).toLocaleString()}</span>
+                        <span>Max {Number(yad2PriceInfo.data.maxPrice).toLocaleString()}</span>
+                      </div>
+                      <div className="mt-3">
+                        <div className="relative h-3 rounded-full overflow-hidden bg-gradient-to-r from-green-400 via-yellow-300 to-red-500" aria-label="Price heatmap" />
+                        {(() => {
+                          const min = Number(yad2PriceInfo.data.minPrice) || 0;
+                          const max = Number(yad2PriceInfo.data.maxPrice) || 0;
+                          const pred = Number(yad2PriceInfo.data.predictedPrice) || 0;
+                          const range = Math.max(max - min, 1);
+                          const pct = Math.min(100, Math.max(0, ((pred - min) / range) * 100));
+                          return (
+                            <div className="relative h-6">
+                              <div className="absolute top-0 -mt-2" style={{ left: `${pct}%`, transform: 'translateX(-50%)' }}>
+                                <div className="h-4 w-4 rounded-full bg-blue-600 border-2 border-white shadow" />
+                              </div>
+                            </div>
+                          );
+                        })()}
+                      </div>
+                      <div className="mt-2 text-xs text-gray-500">
+                        Accuracy: {String(yad2PriceInfo.data.accuracyId)}
+                      </div>
+                    </div>
+                  )}
             <Input
               placeholder={t('asking_price_placeholder')}
               type="number"
@@ -1342,7 +1214,7 @@ export default function AddCarListing() {
           )}
 
           {/* Contact Info */}
-          {currentStep === 5 && (
+          {currentStep === 4 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -1394,7 +1266,7 @@ export default function AddCarListing() {
           )}
 
           {/* Image Upload */}
-          {currentStep === 6 && (
+          {currentStep === 5 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -1488,11 +1360,11 @@ export default function AddCarListing() {
             className="sticky bottom-4 bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg"
           >
             <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-200 transform hover:scale-[1.01] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              type="button"
+              className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl"
+              onClick={handleSubmit}
             >
-              {isSubmitting ? t('submitting') : t('submit_listing')}
+              {t('submit_listing')}
             </Button>
           </motion.div>
           )}

@@ -195,41 +195,41 @@ export default function CreateCarListing() {
 
       // First, upload all images
       const uploadImage = async (file: File) => {
-        const formData = new FormData();
-        formData.append('files', file);
+        // const formData = new FormData();
+        // formData.append('files', file);
 
-        const uploadResponse = await fetch(`/api/upload`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`
-          },
-          body: formData
-        });
+        // const uploadResponse = await fetch(`/api/upload`, {
+        //   method: 'POST',
+        //   headers: {
+        //     'Authorization': `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`
+        //   },
+        //   body: formData
+        // });
 
-        if (!uploadResponse.ok) {
-          throw new Error('Failed to upload image');
-        }
+        // if (!uploadResponse.ok) {
+        //   throw new Error('Failed to upload image');
+        // }
 
-        return await uploadResponse.json();
+        // return await uploadResponse.json();
       };
 
       // Upload main image
       let mainImageId = null;
       if (carData.images.main) {
         const mainImageData = await uploadImage(carData.images.main);
-        mainImageId = mainImageData[0].id;
+        mainImageId = mainImageData[0]?.id ?? null;
       }
 
       // Upload additional images
       const additionalImageIds = await Promise.all(
-        carData.images.additional.map(file => uploadImage(file))
+        carData.images?.additional.map(file => uploadImage(file))
       );
 
       // Upload video if exists
       let videoId = null;
       if (carData.video?.file) {
         const videoData = await uploadImage(carData.video.file);
-        videoId = videoData[0].id;
+        videoId = videoData[0]?.id ?? null;
       }
 
       // Prepare the data for the API
