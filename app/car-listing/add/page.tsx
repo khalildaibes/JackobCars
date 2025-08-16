@@ -716,11 +716,11 @@ export default function AddCarListing() {
              main: [imageId],
              additional: [imageId],
            } : {},
-           cover: imageId ? [imageId] : [],
+           formData: formData,
           features: [
-            { label: 'العنوان', value: String(formData.title || '') },
+            { label: 'العنوان', value: String(formData.title  || '') },
             { label: 'الشركة المصنعة والموديل', value: String(formData.makeModel || '') },
-                         { label: 'سنة الصنع', value: String(cd.year_of_production || formData.yearOfProduction || formData.year || '') },
+            { label: 'سنة الصنع', value: String(cd.year_of_production || formData.yearOfProduction || formData.year || '') },
             { label: 'رقم اللوحة', value: String(formData.plateNumber || '') },
             { label: 'عدد الكيلومترات', value: String(formData.mileage || '') },
             { label: 'اللون', value: String(formData.color || '') },
@@ -865,7 +865,183 @@ export default function AddCarListing() {
             animate={{ opacity: 1 }}
             className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
           >
+            
+            
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('basic_information')}</h2>
+            <div className="space-y-4">
+              <div>
+                <Input
+                  placeholder={t('title_placeholder')}
+                  value={formData.title}
+                  onChange={(e) => {
+                    setFormData(prev => ({ ...prev, title: e.target.value }));
+                    setErrors(prev => ({ ...prev, title: '' }));
+                  }}
+                  className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.title ? 'border-red-500' : ''}`}
+                />
+                {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Select
+                    value={selectedManufacturer}
+                    onValueChange={(value) => {
+                      if (value && manufacturersData[value]) {
+                        const models = manufacturersData[value].submodels || [];
+                        setAvailableModels(models);
+                        setSelectedModel(''); // Reset model selection
+                        setAvailableYears([]); // Clear years until model is selected
+                      } else {
+                        setAvailableModels([]);
+                        setAvailableYears([]);
+                      }
+                      setSelectedManufacturer(value);
+                      setErrors(prev => ({ ...prev, manufacturer: '' }));
+                    }}
+                  >
+                    <SelectTrigger className="rounded-xl py-5">
+                      <SelectValue placeholder={t('select_manufacturer') || 'Select Manufacturer'} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white">
+                      {Object.keys(manufacturersData).length === 0 ? (
+                        <SelectItem value="loading_manufacturers" disabled>
+                          Loading manufacturers...
+                        </SelectItem>
+                      ) : (
+                        Object.keys(manufacturersData).map((manufacturer) => (
+                          <SelectItem key={manufacturer} value={manufacturer}>
+                            {manufacturersData[manufacturer]?.submodels?.[0]?.manufacturer?.title || manufacturer}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                  {errors.manufacturer && <p className="mt-1 text-sm text-red-500">{errors.manufacturer}</p>}
+                </div>
+
+                <div>
+                  <Select
+                    value={selectedModel}
+                    onValueChange={(value) => {
+                      setSelectedModel(value);
+                      setErrors(prev => ({ ...prev, model: '' }));
+                    }}
+                    disabled={!selectedManufacturer || availableModels.length === 0}
+                  >
+                    <SelectTrigger className="rounded-xl py-5">
+                      <SelectValue placeholder={t('select_model') || 'Select Model'} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white">
+                      {!selectedManufacturer ? (
+                        <SelectItem value="select_manufacturer_first" disabled>
+                          Select manufacturer first
+                        </SelectItem>
+                      ) : availableModels.length === 0 ? (
+                        <SelectItem value="no_models_available" disabled>
+                          No models available
+                        </SelectItem>
+                      ) : (
+                        availableModels.map((model) => (
+                          <SelectItem key={model.id} value={model.id?.toString()}>
+                            {model.title || 'Unknown Model'}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                  {errors.model && <p className="mt-1 text-sm text-red-500">{errors.model}</p>}
+                </div>
+
+                <div>
+                  <Select
+                    value={formData.year}
+                    onValueChange={(value) => {
+                      setFormData(prev => ({ ...prev, year: value }));
+                      setErrors(prev => ({ ...prev, year: '' }));
+                    }}
+                    disabled={!selectedManufacturer || !selectedModel || availableYears.length === 0}
+                  >
+                    <SelectTrigger className={`rounded-xl py-5 ${errors.year ? 'border-red-500' : ''}`}>
+                      <SelectValue placeholder={t('year') || 'Year'} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white">
+                      {availableYears.length === 0 ? (
+                        <SelectItem value="no_years_available" disabled>
+                          {!selectedManufacturer ? 'Select manufacturer first' : 
+                           !selectedModel ? 'Select model first' : 'No years available'}
+                        </SelectItem>
+                      ) : (
+                        availableYears.map((year) => (
+                          <SelectItem key={year} value={year.toString()}>
+                            {year}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                  {errors.year && <p className="mt-1 text-sm text-red-500">{errors.year}</p>}
+                </div>
+
+                <div>
+                  <Input
+                    placeholder={t('plate_number')}
+                    value={formData.plateNumber}
+                    onChange={(e) => {
+                      setFormData(prev => ({ ...prev, plateNumber: e.target.value }));
+                      setErrors(prev => ({ ...prev, plateNumber: '' }));
+                    }}
+                    className={`rounded-xl py-5 ${errors.plateNumber ? 'border-red-500' : ''}`}
+                  />
+                  {errors.plateNumber && <p className="mt-1 text-sm text-red-500">{errors.plateNumber}</p>}
+                </div>
+
+                <Input
+                  placeholder={t('mileage')}
+                  value={formData.mileage}
+                  onChange={(e) => setFormData(prev => ({ ...prev, mileage: e.target.value }))}
+                  className="rounded-xl py-5"
+                />
+
+                <Input
+                  placeholder={t('color')}
+                  value={formData.color}
+                  onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
+                  className="rounded-xl py-5"
+                />
+
+                <Select
+                  value={formData.engineType}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, engineType: value }))}
+                >
+                  <SelectTrigger className="rounded-xl py-5">
+                    <SelectValue placeholder={t('engine_type')} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    {['petrol', 'diesel', 'electric', 'hybrid'].map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {t(`fuel_types.${type}`)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select
+                  value={formData.transmission}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, transmission: value }))}
+                >
+                  <SelectTrigger className="rounded-xl py-5">
+                    <SelectValue placeholder={t('transmission')} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    <SelectItem value="automatic">{t('transmission_automatic')}</SelectItem>
+                    <SelectItem value="manual">{t('transmission_manual')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            {/*  */}
+            <h2 className="text-2xl font-semibold mb-6 text-gray-800">او ادخل رقم السيارة</h2>
             <div className="w-full max-w-xl">
             <div className="relative">
               <div className="relative flex items-center bg-[#ffca11] rounded shadow-lg p-2">

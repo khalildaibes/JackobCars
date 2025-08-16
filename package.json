@@ -12,7 +12,10 @@
     "analyze": "ANALYZE=true next build",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+        "translate:extract": "node scripts/translate-manufacturers.js extract",
+    "translate:generate": "node scripts/translate-manufacturers.js generate", 
+    "translate:validate": "node scripts/translate-manufacturers.js validate"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

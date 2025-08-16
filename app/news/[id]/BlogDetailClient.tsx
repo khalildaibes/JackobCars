@@ -638,7 +638,7 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
         
         <main>
           {/* Hero Section - Full Width */}
-          <section className="relative w-full min-h-[60vh]">
+          <section className="relative w-full min-h-[40vh]">
           {cover?.url ? (
             <Image
               src={`http://64.227.112.249${cover.url}`}
@@ -649,94 +649,63 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
           ) : (
             <div className="absolute inset-0 w-full h-full bg-gray-200" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-black/30" />
-          
-         {/* Content Container */}
-         <div className="relative container mx-auto px-0 sm:px-4 pt-32 pb-20">
-            <div className="max-w-4xl mx-auto">
-              {/* Meta Information */}
-              <div className="flex flex-wrap items-center gap-4 mb-6 text-sm text-white/90">
-                {categories?.[0]?.name && (
-                  <span className="bg-blue-600/90 px-4 py-1.5 rounded-full font-medium">
-                    {categories[0].name}
-                  </span>
-                )}
-                <div className="flex items-center gap-4">
-                  <span className="flex items-center gap-2">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {new Date(publishedAt).toLocaleDateString()}
-                  </span>
-                  {authorName && (
-                    <span className="flex items-center gap-2">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                      {authorName}
-                    </span>
-                  )}
-                </div>
-              </div>
+        </section>
 
-              {/* Title and Description */}
-              <div className="bg-black/40 backdrop-blur-sm p-8 rounded-xl mb-8">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white">
+        {/* Title Section */}
+        <section className="pt-2 md:pt-8 pb-2 bg-gradient-to-br from-gray-50 via-white to-blue-50">
+          <div className="container mx-auto px-0">
+            <div className="max-w-4xl mx-auto text-center">
+              {/* Title Only */}
+              <div className="mb-2 md:mb-6">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2 md:mb-6 leading-tight text-gray-900">
                   {title}
                 </h1>
-                <p className="text-lg md:text-xl text-gray-200 leading-relaxed">
-                  {description}
-                </p>
               </div>
 
-              {/* Social Sharing Options */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-4 sm:py-6">
-                <div className="bg-white rounded-xl p-4 sm:p-6 shadow-lg w-full">
-                  <h3 className="text-lg sm:text-xl font-semibold mb-4 text-center">{t('share_article')}</h3>
-                  <div className="flex flex-wrap items-center justify-center gap-4">
-                    <button 
-                      onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank')}
-                      className="p-3 rounded-full bg-white border border-gray-300 hover:bg-gray-50 transition-all duration-300 transform hover:scale-110"
-                      aria-label="Share on Facebook"
-                    >
-                      <Facebook className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
-                    </button>
-                    <button 
-                      onClick={() => window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(title)}`, '_blank')}
-                      className="p-3 rounded-full bg-white border border-gray-300 hover:bg-gray-50 transition-all duration-300 transform hover:scale-110"
-                      aria-label="Share on Twitter"
-                    >
-                      <Twitter className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
-                    </button>
-                    <button 
-                      onClick={() => window.open(`https://www.instagram.com/`, '_blank')}
-                      className="p-3 rounded-full bg-white border border-gray-300 hover:bg-gray-50 transition-all duration-300 transform hover:scale-110"
-                      aria-label="Share on Instagram"
-                    >
-                      <Instagram className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
-                    </button>
-                    <button 
-                      onClick={() => {
-                        const shareText = `${title}\n\n${description || 'Latest automotive news from MaxSpeedLimit'}\n\n`;
-                        const shareUrl = window.location.href;
-                        window.open(`https://wa.me/?text=${encodeURIComponent(shareText + shareUrl)}`, '_blank');
-                      }}
-                      className="p-3 rounded-full bg-white border border-gray-300 hover:bg-gray-50 transition-all duration-300 transform hover:scale-110"
-                      aria-label="Share on WhatsApp"
-                    >
-                      <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
-                    </button>
-                    <button 
-                      onClick={() => {
-                        navigator.clipboard.writeText(window.location.href);
-                      }}
-                      className="p-3 rounded-full bg-white border border-gray-300 hover:bg-gray-50 transition-all duration-300 transform hover:scale-110"
-                      aria-label="Copy link"
-                    >
-                      <LinkIcon className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
-                    </button>
-                  </div>
-                </div>
+              {/* Social Sharing Only */}
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-sm font-medium text-gray-600 mr-2">{t('share_article')}:</span>
+                <button 
+                  onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank')}
+                  className="p-2 rounded-full bg-white border border-gray-300 hover:bg-gray-50 transition-all duration-300 transform hover:scale-110"
+                  aria-label="Share on Facebook"
+                >
+                  <Facebook className="w-4 h-4 text-gray-600" />
+                </button>
+                <button 
+                  onClick={() => window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(title)}`, '_blank')}
+                  className="p-2 rounded-full bg-white border border-gray-300 hover:bg-gray-50 transition-all duration-300 transform hover:scale-110"
+                  aria-label="Share on Twitter"
+                >
+                  <Twitter className="w-4 h-4 text-gray-600" />
+                </button>
+                <button 
+                  onClick={() => window.open(`https://www.instagram.com/`, '_blank')}
+                  className="p-2 rounded-full bg-white border border-gray-300 hover:bg-gray-50 transition-all duration-300 transform hover:scale-110"
+                  aria-label="Share on Instagram"
+                >
+                  <Instagram className="w-4 h-4 text-gray-600" />
+                </button>
+                <button 
+                  onClick={() => {
+                    const shareText = `${title}\n\n${description || 'Latest automotive news from MaxSpeedLimit'}\n\n`;
+                    const shareUrl = window.location.href;
+                    window.open(`https://wa.me/?text=${encodeURIComponent(shareText + shareUrl)}`, '_blank');
+                  }}
+                  className="p-2 rounded-full bg-white border border-gray-300 hover:bg-gray-50 transition-all duration-300 transform hover:scale-110"
+                  aria-label="Share on WhatsApp"
+                >
+                  <MessageCircle className="w-4 h-4 text-gray-600" />
+                </button>
+                <button 
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                  }}
+                  className="p-2 rounded-full bg-white border border-gray-300 hover:bg-gray-50 transition-all duration-300 transform hover:scale-110"
+                  aria-label="Copy link"
+                >
+                  <LinkIcon className="w-4 h-4 text-gray-600" />
+                </button>
               </div>
             </div>
           </div>
@@ -761,7 +730,7 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
             />
 
             {/* Article Content */}
-            <article className="py-16 bg-gradient-to-br from-gray-50 via-white to-blue-50">
+            <article className="pt-4 pb-16 bg-gradient-to-br from-gray-50 via-white to-blue-50">
                 <div className="bg-white rounded-2xl shadow-xl p-2 sm:p-8 md:p-12 border border-gray-100">
                   
                   {/* Videos Section - TikTok/Instagram Embeds */}
@@ -949,6 +918,35 @@ export default function BlogDetailClient({ params }: { params: { id: string } })
                 </div>
               </section>
             )}
+
+            {/* Article Meta Information - At the end of the page */}
+            <section className="py-8 bg-gray-100 border-t border-gray-200">
+              <div className="container mx-auto px-4">
+                <div className="max-w-4xl mx-auto">
+                  <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-600">
+                    {categories?.[0]?.name && (
+                      <span className="bg-blue-600 px-4 py-2 rounded-full font-medium text-white">
+                        {categories[0].name}
+                      </span>
+                    )}
+                    <span className="flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Published: {new Date(publishedAt).toLocaleDateString()}
+                    </span>
+                    {authorName && (
+                      <span className="flex items-center gap-2">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        Author: {authorName}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
 
           {/* Right Ads Section - Hide on mobile */}
