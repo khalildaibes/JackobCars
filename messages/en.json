@@ -1397,7 +1397,11 @@
         "registration_error": "Registration Error",
         "registration_error_desc": "An error occurred during registration",
         "network_error": "Network Error",
-        "network_error_desc": "Failed to connect to server"
+        "network_error_desc": "Failed to connect to server",
+        "close": "Close",
+        "popup_title": "Registration Successful! 🎉",
+        "popup_message": "We can't wait to see you there!",
+        "popup_button": "Close"
       }
     },
     "blog": {

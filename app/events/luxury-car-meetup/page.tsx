@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../..
 import { Badge } from '../../../components/ui/badge';
 import { useToast } from '../../../hooks/use-toast';
 import { useTranslations } from 'next-intl';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../../../components/ui/dialog';
 
 const LuxuryCarMeetupPage = () => {
   const t = useTranslations('Pages.events.luxury_car_meetup');
@@ -19,6 +20,7 @@ const LuxuryCarMeetupPage = () => {
     name: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const { toast } = useToast();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -37,15 +39,12 @@ const LuxuryCarMeetupPage = () => {
 
       const result = await response.json();
 
-      if (response.ok) {
-        toast({
-          title: t('registration_success'),
-          description: t('registration_success_desc'),
-        });
-        setFormData({
-          name: ''
-        });
-      } else {
+             if (response.ok) {
+         setShowSuccessPopup(true);
+         setFormData({
+           name: ''
+         });
+       } else {
         toast({
           title: t('registration_error'),
           description: result.error || t('registration_error_desc'),
@@ -352,10 +351,37 @@ const LuxuryCarMeetupPage = () => {
               </div>
             </CardContent>
           </Card>
-        </motion.div>
-      </div>
-    </div>
-  );
-};
+                 </motion.div>
+       </div>
+
+       {/* Success Popup Modal */}
+       <Dialog open={showSuccessPopup} onOpenChange={setShowSuccessPopup}>
+         <DialogContent className="sm:max-w-md bg-white border-0 shadow-2xl">
+           <DialogHeader className="text-center">
+             <div className="mx-auto mb-4 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+               <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+               </svg>
+             </div>
+             <DialogTitle className="text-2xl font-bold text-gray-900">
+               {t('registration_success')}
+             </DialogTitle>
+             <DialogDescription className="text-lg text-gray-600 mt-2">
+               {t('registration_success_desc')}
+             </DialogDescription>
+           </DialogHeader>
+           <div className="mt-6 text-center">
+             <Button 
+               onClick={() => setShowSuccessPopup(false)}
+               className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 transform hover:scale-105"
+             >
+               {t('close')}
+             </Button>
+           </div>
+         </DialogContent>
+       </Dialog>
+     </div>
+   );
+ };
 
 export default LuxuryCarMeetupPage;
