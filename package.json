@@ -13,9 +13,10 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-        "translate:extract": "node scripts/translate-manufacturers.js extract",
-    "translate:generate": "node scripts/translate-manufacturers.js generate", 
-    "translate:validate": "node scripts/translate-manufacturers.js validate"
+        "extract:manufacturers": "node scripts/extract-manufacturers.js",
+    "create:chunks": "node scripts/create-chunks.js",
+    "translate:chatgpt": "node scripts/translate-with-chatgpt.js translate",
+    "translate:validate-results": "node scripts/translate-with-chatgpt.js validate"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

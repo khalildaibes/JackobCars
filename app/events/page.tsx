@@ -9,6 +9,20 @@ import { Calendar, MapPin, Clock, Users, ChevronRight, Filter } from 'lucide-rea
 const events = [
   {
     id: 1,
+    title: "Luxury Car Meetup in Akko",
+    description: "Join us for the biggest luxury car meetup in Akko featuring Aventador, Huracan, R8, M-Power, AMG, Ferrari F8, Dodge Hellcat and more!",
+    date: "2025-08-18",
+    time: "6:30 PM (18:30)",
+    location: "Baltimore 32, Acco Darom, Akko",
+    image: "/images/img_car11_qgcqjcn7t.png",
+    category: "Meetup",
+    attendees: 500,
+    featured: true,
+    upcoming: true,
+    link: "/events/luxury-car-meetup"
+  },
+  {
+    id: 2,
     title: "International Auto Show 2024",
     description: "Experience the future of automotive technology with the latest models and innovations.",
     date: "2024-05-15",
@@ -17,11 +31,11 @@ const events = [
     image: "/events/auto-show.jpg",
     category: "Exhibition",
     attendees: 1500,
-    featured: true,
+    featured: false,
     upcoming: true
   },
   {
-    id: 2,
+    id: 3,
     title: "Electric Vehicle Summit",
     description: "Join industry leaders in discussing the future of electric vehicles and sustainable transportation.",
     date: "2024-06-20",
@@ -33,7 +47,7 @@ const events = [
     upcoming: true
   },
   {
-    id: 3,
+    id: 4,
     title: "Classic Car Meetup",
     description: "A gathering of vintage car enthusiasts showcasing their prized possessions.",
     date: "2024-04-10",
@@ -81,10 +95,20 @@ const EventsPage = () => {
               <p className="text-gray-200 mb-4">
                 {events.find(event => event.featured)?.description}
               </p>
-              <button className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors w-fit">
-                Register Now
-                <ChevronRight size={16} />
-              </button>
+              {events.find(event => event.featured)?.link ? (
+                <a 
+                  href={events.find(event => event.featured)?.link}
+                  className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors w-fit"
+                >
+                  Register Now
+                  <ChevronRight size={16} />
+                </a>
+              ) : (
+                <button className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors w-fit">
+                  Register Now
+                  <ChevronRight size={16} />
+                </button>
+              )}
             </div>
           </motion.div>
         )}
@@ -163,9 +187,18 @@ const EventsPage = () => {
                     <span>{event.attendees} attendees</span>
                   </div>
                 </div>
-                <button className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                  {event.upcoming ? 'Register Now' : 'View Details'}
-                </button>
+                {event.link ? (
+                  <a 
+                    href={event.link}
+                    className="block w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-center"
+                  >
+                    {event.upcoming ? 'Register Now' : 'View Details'}
+                  </a>
+                ) : (
+                  <button className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    {event.upcoming ? 'Register Now' : 'View Details'}
+                  </button>
+                )}
               </div>
             </motion.div>
           ))}
