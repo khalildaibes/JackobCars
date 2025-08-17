@@ -84,7 +84,7 @@ const LuxuryCarMeetupPage = () => {
       <div className="relative h-[500px] overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40 z-10" />
         <Image
-          src="/images/img_car11_qgcqjcn7t.png"
+          src="/images/car_event.jpg"
           alt="Luxury Cars Meetup"
           fill
           className="object-cover"
@@ -126,26 +126,70 @@ const LuxuryCarMeetupPage = () => {
       </div>
 
       <div className="container mx-auto px-6 py-16">
+        {/* Registration Form - Mobile First (Above Content) */}
+        <div className="lg:hidden mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            <Card className="border-0 shadow-2xl bg-white/90 backdrop-blur-sm">
+              <CardHeader className="text-center pb-4">
+                <CardTitle className="text-2xl font-bold text-gray-900">
+                  {t('register_now')}
+                </CardTitle>
+                <CardDescription className="text-gray-600">
+                  {t('register_desc')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name-mobile" className="text-gray-700 font-medium">
+                      {t('full_name')}
+                    </Label>
+                    <Input
+                      id="name-mobile"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      placeholder={t('full_name_placeholder')}
+                      required
+                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 text-lg rounded-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? (
+                      <div className="flex items-center gap-2 justify-center">
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>{t('registering')}</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 justify-center">
+                        <Star size={20} />
+                        <span>{t('register_button')}</span>
+                      </div>
+                    )}
+                  </Button>
+
+                  <p className="text-xs text-gray-500 text-center">
+                    {t('terms_notice')}
+                  </p>
+                </form>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+
         <div className="grid lg:grid-cols-3 gap-12">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-12">
-            {/* Event Description */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-3xl font-bold text-gray-900 mb-4">
-                    {t('event_details')}
-                  </CardTitle>
-                  <CardDescription className="text-lg text-gray-600 leading-relaxed">
-                    {eventDetails.description}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </motion.div>
+            
 
             {/* Features Grid */}
             <motion.div
@@ -206,8 +250,8 @@ const LuxuryCarMeetupPage = () => {
             </motion.div>
           </div>
 
-          {/* Registration Form Sidebar */}
-          <div className="lg:col-span-1">
+          {/* Registration Form Sidebar - Desktop Only */}
+          <div className="hidden lg:block lg:col-span-1">
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
