@@ -10,7 +10,7 @@ const events = [
   {
     id: 1,
     title: "Luxury Car Meetup in Akko",
-    description: "Join us for the biggest luxury car meetup in Akko featuring Aventador, Huracan, R8, M-Power, AMG, Ferrari F8, Dodge Hellcat and more!",
+    description: "Join us for the biggest luxury car meetup in Akko featuring amazing super cars and luxury vehicles from world-renowned brands!",
     date: "2025-08-18",
     time: "6:30 PM (18:30)",
     location: "Baltimore 32, Acco Darom, Akko",
