@@ -97,12 +97,17 @@ const LuxuryCarMeetupPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <Badge variant="secondary" className="mb-4 bg-blue-600/20 text-blue-200 border-blue-400/30">
-                {t('exclusive_event')}
-              </Badge>
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-                {eventDetails.title}
-              </h1>
+                             <Badge variant="secondary" className="mb-4 bg-blue-600/20 text-blue-200 border-blue-400/30">
+                 {t('exclusive_event')}
+               </Badge>
+               <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                 {eventDetails.title}
+               </h1>
+               <div className="mb-6">
+                 <Badge variant="outline" className="bg-green-600/20 text-green-200 border-green-400/30 text-lg px-4 py-2">
+                   {t('free_entry')}
+                 </Badge>
+               </div>
               <p className="text-xl md:text-2xl text-gray-200 mb-8 max-w-3xl mx-auto">
                 {t('description')}
               </p>
