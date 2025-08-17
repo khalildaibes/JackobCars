@@ -79,8 +79,8 @@ const LuxuryCarMeetupPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50" dir="rtl">
-      {/* Hero Section */}
-      <div className="relative h-[500px] overflow-hidden">
+             {/* Hero Section */}
+       <div className="relative h-[525px] overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40 z-10" />
         <Image
           src="/images/car_event.jpg"
