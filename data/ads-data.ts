@@ -26,11 +26,50 @@ export const mobileAds: AdItem[] = [
     buttonText: 'استشارة قانونية',
     buttonColor: 'purple',
     alt: 'مكتب أدهم أندراوس للمحاماة',  
-    url: 'https://api.whatsapp.com/send?phone=0526866062&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
+    url: "tel:0526866062"
   }
 ];
 
 export const mainContentAds: AdItem[] = [
+  {
+    id: 'royal-courses',
+    image: 'royal_psycho_ad.jpg',
+    title: 'معهد رويال بسيخومتري',
+    description: 'دورات شاملة ودورات الـ800 - مركز رويال يركا وشفاعمرو - 050-2244-972',
+    category: 'تعليم',
+    categoryColor: 'blue',
+    buttonText: 'تواصل معنا',
+    buttonColor: 'blue',
+    alt: 'معهد رويال',
+    url: "tel:0502244972"
+  },
+  {
+    id: "Tow-hitch-installation",
+    image: "tow_hitch_ad.jpg",
+    title: "تركيب واي جر (ווי גרירה)",
+    description: "تركيب واي جر (ווי גרירה) لسيارتك مع يعقوب – متخصص تكييف وكهرباء سيارات. خدمة احترافية بجودة عالية وسرعة في التنفيذ.",
+    category: "خدمات السيارات",
+    categoryColor: "blue",
+    buttonText: "اتصل الآن",
+    buttonColor: "blue",
+    alt: "تركيب واي جر للسيارات",
+    url: "tel:0525675690"
+  },
+  {
+    id: "Good-meat-farm",
+    image: "good_meat_ad.jpg",
+    title: "شركه جود ميت لاستيراد وتسويق اللحوم والمواشي ",
+    description: "شركه جود ميت لاستيراد االلحوم المتخصصة في استيراد وتسويق التلايم والعجول من دول رائدة حول العالم، مع الحرص على الجودة والصحة والمعايير المهنية العالية.",
+    category: " استيراد وتسويق اللحوم والمواشي ",
+    categoryColor: "red",
+    buttonText: "تواصل معنا",
+    buttonColor: "red",
+    alt: "شركه جود ميت لاستيراد االلحوم",
+    url: "tel:1700077370"
+    }
+  
+];
+export const mainContentAds2: AdItem[] = [
   {
     id: 'royal-courses',
     image: 'royal_psycho_ad.jpg',
@@ -56,17 +95,18 @@ export const mainContentAds: AdItem[] = [
     url: 'https://api.whatsapp.com/send?phone=0544603725&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
   },
   {
-    id: 'adham-andraws',
-    image: 'adham_andraws.jpg',
-    title: 'مكتب أدهم أندراوس للمحاماة',
-    description: 'متخصصين بقضايا المخالفات المرورية والحوادث وكل ما يتعلق بالتأمين - 0526866062',
-    category: 'محاماة',
-    categoryColor: 'purple',
-    buttonText: 'استشارة قانونية',
-    buttonColor: 'purple',
-    alt: 'مكتب أدهم أندراوس للمحاماة',  
-    url: 'https://api.whatsapp.com/send?phone=0526866062&text=שלום אני מגיע מהאתר של מאקס ספייד לימיט עם הנחה של 10%'
-  }
+    id: "Good-meat-farm",
+    image: "good_meat_ad.jpg",
+    title: "شركه جود ميت لاستيراد وتسويق اللحوم والمواشي ",
+    description: "شركه جود ميت لاستيراد االلحوم المتخصصة في استيراد وتسويق التلايم والعجول من دول رائدة حول العالم، مع الحرص على الجودة والصحة والمعايير المهنية العالية.",
+    category: " استيراد وتسويق اللحوم والمواشي ",
+    categoryColor: "red",
+    buttonText: "تواصل معنا",
+    buttonColor: "red",
+    alt: "شركه جود ميت لاستيراد االلحوم",
+    url: "tel:1700077370"
+    }
+  
 ];
 
 export const betweenNewsAds: AdItem[] = [

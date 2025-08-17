@@ -12,6 +12,7 @@ import SidebarAds from "../components/ads/SidebarAds";
 import { 
   mobileAds, 
   mainContentAds, 
+  mainContentAds2, 
   betweenNewsAds, 
   leftSidebarAds, 
   rightSidebarAds 
