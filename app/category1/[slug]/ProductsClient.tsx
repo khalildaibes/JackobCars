@@ -601,6 +601,7 @@ export default function ProductsClient({ products }: ProductsClientProps) {
                     key={item.id} 
                     car={{
                       id: item.id,
+                      name: item.name, // Add required name field
                       hostname: item.store?.hostname,
                       slug: item.slug,
                       mainImage: item.images?.[0]?.url || "/default-product.png",
