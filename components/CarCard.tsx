@@ -96,6 +96,7 @@ interface CarCardProps {
     fuel_type?: string;
     pros?: string[];
     cons?: string[];
+    features?: string[]; // Add features field for compatibility
     store?: {
       hostname: string;
     };
