@@ -79,12 +79,23 @@ interface CarCardProps {
     mainImage?: string;
     year?: number;
     mileage?: string;
+    miles?: string; // Add miles field for compatibility
     fuelType?: string;
     make?: string;
     bodyType?: string;
     condition?: string;
     transmission?: string;
     description?: string;
+    // Additional fields for compatibility
+    asking_price?: string | number;
+    owner_name?: string;
+    owner_phone?: string;
+    owner_email?: string;
+    manufacturer_name?: string;
+    commercial_nickname?: string;
+    fuel_type?: string;
+    pros?: string[];
+    cons?: string[];
     store?: {
       hostname: string;
     };

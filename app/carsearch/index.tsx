@@ -158,9 +158,12 @@ export default function CarSearch() {
                     mileage: String(car.mileage),
                     miles: String(car.mileage), // Add miles field for compatibility
                     price: car.price,
+                    asking_price: car.price, // Add asking_price for compatibility
                     bodyType: car.class || "",
                     fuelType: car.fuel,
+                    fuel_type: car.fuel, // Add fuel_type for compatibility
                     make: car.make || "",
+                    manufacturer_name: car.make || "", // Add manufacturer_name for compatibility
                     condition: car.condition || "Unknown",
                     transmission: car.transmission || "Unknown",
                     description: car.details || ""
