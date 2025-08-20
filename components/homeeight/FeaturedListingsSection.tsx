@@ -154,6 +154,7 @@ export default function FeaturedListingsSection({
                             car={{
                               hostname: listing.store.hostname,
                               id: listing.id,
+                              name: listing.title, // Add required name field
                               slug: listing.slug,
                               mainImage: listing.mainImage,
                               make: listing.make || "",
