@@ -97,6 +97,7 @@ interface CarCardProps {
     pros?: string[];
     cons?: string[];
     features?: string[]; // Add features field for compatibility
+    category?: string[]; // Add category field for compatibility
     store?: {
       hostname: string;
     };
