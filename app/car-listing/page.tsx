@@ -104,7 +104,7 @@ const CarListings: React.FC = () => {
   
       setFavorites(updatedFavorites);
       localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
-      console.log("added to favorites id ", id ,favorites)
+
     };
 
     const fetchProducts = async () => {
@@ -118,17 +118,10 @@ const CarListings: React.FC = () => {
           const data = await response.json();
           if (!data || !data.data) throw new Error("Invalid API response structure");
       
-          console.log("Raw API Response:", data);
-          console.log("Fetched Products:", data.data);
-          
-          // Log the first product to see its structure
-          if (data.data && data.data.length > 0) {
-            console.log("First Product Structure:", JSON.stringify(data.data[0], null, 2));
-          }
+
           
           // Transform the fetched data into the required listings format
           const formattedListings = data.data.map((product: any) => {
-            console.log('Processing product:', product);
             
             // Get the fuel type from the new structure
             const rawFuelType = product.details?.car?.fuel_type || product.details?.car?.fuel || "Unknown";
@@ -306,7 +299,7 @@ const CarListings: React.FC = () => {
             };
           });
           
-          console.log("Formatted Listings:", formattedListings);
+
           setListings(formattedListings);
 
           // Calculate min and max prices from the listings
@@ -503,26 +496,7 @@ const CarListings: React.FC = () => {
           </CardContent>
         </Card>
         
-        {/* Debug Section - Remove in production */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="bg-gray-100 p-4 rounded-lg">
-            <h3 className="font-semibold mb-2">Debug Info:</h3>
-            <div className="text-sm space-y-1">
-              <div>Total Listings: {listings.length}</div>
-              <div>Filtered Cars: {filteredCars.length}</div>
-              <div>Loading: {loading ? 'Yes' : 'No'}</div>
-              <div>Error: {error || 'None'}</div>
-              {listings.length > 0 && (
-                <div>
-                  <div>First Car Data:</div>
-                  <pre className="text-xs bg-white p-2 rounded overflow-auto max-h-40">
-                    {JSON.stringify(listings[0], null, 2)}
-                  </pre>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+
 
         {/* Results Section */}
         <div className="space-y-4">

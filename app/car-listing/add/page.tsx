@@ -594,24 +594,13 @@ export default function AddCarListing() {
     }
   }, [selectedYear, availableYears]);
 
-  // Debug: Log form data changes
-  useEffect(() => {
-    console.log('Form data updated:', {
-      manufacturerName: formData.manufacturerName,
-      commercialNickname: formData.commercialNickname,
-      yearOfProduction: formData.yearOfProduction,
-      title: formData.title,
-      makeModel: formData.makeModel,
-      year: formData.year
-    });
-  }, [formData.manufacturerName, formData.commercialNickname, formData.yearOfProduction, formData.title, formData.makeModel, formData.year]);
+
 
   // Auto-populate title when moving to next step (after step 0) and title is empty
   useEffect(() => {
     // Only auto-generate title when moving to next step (currentStep > 0) and title is empty
     if (currentStep > 0 && formData.manufacturerName && formData.commercialNickname && formData.yearOfProduction && !formData.title) {
       const newTitle = `${formData.manufacturerName} ${formData.commercialNickname} ${formData.yearOfProduction}`.trim();
-      console.log('Auto-populating title after step change:', newTitle);
       setFormData(prev => ({
         ...prev,
         title: newTitle
@@ -1232,32 +1221,7 @@ export default function AddCarListing() {
           </div>
         </div>
 
-        {/* Debug Information */}
-        <div className="mb-6 p-4 bg-gray-100 rounded-lg">
-          <h3 className="font-semibold text-gray-800 mb-2">Debug Info:</h3>
-          <div className="text-sm text-gray-600 space-y-1">
-            <div>Current Step: {currentStep} / {STEPS.length - 1}</div>
-            <div>Step Name: {STEPS[currentStep]}</div>
-            <div>Is Last Step: {currentStep === STEPS.length - 1 ? 'Yes' : 'No'}</div>
-            <div>Input Method: <span className={`font-semibold ${inputMethod === 'plate' ? 'text-blue-600' : 'text-green-600'}`}>{inputMethod === 'plate' ? 'Automatic (Plate Search)' : 'Manual Entry'}</span></div>
-            <div>Form Data Keys: {Object.keys(formData).filter(key => formData[key as keyof typeof formData]).join(', ')}</div>
-            <div>Required Fields Status:</div>
-            <div className="ml-4">
-              <div>Title: {formData.title ? '✓' : '✗'} "{formData.title}"</div>
-              <div>Manufacturer: {formData.manufacturerName ? '✓' : '✗'} "{formData.manufacturerName}"</div>
-              <div>Model: {formData.commercialNickname ? '✓' : '✗'} "{formData.commercialNickname}"</div>
-              <div>Year: {formData.yearOfProduction ? '✓' : '✗'} "{formData.yearOfProduction}"</div>
-              <div>Plate: {inputMethod === 'plate' ? (formData.plateNumber ? '✓' : '✗') : 'Optional'} "{formData.plateNumber}" {inputMethod === 'plate' && !carData && formData.plateNumber ? '(Not found in system)' : ''}</div>
-              <div>Email: {formData.email || 'Optional'} "{formData.email}"</div>
-              <div>Phone: {formData.phone ? '✓' : '✗'} "{formData.phone}"</div>
-              <div>Images: {formData.images.length > 0 ? '✓' : '✗'} ({formData.images.length})</div>
-            </div>
-            <div className="mt-2 pt-2 border-t border-gray-300">
-              <div>Car Data Available: {carData ? '✓ Yes' : '✗ No'}</div>
-              <div>Yad2 Data Available: {yad2ModelInfo ? '✓ Yes' : '✗ No'}</div>
-            </div>
-          </div>
-        </div>
+
 
         {/* Steps indicator (clickable) */}
         <div className="mb-8">

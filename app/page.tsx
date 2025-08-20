@@ -221,16 +221,8 @@ interface TransformedArticle {
 
 // API fetch functions
 const fetchArticles = async () => {
-  // Add debugging for production
-  console.log("Environment check:", {
-    NODE_ENV: process.env.NODE_ENV,
-    STRAPI_URL: process.env.NEXT_PUBLIC_STRAPI_URL,
-    HAS_TOKEN: !!process.env.NEXT_PUBLIC_STRAPI_TOKEN,
-    BASE_URL: process.env.NEXT_PUBLIC_BASE_URL
-  });
 
   try {
-    console.log("Fetching articles...");
     const [featuredResponse, newsResponse, storyResponse] = await Promise.all([
       fetch('/api/articles?sort=createdAt:desc&pagination=100'),
       fetch('/api/articles?sort=createdAt:desc&pagination=100'),
@@ -257,11 +249,7 @@ const fetchArticles = async () => {
       storyResponse.json()
     ]);
 
-    console.log("API Responses:", {
-      featured: featuredData?.data?.length || 0,
-      news: newsData?.data?.length || 0,
-      story: storyData?.data?.length || 0
-    });
+
 
     if (!featuredData.data || !newsData.data || !storyData.data) {
       throw new Error('Invalid data format received from API');
@@ -289,14 +277,11 @@ const fetchDeals = async (): Promise<Deal[]> => {
   //   return cachedData;
   // }
 
-  console.log("Fetching deals...");
   const response = await fetch('/api/deals?store_hostname=64.227.112.249');
   if (!response.ok) {
-    console.error("Failed to fetch deals:", response.statusText);
     throw new Error(`Failed to fetch deals: ${response.statusText}`);
   }
   const data = await response.json();
-  console.log("Deals API Response:", data);
   if (!data?.data) {
     console.error("Invalid API response structure:", data);
     throw new Error("Invalid API response structure");

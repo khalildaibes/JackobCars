@@ -231,7 +231,7 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
         condition: condition,
         transmission: transmission,
         details: product.details?.car || {},
-        price: `$${product.price?.toLocaleString() || '0'}`,
+        price: `${product.price?.toLocaleString() || '0'}`,
         mileage: miles,
         year: year,
         pros: pros,
@@ -461,39 +461,7 @@ useEffect(() => {
         </Link>
       </div>
       
-      {/* Debug Section - Remove in production */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="bg-gray-100 p-4 rounded-lg mb-6">
-          <h3 className="font-semibold mb-2">Debug Info:</h3>
-          <div className="text-sm space-y-1">
-            <div>Car ID: {car?.id}</div>
-            <div>Slug: {car?.slug}</div>
-            <div>Title: {car?.title}</div>
-            <div>Owner: {car?.owner_name || 'None'}</div>
-            <div>Phone: {car?.owner_phone || 'None'}</div>
-            <div>Email: {car?.owner_email || 'None'}</div>
-            <div>Price: {car?.price}</div>
-            <div>Year: {car?.year}</div>
-            <div>Make: {car?.make}</div>
-            <div>Body Type: {car?.bodyType}</div>
-            <div>Fuel Type: {car?.fuelType}</div>
-            <div>Transmission: {car?.transmission}</div>
-            <div>Condition: {car?.condition}</div>
-            <div>Miles: {car?.miles}</div>
-            <div>Pros Count: {car?.pros?.length || 0}</div>
-            <div>Cons Count: {car?.cons?.length || 0}</div>
-            <div>Features Count: {car?.features?.length || 0}</div>
-            {car && (
-              <div>
-                <div>Raw Car Data:</div>
-                <pre className="text-xs bg-white p-2 rounded overflow-auto max-h-40">
-                  {JSON.stringify(car, null, 2)}
-                </pre>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+
 
       {/* Car Header */}
       <motion.div

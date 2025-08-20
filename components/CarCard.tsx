@@ -118,22 +118,12 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
 
   // Safety check for data structure - more flexible to handle both old and new formats
   if (!car) {
-    console.warn('CarCard: No car data provided');
     return (
       <div className="cd-card bg-gray-100 rounded-2xl p-6 text-center">
         <p className="text-gray-500">{t('loading') || 'Loading...'}</p>
       </div>
     );
   }
-
-  // Debug logging to see what data structure we're working with
-  console.log('CarCard received data:', {
-    car,
-    hasDetails: !!car.details,
-    hasCarDetails: !!car.details?.car,
-    carKeys: car.details?.car ? Object.keys(car.details.car) : [],
-    directKeys: Object.keys(car)
-  });
 
   useEffect(() => {
     if (typeof window !== "undefined") {
