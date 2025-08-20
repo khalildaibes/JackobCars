@@ -5,8 +5,10 @@ import Link from 'next/link';
 
 export default function CarDetailsPage({ params, searchParams }: { params: { slug: string }, searchParams?: { hostname?: string } }) {
   // Get hostname from searchParams or fallback to default
-  const baseUrl = searchParams?.hostname || process.env.NEXT_PUBLIC_BASE_URL || 'localhost:3000';
-  console.log('baseUrl', baseUrl);
+  const baseUrl = searchParams?.hostname || process.env.NEXT_PUBLIC_BASE_URL || '64.227.112.249';
+  console.log('Car Details Page - searchParams:', searchParams);
+  console.log('Car Details Page - baseUrl:', baseUrl);
+  console.log('Car Details Page - NEXT_PUBLIC_BASE_URL:', process.env.NEXT_PUBLIC_BASE_URL);
   try {
     return (
       <>

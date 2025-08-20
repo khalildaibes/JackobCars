@@ -903,6 +903,7 @@
     "select_transmission": "اختر ناقل الحركة",
     "select_drive_type": "اختر نوع الدفع",
     "select_engine_type": "اختر نوع المحرك",
+    "transmission": "ناقل الحركة",  
     "select_engine_size": "اختر سعة المحرك",
     "plate_number": "رقم اللوحة",
     "add_to_compare": "أضف للمقارنة",

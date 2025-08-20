@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback, memo } from "react";
 import { motion } from "framer-motion";
 import dynamic from 'next/dynamic';
-import { Car, Fuel, Heart, MessageSquare, Scale, Gauge, Check } from "lucide-react";
+import { Car, Fuel, Heart, MessageSquare, Scale, Gauge, Check, Calendar, User, Phone, Mail, Star, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { useTranslations, useLocale } from "next-intl";
@@ -26,20 +26,68 @@ interface CarCardProps {
   car: {
     id: string | number;
     slug: string | number;
-    mainImage: string;
-    title: string;
-    year: number;
-    mileage: string;
-    fuelType: string;
-    make: string;
-    price: string;
-    condition: string;
-    transmission: string;
-    bodyType: string;
-    hostname: string;
-    description?: string;
-    features?: string[];
-    category?: string[];
+    name: string;
+    price: string | number;
+    // New structure
+    image?: {
+      id: number;
+      url: string;
+      formats?: {
+        thumbnail?: {
+          url: string;
+        };
+      };
+    };
+    details?: {
+      car: {
+        name: string;
+        year: number;
+        miles: string;
+        fuel_type: string;
+        transmission: string;
+        condition: string;
+        body_type: string;
+        engine_type: string;
+        color: string;
+        owner_name: string;
+        owner_phone: string;
+        owner_email: string;
+        asking_price: string;
+        trade_in: string;
+        known_problems: string;
+        manufacturer_name: string;
+        commercial_nickname: string;
+        year_of_production: string;
+        trim_level: string;
+        plate_number: string;
+        description: string;
+        features: Array<{
+          label: string;
+          value: string;
+        }>;
+        pros: string[];
+        cons: string[];
+        fuel: string;
+        images: {
+          main: number;
+          additional: number[];
+        };
+      };
+    };
+    // Old structure compatibility
+    title?: string;
+    mainImage?: string;
+    year?: number;
+    mileage?: string;
+    fuelType?: string;
+    make?: string;
+    bodyType?: string;
+    condition?: string;
+    transmission?: string;
+    store?: {
+      hostname: string;
+    };
+    hostname?: string;
   };
   variant?: "grid" | "list";
 }
@@ -52,6 +100,26 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   const locale = useLocale();
   const { addToComparison, removeFromComparison, isInComparison } = useComparison();
   const [favorites, setFavorites] = useState<(string | number)[]>([]);
+  const [showSellerInfo, setShowSellerInfo] = useState(false);
+
+  // Safety check for data structure - more flexible to handle both old and new formats
+  if (!car) {
+    console.warn('CarCard: No car data provided');
+    return (
+      <div className="cd-card bg-gray-100 rounded-2xl p-6 text-center">
+        <p className="text-gray-500">{t('loading') || 'Loading...'}</p>
+      </div>
+    );
+  }
+
+  // Debug logging to see what data structure we're working with
+  console.log('CarCard received data:', {
+    car,
+    hasDetails: !!car.details,
+    hasCarDetails: !!car.details?.car,
+    carKeys: car.details?.car ? Object.keys(car.details.car) : [],
+    directKeys: Object.keys(car)
+  });
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -80,8 +148,64 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   }, [car.slug, favorites, t]);
 
   const handleViewDetails = useCallback(() => {
-    router.push(`/car-details/${car.slug}?hostname=${car.hostname}`);
-  }, [car.slug, car.hostname, router]);
+    const hostname = car.store?.hostname || car.hostname;
+    router.push(`/car-details/${car.slug}?hostname=${hostname}`);
+  }, [car.slug, car.store?.hostname, car.hostname, router]);
+
+  const handleCallAction = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowSellerInfo(!showSellerInfo);
+  };
+
+  // Helper functions - defined before they're used
+  const getMainImage = () => {
+    // Try new structure first
+    if (car.image?.url) return car.image.url;
+    if (car.image?.formats?.thumbnail?.url) return car.image.formats.thumbnail.url;
+    
+    // Try old structure
+    if (car.mainImage) return car.mainImage;
+    
+    return '/placeholder-car.jpg'; // fallback image
+  };
+
+  const getFeatureValue = (label: string) => {
+    const feature = car.details?.car?.features?.find(f => f.label === label);
+    return feature?.value || '';
+  };
+
+  // Safe getter for car data with fallbacks - handles both old and new data structures
+  const getCarData = (field: string, fallback: any = '') => {
+    // Try old structure: car[field]
+    if (car[field] !== undefined && car[field] !== '') {
+      return car[field];
+    }
+
+    // Try new structure first: car.details.car[field]
+    if (car.details?.car?.[field] !== undefined) {
+      return car.details.car[field];
+    }
+    
+
+    
+    // Try mapping old field names to new ones
+    const fieldMapping: { [key: string]: string } = {
+      'title': 'name',
+      'mainImage': 'image',
+      'mileage': 'miles',
+      'fuelType': 'fuel_type',
+      'make': 'manufacturer_name',
+      'bodyType': 'body_type'
+    };
+    
+    const mappedField = fieldMapping[field];
+    if (mappedField && car.details?.car?.[mappedField] !== undefined) {
+      return car.details.car[mappedField];
+    }
+    
+    return fallback;
+  };
 
   const handleCompareToggle = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -92,21 +216,24 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
     } else {
       addToComparison({
         id: car.slug.toString(),
-        title: car.title,
-        price: car.price,
-        year: car.year,
-        mileage: car.mileage,
-        fuelType: car.fuelType,
-        transmission: car.transmission,
-        image: car.mainImage
+        title: getCarData('name', car.name),
+        price: getCarData('asking_price', car.price?.toString()),
+        year: getCarData('year'),
+        mileage: getCarData('miles'),
+        fuelType: getCarData('fuel_type') || getCarData('fuel'),
+        transmission: getCarData('transmission'),
+        image: car.image?.url || car.image?.formats?.thumbnail?.url || ''
       });
       toast.success(t('added_to_comparison'));
     }
   }, [car, isInComparison, addToComparison, removeFromComparison, t]);
 
-  const formatPrice = (price: string) => {
-    const numPrice = parseFloat(price.replace(/[^\d.-]/g, ''));
-    if (isNaN(numPrice)) return price;
+  const formatPrice = (price: string | number) => {
+    if (!price || price === '0' || price === 0) return t('price_on_request') || 'Price on request';
+    
+    const numPrice = typeof price === 'string' ? parseFloat(price.replace(/[^\d.-]/g, '')) : price;
+    if (isNaN(numPrice)) return t('price_on_request') || 'Price on request';
+    
     return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: locale === 'ar' ? 'ILS' : locale === 'he-IL' ? 'ILS' : 'USD',
@@ -115,12 +242,14 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   };
 
   const formatMileage = (mileage: string) => {
+    if (!mileage) return t('mileage_unknown') || 'Unknown';
     const numMileage = parseFloat(mileage.replace(/[^\d.-]/g, ''));
     if (isNaN(numMileage)) return mileage;
     return new Intl.NumberFormat(locale).format(numMileage) + ' km';
   };
 
-  const isNew = car.condition?.toLowerCase() === 'new';
+  const isNew = (car.details?.car?.condition?.toLowerCase() === 'new' || car.details?.car?.condition?.toLowerCase() === 'excellent') ||
+                (car.condition?.toLowerCase() === 'new' || car.condition?.toLowerCase() === 'excellent');
   const isFavorite = favorites.includes(car.slug);
   const inComparison = isInComparison(car.slug.toString());
 
@@ -163,8 +292,8 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
             style={{ height: IMAGE_HEIGHT, minHeight: IMAGE_HEIGHT, maxHeight: IMAGE_HEIGHT }}
           >
             <Img
-              src={car.mainImage}
-              alt={car.title}
+              src={getMainImage()}
+              alt={getCarData('name', car.name)}
               width={400}
               height={IMAGE_HEIGHT}
               external={true}
@@ -172,7 +301,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
             />
             {isNew && (
               <span className={badgeClass}>
-                {t('new')}
+                {t('excellent') || 'Excellent'}
               </span>
             )}
             <button
@@ -190,29 +319,61 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
         <div className={contentBase + " md:w-3/5"}>
           <div className="flex flex-col items-center justify-center mb-3 w-full">
             <h3 className="cd-heading-md mb-1 line-clamp-1 group-hover:text-red-600 transition-colors font-semibold">
-              {car.title}
+              {getCarData('name', car.name)}
             </h3>
             <p className="cd-caption mb-2 text-gray-500">
-              {car.year} • {car.make} • {car.bodyType}
+            {getCarData('year')} • {getCarData('manufacturer_name') || getFeatureValue('الشركة المصنعة والموديل')} • {getFeatureValue('makeModel') || getCarData('commercial_nickname')}
             </p>
             <div className={priceClass + " mb-1"}>
-              {formatPrice(car.price)}
+              {formatPrice(getCarData('asking_price', car.price))}
             </div>
           </div>
           <div className="grid grid-cols-3 gap-4 mb-4 w-full justify-items-center">
             <div className="flex flex-col items-center gap-1">
               <Gauge className="w-5 h-5 text-gray-400" />
-              <span className="cd-body-sm text-gray-700">{formatMileage(car.mileage)}</span>
+              <span className="cd-body-sm text-gray-700">{formatMileage(getCarData('miles'))}</span>
             </div>
             <div className="flex flex-col items-center gap-1">
               <Fuel className="w-5 h-5 text-gray-400" />
-              <span className="cd-body-sm text-gray-700">{car.fuelType}</span>
+              <span className="cd-body-sm text-gray-700">{getCarData('fuel_type') || getCarData('fuel') || getFeatureValue('نوع الوقود')}</span>
             </div>
             <div className="flex flex-col items-center gap-1">
               <Car className="w-5 h-5 text-gray-400" />
-              <span className="cd-body-sm text-gray-700">{car.transmission}</span>
+              <span className="cd-body-sm text-gray-700">{getCarData('transmission') || getFeatureValue('ناقل الحركة')}</span>
             </div>
           </div>
+{/*           
+          {getCarData('owner_name') && (
+            <div className="flex items-center gap-2 mb-3 text-sm text-gray-600">
+              <User className="w-4 h-4" />
+              <span>{getCarData('owner_name')}</span>
+              {getCarData('owner_phone') && (
+                <>
+                  <Phone className="w-4 h-4" />
+                  <span>{getCarData('owner_phone')}</span>
+                </>
+              )}
+            </div>
+          )} */}
+
+          {/* Pros and Cons */}
+          {(getCarData('pros')?.length > 0 || getCarData('cons')?.length > 0) && (
+            <div className="flex gap-4 mb-3 text-xs">
+              {getCarData('pros')?.length > 0 && (
+                <div className="flex items-center gap-1 text-green-600">
+                  <Star className="w-3 h-3" />
+                  <span>{getCarData('pros').length} {t('pros') || 'Pros'}</span>
+                </div>
+              )}
+              {getCarData('cons')?.length > 0 && (
+                <div className="flex items-center gap-1 text-orange-600">
+                  <AlertTriangle className="w-3 h-3" />
+                  <span>{getCarData('cons').length} {t('cons') || 'Cons'}</span>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="flex items-center justify-between w-full mt-2">
             <div className="flex items-center gap-2">
               <button
@@ -226,13 +387,14 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
               >
                 <Scale className="w-5 h-5" />
               </button>
-              <button
-                className={contactBtn}
-                title={t('contact')}
-                aria-label={t('contact')}
-              >
-                <MessageSquare className="w-5 h-5" />
-              </button>
+                          <button
+              onClick={handleCallAction}
+              className={contactBtn}
+              title={t('contact')}
+              aria-label={t('contact')}
+            >
+              <MessageSquare className="w-5 h-5" />
+            </button>
             </div>
             <button 
               onClick={handleViewDetails}
@@ -261,58 +423,107 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
           className={imageWrapper}
           style={{ height: IMAGE_HEIGHT, minHeight: IMAGE_HEIGHT, maxHeight: IMAGE_HEIGHT }}
         >
-          <Img
-            src={car.mainImage}
-            external={true}
-            alt={car.title}
-            width={400}
-            height={IMAGE_HEIGHT}
-            className="w-full h-full object-cover rounded-xl transition-transform duration-300 group-hover:scale-105"
-          />
-          {isNew && (
-            <span className={badgeClass}>
-              {t('new')}
-            </span>
+                      <Img
+              src={getMainImage()}
+              external={true}
+              alt={getCarData('name', car.name)}
+              width={400}
+              height={IMAGE_HEIGHT}
+              className="w-full h-full object-cover rounded-xl transition-transform duration-300 group-hover:scale-105"
+            />
+            {isNew && (
+              <span className={badgeClass}>
+                {t('excellent') || 'Excellent'}
+              </span>
+            )}
+            <button
+              onClick={handleFavoriteToggle}
+              className={
+                favoriteBtn +
+                (isFavorite ? " " + favoriteActive : " text-gray-600")
+              }
+              aria-label={isFavorite ? t('remove_from_favorites') : t('add_to_favorites')}
+            >
+              <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+            </button>
+          </div>
+        </div>
+        <div className={contentBase}>
+          <div className="flex flex-col items-center justify-center mb-3 w-full">
+            <h3 className="cd-heading-md mb-1 line-clamp-2 group-hover:text-red-600 transition-colors font-semibold">
+              {getCarData('name', car.name)}
+            </h3>
+            <p className="cd-caption mb-2 text-gray-500">
+              {getCarData('year')} • {getCarData('manufacturer_name') || getFeatureValue('الشركة المصنعة والموديل')} • {getFeatureValue('makeModel') || getCarData('commercial_nickname')}
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4 mb-4 text-sm w-full justify-items-center">
+            <div className="flex flex-col items-center gap-1">
+              <Gauge className="w-5 h-5 text-gray-400" />
+              <span className="cd-body-sm text-gray-700">{formatMileage(getCarData('miles'))}</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <Fuel className="w-5 h-5 text-gray-400" />
+              <span className="cd-body-sm text-gray-700">{getCarData('fuel_type') || getCarData('fuel') || getFeatureValue('نوع الوقود')}</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <Car className="w-5 h-5 text-gray-400" />
+              <span className="cd-body-sm text-gray-700">{getCarData('transmission') || getFeatureValue('ناقل الحركة')}</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <Check className="w-5 h-5 text-gray-400" />
+              <span className="cd-body-sm text-gray-700">{getCarData('condition') || getFeatureValue('الحالة الحالية')}</span>
+            </div>
+          </div>
+{/* 
+          {getCarData('owner_name') && (
+            <div className="flex items-center gap-2 mb-3 text-sm text-gray-600 justify-center">
+              <User className="w-4 h-4" />
+              <span>{getCarData('owner_name')}</span>
+              {getCarData('owner_phone') && (
+                <>
+                  <Phone className="w-4 h-4" />
+                  <span>{getCarData('owner_phone')}</span>
+                </>
+              )}
+            </div>
+          )} */}
+
+          {/* Seller Info - Only shown when contact button is clicked */}
+          {showSellerInfo && getCarData('owner_name') && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
+              <div className="flex items-center gap-2 text-sm text-blue-800">
+                <User className="w-4 h-4" />
+                <span className="font-medium">{getCarData('owner_name')}</span>
+                {getCarData('owner_phone') && (
+                  <>
+                    <Phone className="w-4 h-4" />
+                    <span>{getCarData('owner_phone')}</span>
+                  </>
+                )}
+              </div>
+            </div>
           )}
-          <button
-            onClick={handleFavoriteToggle}
-            className={
-              favoriteBtn +
-              (isFavorite ? " " + favoriteActive : " text-gray-600")
-            }
-            aria-label={isFavorite ? t('remove_from_favorites') : t('add_to_favorites')}
-          >
-            <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
-          </button>
-        </div>
-      </div>
-      <div className={contentBase}>
-        <div className="flex flex-col items-center justify-center mb-3 w-full">
-          <h3 className="cd-heading-md mb-1 line-clamp-2 group-hover:text-red-600 transition-colors font-semibold">
-            {car.title}
-          </h3>
-          <p className="cd-caption mb-2 text-gray-500">
-            {car.year} • {car.make} • {car.bodyType}
-          </p>
-        </div>
-        <div className="grid grid-cols-2 gap-4 mb-4 text-sm w-full justify-items-center">
-          <div className="flex flex-col items-center gap-1">
-            <Gauge className="w-5 h-5 text-gray-400" />
-            <span className="cd-body-sm text-gray-700">{formatMileage(car.mileage)}</span>
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <Fuel className="w-5 h-5 text-gray-400" />
-            <span className="cd-body-sm text-gray-700">{car.fuelType}</span>
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <Car className="w-5 h-5 text-gray-400" />
-            <span className="cd-body-sm text-gray-700">{car.transmission}</span>
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <Check className="w-5 h-5 text-gray-400" />
-            <span className="cd-body-sm text-gray-700">{car.condition}</span>
-          </div>
-        </div>
+
+          {/* Pros and Cons */}
+          {(getCarData('pros')?.length > 0 || getCarData('cons')?.length > 0) && (
+            <div className="flex gap-4 mb-3 text-xs justify-center">
+              {getCarData('pros')?.length > 0 && (
+                <div className="flex items-center gap-1 text-green-600">
+                  <Star className="w-3 h-3" />
+                  <span>{getCarData('pros').length} {t('pros') || 'Pros'}</span>
+                </div>
+              )}
+              {getCarData('cons')?.length > 0 && (
+                <div className="flex items-center gap-1 text-orange-600">
+                  <AlertTriangle className="w-3 h-3" />
+                  <span>{getCarData('cons').length} {t('cons') || 'Cons'}</span>
+                </div>
+              )}
+            </div>
+          )}
+
         <div className="flex items-center justify-center w-full mt-2">
          
           <div className="flex items-center gap-4 justify-center w-full">
@@ -348,8 +559,9 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
             </button>
           </div>
         </div>
+        
         <div className={priceClass}>
-            {formatPrice(car.price)}
+            {formatPrice(getCarData('asking_price', car.price))}
           </div>
         <button 
           onClick={handleViewDetails}

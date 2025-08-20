@@ -82,6 +82,8 @@ const CarListings: React.FC = () => {
   const [viewType, setViewType] = useState<string>("list");
     const [listings, setListings] = useState([]);
   const [favorites, setFavorites] = useState<number[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
     useEffect(() => {
       if (typeof window !== "undefined") {
@@ -107,18 +109,29 @@ const CarListings: React.FC = () => {
 
     const fetchProducts = async () => {
         try {
+          setLoading(true);
+          setError(null);
+          
           const response = await fetch(`/api/deals?store_hostname=64.227.112.249`);
           if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
       
           const data = await response.json();
           if (!data || !data.data) throw new Error("Invalid API response structure");
       
+          console.log("Raw API Response:", data);
           console.log("Fetched Products:", data.data);
+          
+          // Log the first product to see its structure
+          if (data.data && data.data.length > 0) {
+            console.log("First Product Structure:", JSON.stringify(data.data[0], null, 2));
+          }
           
           // Transform the fetched data into the required listings format
           const formattedListings = data.data.map((product: any) => {
-            // Get the fuel type and normalize it
-            const rawFuelType = product.details?.car.fuel || "Unknown";
+            console.log('Processing product:', product);
+            
+            // Get the fuel type from the new structure
+            const rawFuelType = product.details?.car?.fuel_type || product.details?.car?.fuel || "Unknown";
             let normalizedFuelType = rawFuelType;
             
             // Normalize fuel type values to English
@@ -146,35 +159,60 @@ const CarListings: React.FC = () => {
               normalizedFuelType = "Gasoline";
             }
 
-            // Normalize make values to English
-            const rawMake = product.details?.car.make || "Unknown";
+            // Get manufacturer name from the new structure
+            const rawMake = product.details?.car?.manufacturer_name || "Unknown";
             let normalizedMake = rawMake;
             
-            // Normalize make values to English
-            if (rawMake.toLowerCase().includes("toyota") || rawMake === "טויוטה" || rawMake === "تويوتا") {
+            // Check if rawMake is a number (array index) and convert it to the actual manufacturer name
+            if (!isNaN(rawMake) && rawMake !== "Unknown") {
+              // Convert array index to manufacturer name
+              const manufacturerIndex = parseInt(rawMake);
+              if (manufacturerIndex === 0) normalizedMake = "40";
+              else if (manufacturerIndex === 1) normalizedMake = "אאודי";
+              else if (manufacturerIndex === 2) normalizedMake = "BMW";
+              else if (manufacturerIndex === 3) normalizedMake = "Mercedes";
+              else if (manufacturerIndex === 4) normalizedMake = "Toyota";
+              else if (manufacturerIndex === 5) normalizedMake = "Honda";
+              else if (manufacturerIndex === 6) normalizedMake = "Ford";
+              else if (manufacturerIndex === 7) normalizedMake = "Chevrolet";
+              else if (manufacturerIndex === 8) normalizedMake = "Tesla";
+              else if (manufacturerIndex === 9) normalizedMake = "Lexus";
+              else if (manufacturerIndex === 10) normalizedMake = "Subaru";
+              else normalizedMake = "Unknown";
+            }
+            
+            // Normalize make values to English (keep original if it's already a word)
+            if (typeof normalizedMake === 'string' && !isNaN(Number(normalizedMake))) {
+              // If it's still a number, try to convert based on the actual text
+              if (normalizedMake === "40") {
+                normalizedMake = "40"; // Keep as is for now
+              } else {
+                normalizedMake = "Unknown";
+              }
+            } else if (normalizedMake.toLowerCase().includes("toyota") || normalizedMake === "טויוטה" || normalizedMake === "تويوتا") {
               normalizedMake = "Toyota";
-            } else if (rawMake.toLowerCase().includes("honda") || rawMake === "הונדה" || rawMake === "هوندا") {
+            } else if (normalizedMake.toLowerCase().includes("honda") || normalizedMake === "הונדה" || normalizedMake === "هوندا") {
               normalizedMake = "Honda";
-            } else if (rawMake.toLowerCase().includes("ford") || rawMake === "פורד" || rawMake === "فورد") {
+            } else if (normalizedMake.toLowerCase().includes("ford") || normalizedMake === "פורד" || normalizedMake === "فورد") {
               normalizedMake = "Ford";
-            } else if (rawMake.toLowerCase().includes("chevrolet") || rawMake === "שברולט" || rawMake === "شيفروليه") {
+            } else if (normalizedMake.toLowerCase().includes("chevrolet") || normalizedMake === "שברולט" || normalizedMake === "شيفروليه") {
               normalizedMake = "Chevrolet";
-            } else if (rawMake.toLowerCase().includes("bmw") || rawMake === "ב.מ.וו" || rawMake === "بي ام دبليو") {
+            } else if (normalizedMake.toLowerCase().includes("bmw") || normalizedMake === "ב.מ.וו" || normalizedMake === "بي ام دبليو") {
               normalizedMake = "BMW";
-            } else if (rawMake.toLowerCase().includes("mercedes") || rawMake === "מרצדס" || rawMake === "مرسيدس") {
+            } else if (normalizedMake.toLowerCase().includes("mercedes") || normalizedMake === "מרצדס" || normalizedMake === "مرسيدس") {
               normalizedMake = "Mercedes-Benz";
-            } else if (rawMake.toLowerCase().includes("audi") || rawMake === "אאודי" || rawMake === "أودي") {
+            } else if (normalizedMake.toLowerCase().includes("audi") || normalizedMake === "אאודי" || normalizedMake === "أودي") {
               normalizedMake = "Audi";
-            } else if (rawMake.toLowerCase().includes("tesla") || rawMake === "טסלה" || rawMake === "تيسلا") {
+            } else if (normalizedMake.toLowerCase().includes("tesla") || normalizedMake === "טסלה" || normalizedMake === "تيسلا") {
               normalizedMake = "Tesla";
-            } else if (rawMake.toLowerCase().includes("lexus") || rawMake === "לקסוס" || rawMake === "لكزس") {
+            } else if (normalizedMake.toLowerCase().includes("lexus") || normalizedMake === "לקסוס" || normalizedMake === "لكزس") {
               normalizedMake = "Lexus";
-            } else if (rawMake.toLowerCase().includes("subaru") || rawMake === "סובארו" || rawMake === "سوبارو") {
+            } else if (normalizedMake.toLowerCase().includes("subaru") || normalizedMake === "סובארו" || normalizedMake === "سوبارو") {
               normalizedMake = "Subaru";
             }
 
-            // Normalize body type values to English
-            const rawBodyType = product.details?.car.body_type || "Unknown";
+            // Get body type from the new structure
+            const rawBodyType = product.details?.car?.body_type || "Unknown";
             let normalizedBodyType = rawBodyType;
             
             // Normalize body type values to English
@@ -196,28 +234,75 @@ const CarListings: React.FC = () => {
               normalizedBodyType = "Van";
             }
 
+            // Get transmission from the new structure
+            const transmission = product.details?.car?.transmission || "Unknown";
+            
+            // Get condition from the new structure
+            const condition = product.details?.car?.condition || "Used";
+            
+            // Get miles from the new structure
+            const miles = product.details?.car?.miles || "N/A";
+            
+            // Get year from the new structure
+            const year = product.details?.car?.year || "Unknown";
+            
+            // Get description from the new structure
+            const description = product.details?.car?.description || "";
+            
+            // Get features from the new structure
+            const features = product.details?.car?.features || [];
+            
+            // Get pros and cons from the new structure
+            const pros = product.details?.car?.pros || [];
+            const cons = product.details?.car?.cons || [];
+
             return {
               id: product.id,
               slug: product.slug,
-              mainImage: product.image ? `http://${product.store.hostname}${product.image?.url}` : "/default-car.png",
+              mainImage: (() => {
+                if (product.image && Array.isArray(product.image) && product.image.length > 0) {
+                  return `http://${product.store?.hostname || '64.227.112.249'}${product.image[0]?.url || ''}`;
+                } else if (product.image && product.image.url) {
+                  return `http://${product.store?.hostname || '64.227.112.249'}${product.image.url}`;
+                } else if (product.image && typeof product.image === 'string') {
+                  return `http://${product.store?.hostname || '64.227.112.249'}${product.image}`;
+                }
+                return "/default-car.png";
+              })(),
               alt: product.name || "Car Image",
               title: product.name,
-              store: product.store,
-              hostname: product.store.hostname,
-              miles: product.details?.car.miles || "N/A",
+              store: product.store || {},
+              hostname: product.store?.hostname || '64.227.112.249',
+              miles: miles,
               fuel: normalizedFuelType,
-              condition: product.details?.car.condition || "Used",
-              transmission: product.details?.car.transmission || "Unknown",
-              details: product.details?.car.transmission || "Unknown",
-              price: `$${product.price.toLocaleString()}`,
-              mileage: product.details?.car.miles || "N/A",
-              year: product.details.car.year,
+              condition: condition,
+              transmission: transmission,
+              details: transmission,
+              price: `$${product.price?.toLocaleString() || '0'}`,
+              mileage: miles,
+              year: year,
               fuelType: normalizedFuelType,
               make: normalizedMake,
               bodyType: normalizedBodyType,
-              description: product.details.car.description,
-              features: product.details.car.features.map((feature: any) => feature.value) || [],
+              description: description,
+              features: features.map((feature: any) => feature.value || feature) || [],
               category: product.categories ? product.categories.split(",").map((c: string) => c.toLowerCase().trim()) : [],
+              pros: pros,
+              cons: cons,
+              // Additional fields from new structure
+              owner_name: product.details?.car?.owner_name || "",
+              owner_phone: product.details?.car?.owner_phone || "",
+              owner_email: product.details?.car?.owner_email || "",
+              plate_number: product.details?.car?.plate_number || "",
+              color: product.details?.car?.color || "",
+              engine_type: product.details?.car?.engine_type || "",
+              known_problems: product.details?.car?.known_problems || "",
+              trade_in: product.details?.car?.trade_in || "",
+              asking_price: product.details?.car?.asking_price || "",
+              manufacturer_name: product.details?.car?.manufacturer_name || "",
+              commercial_nickname: product.details?.car?.commercial_nickname || "",
+              year_of_production: product.details?.car?.year_of_production || "",
+              trim_level: product.details?.car?.trim_level || "",
             };
           });
           
@@ -225,15 +310,19 @@ const CarListings: React.FC = () => {
           setListings(formattedListings);
 
           // Calculate min and max prices from the listings
-          const prices = formattedListings.map(car => extractPrice(car.price));
+          const prices = formattedListings.map(car => extractPrice(car.price || '0'));
           const minPrice = Math.min(...prices);
           const maxPrice = Math.max(...prices);
           
           setMinMaxPrices({ min: minPrice, max: maxPrice });
           setPriceRange([minPrice, maxPrice]);
+          
+          setLoading(false);
         } catch (error) {
           console.error("Error fetching products:", error);
+          setError(error instanceof Error ? error.message : 'Failed to fetch products');
           setListings([]);
+          setLoading(false);
         }
       };
     
@@ -243,48 +332,53 @@ const CarListings: React.FC = () => {
       }, []);
 
   const filteredCars = listings.filter(car => {
-    // Filter by search term
-    if (searchTerm && !car.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        !car.make.toLowerCase().includes(searchTerm.toLowerCase())) {
-      return false;
-    }
-    
-    // Filter by price range - convert price string to number for comparison
-    const carPrice = extractPrice(car.price);
-    if (carPrice < priceRange[0] || carPrice > priceRange[1]) {
-      return false;
-    }
-    
-    // Filter by year
-    if (yearFilter !== "Any" && car.year !== parseInt(yearFilter)) {
-      return false;
-    }
-    
-    // Filter by make
-    if (makeFilter !== "Any") {
-      const selectedMake = MAKES.find(make => make.value === makeFilter);
-      if (!selectedMake || car.make !== selectedMake.value) {
+    try {
+      // Filter by search term
+      if (searchTerm && !car.title?.toLowerCase().includes(searchTerm.toLowerCase()) &&
+          !car.make?.toLowerCase().includes(searchTerm.toLowerCase())) {
         return false;
       }
-    }
-    
-    // Filter by body type
-    if (bodyTypeFilter !== "Any") {
-      const selectedBodyType = BODY_TYPES.find(type => type.value === bodyTypeFilter);
-      if (!selectedBodyType || car.bodyType !== selectedBodyType.value) {
+      
+      // Filter by price range - convert price string to number for comparison
+      const carPrice = extractPrice(car.price || '0');
+      if (carPrice < priceRange[0] || carPrice > priceRange[1]) {
         return false;
       }
-    }
-    
-    // Filter by fuel type
-    if (fuelTypeFilter !== "Any") {
-      const selectedFuelType = FUEL_TYPES.find(type => type.value === fuelTypeFilter);
-      if (!selectedFuelType || car.fuelType !== selectedFuelType.value) {
+      
+      // Filter by year
+      if (yearFilter !== "Any" && car.year !== parseInt(yearFilter)) {
         return false;
       }
+      
+      // Filter by make
+      if (makeFilter !== "Any") {
+        const selectedMake = MAKES.find(make => make.value === makeFilter);
+        if (!selectedMake || car.make !== selectedMake.value) {
+          return false;
+        }
+      }
+      
+      // Filter by body type
+      if (bodyTypeFilter !== "Any") {
+        const selectedBodyType = BODY_TYPES.find(type => type.value === bodyTypeFilter);
+        if (!selectedBodyType || car.bodyType !== selectedBodyType.value) {
+          return false;
+        }
+      }
+      
+      // Filter by fuel type
+      if (fuelTypeFilter !== "Any") {
+        const selectedFuelType = FUEL_TYPES.find(type => type.value === fuelTypeFilter);
+        if (!selectedFuelType || car.fuelType !== selectedFuelType.value) {
+          return false;
+        }
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error filtering car:', car, error);
+      return false;
     }
-    
-    return true;
   });
   
   const handleViewDetails = (slug: number) => {
@@ -409,51 +503,104 @@ const CarListings: React.FC = () => {
           </CardContent>
         </Card>
         
-        {/* Results Section */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-center">
-           
-            <div className="flex items-center space-x-2">
-              <Tabs value={viewType} onValueChange={setViewType} className="w-auto">
-                <TabsList className="bg-gray-100">
-                  <TabsTrigger value="grid" className="data-[state=active]:bg-white">
-                    <div className="flex items-center space-x-1">
-                      <Plus className="h-4 w-4 rotate-45" />
-                      <span className="sr-only md:not-sr-only md:inline-block">{t('grid')}</span>
-                    </div>
-                  </TabsTrigger>
-                  {/* <TabsTrigger value="list" className="data-[state=active]:bg-white">
-                    <div className="flex items-center space-x-1">
-                      <Plus className="h-4 w-4 rotate-90" />
-                      <span className="sr-only md:not-sr-only md:inline-block">{t('list')}</span>
-                    </div>
-                  </TabsTrigger> */}
-                </TabsList>
-
-          
-          <div className="space-y-6">
-            <TabsContent value="grid" className="mt-0">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredCars.map((car) => (
-                  <CarCard 
-                    key={car.slug} 
-                    car={car}
-                  />
-                ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="list" className="mt-0">
-              <div className="space-y-4">
-                {filteredCars.map((car) => (
-                  <CarCard key={car.slug} car={car} variant="list" />
-                ))}
-              </div>
-            </TabsContent>
-          </div>
-          </Tabs>
+        {/* Debug Section - Remove in production */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="bg-gray-100 p-4 rounded-lg">
+            <h3 className="font-semibold mb-2">Debug Info:</h3>
+            <div className="text-sm space-y-1">
+              <div>Total Listings: {listings.length}</div>
+              <div>Filtered Cars: {filteredCars.length}</div>
+              <div>Loading: {loading ? 'Yes' : 'No'}</div>
+              <div>Error: {error || 'None'}</div>
+              {listings.length > 0 && (
+                <div>
+                  <div>First Car Data:</div>
+                  <pre className="text-xs bg-white p-2 rounded overflow-auto max-h-40">
+                    {JSON.stringify(listings[0], null, 2)}
+                  </pre>
+                </div>
+              )}
             </div>
           </div>
+        )}
+
+        {/* Results Section */}
+        <div className="space-y-4">
+          {/* Loading State */}
+          {loading && (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">{t('loading') || 'Loading cars...'}</p>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && (
+            <div className="text-center py-12">
+              <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
+                <p className="text-red-700 font-semibold mb-2">{t('error_loading') || 'Error Loading Cars'}</p>
+                <p className="text-red-600 text-sm mb-4">{error}</p>
+                <Button onClick={fetchProducts} className="bg-red-600 hover:bg-red-700">
+                  {t('retry') || 'Retry'}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Results */}
+          {!loading && !error && (
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-sm text-gray-600">
+                  {filteredCars.length} {filteredCars.length === 1 ? t('car_found') || 'car found' : t('cars_found') || 'cars found'}
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Tabs value={viewType} onValueChange={setViewType} className="w-auto">
+                    <TabsList className="bg-gray-100">
+                      <TabsTrigger value="grid" className="data-[state=active]:bg-white">
+                        <div className="flex items-center space-x-1">
+                          <Plus className="h-4 w-4 rotate-45" />
+                          <span className="sr-only md:not-sr-only md:inline-block">{t('grid')}</span>
+                        </div>
+                      </TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                </div>
+              </div>
+
+              {/* No Results */}
+              {filteredCars.length === 0 && (
+                <div className="text-center py-12">
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 max-w-md mx-auto">
+                    <p className="text-gray-700 font-semibold mb-2">{t('no_cars_found') || 'No Cars Found'}</p>
+                    <p className="text-gray-600 text-sm mb-4">{t('try_adjusting_filters') || 'Try adjusting your filters or search terms'}</p>
+                    <Button onClick={() => {
+                      setSearchTerm('');
+                      setYearFilter('Any');
+                      setMakeFilter('Any');
+                      setBodyTypeFilter('Any');
+                      setFuelTypeFilter('Any');
+                      setPriceRange([minMaxPrices.min, minMaxPrices.max]);
+                    }} className="bg-red-600 hover:bg-red-700">
+                      {t('clear_filters') || 'Clear Filters'}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Results Grid */}
+              {filteredCars.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredCars.map((car) => (
+                    <CarCard 
+                      key={car.slug || car.id} 
+                      car={car}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
         </div>
         
       </div>

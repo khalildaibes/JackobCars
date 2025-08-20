@@ -18,7 +18,10 @@ import {
   MapPin, 
   ArrowLeft,
   X,
-  User
+  User,
+  Sparkles,
+  Phone,
+  Mail
 } from 'lucide-react';
 import { Button } from "../../../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs";
@@ -60,22 +63,31 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
   });
   const [prosAndCons, setProsAndCons] = useState<{ pros: string[], cons: string[], reliability: any } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [debugInfo, setDebugInfo] = useState<any>(null);
+  const [showContactInfo, setShowContactInfo] = useState(false);
 
 
   async function getCarDetails(slug: string) {
     // Get the host from headers for SSR absolute URL
+    console.log('CarDetailsContent - hostname prop:', hostname);
+    console.log('CarDetailsContent - slug prop:', slug);
     const dealsUrl = `/api/deals?store_hostname=${hostname}&slug=${slug}`;
+    console.log('CarDetailsContent - API URL:', dealsUrl);
     const response = await fetch(dealsUrl);
     if (!response.ok) throw new Error(`Failed to fetch car details: ${response.statusText}`);
   
     const data = await response.json();
     if (!data || !data.data) throw new Error("Invalid API response structure");
-    console.log('data', data);
+    console.log('Raw API Response:', data);
+    
     // Format listings
     const formattedListings = data.data.map((product: any) => {
-      // Get the fuel type and normalize it
-      const rawFuelType = product.details?.car.fuel || "Unknown";
+      console.log('Processing product:', product);
+      
+      // Get the fuel type from the new structure
+      const rawFuelType = product.details?.car?.fuel_type || product.details?.car?.fuel || "Unknown";
       let normalizedFuelType = rawFuelType;
+      
       // Normalize fuel type values to English
       if (rawFuelType.toLowerCase().includes("plug-in") || 
           rawFuelType.toLowerCase().includes("plug in") || 
@@ -101,33 +113,60 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
         normalizedFuelType = "Gasoline";
       }
   
-      // Normalize make
-      const rawMake = product.details?.car.make || "Unknown";
+      // Get manufacturer name from the new structure
+      const rawMake = product.details?.car?.manufacturer_name || "Unknown";
       let normalizedMake = rawMake;
-      if (rawMake.toLowerCase().includes("toyota") || rawMake === "טויוטה" || rawMake === "تويوتا") {
+      
+      // Check if rawMake is a number (array index) and convert it to the actual manufacturer name
+      if (!isNaN(rawMake) && rawMake !== "Unknown") {
+        // Convert array index to manufacturer name
+        const manufacturerIndex = parseInt(rawMake);
+        if (manufacturerIndex === 0) normalizedMake = "40";
+        else if (manufacturerIndex === 1) normalizedMake = "אאודי";
+        else if (manufacturerIndex === 2) normalizedMake = "BMW";
+        else if (manufacturerIndex === 3) normalizedMake = "Mercedes";
+        else if (manufacturerIndex === 4) normalizedMake = "Toyota";
+        else if (manufacturerIndex === 5) normalizedMake = "Honda";
+        else if (manufacturerIndex === 6) normalizedMake = "Ford";
+        else if (manufacturerIndex === 7) normalizedMake = "Chevrolet";
+        else if (manufacturerIndex === 8) normalizedMake = "Tesla";
+        else if (manufacturerIndex === 9) normalizedMake = "Lexus";
+        else if (manufacturerIndex === 10) normalizedMake = "Subaru";
+        else normalizedMake = "Unknown";
+      }
+      
+      // Normalize make values to English (keep original if it's already a word)
+      if (typeof normalizedMake === 'string' && !isNaN(Number(normalizedMake))) {
+        // If it's still a number, try to convert based on the actual text
+        if (normalizedMake === "40") {
+          normalizedMake = "40"; // Keep as is for now
+        } else {
+          normalizedMake = "Unknown";
+        }
+      } else if (normalizedMake.toLowerCase().includes("toyota") || normalizedMake === "טויוטה" || normalizedMake === "تويوتا") {
         normalizedMake = "Toyota";
-      } else if (rawMake.toLowerCase().includes("honda") || rawMake === "הונדה" || rawMake === "هوندا") {
+      } else if (normalizedMake.toLowerCase().includes("honda") || normalizedMake === "הונדה" || normalizedMake === "هوندا") {
         normalizedMake = "Honda";
-      } else if (rawMake.toLowerCase().includes("ford") || rawMake === "פורד" || rawMake === "فورد") {
+      } else if (normalizedMake.toLowerCase().includes("ford") || normalizedMake === "פורד" || normalizedMake === "فورد") {
         normalizedMake = "Ford";
-      } else if (rawMake.toLowerCase().includes("chevrolet") || rawMake === "שברולט" || rawMake === "شيفروليه") {
+      } else if (normalizedMake.toLowerCase().includes("chevrolet") || normalizedMake === "שברולט" || normalizedMake === "شيفروليه") {
         normalizedMake = "Chevrolet";
-      } else if (rawMake.toLowerCase().includes("bmw") || rawMake === "ב.מ.וו" || rawMake === "بي ام دبليو") {
+      } else if (normalizedMake.toLowerCase().includes("bmw") || normalizedMake === "ב.מ.וו" || normalizedMake === "بي ام دبليو") {
         normalizedMake = "BMW";
-      } else if (rawMake.toLowerCase().includes("mercedes") || rawMake === "מרצדס" || rawMake === "مرسيدس") {
+      } else if (normalizedMake.toLowerCase().includes("mercedes") || normalizedMake === "מרצדס" || normalizedMake === "مرسيدس") {
         normalizedMake = "Mercedes-Benz";
-      } else if (rawMake.toLowerCase().includes("audi") || rawMake === "אאודי" || rawMake === "أودي") {
+      } else if (normalizedMake.toLowerCase().includes("audi") || normalizedMake === "אאודי" || normalizedMake === "أودي") {
         normalizedMake = "Audi";
-      } else if (rawMake.toLowerCase().includes("tesla") || rawMake === "טסלה" || rawMake === "تيسلا") {
+      } else if (normalizedMake.toLowerCase().includes("tesla") || normalizedMake === "טסלה" || normalizedMake === "تيسلا") {
         normalizedMake = "Tesla";
-      } else if (rawMake.toLowerCase().includes("lexus") || rawMake === "לקסוס" || rawMake === "لكزس") {
+      } else if (normalizedMake.toLowerCase().includes("lexus") || normalizedMake === "לקסוס" || normalizedMake === "لكزس") {
         normalizedMake = "Lexus";
-      } else if (rawMake.toLowerCase().includes("subaru") || rawMake === "סובארו" || rawMake === "سوبارو") {
+      } else if (normalizedMake.toLowerCase().includes("subaru") || normalizedMake === "סובארו" || normalizedMake === "سوبارو") {
         normalizedMake = "Subaru";
       }
   
-      // Normalize body type
-      const rawBodyType = product.details?.car.body_type || "Unknown";
+      // Get body type from the new structure
+      const rawBodyType = product.details?.car?.body_type || "Unknown";
       let normalizedBodyType = rawBodyType;
       if (rawBodyType.toLowerCase().includes("sedan") || rawBodyType === "סדאן" || rawBodyType === "سيدان") {
         normalizedBodyType = "Sedan";
@@ -146,63 +185,106 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
       } else if (rawBodyType.toLowerCase().includes("van") || rawBodyType === "ואן" || rawBodyType === "فان") {
         normalizedBodyType = "Van";
       }
-      setCar({
+
+      // Get additional fields from new structure
+      const transmission = product.details?.car?.transmission || "Unknown";
+      const condition = product.details?.car?.condition || "Used";
+      const miles = product.details?.car?.miles || "N/A";
+      const year = product.details?.car?.year || "Unknown";
+      const description = product.details?.car?.description || "";
+      const features = product.details?.car?.features || [];
+      const pros = product.details?.car?.pros || [];
+      const cons = product.details?.car?.cons || [];
+      const owner_name = product.details?.car?.owner_name || "";
+      const owner_phone = product.details?.car?.owner_phone || "";
+      const owner_email = product.details?.car?.owner_email || "";
+      const plate_number = product.details?.car?.plate_number || "";
+      const color = product.details?.car?.color || "";
+      const engine_type = product.details?.car?.engine_type || "";
+      const known_problems = product.details?.car?.known_problems || "";
+      const trade_in = product.details?.car?.trade_in || "";
+      const asking_price = product.details?.car?.asking_price || "";
+      const manufacturer_name = product.details?.car?.manufacturer_name || "";
+      const commercial_nickname = product.details?.car?.commercial_nickname || "";
+      const year_of_production = product.details?.car?.year_of_production || "";
+      const trim_level = product.details?.car?.trim_level || "";
+
+      // Build image URL with fallbacks
+      const mainImage = (() => {
+        if (product.image && Array.isArray(product.image) && product.image.length > 0) {
+          return `http://${product.store?.hostname || hostname}${product.image[0]?.url || ''}`;
+        } else if (product.image && product.image.url) {
+          return `http://${product.store?.hostname || hostname}${product.image.url}`;
+        } else if (product.image && typeof product.image === 'string') {
+          return `http://${product.store?.hostname || hostname}${product.image}`;
+        }
+        return "/default-car.png";
+      })();
+
+      const carData = {
         id: product.id,
-        mainImage: product.image?.url ? `http://${product.store.hostname}${product.image.url}` : "/default-car.png",
+        mainImage: mainImage,
         alt: product.name || "Car Image",
         title: product.name,
-        miles: product.details?.car.miles || "N/A",
+        miles: miles,
         fuel: normalizedFuelType,
-        condition: product.details?.car.condition || "Used",
-        transmission: product.details?.car.transmission || "Unknown",
-        details: product.details?.car || "Unknown",
-        price: `$${product.price.toLocaleString()}`,
-        mileage: product.details?.car.miles || "N/A",
-        year: product.details.car.year,
-        pros: product.details.car.pros,
-        cons: product.details.car.cons,
+        condition: condition,
+        transmission: transmission,
+        details: product.details?.car || {},
+        price: `$${product.price?.toLocaleString() || '0'}`,
+        mileage: miles,
+        year: year,
+        pros: pros,
+        cons: cons,
         fuelType: normalizedFuelType,
         make: normalizedMake,
         slug: product.slug,
         createdAt: product.createdAt,
         bodyType: normalizedBodyType,
-        description: product.details.car.description,
-        features: product.details.car.features.map((feature: any) => feature.value) || [],
+        description: description,
+        features: features.map((feature: any) => {
+          if (typeof feature === 'string') return feature;
+          if (feature && typeof feature === 'object') {
+            return feature.value || feature.label || 'Unknown Feature';
+          }
+          return 'Unknown Feature';
+        }) || [],
         category: product.categories ? product.categories.split(",").map((c: string) => c.toLowerCase().trim()) : [],
-      });
-      return {
-        id: product.id,
-        mainImage: product.image?.url ? `http://${product.store.hostname}${product.image.url}` : "/default-car.png",
-        alt: product.name || "Car Image",
-        title: product.name,
-        miles: product.details?.car.miles || "N/A",
-        fuel: normalizedFuelType,
-        condition: product.details?.car.condition || "Used",
-        transmission: product.details?.car.transmission || "Unknown",
-        details: product.details?.car || "Unknown",
-        price: `${product.price.toLocaleString()}`,
-        mileage: product.details?.car.miles || "N/A",
-        year: product.details.car.year,
-        pros: product.details.car.pros,
-        cons: product.details.car.cons,
-        fuelType: normalizedFuelType,
-        make: normalizedMake,
-        slug: product.slug,
-        createdAt: product.createdAt,
-        bodyType: normalizedBodyType,
-        description: product.details.car.description,
-        features: product.details.car.features.map((feature: any) => feature.value) || [],
-        category: product.categories ? product.categories.split(",").map((c: string) => c.toLowerCase().trim()) : [],
+        // Additional fields from new structure
+        owner_name: owner_name,
+        owner_phone: owner_phone,
+        owner_email: owner_email,
+        plate_number: plate_number,
+        color: color,
+        engine_type: engine_type,
+        known_problems: known_problems,
+        trade_in: trade_in,
+        asking_price: asking_price,
+        manufacturer_name: manufacturer_name,
+        commercial_nickname: commercial_nickname,
+        year_of_production: year_of_production,
+        trim_level: trim_level,
+        // Store info
+        store: product.store || {},
+        hostname: product.store?.hostname || hostname,
+        location: product.store?.address || "Unknown Location"
       };
+
+      // Set car data for the main car
+      if (product.slug.toString() === slug) {
+        setCar(carData);
+      }
+
+      return carData;
     });
+    
     console.log('formattedListings', formattedListings);
+    
     // Find the car with matching slug
     const carData = formattedListings.find((car: any) => car.slug.toString() === slug);
     if (!carData) {
       throw new Error("Car not found");
     }
-  
-
   
     return {
       car: carData,
@@ -321,12 +403,14 @@ useEffect(() => {
         setCar(data.car);
         setListings(data.listings);
         setProsAndCons(null);
+        setDebugInfo(data);
       } catch (err) {
         console.error("Error fetching car details:", err);
         setCar(null);
         setListings([]);
         setProsAndCons(null);
-        setError(err.message);
+        setError(err instanceof Error ? err.message : 'Unknown error');
+        setDebugInfo(null);
       } finally {
         setLoading(false);
       }
@@ -350,10 +434,17 @@ useEffect(() => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('error')}</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            {error ? t('error') : 'Car Not Found'}
+          </h1>
+          {error && (
+            <p className="text-red-600 mb-4 max-w-md mx-auto">
+              {error}
+            </p>
+          )}
           <Link href="/car-listing" className="text-primary hover:text-primary-dark">
             {t('back_to_listings')}
-        </Link>
+          </Link>
         </div>
       </div>
     );
@@ -370,6 +461,40 @@ useEffect(() => {
         </Link>
       </div>
       
+      {/* Debug Section - Remove in production */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="bg-gray-100 p-4 rounded-lg mb-6">
+          <h3 className="font-semibold mb-2">Debug Info:</h3>
+          <div className="text-sm space-y-1">
+            <div>Car ID: {car?.id}</div>
+            <div>Slug: {car?.slug}</div>
+            <div>Title: {car?.title}</div>
+            <div>Owner: {car?.owner_name || 'None'}</div>
+            <div>Phone: {car?.owner_phone || 'None'}</div>
+            <div>Email: {car?.owner_email || 'None'}</div>
+            <div>Price: {car?.price}</div>
+            <div>Year: {car?.year}</div>
+            <div>Make: {car?.make}</div>
+            <div>Body Type: {car?.bodyType}</div>
+            <div>Fuel Type: {car?.fuelType}</div>
+            <div>Transmission: {car?.transmission}</div>
+            <div>Condition: {car?.condition}</div>
+            <div>Miles: {car?.miles}</div>
+            <div>Pros Count: {car?.pros?.length || 0}</div>
+            <div>Cons Count: {car?.cons?.length || 0}</div>
+            <div>Features Count: {car?.features?.length || 0}</div>
+            {car && (
+              <div>
+                <div>Raw Car Data:</div>
+                <pre className="text-xs bg-white p-2 rounded overflow-auto max-h-40">
+                  {JSON.stringify(car, null, 2)}
+                </pre>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Car Header */}
       <motion.div
         initial={{ opacity: 1, y: -10 }}
@@ -514,28 +639,113 @@ useEffect(() => {
               
                 <div className="bg-white rounded-xl p-6 shadow-sm">
                   <h3 className="text-lg font-semibold mb-4">{t('description')}</h3>
-                  <p className="text-gray-700 leading-relaxed">{car.description}</p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {car.features.map((feature: string, index: number) => (
-                    <div key={index} className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl">
-                      <Check className="h-5 w-5 text-blue-500" />
-                      <span className="font-medium">{feature}</span>
+                  <p className="text-gray-700 leading-relaxed">{car.description || 'No description available'}</p>
+                </div>
+
+                {/* Additional Car Details */}
+                {(car.color || car.engine_type || car.trim_level || car.known_problems || car.trade_in) && (
+                  <div className="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 className="text-lg font-semibold mb-4">Additional Details</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {car.color && (
+                        <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                          <div className="w-4 h-4 rounded-full" style={{ backgroundColor: car.color }}></div>
+                          <div>
+                            <div className="text-xs text-gray-500">Color</div>
+                            <div className="font-medium">{car.color}</div>
+                          </div>
+                        </div>
+                      )}
+                      {car.engine_type && (
+                        <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                          <div className="p-2 bg-blue-100 rounded-lg">
+                            <Car className="h-4 w-4 text-blue-600" />
+                          </div>
+                          <div>
+                            <div className="text-xs text-gray-500">Engine Type</div>
+                            <div className="font-medium">{car.engine_type}</div>
+                          </div>
+                        </div>
+                      )}
+                      {car.trim_level && (
+                        <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                          <div className="p-2 bg-green-100 rounded-lg">
+                            <Sparkles className="h-4 w-4 text-green-600" />
+                          </div>
+                          <div>
+                            <div className="text-xs text-gray-500">Trim Level</div>
+                            <div className="font-medium">{car.trim_level}</div>
+                          </div>
+                        </div>
+                      )}
+                      {car.trade_in && (
+                        <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                          <div className="p-2 bg-purple-100 rounded-lg">
+                            <DollarSign className="h-4 w-4 text-purple-600" />
+                          </div>
+                          <div>
+                            <div className="text-xs text-gray-500">Trade-in</div>
+                            <div className="font-medium">{car.trade_in}</div>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  ))}
+                    {car.known_problems && (
+                      <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <h4 className="font-medium text-yellow-800 mb-2">Known Problems</h4>
+                        <p className="text-yellow-700 text-sm">{car.known_problems}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              {/* Pros and Cons Section */}
+              <div className="bg-white rounded-xl p-6 shadow-sm">
+                <h3 className="text-lg font-semibold mb-4">{t('pros_and_cons') || 'Pros and Cons'}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Pros */}
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-green-700 flex items-center">
+                      <Check className="h-5 w-5 text-green-600 mr-2" />
+                      {t('pros') || 'Pros'}
+                    </h4>
+                    {car.pros && car.pros.length > 0 ? (
+                      <ul className="space-y-2">
+                        {car.pros.map((pro: string, index: number) => (
+                          <li key={index} className="flex items-start">
+                            <span className="text-green-500 mr-2 mt-1">•</span>
+                            <span className="text-gray-700">{pro}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-gray-500 text-sm">No pros available</p>
+                    )}
+                  </div>
+
+                  {/* Cons */}
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-red-700 flex items-center">
+                      <X className="h-5 w-5 text-red-600 mr-2" />
+                      {t('cons') || 'Cons'}
+                    </h4>
+                    {car.cons && car.cons.length > 0 ? (
+                      <ul className="space-y-2">
+                        {car.cons.map((con: string, index: number) => (
+                          <li key={index} className="flex items-start">
+                            <span className="text-red-500 mr-2 mt-1">•</span>
+                            <span className="text-gray-700">{con}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-gray-500 text-sm">No cons available</p>
+                    )}
+                  </div>
+                </div>
               </div>
               </TabsContent>
               
-              <TabsContent value="features" className="mt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {car.features.map((feature: string, index: number) => (
-                    <div key={index} className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl">
-                      <Check className="h-5 w-5 text-blue-500" />
-                      <span className="font-medium">{feature}</span>
-                    </div>
-                  ))}
-              </div>
-            </TabsContent>
+
             
               {/* <TabsContent value="history" className="mt-6 space-y-6">
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 flex items-center space-x-4">
@@ -580,31 +790,89 @@ useEffect(() => {
            
 
             {/* Contact Seller Section */}
-            <div className=" flex justify-center w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 h-[240px]">
-              <div className="bg-white rounded-xl p-4 sm:p-6 shadow-lg">
-                <h3 className="text-lg sm:text-xl font-semibold mb-4">{t('contact_seller')}</h3>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div className="flex items-center space-x-3 sm:space-x-4 w-full sm:w-auto">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-                      <User className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
+            <div className="flex justify-center w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+              <div className="bg-white rounded-xl p-4 sm:p-6 shadow-lg w-full max-w-md">
+                <h3 className="text-lg sm:text-xl font-semibold mb-4 text-center">{t('contact_seller')}</h3>
+                
+                {/* Initial Contact Button */}
+                {!showContactInfo ? (
+                  <div className="text-center space-y-4">
+                    <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center mx-auto">
+                      <User className="h-8 w-8 text-gray-600" />
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{car.owner ? car.owner : ''}</p>
-                      <p className="text-xs sm:text-sm text-gray-500">{t('or_call')} {car.phone ? car.phone : ''}</p>
-                    </div>
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
+                    <p className="text-gray-600">{t('click_to_contact') || 'Click below to contact the seller'}</p>
                     <button 
-                      onClick={handleContactSeller} 
-                      className="w-full sm:w-auto px-4 sm:px-6 py-2 bg-white text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors text-sm sm:text-base"
+                      onClick={() => setShowContactInfo(true)}
+                      className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                     >
-                      {t('contact_seller')}
-                    </button>
-                    <button className="w-full sm:w-auto px-4 sm:px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base">
-                      {t('save')}
+                      {t('show_contact_info') || 'Show Contact Information'}
                     </button>
                   </div>
-                </div>
+                ) : (
+                  /* Contact Information Display */
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                        <User className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">{car.owner_name || 'Contact Seller'}</p>
+                        <p className="text-sm text-gray-500">{t('seller') || 'Seller'}</p>
+                      </div>
+                    </div>
+                    
+                    {car.owner_phone && (
+                      <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                          <Phone className="h-5 w-5 text-green-600" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-900">{car.owner_phone}</p>
+                          <p className="text-sm text-gray-500">{t('phone') || 'Phone'}</p>
+                        </div>
+                        <a 
+                          href={`tel:${car.owner_phone}`}
+                          className="ml-auto px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                        >
+                          {t('call') || 'Call'}
+                        </a>
+                      </div>
+                    )}
+                    
+                    {car.owner_email && (
+                      <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                          <Mail className="h-5 w-5 text-purple-600" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-900">{car.owner_email}</p>
+                          <p className="text-sm text-gray-500">{t('email') || 'Email'}</p>
+                        </div>
+                        <a 
+                          href={`mailto:${car.owner_email}`}
+                          className="ml-auto px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
+                        >
+                          {t('email') || 'Email'}
+                        </a>
+                      </div>
+                    )}
+                    
+                    <div className="flex gap-2 pt-2">
+                      <button 
+                        onClick={() => setShowContactInfo(false)}
+                        className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        {t('hide') || 'Hide'}
+                      </button>
+                      <button 
+                        onClick={handleContactSeller} 
+                        className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        {t('message') || 'Message'}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
             
@@ -678,13 +946,13 @@ useEffect(() => {
                             alt={similarCar.title}
                             className="w-full h-full object-cover"
                           /> */}
-                          {car.mainImage[0] && (
-                    <img
-                      src={car.mainImage[0]}
-                      alt={car.title}
-                      className="w-full h-[600px] object-cover"
-                    />
-                  )}
+                          {similarCar.mainImage && (
+                            <img
+                              src={similarCar.mainImage}
+                              alt={similarCar.title}
+                              className="w-full h-full object-cover"
+                            />
+                          )}
                       </div>
                       <div>
                         <h4 className="font-medium text-sm group-hover:text-blue-600 transition-colors">{similarCar.title}</h4>
@@ -699,92 +967,7 @@ useEffect(() => {
           </div>
         </div>
       </div>
-       {/* Pros and Cons Section */}
-       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              <div className="bg-white rounded-xl p-6 shadow-lg">
-                <h3 className="text-xl font-semibold mb-6 text-center">{t('review_highlights')}</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {/* Pros */}
-                  <div className="flex flex-col items-center text-center">
-                    <div className="p-3 bg-blue-100 rounded-full mb-4">
-                      <Check className="h-6 w-6 text-blue-600" />
-                    </div>
-                    <h4 className="font-medium text-gray-900 text-lg mb-4">{t('pros')}</h4>
-                    {loadingProsCons ? (
-                      <div className="animate-pulse space-y-3 w-full">
-                        {[1, 2, 3].map((i) => (
-                          <div key={i} className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
-                        ))}
-                      </div>
-                    ) : (
-                      <ul className="space-y-3 text-gray-600">
-                        {prosAndCons?.pros?.map((pro: string, index: number) => (
-                          <li key={index} className="flex items-center justify-center">
-                            <span className="mr-2">•</span>
-                            {pro}
-                          </li>
-                        )) || (
-                          <>
-                            <li className="flex items-center justify-center">
-                              <span className="mr-2">•</span>
-                              {t('excellent_performance')}
-                            </li>
-                            <li className="flex items-center justify-center">
-                              <span className="mr-2">•</span>
-                              {t('comfortable_interior')}
-                            </li>
-                            <li className="flex items-center justify-center">
-                              <span className="mr-2">•</span>
-                              {t('advanced_tech')}
-                            </li>
-                          </>
-                        )}
-                      </ul>
-                    )}
-                  </div>
 
-                  {/* Cons */}
-                  <div className="flex flex-col items-center text-center">
-                    <div className="p-3 bg-red-100 rounded-full mb-4">
-                      <X className="h-6 w-6 text-red-600" />
-                    </div>
-                    <h4 className="font-medium text-gray-900 text-lg mb-4">{t('cons')}</h4>
-                    {loadingProsCons ? (
-                      <div className="animate-pulse space-y-3 w-full">
-                        {[1, 2, 3].map((i) => (
-                          <div key={i} className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
-                        ))}
-                      </div>
-                    ) : (
-                      <ul className="space-y-3 text-gray-600">
-                        {prosAndCons?.cons?.map((con: string, index: number) => (
-                          <li key={index} className="flex items-center justify-center">
-                            <span className="mr-2">•</span>
-                            {con}
-                          </li>
-                        )) || (
-                          <>
-                            <li className="flex items-center justify-center">
-                              <span className="mr-2">•</span>
-                              {t('higher_price')}
-                            </li>
-                            <li className="flex items-center justify-center">
-                              <span className="mr-2">•</span>
-                              {t('firm_ride')}
-                            </li>
-                            <li className="flex items-center justify-center">
-                              <span className="mr-2">•</span>
-                              {t('limited_cargo')}
-                            </li>
-                          </>
-                        )}
-                      </ul>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-      {/* 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
          <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('car_reviews')}</h2>
@@ -885,7 +1068,7 @@ useEffect(() => {
         </DialogContent>
         
       </Dialog>
-      */}
+      
     </div>
   );
 };

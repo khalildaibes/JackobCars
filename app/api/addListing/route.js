@@ -38,120 +38,57 @@ export async function POST(request) {
     }
     const formData = car.formData || {};
     // Extract the needed fields from the car object
-    const brand = formData.makeModel;
-    const model = formData.commercial_nickname;
-    const year =  formData.yearOfProduction || 'Unknown';
+    const brand = car.manufacturer_name || formData.makeModel || 'Unknown';
+    const model = car.commercial_nickname || formData.commercial_nickname || 'Unknown';
+    const year = car.year_of_production || formData.yearOfProduction || 'Unknown';
     const specs = {
-      price: formData.askingPrice || 0,
-      miles: formData.mileage || '',
-      mileage: car.mileage || '',
-      fuel: formData.fuelType || '',
-      transmission: formData.transmission  || '',
-      body_type: car.body_type || ''
+      price: car.asking_price || formData.askingPrice || 0,
+      miles: car.miles || formData.mileage || '',
+      mileage: car.miles || formData.mileage || '',
+      fuel: car.fuel_type || formData.fuelType || '',
+      transmission: car.transmission || formData.transmission || '',
+      body_type: car.body_type || '',
+      engine_type: car.engine_type || formData.engineType || '',
+      condition: car.condition || formData.currentCondition || '',
+      known_problems: car.known_problems || formData.knownProblems || ''
     };
     const images = car.images || {};
     const video = car.video || null;
     
     console.log('Extracted data:', { brand, model, year, specs, images, video });
 
-    // First, generate car details using ChatGPT
-    const prompt = `
-      Analyze this ${year} ${brand} ${model} car and provide a detailed response in the following JSON format all values in arabic and israeli shekels:
-      {
-        "pros": [
-          "5 specific advantages of this car model"
-        ],
-        "cons": [
-          "5 specific disadvantages of this car model"
-        ],
-        "description": "A detailed one-line description of the ${year} ${brand} ${model} make it fancy for selling purpose",
-        "mechanical_details": [
-          {
-            "label": "Engine Type",
-            "value": "specific engine type"
-          },
-          {
-            "label": "Horsepower",
-            "value": "estimated HP"
-          },
-          {
-            "label": "Torque",
-            "value": "estimated torque"
-          },
-          {
-            "label": "Transmission",
-            "value": "${specs.transmission || 'Automatic'}"
-          },
-          {
-            "label": "Drivetrain",
-            "value": "drivetrain type"
-          },
-          {
-            "label": "Fuel Economy",
-            "value": "${specs.mileage || 'Unknown'}"
-          },
-          {
-            "label": "Emissions",
-            "value": "emissions standard"
-          }
-        ],
-        "dimensions_capacity": [
-          {
-            "label": "Width",
-            "value": "estimated width in mm"
-          },
-          {
-            "label": "Width (including mirrors)",
-            "value": "estimated total width in mm"
-          },
-          {
-            "label": "Gross Vehicle Weight (kg)",
-            "value": "estimated weight in kg"
-          },
-          {
-            "label": "Max. Loading Weight (kg)",
-            "value": "estimated max load in kg"
-          },
-          {
-            "label": "Max. Roof Load (kg)",
-            "value": "estimated roof load in kg"
-          },
-          {
-            "label": "No. of Seats",
-            "value": "typical seat count"
-          }
-        ],
-        "description": "A detailed one-line description of the ${year} ${brand} ${model}"
-      }
-
-      Base the response on typical specifications and features of this car model.
-      Make sure all measurements and values are realistic for this type of vehicle.
-      Write the response in ${locale} language.
-    `;
-
-    const completion = await openai.chat.completions.create({
-      messages: [{ role: "user", content: prompt }],
-      model: "gpt-3.5-turbo",
-      temperature: 0.7,
-      max_tokens: 1500,
-    });
-
-    console.log('ChatGPT response:', completion.choices[0]?.message?.content);
-    
-    let generatedData;
+    // Generate pros and cons using the dedicated API endpoint
+    let generatedData = { pros: [], cons: [] };
     try {
-      generatedData = JSON.parse(completion.choices[0]?.message?.content || '{}');
-    } catch (parseError) {
-      console.error('Failed to parse ChatGPT response:', parseError);
-      // Fallback data if ChatGPT fails
+      const prosConsResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/prosandcons`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          make: brand,
+          model: model,
+          year: year,
+          specs: specs
+        })
+      });
+
+      if (prosConsResponse.ok) {
+        generatedData = await prosConsResponse.json();
+        console.log('Pros/Cons API response:', generatedData);
+      } else {
+        console.warn('Pros/Cons API failed, using fallback data');
+        generatedData = {
+          pros: [`مميزات ${brand} ${model} ${year}`],
+          cons: [`عيوب ${brand} ${model} ${year}`]
+        };
+      }
+    } catch (error) {
+      console.error('Error calling pros/cons API:', error);
+      // Fallback data if API fails
       generatedData = {
-        pros: [],
-        cons: [],
-        engine_transmission_details: [
-        ],
-        dimensions_capacity: [
-        ],
-        description: ``
+        pros: [`مميزات ${brand} ${model} ${year}`],
+        cons: [`عيوب ${brand} ${model} ${year}`]
       };
     }
 
@@ -162,23 +99,24 @@ export async function POST(request) {
         quantity: 1,
         name: `${brand} ${model} ${year}`,
         slug: generateSlug(`${brand} ${model} ${year}`),
-
-        
         price: specs.price || 0,
         details: {
           car: {
-            owner_phone: car.phone || "",
-            owner_name: car.name || "",
-            owner_email: car.email || "",
+            // Owner information
+            owner_phone: car.owner_phone || "",
+            owner_name: car.owner_name || "",
+            owner_email: car.owner_email || "",
+            
+            // Car specifications
             plate_number: car.plate_number || "",
             color: car.color || "",
             engine_type: car.engine_type || "",
             condition: car.condition || "",
             known_problems: car.known_problems || "",
-            pros: generatedData.pros || "",
-            cons: generatedData.cons || "",
             trade_in: car.trade_in || "",
-            price: car.asking_price || "",
+            asking_price: car.asking_price || "",
+            
+            // Manufacturer information
             manufacturer_name: car.manufacturer_name || "",
             commercial_nickname: car.commercial_nickname || "",
             year_of_production: car.year_of_production || "",
@@ -186,23 +124,27 @@ export async function POST(request) {
             trim_level: car.trim_level || "",
             body_type: car.body_type || "",
             transmission: car.transmission || "",
-            miles: car.mileage || "",
+            
+            // Car details
+            miles: car.miles || "",
             fuel: car.fuel || "",
-            transmission: car.transmission || "",
-            body_type: car.body_type || "",
-            description: car.description || "",
-            features: car.features || [],
-            images: car.images || [],
-            fuel: specs.fuel || "غير معروف",
-            name: car.name,
+            name: car.name || "",
             year: parseInt(year) || 0,
-            miles: specs.miles || "",
             price: specs.price || 0,
+            
+            // Generated content - use manual input if available, otherwise use generated
+            pros: car.pros ? [car.pros] : (generatedData.pros || []),
+            cons: car.cons ? [car.cons] : (generatedData.cons || []),
+            description: car.description || `سيارة ${brand} ${model} ${year}`,
+            
+            // Images
             images: {
               main: images?.main?.[0] || "",
               additional: images?.additional || []
             },
-            features: [
+            
+            // Features array
+            features: car.features || [
               {
                 label: "سنة الصنع",
                 value: year.toString()
@@ -223,10 +165,7 @@ export async function POST(request) {
                 label: "السعر المطلوب",
                 value: specs.price?.toString() || ""
               }
-            ],
-            body_type: specs.body_type || "غير محدد",
-            description: generatedData.description || `سيارة ${brand} ${model} ${year}`,
-            transmission: specs.transmission || "غير محدد"
+            ]
           }
         },
         store: [18], // Store ID as array

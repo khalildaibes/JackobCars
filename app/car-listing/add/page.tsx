@@ -133,9 +133,11 @@ export default function AddCarListing() {
   ];
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-    const [manufacturersData, setManufacturersData] = useState<ManufacturersData>(manufacturers_hebrew);
+  const [inputMethod, setInputMethod] = useState<'plate' | 'manual'>('plate');
+  const [manufacturersData, setManufacturersData] = useState<ManufacturersData>(manufacturers_hebrew);
   const [selectedManufacturer, setSelectedManufacturer] = useState('');
   const [selectedModel, setSelectedModel] = useState('');
+  const [selectedYear, setSelectedYear] = useState('');
   const [availableModels, setAvailableModels] = useState<any[]>([]);
   const [availableYears, setAvailableYears] = useState<number[]>([]);
   const [plateNumber, setPlateNumber] = useState("");
@@ -158,6 +160,15 @@ export default function AddCarListing() {
     reliability: false,
     tuning: true
   });
+
+  // New state for popup modal
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupType, setPopupType] = useState<'success' | 'error'>('success');
+  const [popupMessage, setPopupMessage] = useState('');
+  const [popupTitle, setPopupTitle] = useState('');
+  
+  // State for processing steps
+  const [currentProcessingStep, setCurrentProcessingStep] = useState('');
 
   
   const iconMap = {
@@ -201,7 +212,7 @@ export default function AddCarListing() {
     mileage: '',
     color: '',
     engineType: '',
-    transmission: 'Automatic',
+    transmission: '',
     currentCondition: '',
     knownProblems: '',
     pros: '',
@@ -297,7 +308,7 @@ export default function AddCarListing() {
     mispar_rechev: "plate_number",
     tozeret_cd: "manufacturer_code",
     sug_degem: "model_type",
-    tozeret_nm: "manufacturer_name",
+    manufacturer_name: "manufacturer_name",
     degem_cd: "model_code",
     degem_nm: "model_name",
     ramat_gimur: "trim_level",
@@ -502,18 +513,18 @@ export default function AddCarListing() {
         // Persist key fields into formData until submission
         setFormData(prev => ({
           ...prev,
-          manufacturerName: String(record.tozeret_nm || translatedData.manufacturer_name || ''),
+          manufacturerName: String(record.manufacturer_name || translatedData.manufacturer_name || ''),
           commercialNickname: String(record.kinuy_mishari || translatedData.commercial_nickname || ''),
           yearOfProduction: String(record.shnat_yitzur || translatedData.year_of_production || ''),
           fuelType: String(record.sug_delek_nm || translatedData.fuel_type || '')
         }));
         
         // Fetch car image, performance data, and ownership history
-        if (record.tozeret_nm && record.kinuy_mishari && record.shnat_yitzur) {
+        if (record.manufacturer_name && record.kinuy_mishari && record.shnat_yitzur) {
           await Promise.all([
-            fetchCarImage(String(record.tozeret_nm), String(record.kinuy_mishari)),
+            fetchCarImage(String(record.manufacturer_name), String(record.kinuy_mishari)),
             fetchCarPerformanceData(
-              String(record.tozeret_nm),
+              String(record.manufacturer_name),
               String(record.kinuy_mishari),
               String(record.shnat_yitzur),
               String(record.ramat_gimur)
@@ -550,90 +561,419 @@ export default function AddCarListing() {
     const validity = new Date(validityDate);
     return validity < today;
   };
-  // Update formData.makeModel when both manufacturer and model are selected
+  // Update formData when manufacturer and model selections change
   useEffect(() => {
+    console.log('Manufacturer/Model selection changed:', { selectedManufacturer, selectedModel, availableModels });
+    
     if (selectedManufacturer && selectedModel) {
-      const manufacturerName = manufacturersData[selectedManufacturer]?.manufacturerImage ? 
-        Object.keys(manufacturersData).find(key => key === selectedManufacturer) : selectedManufacturer;
+      const manufacturerName = manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer;
       const modelName = availableModels.find(model => model.id?.toString() === selectedModel)?.title || selectedModel;
+      
+      console.log('Setting form data:', { manufacturerName, modelName });
       
       setFormData(prev => ({
         ...prev,
-        makeModel: `${manufacturerName} ${modelName}`.trim()
+        makeModel: `${manufacturerName} ${modelName}`.trim(),
+        manufacturerName: manufacturerName,
+        commercialNickname: modelName
       }));
     }
   }, [selectedManufacturer, selectedModel, availableModels, manufacturersData]);
 
+  // Update formData when year selection changes
+  useEffect(() => {
+    console.log('Year selection changed:', { selectedYear, availableYears });
+    
+    if (selectedYear && availableYears.length > 0) {
+      console.log('Setting year in form data:', selectedYear);
+      setFormData(prev => ({
+        ...prev,
+        year: selectedYear,
+        yearOfProduction: selectedYear
+      }));
+    }
+  }, [selectedYear, availableYears]);
+
+  // Debug: Log form data changes
+  useEffect(() => {
+    console.log('Form data updated:', {
+      manufacturerName: formData.manufacturerName,
+      commercialNickname: formData.commercialNickname,
+      yearOfProduction: formData.yearOfProduction,
+      title: formData.title,
+      makeModel: formData.makeModel,
+      year: formData.year
+    });
+  }, [formData.manufacturerName, formData.commercialNickname, formData.yearOfProduction, formData.title, formData.makeModel, formData.year]);
+
+  // Auto-populate title when moving to next step (after step 0) and title is empty
+  useEffect(() => {
+    // Only auto-generate title when moving to next step (currentStep > 0) and title is empty
+    if (currentStep > 0 && formData.manufacturerName && formData.commercialNickname && formData.yearOfProduction && !formData.title) {
+      const newTitle = `${formData.manufacturerName} ${formData.commercialNickname} ${formData.yearOfProduction}`.trim();
+      console.log('Auto-populating title after step change:', newTitle);
+      setFormData(prev => ({
+        ...prev,
+        title: newTitle
+      }));
+    }
+  }, [currentStep, formData.manufacturerName, formData.commercialNickname, formData.yearOfProduction, formData.title]);
+
+  /**
+   * Helper function to get the best available data source for a field
+   * Data source priority:
+   * 1. Manual input (when in manual mode) - highest priority
+   * 2. Yad2 API response - second priority (more detailed car info)
+   * 3. Government API response - third priority (basic vehicle data)
+   * 4. Fallback to manual value or empty string
+   * 
+   * This ensures that user input always takes precedence when in manual mode,
+   * while providing intelligent fallbacks when using automatic plate search.
+   */
+  const getBestDataValue = (field: string, manualValue: any, apiValue: any, yad2Value: any = null) => {
+    // Priority: Manual input > Yad2 API > Government API
+    let result;
+    
+    if (inputMethod === 'manual' && manualValue) {
+      result = manualValue;
+    } else if (yad2Value && yad2Value !== '') {
+      result = yad2Value;
+    } else if (apiValue && apiValue !== '') {
+      result = apiValue;
+    } else {
+      result = manualValue || '';
+    }
+    
+    if (yad2Value && yad2Value !== '') {
+      return yad2Value;
+    }
+    
+    if (apiValue && apiValue !== '') {
+      return apiValue;
+    }
+    
+    return manualValue || '';
+  };
+
+  /**
+   * Helper function to popzsubmitulate form data with the best available sources
+   * This function intelligently combines data from multiple sources:
+   * - Manual user input (highest priority)
+   * - Yad2 API response (detailed car specifications)
+   * - Government API response (basic vehicle registration data)
+   * 
+   * The function respects the current input method and ensures data consistency
+   * across all form fields while maintaining user control over manual inputs.
+   */
+  const populateFormDataWithBestSources = () => {
+    if (!carData && !yad2ModelInfo) return;
+
+    const cd: any = carData || {};
+    const yad2: any = yad2ModelInfo?.data || {};
+
+
+
+    setFormData(prev => ({
+      ...prev,
+      // Basic car information - prioritize based on input method
+      manufacturerName: getBestDataValue(
+        'manufacturerName',
+        prev.manufacturerName,
+        cd.manufacturer_name || cd.manufacturer_name,
+        yad2.manufacturerName
+      ),
+      commercialNickname: getBestDataValue(
+        'commercialNickname',
+        prev.commercialNickname,
+        cd.commercial_nickname,
+        yad2.modelName
+      ),
+      yearOfProduction: getBestDataValue(
+        'yearOfProduction',
+        prev.yearOfProduction,
+        cd.year_of_production,
+        yad2.year
+      ),
+      fuelType: getBestDataValue(
+        'fuelType',
+        prev.fuelType,
+        cd.fuel_type,
+        yad2.fuelType
+      ),
+      
+      // Auto-populate other fields if they're empty and we have API data
+      title: prev.title || `${getBestDataValue('manufacturerName', prev.manufacturerName, cd.manufacturer_name, yad2.manufacturerName) || ''} ${cd.commercial_nickname || yad2.modelName || ''} ${cd.year_of_production || yad2.year || ''}`.trim(),
+      makeModel: prev.makeModel || `${getBestDataValue('manufacturerName', prev.manufacturerName, cd.manufacturer_name, yad2.manufacturerName) || ''} ${cd.commercial_nickname || yad2.modelName || ''}`.trim(),
+      year: prev.year || cd.year_of_production || yad2.year || '',
+      plateNumber: prev.plateNumber || cd.plate_number || '',
+      
+      // Keep manual inputs if they exist, otherwise use API data
+      mileage: prev.mileage || cd.mileage || '',
+      color: prev.color || cd.color || '',
+      engineType: prev.engineType || cd.engine_type || yad2.engineType || '',
+              transmission: prev.transmission || cd.transmission || yad2.transmission || '',
+      currentCondition: prev.currentCondition || cd.condition || '',
+      knownProblems: prev.knownProblems || cd.known_problems || '',
+      pros: prev.pros || cd.pros || '',
+      cons: prev.cons || cd.cons || '',
+      tradeIn: prev.tradeIn || cd.trade_in || '',
+      askingPrice: prev.askingPrice || cd.asking_price || '',
+      name: prev.name || cd.name || '',
+      email: prev.email || cd.email || '',
+      phone: prev.phone || cd.phone || '',
+      
+      // Store the complete car data for reference
+      car_data: {
+        ...cd,
+        yad2_data: yad2
+      }
+    }));
+  };
+
+  // Function to handle manual field changes - ensures manual input takes precedence
+  const handleManualFieldChange = (field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+    
+    // If we're in manual mode and the user changes a field, mark it as manually entered
+    if (inputMethod === 'manual') {
+      // This ensures the manual input takes precedence over any API data
+      setFormData(prev => ({
+        ...prev,
+        [field]: value
+      }));
+    }
+  };
+
+  // Function to show popup modal
+  const showPopupModal = (type: 'success' | 'error', title: string, message: string) => {
+    setPopupType(type);
+    setPopupTitle(title);
+    setPopupMessage(message);
+    setShowPopup(true);
+  };
+
+  // Function to close popup modal
+  const closePopupModal = () => {
+    setShowPopup(false);
+    setPopupMessage('');
+    setPopupTitle('');
+  };
+
+  // Effect to populate form data when car data or Yad2 info changes
+  useEffect(() => {
+    if (carData || yad2ModelInfo) {
+      populateFormDataWithBestSources();
+    }
+  }, [carData, yad2ModelInfo, inputMethod]);
+
+  // Effect to clear auto-populated data when switching to manual mode
+  useEffect(() => {
+    if (inputMethod === 'manual') {
+      // Keep user-entered data but clear auto-populated fields
+      setFormData(prev => ({
+        ...prev,
+        // Clear fields that were auto-populated from API
+        title: prev.title || '',
+        makeModel: prev.makeModel || '',
+        year: prev.year || '',
+        plateNumber: prev.plateNumber || '',
+        mileage: prev.mileage || '',
+        color: prev.color || '',
+        engineType: prev.engineType || '',
+        transmission: prev.transmission || '',
+        currentCondition: prev.currentCondition || '',
+        knownProblems: prev.knownProblems || '',
+        pros: prev.pros || '',
+        cons: prev.cons || '',
+        tradeIn: prev.tradeIn || '',
+        askingPrice: prev.askingPrice || '',
+        name: prev.name || '',
+        email: prev.email || '',
+        phone: prev.phone || ''
+      }));
+    } else if (inputMethod === 'plate') {
+      // When switching back to plate mode, try to populate with available API data
+      if (carData || yad2ModelInfo) {
+        populateFormDataWithBestSources();
+      }
+    }
+  }, [inputMethod]);
+
+  // Function to auto-generate title when moving to next step
+  const autoGenerateTitleIfEmpty = () => {
+    if (!formData.title && selectedManufacturer && selectedModel && selectedYear) {
+      const manufacturerName = manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer;
+      const newTitle = `${manufacturerName} ${selectedModel} ${selectedYear}`.trim();
+      console.log('Auto-generating title on step change:', newTitle);
+      setFormData(prev => ({
+        ...prev,
+        title: newTitle
+      }));
+    }
+  };
+
+  // Function to handle input method change
+  const handleInputMethodChange = (method: 'plate' | 'manual') => {
+    setInputMethod(method);
+    
+    if (method === 'manual') {
+      // Clear API-related data when switching to manual mode
+      setCarData(null);
+      setYad2ModelInfo(null);
+      setError(null);
+      
+      // Reset form to manual input mode
+      setFormData(prev => ({
+        ...prev,
+        // Keep only user-entered data, clear auto-populated fields
+        manufacturerName: '',
+        commercialNickname: '',
+        yearOfProduction: '',
+        fuelType: '',
+        // Keep other user inputs
+        title: prev.title || '',
+        makeModel: prev.makeModel || '',
+        year: prev.year || '',
+        plateNumber: prev.plateNumber || '',
+        mileage: prev.mileage || '',
+        color: prev.color || '',
+        engineType: prev.engineType || '',
+        transmission: prev.transmission || '',
+        currentCondition: prev.currentCondition || '',
+        knownProblems: prev.knownProblems || '',
+        pros: prev.pros || '',
+        cons: prev.cons || '',
+        tradeIn: prev.tradeIn || '',
+        askingPrice: prev.askingPrice || '',
+        name: prev.name || '',
+        email: prev.email || '',
+        phone: prev.phone || '',
+        images: prev.images,
+        car_data: {}
+      }));
+    } else if (method === 'plate') {
+      // When switching to plate mode, clear manual inputs and try to populate with API data
+      setFormData(prev => ({
+        ...prev,
+        // Clear manual input fields
+        manufacturerName: '',
+        commercialNickname: '',
+        yearOfProduction: '',
+        fuelType: '',
+        title: '',
+        makeModel: '',
+        year: '',
+        plateNumber: '',
+        // Keep other user inputs
+        mileage: prev.mileage || '',
+        color: prev.color || '',
+        engineType: prev.engineType || '',
+        transmission: prev.transmission || '',
+        currentCondition: prev.currentCondition || '',
+        knownProblems: prev.knownProblems || '',
+        pros: prev.pros || '',
+        cons: prev.cons || '',
+        tradeIn: prev.tradeIn || '',
+        askingPrice: prev.askingPrice || '',
+        name: prev.name || '',
+        email: prev.email || '',
+        phone: prev.phone || '',
+        images: prev.images,
+        car_data: {}
+      }));
+      
+      // Try to populate with available API data
+      if (carData || yad2ModelInfo) {
+        populateFormDataWithBestSources();
+      }
+    }
+  };
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    // Fill formData fields from carData if they are undefined or empty
-    if (carData) {
-      if (!formData.title) formData.title = `${carData.manufacturer_name || ""} ${carData.commercial_nickname || ""} ${carData.year_of_production || ""}`.trim();
-      if (!formData.makeModel) formData.makeModel = `${carData.manufacturer_name || ""} ${carData.model_name || ""}`.trim();
-      if (!formData.mileage) formData.mileage = carData.mileage;
-      if (!formData.color) formData.color = carData.color;
-      if (!formData.engineType) formData.engineType = carData.engine_type;
-      if (!formData.transmission) formData.transmission = carData.transmission;
-      if (!formData.currentCondition) formData.currentCondition = carData.condition;
-      if (!formData.knownProblems) formData.knownProblems = carData.known_problems;
-      if (!formData.pros) formData.pros = carData.pros;
-      if (!formData.cons) formData.cons = carData.cons;
-      if (!formData.tradeIn) formData.tradeIn = carData.trade_in;
-      if (!formData.askingPrice) formData.askingPrice = carData.asking_price;
-      if (!formData.name) formData.name = carData.name;
-      if (!formData.email) formData.email = carData.email;
-      if (!formData.phone) formData.phone = carData.phone;
-      if (!formData.manufacturerName) formData.manufacturerName = carData.manufacturer_name;
-      if (!formData.commercialNickname) formData.commercialNickname = carData.commercial_nickname;
-      if (!formData.yearOfProduction) formData.yearOfProduction = carData.year_of_production;
-      if (!formData.fuelType) formData.fuelType = carData.fuel_type;
-      if (!formData.car_data) formData.car_data = carData;
-      if (!formData.plateNumber) formData.plateNumber = carData.plate_number;
-      if (!formData.year) formData.year = carData.year_of_production;
+    
+    console.log('Validating form with data:', formData);
+    console.log('Current dropdown selections:', { selectedManufacturer, selectedModel, selectedYear });
+    
+    // Ensure form data is populated with the best available sources before validation
+    if (carData || yad2ModelInfo) {
+      populateFormDataWithBestSources();
     }
-         formData.title = carData.manufacturer_name + ' ' + carData.commercial_nickname + ' ' + carData.year_of_production + (carData.trim_level || '');
-    formData.makeModel = carData.manufacturer_name + ' ' + carData.commercial_nickname;
-    formData.mileage = formData.mileage ?? carData.mileage;
-    formData.color = formData.color ?? carData.color;
-    formData.engineType = formData.engineType ?? carData.engine_type;
-    formData.transmission = formData.transmission ?? carData.transmission;
-    formData.currentCondition = formData.currentCondition ?? carData.condition;
-    formData.knownProblems = formData.knownProblems ?? carData.known_problems;
-    formData.pros =  formData.pros ?? carData.pros;
-    formData.cons = formData.cons ?? carData.cons;
-    formData.tradeIn = formData.tradeIn ?? carData.trade_in;
-    formData.askingPrice = formData.askingPrice ?? carData.asking_price;
-    formData.name = formData.name ?? carData.name;
-    formData.email = formData.email ?? carData.email;
-    formData.phone = formData.phone ?? carData.phone;
-    formData.manufacturerName = formData.manufacturerName ?? carData.manufacturer_name;
-    formData.commercialNickname = formData.commercialNickname ?? carData.commercial_nickname;
-    formData.yearOfProduction = formData.yearOfProduction ?? carData.year_of_production;
-    formData.fuelType = formData.fuelType ?? carData.fuel_type;
-    formData.car_data = formData.car_data ?? carData;
-    // console.log("formData is", formData);
-    // console.log("carData   is", carData);
-    if (!formData.title) newErrors.title = t('validation_required');
-    if (!formData.manufacturerName) newErrors.manufacturer = t('validation_required');
-    if (!formData.commercialNickname) newErrors.model = t('validation_required');
-    if (!formData.yearOfProduction) newErrors.year = t('validation_required');
-    if (!formData.plateNumber) newErrors.plateNumber = t('validation_required');
-    if (!formData.email) {
-      newErrors.email = t('validation_required');
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = t('validation_email');
+    
+    // Validate required fields
+    if (!formData.title) {
+      newErrors.title = t('validation_required');
+      console.log('Title validation failed - current value:', formData.title);
     }
-    if (!formData.phone) newErrors.phone = t('validation_required');
-    if (!formData.images.length) newErrors.images = t('validation_images');
+    if (!formData.manufacturerName) {
+      newErrors.manufacturer = t('validation_required');
+      console.log('Manufacturer validation failed - current value:', formData.manufacturerName);
+    }
+    if (!formData.commercialNickname) {
+      newErrors.model = t('validation_required');
+      console.log('Model validation failed - current value:', formData.commercialNickname);
+    }
+    if (!formData.yearOfProduction) {
+      newErrors.year = t('validation_required');
+      console.log('Year validation failed - current value:', formData.yearOfProduction);
+    }
+    // Plate number validation: required only in automatic/plate mode
+    if (inputMethod === 'plate') {
+      if (!formData.plateNumber || formData.plateNumber.trim() === '') {
+        newErrors.plateNumber = t('validation_required') || 'Plate number is required when using automatic search';
+        console.log('Plate number validation failed - required in plate mode, current value:', formData.plateNumber);
+      } else if (!carData) {
+        newErrors.plateNumber = t('validation_required') || 'Plate number must be found in the system';
+        console.log('Plate number validation failed - plate not found in system');
+      }
+    } else {
+      // In manual mode, plate number is optional
+      console.log('Plate number validation skipped - manual mode, current value:', formData.plateNumber);
+    }
+    // Email is not required
+    // if (!formData.email) {
+    //   newErrors.email = t('validation_required');
+    //   console.log('Email validation failed - current value:', formData.email);
+    // } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    //   newErrors.email = t('validation_email');
+    //   console.log('Email format validation failed - current value:', formData.email);
+    // }
+    
+    // Phone validation: Israeli phone number format
+    if (!formData.phone) {
+      newErrors.phone = t('validation_required');
+      console.log('Phone validation failed - current value:', formData.phone);
+    } else {
+      // Israeli phone number validation: +972-XX-XXXXXXX or 05X-XXXXXXX or 0X-XXXXXXX
+      const israeliPhoneRegex = /^(\+972-?|0)?5[0-9]-?[0-9]{7}$|^(\+972-?|0)?[2-4][0-9]-?[0-9]{7}$/;
+      if (!israeliPhoneRegex.test(formData.phone.replace(/\s/g, ''))) {
+        newErrors.phone = t('validation_phone_invalid') || 'Please enter a valid Israeli phone number';
+        console.log('Phone validation failed - invalid Israeli format:', formData.phone);
+      }
+    }
+    if (!formData.images.length) {
+      newErrors.images = t('validation_images');
+      console.log('Images validation failed - current count:', formData.images.length);
+    }
 
+    console.log('Validation errors:', newErrors);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
   const handlePlateNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formattedValue = formatPlateNumber(e.target.value);
     setPlateNumber(formattedValue);
+    setFormData(prev => ({ ...prev, plateNumber: formattedValue }));
     setError(null);
   };
+
+  // Also update formData.plateNumber when plateNumber state changes (for the plate search input)
+  useEffect(() => {
+    setFormData(prev => ({ ...prev, plateNumber: plateNumber }));
+  }, [plateNumber]);
   const uploadImages = async (files: File[]) => {
   //   const uploadPromises = files.map(async (file) => {
   //     const formData = new FormData();
@@ -665,8 +1005,18 @@ export default function AddCarListing() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    
+    console.log('Form submission started');
+    console.log('Current form data:', formData);
+    
+    setCurrentProcessingStep(t('validating_form') || 'Validating form...');
+    if (!validateForm()) {
+      console.log('Form validation failed');
+      setCurrentProcessingStep('');
+      return;
+    }
 
+    console.log('Form validation passed, starting submission');
     setIsSubmitting(true);
 
     try {
@@ -674,18 +1024,25 @@ export default function AddCarListing() {
       // const imageIds = await uploadImages(formData.images);
 
       // Format the car details object per requested structure
+      // Use the best available data sources based on input method
       const cd: any = (formData as any).car_data || {};
+      const yad2Data: any = cd.yad2_data || {};
+      
       const composedName = [
-        cd.manufacturer_name || formData.manufacturerName,
-        cd.model_name || formData.commercialNickname,
-        cd.year_of_production || formData.yearOfProduction || formData.year,
-        cd.fuel_type || formData.fuelType || formData.engineType,
+        getBestDataValue('manufacturerName', formData.manufacturerName, cd.manufacturer_name, yad2Data.manufacturerName),
+        getBestDataValue('commercialNickname', formData.commercialNickname, cd.commercial_nickname, yad2Data.modelName),
+        getBestDataValue('yearOfProduction', formData.yearOfProduction, cd.year_of_production, yad2Data.year),
+        getBestDataValue('fuelType', formData.fuelType, cd.fuel_type, yad2Data.fuelType),
       ]
         .filter(Boolean)
         .join(' ');
-              let imageId = null;
-        if (formData.images && formData.images.length > 0) {
-          console.log("formData.images[0] is", formData.images[0]);
+
+      // Upload image if present
+      let imageId = null;
+      if (formData.images && formData.images.length > 0) {
+        try {
+          setCurrentProcessingStep(t('uploading_image') || 'Uploading image...');
+          console.log("Uploading image...");
           const formDataToSend = new FormData();
           formDataToSend.append('image', formData.images[0]);
           
@@ -693,6 +1050,7 @@ export default function AddCarListing() {
             method: 'POST',
             body: formDataToSend
           });
+          
           console.log("imagesupload_response is", imagesupload_response);
           if (imagesupload_response.ok) {
             const uploadResult = await imagesupload_response.json();
@@ -704,47 +1062,87 @@ export default function AddCarListing() {
             // Continue without image if upload fails
             imageId = null;
           }
+        } catch (uploadError) {
+          console.error("Error uploading image:", uploadError);
+          // Continue without image if upload fails
+          imageId = null;
         }
+      }
+
+      // Prepare car details
+      setCurrentProcessingStep(t('preparing_data') || 'Preparing car details...');
       const carDetails = {
         car: {
-          fuel: cd.fuel_type || formData.fuelType || formData.engineType || '',
+          // Basic car information
+          fuel: getBestDataValue('fuelType', formData.fuelType, cd.fuel_type, yad2Data.fuelType) || '',
           name: composedName,
-          year: String(cd.year_of_production || formData.yearOfProduction || formData.year || ''),
+          year: String(getBestDataValue('yearOfProduction', formData.yearOfProduction, cd.year_of_production, yad2Data.year) || ''),
           miles: String(formData.mileage || ''),
           price: parseFloat(formData.askingPrice) || 0,
-                     images: imageId ? {
-             main: [imageId],
-             additional: [imageId],
-           } : {},
-           formData: formData,
+          
+          // Owner information
+          owner_name: formData.name || '',
+          owner_email: formData.email || '',
+          owner_phone: formData.phone || '',
+          
+          // Car specifications
+          plate_number: formData.plateNumber || '',
+          color: formData.color || '',
+          engine_type: formData.engineType || '',
+          condition: formData.currentCondition || '',
+          known_problems: formData.knownProblems || '',
+          trade_in: formData.tradeIn || '',
+          asking_price: formData.askingPrice || '',
+          
+          // Manufacturer information
+          manufacturer_name: getBestDataValue('manufacturerName', formData.manufacturerName, cd.manufacturer_name, yad2Data.manufacturerName) || '',
+          commercial_nickname: getBestDataValue('commercialNickname', formData.commercialNickname, cd.commercial_nickname, yad2Data.modelName) || '',
+          year_of_production: getBestDataValue('yearOfProduction', formData.yearOfProduction, cd.year_of_production, yad2Data.year) || '',
+          fuel_type: getBestDataValue('fuelType', formData.engineType, cd.fuel_type, yad2Data.fuelType) || '',
+          trim_level: cd.trim_level || yad2Data.trimLevel || '',
+          body_type: cd.body_type || yad2Data.bodyType || '',
+          transmission: formData.transmission || '',
+          
+          // Images
+          images: imageId ? {
+            main: [imageId],
+            additional: [imageId],
+          } : {},
+          
+          // Pros and Cons
+          pros: formData.pros || '',
+          cons: formData.cons || '',
+          
+          // Features array for display
           features: [
-            { label: 'العنوان', value: String(formData.title  || '') },
-            { label: 'الشركة المصنعة والموديل', value: String(formData.makeModel || '') },
-            { label: 'سنة الصنع', value: String(cd.year_of_production || formData.yearOfProduction || formData.year || '') },
-            { label: 'رقم اللوحة', value: String(formData.plateNumber || '') },
-            { label: 'عدد الكيلومترات', value: String(formData.mileage || '') },
-            { label: 'اللون', value: String(formData.color || '') },
-            { label: 'نوع المحرك', value: String(formData.engineType || '') },
-            { label: 'ناقل الحركة', value: String(formData.transmission || '') },
-            { label: 'الحالة الحالية', value: String(formData.currentCondition || '') },
-            { label: 'المشاكل المعروفة', value: String(formData.knownProblems || '') },
-            { label: 'المميزات', value: String(formData.pros || '') },
-            { label: 'العيوب', value: String(formData.cons || '') },
-            { label: 'خيار الاستبدال', value: String(formData.tradeIn || '') },
-            { label: 'السعر المطلوب', value: String(formData.askingPrice || '') },
-            { label: 'الاسم', value: String(formData.name || '') },
-            { label: 'البريد الإلكتروني', value: String(formData.email || '') },
-            { label: 'رقم الهاتف', value: String(formData.phone || '') },
-            { label: 'نوع الوقود', value: String(cd.fuel_type || formData.fuelType || formData.engineType || '') },
-                         ...(imageId ? [{ label: 'الصورة', value: imageId }] : []),
+            {  'address': '' }, //String(formData.address || '')
+            {  'makeModel': String(formData.makeModel || '') },
+            {  'yearOfProduction': String(getBestDataValue('yearOfProduction', formData.yearOfProduction, cd.year_of_production, yad2Data.year) || '') },
+            {  'plateNumber': String(formData.plateNumber || '') },
+            {  'mileage': String(formData.mileage || '') },
+            {  'color': String(formData.color || '') },
+            {  'engineType': String(formData.engineType || '') },
+            {  'transmission': String(formData.transmission || '') },
+            {  'currentCondition': String(formData.currentCondition || '') },
+            {  'knownProblems': String(formData.knownProblems || '') },
+            {  'pros': String(formData.pros || '') },
+            {  'cons': String(formData.cons || '') },
+            {  'tradeIn': String(formData.tradeIn || '') },
+            {  'askingPrice': String(formData.askingPrice || '') },
+            {  'name': String(formData.name || '') },
+            {  'email': String(formData.email || '') },
+            {  'phone': String(formData.phone || '') },
+            {  'fuelType': String(getBestDataValue('fuelType', formData.engineType, cd.fuel_type, yad2Data.fuelType) || '') },
+            ...(imageId ? [{  'image': imageId }] : []),
           ],
-          body_type: 'غير محدد',
-          description: 'غير محدد',
-          transmission: 'غير محدد',
+          
+          // Description
+          description: `${getBestDataValue('manufacturerName', formData.manufacturerName, cd.manufacturer_name, yad2Data.manufacturerName) || ''} ${getBestDataValue('commercialNickname', formData.commercialNickname, cd.commercial_nickname, yad2Data.modelName) || ''} ${getBestDataValue('yearOfProduction', formData.yearOfProduction, cd.year_of_production, yad2Data.year) || ''}`.trim(),
         }
       };
 
       // Send to our new API endpoint
+      setCurrentProcessingStep(t('submitting_listing') || 'Submitting car listing...');
       const response = await fetch('/api/addListing', {
         method: 'POST',
         headers: {
@@ -757,7 +1155,7 @@ export default function AddCarListing() {
       if (response.ok) {
         const responseData = await response.json();
         console.log("Final API response data:", responseData);
-        alert(t('success_message'));
+        showPopupModal('success', t('success_title') || 'Success!', t('success_message'));
         // Reset form
         setFormData({
           title: '',
@@ -767,7 +1165,7 @@ export default function AddCarListing() {
           mileage: '',
           color: '',
           engineType: '',
-          transmission: 'Automatic',
+          transmission: '',
           currentCondition: '',
           knownProblems: '',
           pros: '',
@@ -792,9 +1190,10 @@ export default function AddCarListing() {
       }
     } catch (error) {
       console.error('Error submitting form:', error);
-      alert(t('error_message'));
+      showPopupModal('error', t('error_title') || 'Error!', t('error_message'));
     } finally {
       setIsSubmitting(false);
+      setCurrentProcessingStep('');
     }
   };
 
@@ -833,6 +1232,33 @@ export default function AddCarListing() {
           </div>
         </div>
 
+        {/* Debug Information */}
+        <div className="mb-6 p-4 bg-gray-100 rounded-lg">
+          <h3 className="font-semibold text-gray-800 mb-2">Debug Info:</h3>
+          <div className="text-sm text-gray-600 space-y-1">
+            <div>Current Step: {currentStep} / {STEPS.length - 1}</div>
+            <div>Step Name: {STEPS[currentStep]}</div>
+            <div>Is Last Step: {currentStep === STEPS.length - 1 ? 'Yes' : 'No'}</div>
+            <div>Input Method: <span className={`font-semibold ${inputMethod === 'plate' ? 'text-blue-600' : 'text-green-600'}`}>{inputMethod === 'plate' ? 'Automatic (Plate Search)' : 'Manual Entry'}</span></div>
+            <div>Form Data Keys: {Object.keys(formData).filter(key => formData[key as keyof typeof formData]).join(', ')}</div>
+            <div>Required Fields Status:</div>
+            <div className="ml-4">
+              <div>Title: {formData.title ? '✓' : '✗'} "{formData.title}"</div>
+              <div>Manufacturer: {formData.manufacturerName ? '✓' : '✗'} "{formData.manufacturerName}"</div>
+              <div>Model: {formData.commercialNickname ? '✓' : '✗'} "{formData.commercialNickname}"</div>
+              <div>Year: {formData.yearOfProduction ? '✓' : '✗'} "{formData.yearOfProduction}"</div>
+              <div>Plate: {inputMethod === 'plate' ? (formData.plateNumber ? '✓' : '✗') : 'Optional'} "{formData.plateNumber}" {inputMethod === 'plate' && !carData && formData.plateNumber ? '(Not found in system)' : ''}</div>
+              <div>Email: {formData.email || 'Optional'} "{formData.email}"</div>
+              <div>Phone: {formData.phone ? '✓' : '✗'} "{formData.phone}"</div>
+              <div>Images: {formData.images.length > 0 ? '✓' : '✗'} ({formData.images.length})</div>
+            </div>
+            <div className="mt-2 pt-2 border-t border-gray-300">
+              <div>Car Data Available: {carData ? '✓ Yes' : '✗ No'}</div>
+              <div>Yad2 Data Available: {yad2ModelInfo ? '✓ Yes' : '✗ No'}</div>
+            </div>
+          </div>
+        </div>
+
         {/* Steps indicator (clickable) */}
         <div className="mb-8">
           <ol className="flex items-center text-xs sm:text-sm text-gray-700 gap-2 overflow-hidden" role="list">
@@ -865,420 +1291,464 @@ export default function AddCarListing() {
             animate={{ opacity: 1 }}
             className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
           >
-            
-            
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('basic_information')}</h2>
-            <div className="space-y-4">
-              <div>
-                <Input
-                  placeholder={t('title_placeholder')}
-                  value={formData.title}
-                  onChange={(e) => {
-                    setFormData(prev => ({ ...prev, title: e.target.value }));
-                    setErrors(prev => ({ ...prev, title: '' }));
-                  }}
-                  className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.title ? 'border-red-500' : ''}`}
-                />
-                {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
+            
+            {/* Input Method Toggle */}
+            <div className="mb-6">
+              <div className="flex items-center justify-center bg-gray-100 rounded-xl p-1">
+                <button
+                  type="button"
+                  onClick={() => handleInputMethodChange('plate')}
+                  className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
+                    inputMethod === 'plate'
+                      ? 'bg-white text-blue-600 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <Car className="h-5 w-5" />
+                    {t('search_by_plate') || 'Search by Plate Number'}
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleInputMethodChange('manual')}
+                  className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
+                    inputMethod === 'manual'
+                      ? 'bg-white text-blue-600 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <Settings className="h-5 w-5" />
+                    {t('enter_manually') || 'Enter Manually'}
+                  </div>
+                </button>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            </div>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t('title') || 'Title'} <span className="text-gray-500">(Auto-generated when you move to next step if left empty)</span>
+              </label>
+              <Input
+                placeholder={t('title_placeholder') || 'Enter car title or leave empty for auto-generation on next step'}
+                value={formData.title}
+                onChange={(e) => {
+                  setFormData(prev => ({ ...prev, title: e.target.value }));
+                  setErrors(prev => ({ ...prev, title: '' }));
+                }}
+                className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.title ? 'border-red-500' : ''}`}
+              />
+              {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
+              {!formData.title && selectedManufacturer && selectedModel && selectedYear && (
+                <p className="mt-2 text-sm text-blue-600">
+                  💡 Title will be auto-generated as "{manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer} {selectedModel} {selectedYear}" when you click Next
+                </p>
+              )}
+            </div>
                 <div>
-                  <Select
-                    value={selectedManufacturer}
-                    onValueChange={(value) => {
-                      if (value && manufacturersData[value]) {
-                        const models = manufacturersData[value].submodels || [];
-                        setAvailableModels(models);
-                        setSelectedModel(''); // Reset model selection
-                        setAvailableYears([]); // Clear years until model is selected
-                      } else {
-                        setAvailableModels([]);
-                        setAvailableYears([]);
-                      }
-                      setSelectedManufacturer(value);
-                      setErrors(prev => ({ ...prev, manufacturer: '' }));
-                    }}
-                  >
-                    <SelectTrigger className="rounded-xl py-5">
-                      <SelectValue placeholder={t('select_manufacturer') || 'Select Manufacturer'} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white">
-                      {Object.keys(manufacturersData).length === 0 ? (
-                        <SelectItem value="loading_manufacturers" disabled>
-                          Loading manufacturers...
-                        </SelectItem>
-                      ) : (
-                        Object.keys(manufacturersData).map((manufacturer) => (
-                          <SelectItem key={manufacturer} value={manufacturer}>
-                            {manufacturersData[manufacturer]?.submodels?.[0]?.manufacturer?.title || manufacturer}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                  {errors.manufacturer && <p className="mt-1 text-sm text-red-500">{errors.manufacturer}</p>}
-                </div>
-
-                <div>
-                  <Select
-                    value={selectedModel}
-                    onValueChange={(value) => {
-                      setSelectedModel(value);
-                      setErrors(prev => ({ ...prev, model: '' }));
-                    }}
-                    disabled={!selectedManufacturer || availableModels.length === 0}
-                  >
-                    <SelectTrigger className="rounded-xl py-5">
-                      <SelectValue placeholder={t('select_model') || 'Select Model'} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white">
-                      {!selectedManufacturer ? (
-                        <SelectItem value="select_manufacturer_first" disabled>
-                          Select manufacturer first
-                        </SelectItem>
-                      ) : availableModels.length === 0 ? (
-                        <SelectItem value="no_models_available" disabled>
-                          No models available
-                        </SelectItem>
-                      ) : (
-                        availableModels.map((model) => (
-                          <SelectItem key={model.id} value={model.id?.toString()}>
-                            {model.title || 'Unknown Model'}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                  {errors.model && <p className="mt-1 text-sm text-red-500">{errors.model}</p>}
-                </div>
-
-                <div>
-                  <Select
-                    value={formData.year}
-                    onValueChange={(value) => {
-                      setFormData(prev => ({ ...prev, year: value }));
-                      setErrors(prev => ({ ...prev, year: '' }));
-                    }}
-                    disabled={!selectedManufacturer || !selectedModel || availableYears.length === 0}
-                  >
-                    <SelectTrigger className={`rounded-xl py-5 ${errors.year ? 'border-red-500' : ''}`}>
-                      <SelectValue placeholder={t('year') || 'Year'} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white">
-                      {availableYears.length === 0 ? (
-                        <SelectItem value="no_years_available" disabled>
-                          {!selectedManufacturer ? 'Select manufacturer first' : 
-                           !selectedModel ? 'Select model first' : 'No years available'}
-                        </SelectItem>
-                      ) : (
-                        availableYears.map((year) => (
-                          <SelectItem key={year} value={year.toString()}>
-                            {year}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                  {errors.year && <p className="mt-1 text-sm text-red-500">{errors.year}</p>}
-                </div>
-
-                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('mileage') || 'Mileage'} <span className="text-gray-500">(in kilometers)</span>
+                  </label>
                   <Input
-                    placeholder={t('plate_number')}
-                    value={formData.plateNumber}
-                    onChange={(e) => {
-                      setFormData(prev => ({ ...prev, plateNumber: e.target.value }));
-                      setErrors(prev => ({ ...prev, plateNumber: '' }));
-                    }}
-                    className={`rounded-xl py-5 ${errors.plateNumber ? 'border-red-500' : ''}`}
+                    placeholder={t('mileage') || 'Enter mileage in kilometers'}
+                    value={formData.mileage}
+                    onChange={(e) => setFormData(prev => ({ ...prev, mileage: e.target.value }))}
+                    className={`mb-6 rounded-xl py-5 ${errors.mileage ? 'border-red-500' : ''}`}
                   />
-                  {errors.plateNumber && <p className="mt-1 text-sm text-red-500">{errors.plateNumber}</p>}
+                  {errors.mileage && <p className="mt-1 text-sm text-red-500">{errors.mileage}</p>}
                 </div>
+            {/* Plate Number Input Method */}
+            {inputMethod === 'plate' && (
+              <div className="space-y-6">
+                <div className="w-full max-w-xl mx-auto">
+                  <div className="relative">
+                    <div className="relative flex items-center bg-[#ffca11] rounded shadow-lg p-2">
+                      <div className="flex items-center gap-4">
+                        <img 
+                          src="/a1.png" 
+                          alt={t("logo_alt")} 
+                          width={40} 
+                          height={50} 
+                          className="object-fill w-[60px] md:w-[80px] p-[2px]" 
+                        />
+                      </div>
+                      <Input
+                        type="text"
+                        value={plateNumber}
+                        onChange={handlePlateNumberChange}
+                        placeholder={t("enter_plate")}
+                        className="w-full px-4 sm:px-6 py-4 sm:py-8 text-xl sm:text-2xl md:text-3xl font-black tracking-[0.1em] bg-transparent border-0 focus:ring-0 text-center uppercase"
+                        maxLength={10}
+                        style={{
+                          letterSpacing: '0.1em',
+                          fontFamily: 'monospace',
+                          lineHeight: '1',
+                          WebkitTextStroke: '1px black',
+                          textShadow: '2px 2px 0px rgba(0,0,0,0.1)'
+                        }}
+                      />
+                    </div>
+                    <div className="flex items-center gap-2 px-4 w-full justify-center pt-4">
+                      <Button 
+                        onClick={fetchCarData} 
+                        disabled={loading}
+                        className="rounded-full w-50 text-black h-12 hover:bg-blue-700 transition-colors bg-[#ffca11]"
+                      >
+                        {t("search_by_vin")}
+                      </Button>
+                    </div>
 
-                <Input
-                  placeholder={t('mileage')}
-                  value={formData.mileage}
-                  onChange={(e) => setFormData(prev => ({ ...prev, mileage: e.target.value }))}
-                  className="rounded-xl py-5"
-                />
+                    {showCaptchaPrompt && captchaRequired && (
+                      <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+                        <p className="text-red-700 font-semibold mb-2">Robot check required</p>
+                        <p className="text-sm text-red-700 mb-4">Please complete the captcha challenge to continue.</p>
+                        <div className="flex items-center justify-center gap-3">
+                          <Button
+                            type="button"
+                            onClick={() => {
+                              if (captchaUrl) {
+                                const popup = window.open(captchaUrl, 'captchaPopup', 'width=480,height=720');
+                                if (popup) {
+                                  popup.focus();
+                                }
+                              }
+                            }}
+                            className="bg-red-600 hover:bg-red-700 text-white"
+                          >
+                            Open to see data.
+                          </Button>
+                          <Button
+                            type="button"
+                            onClick={async () => {
+                              try {
+                                setShowCaptchaPrompt(false);
+                                setLoading(true);
+                                const data = await fetchCarDataDirect(plateNumber);
+                                setYad2ModelInfo(data);
+                              } catch (e) {
+                                console.error(e);
+                                // fallback UI
+                              } finally {
+                                setLoading(false);
+                              }
+                            }}
+                            variant="outline"
+                          >
+                            I completed it, retry
+                          </Button>
+                        </div>
+                      </div>
+                    )}
 
-                <Input
-                  placeholder={t('color')}
-                  value={formData.color}
-                  onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
-                  className="rounded-xl py-5"
-                />
+                    {/* Yad2 Price Heatmap and Details */}
+                    {(yad2PriceInfo?.data || yad2ModelInfo?.data) && (
+                      <div className="mt-6 space-y-4">
+                        {yad2PriceInfo?.data && (
+                          <div className="bg-gray-50 rounded-lg p-4">
+                            <div className="flex items-center justify-between text-sm text-gray-700 font-medium">
+                              <span>Min {Number(yad2PriceInfo.data.minPrice).toLocaleString()}</span>
+                              <span>Predicted {Number(yad2PriceInfo.data.predictedPrice).toLocaleString()}</span>
+                              <span>Max {Number(yad2PriceInfo.data.maxPrice).toLocaleString()}</span>
+                            </div>
+                            <div className="mt-3">
+                              <div className="relative h-3 rounded-full overflow-hidden bg-gradient-to-r from-green-400 via-yellow-300 to-red-500" aria-label="Price heatmap" />
+                              {(() => {
+                                const min = Number(yad2PriceInfo.data.minPrice) || 0;
+                                const max = Number(yad2PriceInfo.data.maxPrice) || 0;
+                                const pred = Number(yad2PriceInfo.data.predictedPrice) || 0;
+                                const range = Math.max(max - min, 1);
+                                const pct = Math.min(100, Math.max(0, ((pred - min) / range) * 100));
+                                return (
+                                  <div className="relative h-6">
+                                    <div className="absolute top-0 -mt-2" style={{ left: `${pct}%`, transform: 'translateX(-50%)' }}>
+                                      <div className="h-4 w-4 rounded-full bg-blue-600 border-2 border-white shadow" />
+                                    </div>
+                                  </div>
+                                );
+                              })()}
+                            </div>
+                            <div className="mt-2 text-xs text-gray-500">
+                              Accuracy: {String(yad2PriceInfo.data.accuracyId)}
+                            </div>
+                          </div>
+                        )}
 
-                <Select
-                  value={formData.engineType}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, engineType: value }))}
-                >
-                  <SelectTrigger className="rounded-xl py-5">
-                    <SelectValue placeholder={t('engine_type')} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white">
-                    {['petrol', 'diesel', 'electric', 'hybrid'].map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {t(`fuel_types.${type}`)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select
-                  value={formData.transmission}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, transmission: value }))}
-                >
-                  <SelectTrigger className="rounded-xl py-5">
-                    <SelectValue placeholder={t('transmission')} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white">
-                    <SelectItem value="automatic">{t('transmission_automatic')}</SelectItem>
-                    <SelectItem value="manual">{t('transmission_manual')}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            {/*  */}
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">او ادخل رقم السيارة</h2>
-            <div className="w-full max-w-xl">
-            <div className="relative">
-              <div className="relative flex items-center bg-[#ffca11] rounded shadow-lg p-2">
-                <div className="flex items-center gap-4">
-                  <img 
-                    src="/a1.png" 
-                    alt={t("logo_alt")} 
-                    width={40} 
-                    height={50} 
-                    className="object-fill w-[60px] md:w-[80px] p-[2px]" 
-                  />
-                </div>
-                <Input
-                  type="text"
-                  value={plateNumber}
-                  onChange={handlePlateNumberChange}
-                  placeholder={t("enter_plate")}
-                  className="w-full px-4 sm:px-6 py-4 sm:py-8 text-xl sm:text-2xl md:text-3xl font-black tracking-[0.1em] bg-transparent border-0 focus:ring-0 text-center uppercase"
-                  maxLength={10}
-                  style={{
-                    letterSpacing: '0.1em',
-                    fontFamily: 'monospace',
-                    lineHeight: '1',
-                    WebkitTextStroke: '1px black',
-                    textShadow: '2px 2px 0px rgba(0,0,0,0.1)'
-                  }}
-                />
-              </div>
-            <div className="flex items-center gap-2 px-4 w-full justify-center pt-4">
-            <Button 
-                    onClick={fetchCarData} 
-                    disabled={loading}
-                    className="rounded-full w-50 text-black h-12 hover:bg-blue-700 transition-colors bg-[#ffca11]"
-                  >
-                    {t("search_by_vin")}
-                    
-                  </Button>
-            </div>
-
-              {showCaptchaPrompt && captchaRequired && (
-                <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-                  <p className="text-red-700 font-semibold mb-2">Robot check required</p>
-                  <p className="text-sm text-red-700 mb-4">Please complete the captcha challenge to continue.</p>
-                  <div className="flex items-center justify-center gap-3">
-                    <Button
-                      type="button"
-                      onClick={() => {
-                        if (captchaUrl) {
-                          const popup = window.open(captchaUrl, 'captchaPopup', 'width=480,height=720');
-                          if (popup) {
-                            popup.focus();
-                          }
-                        }
-                      }}
-                      className="bg-red-600 hover:bg-red-700 text-white"
-                    >
-                      Open to see data.
-                    </Button>
-                 <Button
-                    type="button"
-                    onClick={async () => {
-                      try {
-                        setShowCaptchaPrompt(false);
-                        setLoading(true);
-                        const data = await fetchCarDataDirect(plateNumber);
-                        setYad2ModelInfo(data);
-                      } catch (e) {
-                        console.error(e);
-                        // fallback UI
-                      } finally {
-                        setLoading(false);
-                      }
-                    }}
-                    variant="outline"
-                  >
-                      I completed it, retry
-                    </Button>
+                        {yad2ModelInfo?.data && (
+                          <div className="bg-gray-50 rounded-lg p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <h4 className="text-sm font-semibold text-gray-800">Yad2</h4>
+                              <span className="text-xs text-gray-500">model</span>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              {yad2ModelInfo.data.carTitle && (
+                                <div>
+                                  <div className="text-xs text-gray-500">Car</div>
+                                  <div className="font-medium text-gray-900">{yad2ModelInfo.data.carTitle}</div>
+                                </div>
+                              )}
+                              {yad2ModelInfo.data.subModelTitle && (
+                                <div>
+                                  <div className="text-xs text-gray-500">Submodel</div>
+                                  <div className="font-medium text-gray-900">{yad2ModelInfo.data.subModelTitle}</div>
+                                </div>
+                              )}
+                              {yad2ModelInfo.data.carYear && (
+                                <div>
+                                  <div className="text-xs text-gray-500">Year</div>
+                                  <div className="font-medium text-gray-900">{yad2ModelInfo.data.carYear}</div>
+                                </div>
+                              )}
+                              {yad2ModelInfo.data.owner && (
+                                <div>
+                                  <div className="text-xs text-gray-500">Owner</div>
+                                  <div className="font-medium text-gray-900">{yad2ModelInfo.data.owner}</div>
+                                </div>
+                              )}
+                              {yad2ModelInfo.data.tokefTestDate && (
+                                <div>
+                                  <div className="text-xs text-gray-500">Test Valid Until</div>
+                                  <div className="font-medium text-gray-900">{yad2ModelInfo.data.tokefTestDate}</div>
+                                </div>
+                              )}
+                              {yad2ModelInfo.data.yad2CarTitle && (
+                                <div>
+                                  <div className="text-xs text-gray-500">Color</div>
+                                  <div className="font-medium text-gray-900">{yad2ModelInfo.data.yad2CarTitle}</div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
-              )}
 
-              {/* Yad2 Price Heatmap and Details */}
-              {(yad2PriceInfo?.data || yad2ModelInfo?.data) && (
-                <div className="mt-6 space-y-4">
-                  {yad2PriceInfo?.data && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="flex items-center justify-between text-sm text-gray-700 font-medium">
-                        <span>Min {Number(yad2PriceInfo.data.minPrice).toLocaleString()}</span>
-                        <span>Predicted {Number(yad2PriceInfo.data.predictedPrice).toLocaleString()}</span>
-                        <span>Max {Number(yad2PriceInfo.data.maxPrice).toLocaleString()}</span>
-                      </div>
-                      <div className="mt-3">
-                        <div className="relative h-3 rounded-full overflow-hidden bg-gradient-to-r from-green-400 via-yellow-300 to-red-500" aria-label="Price heatmap" />
-                        {(() => {
-                          const min = Number(yad2PriceInfo.data.minPrice) || 0;
-                          const max = Number(yad2PriceInfo.data.maxPrice) || 0;
-                          const pred = Number(yad2PriceInfo.data.predictedPrice) || 0;
-                          const range = Math.max(max - min, 1);
-                          const pct = Math.min(100, Math.max(0, ((pred - min) / range) * 100));
-                          return (
-                            <div className="relative h-6">
-                              <div className="absolute top-0 -mt-2" style={{ left: `${pct}%`, transform: 'translateX(-50%)' }}>
-                                <div className="h-4 w-4 rounded-full bg-blue-600 border-2 border-white shadow" />
-                              </div>
-                            </div>
-                          );
-                        })()}
-                      </div>
-                      <div className="mt-2 text-xs text-gray-500">
-                        Accuracy: {String(yad2PriceInfo.data.accuracyId)}
-                      </div>
-                    </div>
+                {/* Results Section */}
+                <div ref={resultsRef} className="container mx-auto px-4 py-8 scroll-mt-8">
+                  {error && (
+                    <Alert variant="destructive" className="mb-8">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
                   )}
 
-                  {yad2ModelInfo?.data && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <h4 className="text-sm font-semibold text-gray-800">Yad2</h4>
-                        <span className="text-xs text-gray-500">model</span>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {yad2ModelInfo.data.carTitle && (
+                  {carData && !loading && (
+                    <Card>
+                      <CardContent className="p-6">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
                           <div>
-                            <div className="text-xs text-gray-500">Car</div>
-                            <div className="font-medium text-gray-900">{yad2ModelInfo.data.carTitle}</div>
+                            <div className="text-xs text-gray-500">{t('manufacturer_name')}</div>
+                            <div className="font-medium text-gray-900">{carData.manufacturer_name}</div>
                           </div>
-                        )}
-                        {yad2ModelInfo.data.subModelTitle && (
                           <div>
-                            <div className="text-xs text-gray-500">Submodel</div>
-                            <div className="font-medium text-gray-900">{yad2ModelInfo.data.subModelTitle}</div>
+                            <div className="text-xs text-gray-500">{t('commercial_nickname')}</div>
+                            <div className="font-medium text-gray-900">{carData.commercial_nickname}</div>
                           </div>
-                        )}
-                        {yad2ModelInfo.data.carYear && (
                           <div>
-                            <div className="text-xs text-gray-500">Year</div>
-                            <div className="font-medium text-gray-900">{yad2ModelInfo.data.carYear}</div>
+                            <div className="text-xs text-gray-500">{t('year_of_production')}</div>
+                            <div className="font-medium text-gray-900">{carData.year_of_production}</div>
                           </div>
-                        )}
-                        {yad2ModelInfo.data.owner && (
                           <div>
-                            <div className="text-xs text-gray-500">Owner</div>
-                            <div className="font-medium text-gray-900">{yad2ModelInfo.data.owner}</div>
+                            <div className="text-xs text-gray-500">{t('fuel_type')}</div>
+                            <div className="font-medium text-gray-900">{carData.fuel_type}</div>
                           </div>
-                        )}
-                        {yad2ModelInfo.data.tokefTestDate && (
-                          <div>
-                            <div className="text-xs text-gray-500">Test Valid Until</div>
-                            <div className="font-medium text-gray-900">{yad2ModelInfo.data.tokefTestDate}</div>
-                          </div>
-                        )}
-                        {yad2ModelInfo.data.yad2CarTitle && (
-                          <div>
-                            <div className="text-xs text-gray-500">Color</div>
-                            <div className="font-medium text-gray-900">{yad2ModelInfo.data.yad2CarTitle}</div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   )}
-                </div>
-              )}
-            
-            </div>
-             {/* Results Section */}
-      <div ref={resultsRef} className="container mx-auto px-4 py-8 scroll-mt-8">
-        {error && (
-          <Alert variant="destructive" className="mb-8">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-
-        {carData && !loading && (
-          <Card>
-            <CardContent className="p-6">
-             
-              
-
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-                <div>
-                  <div className="text-xs text-gray-500">{t('manufacturer_name')}</div>
-                  <div className="font-medium text-gray-900">{carData.manufacturer_name}</div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-500">{t('commercial_nickname')}</div>
-                  <div className="font-medium text-gray-900">{carData.commercial_nickname}</div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-500">{t('year_of_production')}</div>
-                  <div className="font-medium text-gray-900">{carData.year_of_production}</div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-500">{t('fuel_type')}</div>
-                  <div className="font-medium text-gray-900">{carData.fuel_type}</div>
                 </div>
               </div>
-              {/* Other Fields */}
-              {/* <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {Object.entries(carData).map(([key, value]) => (
-                  !priorityFields.includes(key) && !key.endsWith('_value') && (
-                    <div key={key} className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                      <div className={`flex-shrink-0 ${isRTL ? 'order-2' : 'order-1'}`}>
-                        {iconMap[key as keyof typeof iconMap] && (
-                          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                            {React.createElement(iconMap[key as keyof typeof iconMap], {
-                              className: "h-5 w-5 text-blue-600"
-                            })}
-                          </div>
+            )}
+
+            {/* Manual Entry Method */}
+            {inputMethod === 'manual' && (
+              <div className="space-y-4">
+                
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('manufacturer') || 'Manufacturer'} <span className="text-red-500">*</span>
+                    </label>
+                    <Select
+                      value={selectedManufacturer}
+                      onValueChange={(value) => {
+                        if (value && manufacturersData[value]) {
+                          const models = manufacturersData[value].submodels || [];
+                          setAvailableModels(models);
+                          setSelectedModel(''); // Reset model selection
+                          setAvailableYears([]); // Clear years until model is selected
+                        } else {
+                          setAvailableModels([]);
+                          setAvailableYears([]);
+                        }
+                        setSelectedManufacturer(value);
+                        setErrors(prev => ({ ...prev, manufacturer: '' }));
+                      }}
+                    >
+                      <SelectTrigger className="rounded-xl py-5">
+                        <SelectValue placeholder={t('select_manufacturer') || 'Select Manufacturer'} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        {Object.keys(manufacturersData).length === 0 ? (
+                          <SelectItem value="loading_manufacturers" disabled>
+                            Loading manufacturers...
+                          </SelectItem>
+                        ) : (
+                          Object.keys(manufacturersData).map((manufacturer) => (
+                            <SelectItem key={manufacturer} value={manufacturer}>
+                              {manufacturersData[manufacturer]?.submodels?.[0]?.manufacturer?.title || manufacturer}
+                            </SelectItem>
+                          ))
                         )}
-                      </div>
-                      <div className={isRTL ? 'order-1 text-right' : 'order-2 text-left'}>
-                        <p className="text-sm font-medium text-gray-500">{t(key).split('.').pop()}</p>
-                        <p className={`font-semibold ${key === 'validity_date' && isLicenseExpired(value) ? 'text-red-600' : 'text-gray-900'}`}>
-                          {String(value)}
-                          {key === 'validity_date' && isLicenseExpired(value) && (
-                            <span className="ml-2 text-sm text-red-600 font-normal">
-                              ({t('license_expired')})
-                            </span>
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  )
-                ))}
-              </div> */}
+                      </SelectContent>
+                    </Select>
+                    {errors.manufacturer && <p className="mt-1 text-sm text-red-500">{errors.manufacturer}</p>}
+                  </div>
 
-              {/* Ownership History Section */}
-              
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('model') || 'Model'} <span className="text-red-500">*</span>
+                    </label>
+                    <Select
+                      value={selectedModel}
+                      onValueChange={(value) => {
+                        setSelectedModel(value);
+                        setErrors(prev => ({ ...prev, model: '' }));
+                      }}
+                      disabled={!selectedManufacturer || availableModels.length === 0}
+                    >
+                      <SelectTrigger className="rounded-xl py-5">
+                        <SelectValue placeholder={t('select_model') || 'Select Model'} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        {!selectedManufacturer ? (
+                          <SelectItem value="no_models_available" disabled>
+                            Select manufacturer first
+                          </SelectItem>
+                        ) : availableModels.length === 0 ? (
+                          <SelectItem value="no_models_available" disabled>
+                            No models available
+                          </SelectItem>
+                        ) : (
+                          availableModels.map((model) => (
+                            <SelectItem key={model.id} value={model.title?.toString()}>
+                              {model.title || 'Unknown Model'}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                    {errors.model && <p className="mt-1 text-sm text-red-500">{errors.model}</p>}
+                  </div>
 
-              {/* Vehicle Specs Section */}
-             
-            </CardContent>
-          </Card>
-        )}
-          </div>
-          </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('year') || 'Year'} <span className="text-red-500">*</span>
+                    </label>
+                    <Select
+                      value={selectedYear}
+                      onValueChange={(value) => {
+                        setSelectedYear(value);
+                        setFormData(prev => ({ ...prev, year: value }));
+                        setErrors(prev => ({ ...prev, year: '' }));
+                      }}
+                      disabled={!selectedManufacturer || !selectedModel || availableYears.length === 0}
+                    >
+                      <SelectTrigger className={`rounded-xl py-5 ${errors.year ? 'border-red-500' : ''}`}>
+                        <SelectValue placeholder={t('year') || 'Year'} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        {availableYears.length === 0 ? (
+                          <SelectItem value="no_years_available" disabled>
+                            {!selectedManufacturer ? 'Select manufacturer first' : 
+                             !selectedModel ? 'Select model first' : 'No years available'}
+                          </SelectItem>
+                        ) : (
+                          availableYears.map((year) => (
+                            <SelectItem key={year} value={year.toString()}>
+                              {year}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                    {errors.year && <p className="mt-1 text-sm text-red-500">{errors.year}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('plate_number') || 'Plate Number'} <span className="text-gray-500">(Optional)</span>
+                    </label>
+                    <Input
+                      placeholder={t('plate_number') || 'Enter plate number'}
+                      value={formData.plateNumber}
+                      onChange={(e) => {
+                        setFormData(prev => ({ ...prev, plateNumber: e.target.value }));
+                        setErrors(prev => ({ ...prev, plateNumber: '' }));
+                      }}
+                      className={`rounded-xl py-5 ${errors.plateNumber ? 'border-red-500' : ''}`}
+                    />
+                    {errors.plateNumber && <p className="mt-1 text-sm text-red-500">{errors.plateNumber}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('color') || 'Color'} <span className="text-gray-500">(Optional)</span>
+                    </label>
+                    <Input
+                      placeholder={t('color') || 'Enter car color'}
+                      value={formData.color}
+                      onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
+                      className="rounded-xl py-5"
+                    />
+                  </div>
+
+
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('engine_type') || 'Engine Type'} <span className="text-gray-500">(Optional)</span>
+                    </label>
+                    <Select
+                      value={formData.engineType}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, engineType: value }))}
+                    >
+                      <SelectTrigger className="rounded-xl py-5 text-black">
+                        <SelectValue placeholder={t('engine_type') || 'Select engine type'} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        {['petrol', 'gasoline', 'diesel', 'electric', 'hybrid'].map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {t(`fuel_types.${type}`) || type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('transmission') || 'Transmission'} <span className="text-gray-500">(Optional)</span>
+                    </label>
+                    <Select
+                      value={formData.transmission}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, transmission: value }))}
+                    >
+                      <SelectTrigger className="rounded-xl py-5 text-black">
+                        <SelectValue placeholder={t('select_transmission') || 'Select transmission'} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        <SelectItem value="automatic">{t('transmission_automatic') || 'Automatic'}</SelectItem>
+                        <SelectItem value="manual">{t('transmission_manual') || 'Manual'}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            )}
           </motion.div>
           )}
 
@@ -1291,24 +1761,35 @@ export default function AddCarListing() {
           >
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('condition')}</h2>
             <div className="space-y-4">
-              <Select
-                value={formData.currentCondition}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, currentCondition: value }))}
-              >
-                <SelectTrigger className="rounded-xl py-5">
-                  <SelectValue placeholder={t('current_condition')} />
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                  {conditions.map((condition) => (
-                    <SelectItem key={condition} value={condition}>
-                      {t(`condition_${condition}`)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('current_condition') || 'Current Condition'} <span className="text-gray-500">(Optional)</span>
+                </label>
+                <Select
+                  value={formData.currentCondition}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, currentCondition: value }))}
+                >
+                  <SelectTrigger className="rounded-xl py-5">
+                    <SelectValue placeholder={t('current_condition') || 'Select condition'} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    {conditions.map((condition) => (
+                      <SelectItem key={condition} value={condition}>
+                        {t(`condition_${condition}`) || condition}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               
-              
-              
+              <div>
+                <Textarea
+                  placeholder={t('known_problems') || 'Known Problems (Optional)'}
+                  value={formData.knownProblems}
+                  onChange={(e) => setFormData(prev => ({ ...prev, knownProblems: e.target.value }))}
+                  className="rounded-xl py-4 min-h-[100px]"
+                />
+              </div>
             </div>
           </motion.div>
           )}
@@ -1321,22 +1802,48 @@ export default function AddCarListing() {
             className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
           >
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('trade_in_option')}</h2>
-            <RadioGroup
-              value={formData.tradeIn}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, tradeIn: value }))}>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="yes" id="yes" />
-                <Label htmlFor="yes">{t('yes')}</Label>
+            <div className="space-y-6">
+              <RadioGroup
+                value={formData.tradeIn}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, tradeIn: value }))}>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="yes" id="yes" />
+                  <Label htmlFor="yes">{t('yes')}</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="no" id="no" />
+                  <Label htmlFor="no">{t('no')}</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="maybe" id="maybe" />
+                  <Label htmlFor="maybe">{t('maybe')}</Label>
+                </div>
+              </RadioGroup>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('pros') || 'Pros'} <span className="text-gray-500">(Will be auto-generated if left empty)</span>
+                </label>
+                <Textarea
+                  placeholder={t('pros_placeholder') || 'Enter pros manually or leave empty for AI generation'}
+                  value={formData.pros}
+                  onChange={(e) => setFormData(prev => ({ ...prev, pros: e.target.value }))}
+                  className="rounded-xl py-4 min-h-[100px]"
+                />
               </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="no" id="no" />
-                <Label htmlFor="no">{t('no')}</Label>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('cons') || 'Cons'} <span className="text-gray-500">(Will be auto-generated if left empty)</span>
+                </label>
+                <Textarea
+                  placeholder={t('cons_placeholder') || 'Enter cons manually or leave empty for AI generation'}
+                  value={formData.cons}
+                  onChange={(e) => setFormData(prev => ({ ...prev, cons: e.target.value }))}
+                  className="rounded-xl py-4 min-h-[100px]"
+                />
               </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="maybe" id="maybe" />
-                <Label htmlFor="maybe">{t('maybe')}</Label>
-              </div>
-            </RadioGroup>
+            </div>
           </motion.div>
           )}
 
@@ -1379,13 +1886,18 @@ export default function AddCarListing() {
                       </div>
                     </div>
                   )}
-            <Input
-              placeholder={t('asking_price_placeholder')}
-              type="number"
-              value={formData.askingPrice}
-              onChange={(e) => setFormData(prev => ({ ...prev, askingPrice: e.target.value }))}
-              className="w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500"
-            />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t('asking_price') || 'Asking Price'} <span className="text-gray-500">(in Israeli Shekels)</span>
+              </label>
+              <Input
+                placeholder={t('asking_price_placeholder') || 'Enter your asking price'}
+                type="number"
+                value={formData.askingPrice}
+                onChange={(e) => setFormData(prev => ({ ...prev, askingPrice: e.target.value }))}
+                className="w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
           </motion.div>
           )}
 
@@ -1399,8 +1911,11 @@ export default function AddCarListing() {
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('contact_info')}</h2>
             <div className="space-y-4">
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('name') || 'Full Name'} <span className="text-red-500">*</span>
+                </label>
                 <Input
-                  placeholder={t('name_placeholder')}
+                  placeholder={t('name_placeholder') || 'Enter your full name'}
                   value={formData.name}
                   onChange={(e) => {
                     setFormData(prev => ({ ...prev, name: e.target.value }));
@@ -1412,8 +1927,11 @@ export default function AddCarListing() {
               </div>
 
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('email') || 'Email Address'} <span className="text-gray-500">(Optional)</span>
+                </label>
                 <Input
-                  placeholder={t('email_placeholder')}
+                  placeholder={t('email_placeholder') || 'Enter your email address'}
                   type="email"
                   value={formData.email}
                   onChange={(e) => {
@@ -1426,8 +1944,11 @@ export default function AddCarListing() {
               </div>
 
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('phone') || 'Phone Number'} <span className="text-red-500">*</span>
+                </label>
                 <Input
-                  placeholder={t('phone_placeholder')}
+                  placeholder={t('phone_placeholder') || 'Enter your phone number'}
                   value={formData.phone}
                   onChange={(e) => {
                     setFormData(prev => ({ ...prev, phone: e.target.value }));
@@ -1520,7 +2041,13 @@ export default function AddCarListing() {
             {currentStep < STEPS.length - 1 && (
               <Button
                 type="button"
-                onClick={() => setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))}
+                onClick={() => {
+                  // Auto-generate title if moving from step 0 and title is empty
+                  if (currentStep === 0) {
+                    autoGenerateTitleIfEmpty();
+                  }
+                  setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1));
+                }}
                 className="px-6"
               >
                 Next
@@ -1536,15 +2063,134 @@ export default function AddCarListing() {
             className="sticky bottom-4 bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg"
           >
             <Button
-              type="button"
-              className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl"
-              onClick={handleSubmit}
+              type="submit"
+              className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isSubmitting}
             >
-              {t('submit_listing')}
+              {isSubmitting ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <span>{t('submitting') || 'Submitting...'}</span>
+                </div>
+              ) : (
+                t('submit_listing')
+              )}
             </Button>
           </motion.div>
           )}
+
+          {/* Temporary Submit Button for Testing - Always Visible */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="sticky bottom-4 bg-yellow-100/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg border-2 border-yellow-400"
+          >
+            <Button
+              type="submit"
+              onClick={handleSubmit}
+              className="w-full py-4 text-lg font-semibold bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <span>Testing Submit...</span>
+                </div>
+              ) : (
+                'TEST SUBMIT (Always Visible)'
+              )}
+            </Button>
+          </motion.div>
         </form>
+
+        {/* Loading Overlay */}
+        {isSubmitting && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl text-center"
+            >
+              <div className="bg-blue-100 rounded-full p-4 mb-6 mx-auto w-20 h-20 flex items-center justify-center">
+                <Loader2 className="h-10 w-10 text-blue-600 animate-spin" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                {t('processing') || 'Processing...'}
+              </h3>
+              <p className="text-gray-600 mb-4">
+                {currentProcessingStep || t('processing_description') || 'Please wait while we process your car listing. This may take a few moments.'}
+              </p>
+              <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* Popup Modal */}
+        {showPopup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+            onClick={closePopupModal}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className={`bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl ${
+                popupType === 'success' ? 'border-l-4 border-green-500' : 'border-l-4 border-red-500'
+              }`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <div className={`p-3 rounded-full ${
+                  popupType === 'success' 
+                    ? 'bg-green-100 text-green-600' 
+                    : 'bg-red-100 text-red-600'
+                }`}>
+                  {popupType === 'success' ? (
+                    <ShieldCheck className="h-6 w-6" />
+                  ) : (
+                    <AlertCircle className="h-6 w-6" />
+                  )}
+                </div>
+                <div>
+                  <h3 className={`text-lg font-semibold ${
+                    popupType === 'success' ? 'text-green-800' : 'text-red-800'
+                  }`}>
+                    {popupTitle}
+                  </h3>
+                </div>
+              </div>
+              
+              <p className={`text-gray-700 mb-6 ${
+                popupType === 'success' ? 'text-green-700' : 'text-red-700'
+              }`}>
+                {popupMessage}
+              </p>
+              
+              <div className="flex justify-end">
+                <Button
+                  onClick={closePopupModal}
+                  className={`px-6 py-2 ${
+                    popupType === 'success'
+                      ? 'bg-green-600 hover:bg-green-700 text-white'
+                      : 'bg-red-600 hover:bg-red-700 text-white'
+                  }`}
+                >
+                  {t('close') || 'Close'}
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
       </motion.div>
     </div>
   );
