@@ -153,15 +153,17 @@ export default function CarSearch() {
                     slug: car.slug,
                     mainImage: car.mainImage,
                     title: car.title,
+                    name: car.title, // Add name field for compatibility
                     year: car.year,
                     mileage: String(car.mileage),
+                    miles: String(car.mileage), // Add miles field for compatibility
                     price: car.price,
                     bodyType: car.class || "",
                     fuelType: car.fuel,
                     make: car.make || "",
                     condition: car.condition || "Unknown",
                     transmission: car.transmission || "Unknown",
-                    description: car.details
+                    description: car.details || ""
                   }}
                 />
               ))}

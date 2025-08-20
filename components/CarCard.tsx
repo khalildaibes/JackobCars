@@ -84,6 +84,7 @@ interface CarCardProps {
     bodyType?: string;
     condition?: string;
     transmission?: string;
+    description?: string;
     store?: {
       hostname: string;
     };
