@@ -592,6 +592,7 @@ export default function StorePage() {
                           <CarCard
                             car={{
                               id: product.id,
+                              name: product.name, // Add required name field
                               slug: product.slug,
                               hostname: product.store.hostname,
                               mainImage: product.details.car.images.main
