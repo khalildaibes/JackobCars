@@ -174,6 +174,7 @@ export default function StoreListingsPage() {
                 key={car.id}
                 car={{
                   id: car.id,
+                  name: car.name, // Add required name field
                   hostname: car.store.hostname,
                   slug: car.slug,
                   mainImage: car.details.car.images.main
