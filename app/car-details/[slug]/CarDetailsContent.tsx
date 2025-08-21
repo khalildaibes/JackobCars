@@ -669,42 +669,42 @@ useEffect(() => {
                     <h3 className="text-lg font-semibold mb-4">{t('additional_details')}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {car.color && (
-                        <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
                           <div className="w-4 h-4 rounded-full" style={{ backgroundColor: car.color }}></div>
-                          <div>
+                          <div className={isRTL ? 'text-right' : 'text-left'}>
                             <div className="text-xs text-gray-500">{t('color')}</div>
                             <div className="font-medium">{car.color}</div>
                           </div>
                         </div>
                       )}
                       {car.engine_type && (
-                        <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
                           <div className="p-2 bg-blue-100 rounded-lg">
                             <Car className="h-4 w-4 text-blue-600" />
                           </div>
-                          <div>
+                          <div className={isRTL ? 'text-right' : 'text-left'}>
                             <div className="text-xs text-gray-500">{t('engine_type')}</div>
                             <div className="font-medium">{car.engine_type}</div>
                           </div>
                         </div>
                       )}
                       {car.trim_level && (
-                        <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
                           <div className="p-2 bg-green-100 rounded-lg">
                             <Sparkles className="h-4 w-4 text-green-600" />
                           </div>
-                          <div>
+                          <div className={isRTL ? 'text-right' : 'text-left'}>
                             <div className="text-xs text-gray-500">{t('trim_level')}</div>
                             <div className="font-medium">{car.trim_level}</div>
                           </div>
                         </div>
                       )}
                       {car.trade_in && (
-                        <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
                           <div className="p-2 bg-purple-100 rounded-lg">
                             <DollarSign className="h-4 w-4 text-purple-600" />
                           </div>
-                          <div>
+                          <div className={isRTL ? 'text-right' : 'text-left'}>
                             <div className="text-xs text-gray-500">{t('trade_in')}</div>
                             <div className="font-medium">{car.trade_in}</div>
                           </div>
@@ -724,16 +724,16 @@ useEffect(() => {
                 <h3 className="text-lg font-semibold mb-4">{t('pros_and_cons') || 'Pros and Cons'}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Pros */}
-                  <div className="space-y-3">
-                    <h4 className="font-medium text-green-700 flex items-center">
-                      <Check className="h-5 w-5 text-green-600 mr-2" />
+                  <div className={`space-y-3 ${isRTL ? 'md:col-start-2' : ''}`}>
+                    <h4 className={`font-medium text-green-700 flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <Check className={`h-5 w-5 text-green-600 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                       {t('pros')}
                     </h4>
                     {car.pros && car.pros.length > 0 ? (
                       <ul className="space-y-2">
                         {car.pros.map((pro: string, index: number) => (
-                          <li key={index} className="flex items-start">
-                            <span className="text-green-500 mr-2 mt-1">•</span>
+                          <li key={index} className={`flex items-start ${isRTL ? 'flex-row-reverse' : ''}`}>
+                            <span className={`text-green-500 ${isRTL ? 'ml-2' : 'mr-2'} mt-1`}>•</span>
                             <span className="text-gray-700">{pro}</span>
                           </li>
                         ))}
@@ -744,16 +744,16 @@ useEffect(() => {
                   </div>
 
                   {/* Cons */}
-                  <div className="space-y-3">
-                    <h4 className="font-medium text-red-700 flex items-center">
-                      <X className="h-5 w-5 text-red-600 mr-2" />
+                  <div className={`space-y-3 ${isRTL ? 'md:col-start-1' : ''}`}>
+                    <h4 className={`font-medium text-red-700 flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <X className={`h-5 w-5 text-red-600 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                       {t('cons')}
                     </h4>
                     {car.cons && car.cons.length > 0 ? (
                       <ul className="space-y-2">
                         {car.cons.map((con: string, index: number) => (
-                          <li key={index} className="flex items-start">
-                            <span className="text-red-500 mr-2 mt-1">•</span>
+                          <li key={index} className={`flex items-start ${isRTL ? 'flex-row-reverse' : ''}`}>
+                            <span className={`text-red-500 ${isRTL ? 'ml-2' : 'mr-2'} mt-1`}>•</span>
                             <span className="text-gray-700">{con}</span>
                           </li>
                         ))}
@@ -832,28 +832,28 @@ useEffect(() => {
                 ) : (
                   /* Contact Information Display */
                   <div className="space-y-4">
-                    <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
                       <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
                         <User className="h-5 w-5 text-blue-600" />
                       </div>
-                      <div>
+                      <div className={isRTL ? 'text-right' : 'text-left'}>
                         <p className="font-medium text-gray-900">{car.owner_name || 'Contact Seller'}</p>
                         <p className="text-sm text-gray-500">{t('seller')}</p>
                       </div>
                     </div>
                     
                     {car.owner_phone && (
-                      <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                      <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
                         <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
                           <Phone className="h-5 w-5 text-green-600" />
                         </div>
-                        <div>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
                           <p className="font-medium text-gray-900">{car.owner_phone}</p>
                           <p className="text-sm text-gray-500">{t('phone')}</p>
                         </div>
                         <a 
                           href={`tel:${car.owner_phone}`}
-                          className="ml-auto px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                          className={`${isRTL ? 'mr-auto' : 'ml-auto'} px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm`}
                         >
                           {t('call')}
                         </a>
@@ -861,17 +861,17 @@ useEffect(() => {
                     )}
                     
                     {car.owner_email && (
-                      <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                      <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
                         <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
                           <Mail className="h-5 w-5 text-purple-600" />
                         </div>
-                        <div>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
                           <p className="font-medium text-gray-900">{car.owner_email}</p>
                           <p className="text-sm text-gray-500">{t('email')}</p>
                         </div>
                         <a 
                           href={`mailto:${car.owner_email}`}
-                          className="ml-auto px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
+                          className={`${isRTL ? 'mr-auto' : 'ml-auto'} px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm`}
                         >
                           {t('email')}
                         </a>

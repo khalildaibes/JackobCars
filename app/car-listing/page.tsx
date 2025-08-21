@@ -384,7 +384,7 @@ const CarListings: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl mt-[15%] md:mt-[5%] bg-white rounded-lg">
       <div className="space-y-6">
-        <motion.div 
+        {/* <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -401,7 +401,7 @@ const CarListings: React.FC = () => {
             <Sparkles className="h-5 w-5 mr-2" />
             {t('make_ai_recommendation')}
           </Button>
-        </motion.div>
+        </motion.div> */}
         
         {/* Search and Filter Section */}
         <Card className="bg-white shadow-md">
