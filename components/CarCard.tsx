@@ -120,7 +120,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
   if (!car) {
     return (
       <div className="cd-card bg-gray-100 rounded-2xl p-6 text-center">
-        <p className="text-gray-500">{t('loading') || 'Loading...'}</p>
+        <p className="text-gray-500">{t('loading')}</p>
       </div>
     );
   }
@@ -305,7 +305,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
             />
             {isNew && (
               <span className={badgeClass}>
-                {t('excellent') || 'Excellent'}
+                {t('excellent')}
               </span>
             )}
             <button
@@ -366,13 +366,13 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
               {getCarData('pros')?.length > 0 && (
                 <div className="flex items-center gap-1 text-green-600">
                   <Star className="w-3 h-3" />
-                  <span>{getCarData('pros').length} {t('pros') || 'Pros'}</span>
+                  <span>{getCarData('pros').length} {t('pros')}</span>
                 </div>
               )}
               {getCarData('cons')?.length > 0 && (
                 <div className="flex items-center gap-1 text-orange-600">
                   <AlertTriangle className="w-3 h-3" />
-                  <span>{getCarData('cons').length} {t('cons') || 'Cons'}</span>
+                  <span>{getCarData('cons').length} {t('cons')}</span>
                 </div>
               )}
             </div>
@@ -446,7 +446,7 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
             />
             {isNew && (
               <span className={badgeClass}>
-                {t('excellent') || 'Excellent'}
+                {t('excellent')}
               </span>
             )}
             <button
@@ -525,13 +525,13 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
               {getCarData('pros')?.length > 0 && (
                 <div className="flex items-center gap-1 text-green-600">
                   <Star className="w-3 h-3" />
-                  <span>{getCarData('pros').length} {t('pros') || 'Pros'}</span>
+                  <span>{getCarData('pros').length} {t('pros')}</span>
                 </div>
               )}
               {getCarData('cons')?.length > 0 && (
                 <div className="flex items-center gap-1 text-orange-600">
                   <AlertTriangle className="w-3 h-3" />
-                  <span>{getCarData('cons').length} {t('cons') || 'Cons'}</span>
+                  <span>{getCarData('cons').length} {t('cons')}</span>
                 </div>
               )}
             </div>

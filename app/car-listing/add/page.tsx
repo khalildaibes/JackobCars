@@ -124,12 +124,12 @@ export default function AddCarListing() {
   const locale = useLocale();
   const isRTL = locale === 'ar' || locale === 'he-IL';
   const STEPS = [
-    'Basic Information',
-    'Condition',
-    'Trade-in Option',
-    'Price',
-    'Contact Info',
-    'Upload Images',
+    t('basic_information'),
+    t('condition'),
+    t('trade_in_option'),
+    t('price'),
+    t('contact_info'),
+    t('upload_images'),
   ];
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -928,10 +928,10 @@ export default function AddCarListing() {
     // Plate number validation: required only in automatic/plate mode
     if (inputMethod === 'plate') {
       if (!formData.plateNumber || formData.plateNumber.trim() === '') {
-        newErrors.plateNumber = t('validation_required') || 'Plate number is required when using automatic search';
+        newErrors.plateNumber = t('plate_number_required_automatic');
         console.log('Plate number validation failed - required in plate mode, current value:', formData.plateNumber);
       } else if (!carData) {
-        newErrors.plateNumber = t('validation_required') || 'Plate number must be found in the system';
+        newErrors.plateNumber = t('plate_number_must_be_found');
         console.log('Plate number validation failed - plate not found in system');
       }
     } else {
@@ -955,7 +955,7 @@ export default function AddCarListing() {
       // Israeli phone number validation: +972-XX-XXXXXXX or 05X-XXXXXXX or 0X-XXXXXXX
       const israeliPhoneRegex = /^(\+972-?|0)?5[0-9]-?[0-9]{7}$|^(\+972-?|0)?[2-4][0-9]-?[0-9]{7}$/;
       if (!israeliPhoneRegex.test(formData.phone.replace(/\s/g, ''))) {
-        newErrors.phone = t('validation_phone_invalid') || 'Please enter a valid Israeli phone number';
+        newErrors.phone = t('validation_phone_invalid');
         console.log('Phone validation failed - invalid Israeli format:', formData.phone);
       }
     }
@@ -1014,7 +1014,7 @@ export default function AddCarListing() {
     console.log('Form submission started');
     console.log('Current form data:', formData);
     
-    setCurrentProcessingStep(t('validating_form') || 'Validating form...');
+    setCurrentProcessingStep(t('validating_form'));
     if (!validateForm()) {
       console.log('Form validation failed');
       setCurrentProcessingStep('');
@@ -1046,7 +1046,7 @@ export default function AddCarListing() {
       let imageId = null;
       if (formData.images && formData.images.length > 0) {
         try {
-          setCurrentProcessingStep(t('uploading_image') || 'Uploading image...');
+          setCurrentProcessingStep(t('uploading_image'));
           console.log("Uploading image...");
           const formDataToSend = new FormData();
           formDataToSend.append('image', formData.images[0]);
@@ -1075,7 +1075,7 @@ export default function AddCarListing() {
       }
 
       // Prepare car details
-      setCurrentProcessingStep(t('preparing_data') || 'Preparing car details...');
+      setCurrentProcessingStep(t('preparing_data'));
       const carDetails = {
         car: {
           // Basic car information
@@ -1148,7 +1148,7 @@ export default function AddCarListing() {
       };
 
       // Send to our new API endpoint
-      setCurrentProcessingStep(t('submitting_listing') || 'Submitting car listing...');
+      setCurrentProcessingStep(t('submitting_listing'));
       const response = await fetch('/api/addListing', {
         method: 'POST',
         headers: {
@@ -1343,10 +1343,10 @@ export default function AddCarListing() {
             </div>
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('title') || 'Title'} <span className="text-gray-500">(Auto-generated when you move to next step if left empty)</span>
+                {t('title')} <span className="text-gray-500">({t('auto_generated_hint')})</span>
               </label>
               <Input
-                placeholder={t('title_placeholder') || 'Enter car title or leave empty for auto-generation on next step'}
+                placeholder={t('title_placeholder')}
                 value={formData.title}
                 onChange={(e) => {
                   setFormData(prev => ({ ...prev, title: e.target.value }));
@@ -1357,16 +1357,16 @@ export default function AddCarListing() {
               {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
               {!formData.title && selectedManufacturer && selectedModel && selectedYear && (
                 <p className="mt-2 text-sm text-blue-600">
-                  💡 Title will be auto-generated as "{manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer} {formData.commercialNickname || 'Model'} {selectedYear}" when you click Next
+                  💡 {t('title_auto_generation_hint')} "{manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer} {formData.commercialNickname || t('model')} {selectedYear}" {t('when_click_next')}
                 </p>
               )}
             </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('mileage') || 'Mileage'} <span className="text-gray-500">(in kilometers)</span>
+                    {t('mileage')} <span className="text-gray-500">({t('in_kilometers')})</span>
                   </label>
                   <Input
-                    placeholder={t('mileage') || 'Enter mileage in kilometers'}
+                    placeholder={t('mileage')}
                     value={formData.mileage}
                     onChange={(e) => setFormData(prev => ({ ...prev, mileage: e.target.value }))}
                     className={`mb-6 rounded-xl py-5 ${errors.mileage ? 'border-red-500' : ''}`}
@@ -1461,11 +1461,11 @@ export default function AddCarListing() {
                       <div className="mt-6 space-y-4">
                         {yad2PriceInfo?.data && (
                           <div className="bg-gray-50 rounded-lg p-4">
-                            <div className="flex items-center justify-between text-sm text-gray-700 font-medium">
-                              <span>Min {Number(yad2PriceInfo.data.minPrice).toLocaleString()}</span>
-                              <span>Predicted {Number(yad2PriceInfo.data.predictedPrice).toLocaleString()}</span>
-                              <span>Max {Number(yad2PriceInfo.data.maxPrice).toLocaleString()}</span>
-                            </div>
+                                                  <div className="flex items-center justify-between text-sm text-gray-700 font-medium">
+                        <span>{t('min')} {Number(yad2PriceInfo.data.minPrice).toLocaleString()}</span>
+                        <span>{t('predicted')} {Number(yad2PriceInfo.data.predictedPrice).toLocaleString()}</span>
+                        <span>{t('max')} {Number(yad2PriceInfo.data.maxPrice).toLocaleString()}</span>
+                      </div>
                             <div className="mt-3">
                               <div className="relative h-3 rounded-full overflow-hidden bg-gradient-to-r from-green-400 via-yellow-300 to-red-500" aria-label="Price heatmap" />
                               {(() => {
@@ -1484,7 +1484,7 @@ export default function AddCarListing() {
                               })()}
                             </div>
                             <div className="mt-2 text-xs text-gray-500">
-                              Accuracy: {String(yad2PriceInfo.data.accuracyId)}
+                              {t('accuracy')}: {String(yad2PriceInfo.data.accuracyId)}
                             </div>
                           </div>
                         )}
@@ -1493,42 +1493,42 @@ export default function AddCarListing() {
                           <div className="bg-gray-50 rounded-lg p-4">
                             <div className="flex items-center gap-2 mb-2">
                               <h4 className="text-sm font-semibold text-gray-800">Yad2</h4>
-                              <span className="text-xs text-gray-500">model</span>
+                              <span className="text-xs text-gray-500">{t('model')}</span>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               {yad2ModelInfo.data.carTitle && (
                                 <div>
-                                  <div className="text-xs text-gray-500">Car</div>
+                                  <div className="text-xs text-gray-500">{t('car')}</div>
                                   <div className="font-medium text-gray-900">{yad2ModelInfo.data.carTitle}</div>
                                 </div>
                               )}
                               {yad2ModelInfo.data.subModelTitle && (
                                 <div>
-                                  <div className="text-xs text-gray-500">Submodel</div>
+                                  <div className="text-xs text-gray-500">{t('submodel')}</div>
                                   <div className="font-medium text-gray-900">{yad2ModelInfo.data.subModelTitle}</div>
                                 </div>
                               )}
                               {yad2ModelInfo.data.carYear && (
                                 <div>
-                                  <div className="text-xs text-gray-500">Year</div>
+                                  <div className="text-xs text-gray-500">{t('year')}</div>
                                   <div className="font-medium text-gray-900">{yad2ModelInfo.data.carYear}</div>
                                 </div>
                               )}
                               {yad2ModelInfo.data.owner && (
                                 <div>
-                                  <div className="text-xs text-gray-500">Owner</div>
+                                  <div className="text-xs text-gray-500">{t('owner')}</div>
                                   <div className="font-medium text-gray-900">{yad2ModelInfo.data.owner}</div>
                                 </div>
                               )}
                               {yad2ModelInfo.data.tokefTestDate && (
                                 <div>
-                                  <div className="text-xs text-gray-500">Test Valid Until</div>
+                                  <div className="text-xs text-gray-500">{t('test_valid_until')}</div>
                                   <div className="font-medium text-gray-900">{yad2ModelInfo.data.tokefTestDate}</div>
                                 </div>
                               )}
                               {yad2ModelInfo.data.yad2CarTitle && (
                                 <div>
-                                  <div className="text-xs text-gray-500">Color</div>
+                                  <div className="text-xs text-gray-500">{t('color')}</div>
                                   <div className="font-medium text-gray-900">{yad2ModelInfo.data.yad2CarTitle}</div>
                                 </div>
                               )}
@@ -1701,10 +1701,10 @@ export default function AddCarListing() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('plate_number') || 'Plate Number'} <span className="text-gray-500">(Optional)</span>
+                      {t('plate_number')} <span className="text-gray-500">({t('optional') || 'Optional'})</span>
                     </label>
                     <Input
-                      placeholder={t('plate_number') || 'Enter plate number'}
+                      placeholder={t('plate_number')}
                       value={formData.plateNumber}
                       onChange={(e) => {
                         setFormData(prev => ({ ...prev, plateNumber: e.target.value }));
@@ -1717,10 +1717,10 @@ export default function AddCarListing() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('color') || 'Color'} <span className="text-gray-500">(Optional)</span>
+                      {t('color')} <span className="text-gray-500">({t('optional')})</span>
                     </label>
                     <Input
-                      placeholder={t('color') || 'Enter car color'}
+                      placeholder={t('color')}
                       value={formData.color}
                       onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
                       className="rounded-xl py-5"
@@ -1731,19 +1731,19 @@ export default function AddCarListing() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('engine_type') || 'Engine Type'} <span className="text-gray-500">(Optional)</span>
+                      {t('engine_type')} <span className="text-gray-500">({t('optional')})</span>
                     </label>
                     <Select
                       value={formData.engineType}
                       onValueChange={(value) => setFormData(prev => ({ ...prev, engineType: value }))}
                     >
                       <SelectTrigger className="rounded-xl py-5 text-black">
-                        <SelectValue placeholder={t('engine_type') || 'Select engine type'} />
+                        <SelectValue placeholder={t('engine_type')} />
                       </SelectTrigger>
                       <SelectContent className="bg-white">
                         {['petrol', 'gasoline', 'diesel', 'electric', 'hybrid'].map((type) => (
                           <SelectItem key={type} value={type}>
-                            {t(`fuel_types.${type}`) || type}
+                            {t(`fuel_types.${type}`)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -1752,18 +1752,18 @@ export default function AddCarListing() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('transmission') || 'Transmission'} <span className="text-gray-500">(Optional)</span>
+                      {t('transmission')} <span className="text-gray-500">({t('optional')})</span>
                     </label>
                     <Select
                       value={formData.transmission}
                       onValueChange={(value) => setFormData(prev => ({ ...prev, transmission: value }))}
                     >
                       <SelectTrigger className="rounded-xl py-5 text-black">
-                        <SelectValue placeholder={t('select_transmission') || 'Select transmission'} />
+                        <SelectValue placeholder={t('select_transmission')} />
                       </SelectTrigger>
                       <SelectContent className="bg-white">
-                        <SelectItem value="automatic">{t('transmission_automatic') || 'Automatic'}</SelectItem>
-                        <SelectItem value="manual">{t('transmission_manual') || 'Manual'}</SelectItem>
+                        <SelectItem value="automatic">{t('transmission_automatic')}</SelectItem>
+                        <SelectItem value="manual">{t('transmission_manual')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -1784,19 +1784,19 @@ export default function AddCarListing() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('current_condition') || 'Current Condition'} <span className="text-gray-500">(Optional)</span>
+                  {t('current_condition')} <span className="text-gray-500">({t('optional')})</span>
                 </label>
                 <Select
                   value={formData.currentCondition}
                   onValueChange={(value) => setFormData(prev => ({ ...prev, currentCondition: value }))}
                 >
                   <SelectTrigger className="rounded-xl py-5">
-                    <SelectValue placeholder={t('current_condition') || 'Select condition'} />
+                    <SelectValue placeholder={t('current_condition')} />
                   </SelectTrigger>
                   <SelectContent className="bg-white">
                     {conditions.map((condition) => (
                       <SelectItem key={condition} value={condition}>
-                        {t(`condition_${condition}`) || condition}
+                        {t(`condition_${condition}`)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -1805,7 +1805,7 @@ export default function AddCarListing() {
               
               <div>
                 <Textarea
-                  placeholder={t('known_problems') || 'Known Problems (Optional)'}
+                  placeholder={`${t('known_problems')} (${t('optional')})`}
                   value={formData.knownProblems}
                   onChange={(e) => setFormData(prev => ({ ...prev, knownProblems: e.target.value }))}
                   className="rounded-xl py-4 min-h-[100px]"
@@ -1814,10 +1814,10 @@ export default function AddCarListing() {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('description') || 'Description'} <span className="text-gray-500">(Will be auto-generated if left empty)</span>
+                  {t('description')} <span className="text-gray-500">({t('will_be_auto_generated') || 'Will be auto-generated if left empty'})</span>
                 </label>
                 <Textarea
-                  placeholder={t('description_placeholder') || 'Enter description manually or leave empty for AI generation'}
+                  placeholder={t('description_placeholder')}
                   value={formData.description}
                   onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                   className="rounded-xl py-4 min-h-[100px]"
@@ -1827,7 +1827,7 @@ export default function AddCarListing() {
                     type="button"
                     onClick={async () => {
                       if (!formData.manufacturerName || !formData.commercialNickname || !formData.yearOfProduction) {
-                        alert('Please fill in manufacturer, model, and year first');
+                        alert(t('fill_manufacturer_model_year_first'));
                         return;
                       }
                       
@@ -1853,16 +1853,16 @@ export default function AddCarListing() {
                           const data = await response.json();
                           setFormData(prev => ({ ...prev, description: data.description }));
                         } else {
-                          alert('Failed to generate description');
+                          alert(t('failed_to_generate_description'));
                         }
                       } catch (error) {
                         console.error('Error generating description:', error);
-                        alert('Error generating description');
+                        alert(t('error_generating_description'));
                       }
                     }}
                     className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
                   >
-                    🤖 Generate AI Description
+                    🤖 {t('generate_ai_description') || 'Generate AI Description'}
                   </button>
                 </div>
               </div>
@@ -1898,10 +1898,10 @@ export default function AddCarListing() {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('pros') || 'Pros'} <span className="text-gray-500">(Will be auto-generated if left empty)</span>
+                  {t('pros')} <span className="text-gray-500">({t('will_be_auto_generated')})</span>
                 </label>
                 <Textarea
-                  placeholder={t('pros_placeholder') || 'Enter pros manually or leave empty for AI generation'}
+                  placeholder={t('pros_placeholder')}
                   value={formData.pros}
                   onChange={(e) => setFormData(prev => ({ ...prev, pros: e.target.value }))}
                   className="rounded-xl py-4 min-h-[100px]"
@@ -1910,10 +1910,10 @@ export default function AddCarListing() {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('cons') || 'Cons'} <span className="text-gray-500">(Will be auto-generated if left empty)</span>
+                  {t('cons')} <span className="text-gray-500">({t('will_be_auto_generated')})</span>
                 </label>
                 <Textarea
-                  placeholder={t('cons_placeholder') || 'Enter cons manually or leave empty for AI generation'}
+                  placeholder={t('cons_placeholder')}
                   value={formData.cons}
                   onChange={(e) => setFormData(prev => ({ ...prev, cons: e.target.value }))}
                   className="rounded-xl py-4 min-h-[100px]"
@@ -1937,9 +1937,9 @@ export default function AddCarListing() {
             {yad2PriceInfo?.data && (
                     <div className="bg-gray-50 rounded-lg p-4">
                       <div className="flex items-center justify-between text-sm text-gray-700 font-medium">
-                        <span>Min {Number(yad2PriceInfo.data.minPrice).toLocaleString()}</span>
-                        <span>Predicted {Number(yad2PriceInfo.data.predictedPrice).toLocaleString()}</span>
-                        <span>Max {Number(yad2PriceInfo.data.maxPrice).toLocaleString()}</span>
+                        <span>{t('min')} {Number(yad2PriceInfo.data.minPrice).toLocaleString()}</span>
+                        <span>{t('predicted')} {Number(yad2PriceInfo.data.predictedPrice).toLocaleString()}</span>
+                        <span>{t('max')} {Number(yad2PriceInfo.data.maxPrice).toLocaleString()}</span>
                       </div>
                       <div className="mt-3">
                         <div className="relative h-3 rounded-full overflow-hidden bg-gradient-to-r from-green-400 via-yellow-300 to-red-500" aria-label="Price heatmap" />
@@ -1958,17 +1958,17 @@ export default function AddCarListing() {
                           );
                         })()}
                       </div>
-                      <div className="mt-2 text-xs text-gray-500">
-                        Accuracy: {String(yad2PriceInfo.data.accuracyId)}
-                      </div>
+                                                  <div className="mt-2 text-xs text-gray-500">
+                              {t('accuracy')}: {String(yad2PriceInfo.data.accuracyId)}
+                            </div>
                     </div>
                   )}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('asking_price') || 'Asking Price'} <span className="text-gray-500">(in Israeli Shekels)</span>
+                {t('asking_price')} <span className="text-gray-500">({t('in_israeli_shekels') || 'in Israeli Shekels'})</span>
               </label>
               <Input
-                placeholder={t('asking_price_placeholder') || 'Enter your asking price'}
+                placeholder={t('asking_price_placeholder')}
                 type="number"
                 value={formData.askingPrice}
                 onChange={(e) => setFormData(prev => ({ ...prev, askingPrice: e.target.value }))}
@@ -1989,10 +1989,10 @@ export default function AddCarListing() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('name') || 'Full Name'} <span className="text-red-500">*</span>
+                  {t('name')} <span className="text-red-500">*</span>
                 </label>
                 <Input
-                  placeholder={t('name_placeholder') || 'Enter your full name'}
+                  placeholder={t('name_placeholder')}
                   value={formData.name}
                   onChange={(e) => {
                     setFormData(prev => ({ ...prev, name: e.target.value }));
@@ -2005,10 +2005,10 @@ export default function AddCarListing() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('email') || 'Email Address'} <span className="text-gray-500">(Optional)</span>
+                  {t('email')} <span className="text-gray-500">({t('optional')})</span>
                 </label>
                 <Input
-                  placeholder={t('email_placeholder') || 'Enter your email address'}
+                  placeholder={t('email_placeholder')}
                   type="email"
                   value={formData.email}
                   onChange={(e) => {
@@ -2022,10 +2022,10 @@ export default function AddCarListing() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('phone') || 'Phone Number'} <span className="text-red-500">*</span>
+                  {t('phone')} <span className="text-red-500">*</span>
                 </label>
                 <Input
-                  placeholder={t('phone_placeholder') || 'Enter your phone number'}
+                  placeholder={t('phone_placeholder')}
                   value={formData.phone}
                   onChange={(e) => {
                     setFormData(prev => ({ ...prev, phone: e.target.value }));
@@ -2112,7 +2112,7 @@ export default function AddCarListing() {
               disabled={currentStep === 0}
               className="px-6"
             >
-              Previous
+              {t('previous') || 'Previous'}
             </Button>
 
             {currentStep < STEPS.length - 1 && (
@@ -2132,7 +2132,7 @@ export default function AddCarListing() {
                 }}
                 className="px-6"
               >
-                Next
+                {t('next') || 'Next'}
               </Button>
             )}
           </div>
@@ -2152,7 +2152,7 @@ export default function AddCarListing() {
               {isSubmitting ? (
                 <div className="flex items-center justify-center gap-2">
                   <Loader2 className="h-5 w-5 animate-spin" />
-                  <span>{t('submitting') || 'Submitting...'}</span>
+                  <span>{t('submitting')}</span>
                 </div>
               ) : (
                 t('submit_listing')
