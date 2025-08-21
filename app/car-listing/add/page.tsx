@@ -3,290 +3,182 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useLocale } from 'next-intl';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+
+// UI Components
 import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
-import { Upload, Plus,  X, Camera } from 'lucide-react';
 import { Alert, AlertDescription } from "../../../components/ui/alert";
 import { Card, CardContent } from "../../../components/ui/card";
-
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../components/ui/select";
-import {
-  Loader2,
-  Search,
-  Car,
-  Calendar,
-  Gauge,
-  Fuel,
-  Settings,
-  Shield,
-  Clock,
-  AlertCircle,
-  Tag,
-  Palette,
-  Key,
-  User,
-  Truck,
-  Cog,
-  Zap,
-  Timer,
-  Disc,
-  Sparkles,
-  Activity,
-  ShieldCheck
-} from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
 import { RadioGroup, RadioGroupItem } from "../../../components/ui/radio-group";
 import { Label } from "../../../components/ui/label";
 import { Textarea } from "../../../components/ui/textarea";
-import { motion } from "framer-motion";
-import { useRouter } from 'next/navigation';
-import {manufacturers_hebrew} from '../../../data/manufacturers_multilingual';
-const conditions = ['excellent', 'good', 'fair', 'poor'] as const;
-import React from 'react';
 
-// Move these to environment variables
-const API_BASE_URL = "/api/gov/car-data?licensePlate=";
-const YAD2_API_BASE_URL = "https://gw.yad2.co.il/car-data-gov/model-master/?licensePlate=";
-const YAD2_API_BASE_URL_PRICE = "https://gw.yad2.co.il/price-list/calculate-price?";
-const ALTERNATE_API_BASE_URL = "/api/gov/car-data?licensePlate=";
-const OWNERSHIP_HISTORY_API_URL = "/api/gov/ownership-history?licensePlate=";
-const VEHICLE_SPECS_API_URL = "/api/gov/vehicle-specs?licensePlate=";
-const DEFAULT_STORE_ID = 18; // Update if needed
-const DEFAULT_PUBLISHER_ID = 1; // Update if needed
+// Icons
+import {
+  Loader2, Search, Car, Calendar, Gauge, Fuel, Settings, Shield, Clock,
+  AlertCircle, Tag, Palette, Key, User, Truck, Cog, Zap, Timer, Disc,
+  Sparkles, Activity, ShieldCheck, Upload, Plus, X, Camera
+} from "lucide-react";
 
-interface CarData {
-  [key: string]: string;
-}
+// Data and Types
+import { manufacturers_hebrew } from '../../../data/manufacturers_multilingual';
+import { 
+  CarData, VehicleSpecs, OwnershipRecord, CarPerformanceData, 
+  ManufacturerData, ManufacturersData, FormData as CarFormData, ValidationErrors,
+  InputMethod, ProcessingStep, PopupModal, StepConfig
+} from './types';
+import { 
+  API_ENDPOINTS, DEFAULT_VALUES, VALIDATION_RULES,
+  ANIMATION_VARIANTS, STEP_CONFIGURATION 
+} from './constants';
+import { 
+  useCarDataFetching, useFormValidation, useImageHandling,
+  useStepNavigation, usePopupModal 
+} from './hooks';
 
-interface VehicleSpecs {
-  sug_degem: string;
-  ramat_gimur: string;
-  shnat_yitzur: string;
-  degem_nm: string;
-  [key: string]: string;
-}
+// Step Components
+import { BasicInformationStep } from './components/BasicInformationStep';
+import { ConditionStep } from './components/ConditionStep';
+import { TradeInStep } from './components/TradeInStep';
+import { PriceStep } from './components/PriceStep';
+import { ContactInfoStep } from './components/ContactInfoStep';
+import { ImageUploadStep } from './components/ImageUploadStep';
 
-interface OwnershipRecord {
-  _id: number;
-  mispar_rechev: number;
-  baalut_dt: number;
-  baalut: string;
-  rank: number;
-}
+// Utility Components
+import { StepIndicator } from './components/StepIndicator';
+import { LoadingOverlay } from './components/LoadingOverlay';
+import { PopupModal as PopupModalComponent } from './components/PopupModal';
 
-interface CarPerformanceData {
-  performance: {
-    acceleration: string;
-    top_speed: string;
-    horsepower: string;
-    torque: string;
-    fuel_consumption_city: string;
-    fuel_consumption_highway: string;
-  };
-  tuning: {
-    tuning_potential: string;
-    tuning_notes: string;
-    common_upgrades: string[];
-  };
-  handling: {
-    handling_rating: string;
-    suspension_type: string;
-    driving_characteristics: string;
-  };
-  reliability: {
-    reliability_rating: string;
-    common_issues: string[];
-    maintenance_cost: string;
-  };
-}
-interface ManufacturerData {
-  submodels: any[];
-  manufacturerImage: string;
-  year: {
-    from: number;
-    to: number;
-    step: number;
-  };
-}
-
-interface ManufacturersData {
-  [key: string]: ManufacturerData;
-}
-
+/**
+ * AddCarListing - Main component for adding new car listings
+ * 
+ * This component provides a multi-step form for users to add car listings
+ * with both automatic (plate-based) and manual input methods.
+ * 
+ * Features:
+ * - Multi-step form with smooth transitions
+ * - Automatic car data fetching via plate number
+ * - Manual car specification entry
+ * - Image upload handling
+ * - Form validation and error handling
+ * - Responsive design with mobile optimization
+ * - Professional animations and user experience
+ */
 export default function AddCarListing() {
   const t = useTranslations('CarListing');
   const locale = useLocale();
   const isRTL = locale === 'ar' || locale === 'he-IL';
-  const STEPS = [
-    t('basic_information'),
-    t('condition'),
-    t('trade_in_option'),
-    t('price'),
-    t('contact_info'),
-    t('upload_images'),
-  ];
+  const router = useRouter();
+
+  // Core state management
   const [currentStep, setCurrentStep] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [inputMethod, setInputMethod] = useState<'plate' | 'manual'>('plate');
+  const [inputMethod, setInputMethod] = useState<InputMethod>('plate');
+  const [formData, setFormData] = useState<CarFormData>(DEFAULT_VALUES);
+  const [errors, setErrors] = useState<ValidationErrors>({});
+
+  // Car data and API state
   const [manufacturersData, setManufacturersData] = useState<ManufacturersData>(manufacturers_hebrew);
   const [selectedManufacturer, setSelectedManufacturer] = useState('');
   const [selectedModel, setSelectedModel] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
-  const [govCarInfo, setGovCarInfo] = useState<any | null>(null);
+  const [selectedSubmodel, setSelectedSubmodel] = useState('');
   const [subModelID, setSubModelID] = useState<string>('');
+
+  // Available options state
   const [availableModels, setAvailableModels] = useState<any[]>([]);
   const [availableYears, setAvailableYears] = useState<number[]>([]);
   const [availableSubmodels, setAvailableSubmodels] = useState<any[]>([]);
-  const [selectedSubmodel, setSelectedSubmodel] = useState('');
-  const [plateNumber, setPlateNumber] = useState("");
-  const resultsRef = React.useRef<HTMLDivElement>(null);
 
+  // API response state
+  const [govCarInfo, setGovCarInfo] = useState<any | null>(null);
   const [carData, setCarData] = useState<CarData | null>(null);
   const [yad2ModelInfo, setYad2ModelInfo] = useState<any | null>(null);
   const [yad2PriceInfo, setYad2PriceInfo] = useState<any | null>(null);
-  
-  const [captchaRequired, setCaptchaRequired] = useState(false);
-  const [captchaUrl, setCaptchaUrl] = useState<string | null>(null);
-  const [showCaptchaPrompt, setShowCaptchaPrompt] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [carImage, setCarImage] = useState<string | null>(null);
-  const [performanceData, setPerformanceData] = useState<CarPerformanceData | null>(null);
-  const [loadingPerformance, setLoadingPerformance] = useState(false);
   const [ownershipHistory, setOwnershipHistory] = useState<OwnershipRecord[]>([]);
   const [vehicleSpecs, setVehicleSpecs] = useState<VehicleSpecs | null>(null);
-  const [expandedSections, setExpandedSections] = useState({
-    handling: false,
-    reliability: false,
-    tuning: true
+  const [performanceData, setPerformanceData] = useState<CarPerformanceData | null>(null);
+  const [carImage, setCarImage] = useState<string | null>(null);
+
+  // UI state
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentProcessingStep, setCurrentProcessingStep] = useState<ProcessingStep>('');
+
+  // Refs
+  const resultsRef = useRef<HTMLDivElement>(null);
+
+  // Custom hooks
+  const { showPopup, popupConfig, showPopupModal, closePopup } = usePopupModal();
+  const { validateForm, clearErrors } = useFormValidation(formData, inputMethod, setErrors);
+  const { handleImageChange, removeImage, uploadImages } = useImageHandling(formData, setFormData, setErrors);
+  const { goToNextStep, goToPreviousStep, canProceedToNext } = useStepNavigation(
+    currentStep, 
+    STEP_CONFIGURATION.length, 
+    setCurrentStep,
+    () => autoGenerateTitleIfEmpty(),
+    () => fetchYad2PriceHook(subModelID, formData.yearOfProduction)
+  );
+
+  // Car data fetching hook
+  const { 
+    fetchCarData, 
+    fetchCarDataDirect, 
+    fetchSubmodels, 
+    fetchYad2Price: fetchYad2PriceHook 
+  } = useCarDataFetching({
+    setLoading,
+    setError,
+    setCarData,
+    setYad2ModelInfo,
+    setYad2PriceInfo,
+    setGovCarInfo,
+    setOwnershipHistory,
+    setVehicleSpecs,
+    setPerformanceData,
+    setCarImage,
+    manufacturersData,
+    setFormData,
+    setSelectedManufacturer,
+    setSelectedModel,
+    setSubModelID,
+    setAvailableModels,
+    setAvailableYears,
+    setAvailableSubmodels,
+    setSelectedSubmodel,
+    formData,
+    selectedManufacturer,
+    selectedModel,
+    selectedYear,
+    subModelID,
+    t
   });
 
-  // New state for popup modal
-  const [showPopup, setShowPopup] = useState(false);
-  const [popupType, setPopupType] = useState<'success' | 'error'>('success');
-  const [popupMessage, setPopupMessage] = useState('');
-  const [popupTitle, setPopupTitle] = useState('');
-  
-  // State for processing steps
-  const [currentProcessingStep, setCurrentProcessingStep] = useState('');
-
-  
-  const iconMap = {
-    transmission: Cog,
-    drive_type: Cog,
-    engine_type: Gauge,
-    engine_size: Fuel,
-    engine_power: Zap,
-    acceleration: Timer,
-    front_tire: Disc,
-    rear_tire: Disc,
-    plate_number: Car,
-    year_of_production: Calendar,
-    engine_model: Gauge,
-    fuel_type: Fuel,
-    model_type: Settings,
-    safety_equipment_level: Shield,
-    last_inspection_date: Clock,
-    manufacturer_code: Key,
-    manufacturer_name: Tag,
-    color_code: Palette,
-    car_color: Palette,
-    ownership: User,
-    chassis: Truck,
-  } as const;
-  const priorityFields = [
-    'transmission',
-    'drive_type',
-    'engine_type',
-    'engine_size',
-    'engine_power',
-    'acceleration',
-    'front_tire',
-    'rear_tire'
-  ];
-  const [formData, setFormData] = useState({
-    title: '',
-    makeModel: '',
-    year: '',
-    plateNumber: '',
-    mileage: '',
-    color: '',
-    engineType: '',
-    transmission: '',
-    currentCondition: '',
-    knownProblems: '',
-    description: '',
-    pros: '',
-    cons: '',
-    tradeIn: '',
-    askingPrice: '',
-    name: '',
-    email: '',
-    phone: '',
-    images: [] as File[],
-    manufacturerName: '',
-    commercialNickname: '',
-    yearOfProduction: '',
-    fuelType: '',
-    car_data: {},
-    // Basic Ad Info (מאפייני מודעה)
-    hasImage: false,
-    hasPrice: false,
-    fromAgency: false,
-    availableInTradeIn: false,
-    availableInFinancing: false,
-    priceDropped: false,
-    foreclosureAd: false,
-    // Vehicle Specifications
-    price: '',
-    kilometers: '',
-    engineCapacity: '',
-    handOwnershipCount: '',
-    region: '',
-    submodel: '',
-    numberOfSeats: '',
-    // Engine Types (סוגי מנוע)
-    engineTypes: [] as string[],
-    // Gearbox (תיבת הילוכים)
-    gearbox: '',
-    // Ownership Type (בעלות)
-    ownershipType: '',
-    // Color (צבע)
-    colors: [] as string[],
-    // Additional Features (מאפיינים נוספים)
-    longTestValid: false,
-    adaptedForDisabled: false,
-    // Free Search (חיפוש חופשי)
-    freeSearch: ''
-  });
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  // Update available models when manufacturer changes
+  // Effect: Update available models when manufacturer changes
   useEffect(() => {
     if (selectedManufacturer && manufacturersData[selectedManufacturer]) {
       const models = manufacturersData[selectedManufacturer].submodels || [];
       setAvailableModels(models);
-      setSelectedModel(''); // Reset model selection
-      setAvailableYears([]); // Clear years until model is selected
+      setSelectedModel('');
+      setAvailableYears([]);
+      setAvailableSubmodels([]);
+      setSelectedSubmodel('');
     } else {
       setAvailableModels([]);
       setAvailableYears([]);
+      setAvailableSubmodels([]);
     }
   }, [selectedManufacturer, manufacturersData]);
 
-  // Update available years when model changes
+  // Effect: Update available years when model changes
   useEffect(() => {
     if (selectedManufacturer && selectedModel && manufacturersData[selectedManufacturer]) {
       const manufacturer = manufacturersData[selectedManufacturer];
-      
-      // Generate year options based on manufacturer data
       const yearData = manufacturer.year;
+      
       if (yearData && yearData.from && yearData.to) {
         const years = [];
         for (let year = yearData.to; year >= yearData.from; year -= yearData.step || 1) {
@@ -294,7 +186,6 @@ export default function AddCarListing() {
         }
         setAvailableYears(years);
       } else {
-        // Fallback to default years
         const years = [];
         for (let year = 2025; year >= 1990; year--) {
           years.push(year);
@@ -306,15 +197,14 @@ export default function AddCarListing() {
     }
   }, [selectedManufacturer, selectedModel, manufacturersData]);
 
-  // Fetch Yad2 price when step changes to 3 (Price step)
+  // Effect: Fetch Yad2 price when reaching price step
   useEffect(() => {
     if (currentStep === 3 && subModelID && formData.yearOfProduction) {
-      console.log('Step 3 reached, fetching Yad2 price with:', { subModelID, year: formData.yearOfProduction });
-      fetchYad2Price();
+      fetchYad2PriceHook(subModelID, formData.yearOfProduction);
     }
-  }, [currentStep, subModelID, formData.yearOfProduction]);
+  }, [currentStep, subModelID, formData.yearOfProduction, fetchYad2PriceHook]);
 
-  // Auto-update hasImage, hasPrice and availableInTradeIn based on form data
+  // Effect: Auto-update form flags
   useEffect(() => {
     setFormData(prev => ({
       ...prev,
@@ -324,480 +214,59 @@ export default function AddCarListing() {
     }));
   }, [formData.images, formData.askingPrice, formData.price, formData.tradeIn]);
 
-  const formatPlateNumber = (value: string) => {
-    // Remove all non-alphanumeric characters
-    const cleanValue = value.replace(/[^a-zA-Z0-9]/g, '');
-    
-    // Format based on length
-    if (cleanValue.length <= 2) {
-      return cleanValue;
-    } else if (cleanValue.length <= 5) {
-      return `${cleanValue.slice(0, 2)}-${cleanValue.slice(2)}`;
-    } else if (cleanValue.length <= 7) {
-      return `${cleanValue.slice(0, 2)}-${cleanValue.slice(2, 5)}-${cleanValue.slice(5)}`;
-    } else if (cleanValue.length <= 8) {
-      return `${cleanValue.slice(0, 3)}-${cleanValue.slice(3, 5)}-${cleanValue.slice(5)}`;
-    }
-    return cleanValue;
-  };
-
-
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchCarImage = async (manufacturer: string, model: string) => {
-    try {
-      const response = await fetch(`https://api.unsplash.com/search/photos?query=${manufacturer}+${model}+car&client_id=YOUR_UNSPLASH_API_KEY`);
-      const data = await response.json();
-
-      if (data.results && data.results.length > 0) {
-        setCarImage(data.results[0].urls.regular);
-      }
-    } catch (error) {
-      console.error("Error fetching car image:", error);
-    }
-  };
-
-
-  const translationMap: Record<string, string> = {
-    _id: "id",
-    mispar_rechev: "plate_number",
-    tozeret_cd: "manufacturer_code",
-    sug_degem: "model_type",
-    manufacturer_name: "manufacturer_name",
-    degem_cd: "model_code",
-    degem_nm: "model_name",
-    ramat_gimur: "trim_level",
-    ramat_eivzur_betihuty: "safety_equipment_level",
-    kvutzat_zihum: "pollution_group",
-    shnat_yitzur: "year_of_production",
-    degem_manoa: "engine_model",
-    mivchan_acharon_dt: "last_inspection_date",
-    tokef_dt: "validity_date",
-    baalut: "ownership",
-    misgeret: "chassis",
-    tzeva_cd: "color_code",
-    tzeva_rechev: "car_color",
-    zmig_kidmi: "front_tire",
-    zmig_ahori: "rear_tire",
-    sug_delek_nm: "fuel_type",
-    horaat_rishum: "registration_order",
-    moed_aliya_lakvish: "road_entry_date",
-    kinuy_mishari: "commercial_nickname",
-    rank: "rank",
-  };
-  const fetchCarPerformanceData = async (manufacturer: string, model: string, year: string, trim: string) => {
-    try {
-      // setLoadingPerformance(true);
-      // const response = await fetch('/api/generate-car-information', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     manufacturer,
-      //     model,
-      //     year,
-      //     locale,
-      //     trim
-      //   }),
-      // });
-     
-
-      // const data = await response.json();
-      // setPerformanceData(data);
-    } catch (error) {
-      setError(t('error_loading_info'));
-    } finally {
-      // setLoadingPerformance(false);
-    }
-  };
-
-  const fetchOwnershipHistory = async (plateNumber: string) => {
-    try {
-      const response = await fetch(`${OWNERSHIP_HISTORY_API_URL}${plateNumber}`);
-      const data = await response.json();
-      
-      if (data?.result?.records) {
-        // Sort records by baalut_dt in descending order (most recent first)
-        const sortedRecords = data.result.records.sort((a: OwnershipRecord, b: OwnershipRecord) => 
-          b.baalut_dt - a.baalut_dt
-        );
-        setOwnershipHistory(sortedRecords);
-      }
-    } catch (error) {
-      console.error("Error fetching ownership history:", error);
-    }
-  };
-
-  const fetchVehicleSpecs = async (carData: CarData) => {
-    try {
-      // Construct query from car data
-      const query = JSON.stringify([
-        carData.model_type || '',
-        carData.trim_level || '',
-        carData.manufacturer_name || '',
-        carData.year_of_production || ''
-      ]);
-      
-      const response = await fetch(`${VEHICLE_SPECS_API_URL}${encodeURIComponent(query)}`);
-      const data = await response.json();
-      
-      if (data?.result?.records?.length) {
-        const record = data.result.records[0] as Record<string, unknown>;
-        const vehicleSpecs = Object.fromEntries(
-          Object.entries(record).map(([key, value]) => [
-            key,
-            String(value),
-          ])
-        ) as VehicleSpecs;
-        setVehicleSpecs(vehicleSpecs);
-      }
-    } catch (error) {
-      console.error("Error fetching vehicle specs:", error);
-    }
-  };
-  async function fetchCarDataDirect(plate: string) {
-    try {
-      // First try Yad2 API
-      const upstreamUrl = `api/model-master?licensePlate=${encodeURIComponent(plate)}`;
-      const r = await fetch(upstreamUrl);
-      
-      if (r.ok) {
-        const data = await r.json();
-        
-        // Auto-populate form fields from Yad2 data
-        if (data?.data) {
-          const carInfo = data.data;
-          console.log("Yad2 carInfo is", carInfo);
-          setGovCarInfo(carInfo);
-          return data;
-        }
-      } else {
-        console.warn('Yad2 API failed, trying government API fallback...');
-      }
-    } catch (error) {
-      console.warn('Yad2 API error, trying government API fallback...', error);
-    }
-
-    // Fallback to Israeli government API
-    try {
-      const govApiUrl = `/api/gov/car-data?licensePlate=${encodeURIComponent(plate)}`;
-      console.log('Trying government API fallback:', govApiUrl);
-      
-      const govResponse = await fetch(govApiUrl);
-      
-      if (govResponse.ok) {
-        const govData = await govResponse.json();
-        console.log('Government API response:', govData);
-        
-        if (govData?.result?.records?.length > 0) {
-          const record = govData.result.records[0];
-          console.log('Government API record:', record);
-          
-          // Map government API data to our format
-          const mappedData = {
-            data: {
-              modelId: record.degem_cd || null,
-              manufacturerId: record.tozeret_cd || null,
-              carTitle: `${record.tozeret_nm || ''} ${record.degem_nm || ''}`,
-              subModelTitle: record.ramat_gimur || record.sug_degem || '',
-              subModelId: record.mispar_rechev || null,
-              carYear: record.shnat_yitzur || null,
-              owner: record.baalut || 'פרטי',
-              dateOnRoad: record.moed_aliya_lakvish || null,
-              pollutionGroup: null,
-              tokefTestDate: record.tokef_dt || null,
-              carColorGroupID: record.tzeva_cd || null,
-              yad2ColorID: null,
-              yad2CarTitle: record.tzeva_rechev || null,
-              // Additional fields from government API
-              manufacturerName: record.tozeret_nm || '',
-              modelName: record.degem_nm || '',
-              commercialNickname: record.kinuy_mishari || '',
-              fuelType: record.sug_delek_nm || '',
-              frameNumber: record.misgeret || '',
-              lastTestDate: record.mivchan_acharon_dt || null,
-              engineCode: record.degem_manoa || '',
-              frontTires: record.zmig_kidmi || '',
-              rearTires: record.zmig_ahori || '',
-              seatingCapacity: record.kvutzat_zihum || null,
-              mileage: record.horaat_rishum || null
-            },
-            message: 'OK',
-            source: 'government_api'
-          };
-          
-          console.log('Mapped government data:', mappedData);
-          setGovCarInfo(mappedData.data);
-          setYad2ModelInfo(mappedData);
-          return mappedData;
-        }
-      } else {
-        console.error('Government API also failed:', govResponse.status);
-      }
-    } catch (fallbackError) {
-      console.error('Government API fallback error:', fallbackError);
-    }
-
-    // If both APIs fail, return null
-    console.error('Both Yad2 and government APIs failed for plate:', plate);
-    return null;
-  }
-
-  const fetchCarData = async () => {
-    if (!plateNumber) return;
-    // Remove dashes before making the API call
-    const cleanPlateNumber = plateNumber.replace(/-/g, '');
-    setLoading(true);
-    setError(null);
-    setCarImage(null);
-    setYad2ModelInfo(null);
-    setYad2PriceInfo(null);
-    setCaptchaRequired(false);
-    setCaptchaUrl(null);
-    setShowCaptchaPrompt(false);
-    setOwnershipHistory([]);
-    setVehicleSpecs(null);
-    let data = null;
-    let primaryData = null;
-    let yad2Info: any = null;
-    try {
-      
-        console.log('Yad2 API failed, trying government API fallback...');
-        // If Yad2 API failed, try government API fallback
-        if (!yad2Info?.data) {
-          try {
-            console.log('Yad2 API failed, trying government API fallback...');
-            const govApiUrl = `/api/gov/car-data?licensePlate=${encodeURIComponent(cleanPlateNumber)}`;
-            console.log('Trying government API fallback:', govApiUrl);
-            
-            const govResponse = await fetch(govApiUrl);
-            
-            if (govResponse.ok) {
-              const govData = await govResponse.json();
-              console.log('Government API response:', govData);
-              
-              if (govData?.result?.records?.length > 0) {
-                const record = govData.result.records[0];
-                console.log('Government API record:', record);
-                
-                // Map government API data to our format
-                const mappedData = {
-                  data: {
-                    modelId: record.degem_cd || null,
-                    manufacturerId: record.tozeret_cd || null,
-                    carTitle: `${record.tozeret_nm || ''} ${record.degem_nm || ''}`,
-                    subModelTitle: record.ramat_gimur || record.sug_degem || '',
-                    subModelId: record.mispar_rechev || null,
-                    carYear: record.shnat_yitzur || null,
-                    owner: record.baalut || 'פרטי',
-                    dateOnRoad: record.moed_aliya_lakvish || null,
-                    pollutionGroup: null,
-                    tokefTestDate: record.tokef_dt || null,
-                    carColorGroupID: record.tzeva_cd || null,
-                    yad2ColorID: null,
-                    yad2CarTitle: record.tzeva_rechev || null,
-                    // Additional fields from government API
-                    manufacturerName: record.tozeret_nm || '',
-                    modelName: record.degem_nm || '',
-                    commercialNickname: record.kinuy_mishari || '',
-                    fuelType: record.sug_delek_nm || '',
-                    frameNumber: record.misgeret || '',
-                    lastTestDate: record.mivchan_acharon_dt || null,
-                    engineCode: record.degem_manoa || '',
-                    frontTires: record.zmig_kidmi || '',
-                    rearTires: record.zmig_ahori || '',
-                    seatingCapacity: record.kvutzat_zihum || null,
-                    mileage: record.horaat_rishum || null
-                  },
-                  message: 'OK',
-                  source: 'government_api'
-                };
-                
-                console.log('Mapped government data:', mappedData);
-                setYad2ModelInfo(mappedData);
-                setGovCarInfo(mappedData.data);
-                
-                // Auto-populate form fields from government data
-                if (mappedData.data) {
-                  const carInfo = mappedData.data;
-                  
-                  // Set year of production
-                  if (carInfo.carYear) {
-                    setFormData(prev => ({ ...prev, yearOfProduction: carInfo.carYear }));
-                    setSelectedYear(carInfo.carYear);
-                  }
-                  
-                  // Set manufacturer and model
-                  if (carInfo.manufacturerId) {
-                    // Find manufacturer by ID and set it
-                    Object.keys(manufacturersData).forEach(manufacturerKey => {
-                      const manufacturer = manufacturersData[manufacturerKey];
-                      // Check if any submodel has the matching manufacturer ID
-                      const hasManufacturer = manufacturer.submodels?.some(submodel => 
-                        submodel.manufacturer?.id === carInfo.manufacturerId
-                      );
-                      
-                      if (hasManufacturer) {
-                        setSelectedManufacturer(manufacturerKey);
-                        // Set available models for this manufacturer
-                        setAvailableModels(manufacturer.submodels || []);
-                        
-                        // Find and set the model
-                        if (carInfo.modelId && manufacturer.submodels) {
-                          const model = manufacturer.submodels.find(m => m.id === carInfo.modelId);
-                          if (model) {
-                            setSelectedModel(model.id.toString());
-                            setSubModelID(model.id.toString());
-                            setFormData(prev => ({ 
-                              ...prev, 
-                              commercialNickname: model.title || '',
-                              manufacturerName: model.manufacturer?.title || ''
-                            }));
-                            
-                            // Fetch submodels for this model
-                            fetchSubmodels(model.id.toString());
-                          }
-                        }
-                      }
-                    });
-                  }
-                }
-                
-                // Use government data for price fetching if available
-                if (mappedData.data?.subModelId) {
-                  yad2Info = mappedData;
-                }
-              }
-            } else {
-              console.error('Government API also failed:', govResponse.status);
-            }
-          } catch (fallbackError) {
-            console.error('Government API fallback error:', fallbackError);
-          }
-        }
-        
-      // If no records were returned, try the alternate API
-      let ascentYearOnRoad = null;
-      let ascentMonthOnRoad = null;
-      if (yad2Info?.data?.subModelId) {
-        if (yad2Info?.data?.dateOnRoad) {
-           ascentYearOnRoad = yad2Info?.data?.dateOnRoad.split('-')[0];
-          ascentMonthOnRoad = yad2Info?.data?.dateOnRoad.split('-')[1];
-        } else {
-          ascentYearOnRoad = yad2Info?.data?.carYear;
-          ascentMonthOnRoad = 1;
-        }
-
-        try {
-              const priceRes = await fetch('/api/yad2/price?subModelId='+yad2Info.data.subModelId+'&kilometers=0&ascentYearOnRoad='+ascentYearOnRoad+'&ascentMonthOnRoad='+ascentMonthOnRoad);
-          if (priceRes.ok) {
-            const priceData = await priceRes.json();
-            console.log('yad2 price:', priceData);
-            setYad2PriceInfo(priceData);
-          } else {
-            const err = await priceRes.json().catch(() => ({}));
-            console.warn('yad2 price failed', err);
-          }
-        } catch (err) {
-          console.error('Error fetching Yad2 price:', err);
-        }
-      }
-      if (primaryData?.result?.records?.length) {
-        data = primaryData;
-      } else {
-        const alternateResponse = await fetch(`${ALTERNATE_API_BASE_URL}${cleanPlateNumber}`);
-        data = await alternateResponse.json();
-      }
-
-      if (data?.result?.records?.length) {
-        const record = data.result.records[0] as Record<string, unknown>;
-
-        const translatedData = Object.fromEntries(
-          Object.entries(record).map(([key, value]) => [
-            translationMap[key as keyof typeof translationMap] || key,
-            String(value),
-          ])
-        );
-
-        setCarData(translatedData);
-        formData.car_data = translatedData;
-        // Persist key fields into formData until submission
-        setFormData(prev => ({
-          ...prev,
-          manufacturerName: String(record.manufacturer_name || translatedData.manufacturer_name || ''),
-          commercialNickname: String(record.kinuy_mishari || translatedData.commercial_nickname || ''),
-          yearOfProduction: String(record.shnat_yitzur || translatedData.year_of_production || ''),
-          fuelType: String(record.sug_delek_nm || translatedData.fuel_type || '')
-        }));
-        
-        // Fetch car image, performance data, and ownership history
-        if (record.manufacturer_name && record.kinuy_mishari && record.shnat_yitzur) {
-          await Promise.all([
-            fetchCarImage(String(record.manufacturer_name), String(record.kinuy_mishari)),
-            fetchCarPerformanceData(
-              String(record.manufacturer_name),
-              String(record.kinuy_mishari),
-              String(record.shnat_yitzur),
-              String(record.ramat_gimur)
-            ),
-            fetchOwnershipHistory(cleanPlateNumber),
-            fetchVehicleSpecs(translatedData)
-          ]);
-        }
-
-        // Scroll to results after data is loaded
-        setTimeout(() => {
-          resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
-      } else {
-        setCarData(null);
-        setError(t("no_car_found"));
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setError(t("error_fetching"));
-    }
-
-    setLoading(false);
-  };
-
-  const renderRating = (rating: string) => {
-    const numRating = parseInt(rating);
-    return t(`rating_${numRating}`);
-  };
-
-  const isLicenseExpired = (validityDate: string) => {
-    if (!validityDate) return false;
-    const today = new Date();
-    const validity = new Date(validityDate);
-    return validity < today;
-  };
-  // Update formData when manufacturer and model selections change
+  // Effect: Update form data when selections change
   useEffect(() => {
-    console.log('Manufacturer/Model selection changed:', { selectedManufacturer, selectedModel, availableModels });
-    
     if (selectedManufacturer && selectedModel) {
       const manufacturerName = manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer;
-      const modelName = availableModels.find(model => model.id?.toString() === selectedModel)?.title || selectedModel;
       
-      console.log('Setting form data:', { manufacturerName, modelName });
+      // Find the model title from manufacturers data first, then from availableModels
+      let modelName = null;
       
-      setFormData(prev => ({
-        ...prev,
-        makeModel: `${manufacturerName} ${modelName}`.trim(),
+      // Try to find the model in manufacturers data
+      if (manufacturersData[selectedManufacturer]?.submodels) {
+        const model = manufacturersData[selectedManufacturer].submodels.find(
+          submodel => submodel.id?.toString() === selectedModel
+        );
+        if (model?.title) {
+          modelName = model.title;
+        }
+      }
+      
+      // If not found in manufacturers data, try availableModels
+      if (!modelName && availableModels.length > 0) {
+        const model = availableModels.find(model => model.id?.toString() === selectedModel);
+        if (model?.title) {
+          modelName = model.title;
+        }
+      }
+      
+      // Only update if we found a proper title and the current commercialNickname is not valid
+      const isCurrentCommercialNicknameValid = formData.commercialNickname && 
+        formData.commercialNickname !== selectedModel && 
+        formData.commercialNickname.length > 2;
+      
+      if (modelName && !isCurrentCommercialNicknameValid) {
+                            setFormData(prev => ({ 
+                              ...prev, 
+          makeModel: `${manufacturerName} ${modelName}`.trim(),
+          manufacturerName: manufacturerName,
+          commercialNickname: modelName
+        }));
+      } else if (!modelName && !isCurrentCommercialNicknameValid) {
+        // If still no title found, use the selectedModel as fallback (but this should rarely happen)
+        setFormData(prev => ({
+          ...prev,
+          makeModel: `${manufacturerName} ${selectedModel}`.trim(),
         manufacturerName: manufacturerName,
-        commercialNickname: modelName
+          commercialNickname: selectedModel
       }));
+      }
     }
   }, [selectedManufacturer, selectedModel, availableModels, manufacturersData]);
 
-  // Update formData when year selection changes
+  // Effect: Update year in form data
   useEffect(() => {
-    console.log('Year selection changed:', { selectedYear, availableYears });
-    
     if (selectedYear && availableYears.length > 0) {
-      console.log('Setting year in form data:', selectedYear);
       setFormData(prev => ({
         ...prev,
         year: selectedYear,
@@ -806,264 +275,61 @@ export default function AddCarListing() {
     }
   }, [selectedYear, availableYears]);
 
-
-
-  // Auto-populate title when moving to next step (after step 0) and title is empty
+  // Effect: Auto-generate title when moving to next step
   useEffect(() => {
-    // Only auto-generate title when moving to next step (currentStep > 0) and title is empty
     if (currentStep > 0 && formData.manufacturerName && formData.commercialNickname && formData.yearOfProduction && !formData.title) {
-      const newTitle = `${formData.manufacturerName} ${formData.commercialNickname} ${formData.yearOfProduction}`.trim();
-      setFormData(prev => ({
-        ...prev,
-        title: newTitle
-      }));
-    }
-  }, [currentStep, formData.manufacturerName, formData.commercialNickname, formData.yearOfProduction, formData.title]);
-
-  /**
-   * Helper function to get the best available data source for a field
-   * Data source priority:
-   * 1. Manual input (when in manual mode) - highest priority
-   * 2. Yad2 API response - second priority (more detailed car info)
-   * 3. Government API response - third priority (basic vehicle data)
-   * 4. Fallback to manual value or empty string
-   * 
-   * This ensures that user input always takes precedence when in manual mode,
-   * while providing intelligent fallbacks when using automatic plate search.
-   */
-  const getBestDataValue = (field: string, manualValue: any, apiValue: any, yad2Value: any = null) => {
-    // Priority: Manual input > Yad2 API > Government API
-    let result;
-    
-    if (inputMethod === 'manual' && manualValue) {
-      result = manualValue;
-    } else if (yad2Value && yad2Value !== '') {
-      result = yad2Value;
-    } else if (apiValue && apiValue !== '') {
-      result = apiValue;
-    } else {
-      result = manualValue || '';
-    }
-    
-    if (yad2Value && yad2Value !== '') {
-      return yad2Value;
-    }
-    
-    if (apiValue && apiValue !== '') {
-      return apiValue;
-    }
-    
-    return manualValue || '';
-  };
-
-  /**
-   * Helper function to popzsubmitulate form data with the best available sources
-   * This function intelligently combines data from multiple sources:
-   * - Manual user input (highest priority)
-   * - Yad2 API response (detailed car specifications)
-   * - Government API response (basic vehicle registration data)
-   * 
-   * The function respects the current input method and ensures data consistency
-   * across all form fields while maintaining user control over manual inputs.
-   */
-  const populateFormDataWithBestSources = () => {
-    if (!carData && !yad2ModelInfo) return;
-
-    const cd: any = carData || {};
-    const yad2: any = yad2ModelInfo?.data || {};
-
-
-
-    setFormData(prev => ({
-      ...prev,
-      // Basic car information - prioritize based on input method
-      manufacturerName: getBestDataValue(
-        'manufacturerName',
-        prev.manufacturerName,
-        cd.manufacturer_name || cd.manufacturer_name,
-        yad2.manufacturerName
-      ),
-      commercialNickname: getBestDataValue(
-        'commercialNickname',
-        prev.commercialNickname,
-        cd.commercial_nickname,
-        yad2.modelName
-      ),
-      yearOfProduction: getBestDataValue(
-        'yearOfProduction',
-        prev.yearOfProduction,
-        cd.year_of_production,
-        yad2.year
-      ),
-      fuelType: getBestDataValue(
-        'fuelType',
-        prev.fuelType,
-        cd.fuel_type,
-        yad2.fuelType
-      ),
+      // Ensure we have proper titles (not IDs)
+      const manufacturerName = formData.manufacturerName;
+      const modelName = formData.commercialNickname;
       
-      // Auto-populate other fields if they're empty and we have API data
-      title: prev.title || `${getBestDataValue('manufacturerName', prev.manufacturerName, cd.manufacturer_name, yad2.manufacturerName) || ''} ${cd.commercial_nickname || yad2.modelName || ''} ${cd.year_of_production || yad2.year || ''}`.trim(),
-      makeModel: prev.makeModel || `${getBestDataValue('manufacturerName', prev.manufacturerName, cd.manufacturer_name, yad2.manufacturerName) || ''} ${cd.commercial_nickname || yad2.modelName || ''}`.trim(),
-      year: prev.year || cd.year_of_production || yad2.year || '',
-      plateNumber: prev.plateNumber || cd.plate_number || '',
+      // Check if the values look like proper names (not IDs)
+      const isManufacturerNameValid = manufacturerName && manufacturerName.length > 2 && manufacturerName !== selectedManufacturer;
+      const isModelNameValid = modelName && modelName.length > 2 && modelName !== selectedModel;
       
-      // Keep manual inputs if they exist, otherwise use API data
-      mileage: prev.mileage || cd.mileage || '',
-      color: prev.color || cd.color || '',
-      engineType: prev.engineType || cd.engine_type || yad2.engineType || '',
-              transmission: prev.transmission || cd.transmission || yad2.transmission || '',
-      currentCondition: prev.currentCondition || cd.condition || '',
-      knownProblems: prev.knownProblems || cd.known_problems || '',
-      description: prev.description || cd.description || '',
-      pros: prev.pros || cd.pros || '',
-      cons: prev.cons || cd.cons || '',
-      tradeIn: prev.tradeIn || cd.trade_in || '',
-      askingPrice: prev.askingPrice || cd.asking_price || '',
-      name: prev.name || cd.name || '',
-      email: prev.email || cd.email || '',
-      phone: prev.phone || cd.phone || '',
-      
-      // Store the complete car data for reference
-      car_data: {
-        ...cd,
-        yad2_data: yad2
-      }
-    }));
-  };
-
-  // Function to handle manual field changes - ensures manual input takes precedence
-  const handleManualFieldChange = (field: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-    
-    // If we're in manual mode and the user changes a field, mark it as manually entered
-    if (inputMethod === 'manual') {
-      // This ensures the manual input takes precedence over any API data
-      setFormData(prev => ({
-        ...prev,
-        [field]: value
-      }));
-    }
-  };
-
-  // Function to show popup modal
-  const showPopupModal = (type: 'success' | 'error', title: string, message: string) => {
-    setPopupType(type);
-    setPopupTitle(title);
-    setPopupMessage(message);
-    setShowPopup(true);
-  };
-
-  // Function to close popup modal
-  const closePopupModal = () => {
-    setShowPopup(false);
-    setPopupMessage('');
-    setPopupTitle('');
-  };
-
-  // Effect to populate form data when car data or Yad2 info changes
-  useEffect(() => {
-    if (carData || yad2ModelInfo) {
-      populateFormDataWithBestSources();
-    }
-  }, [carData, yad2ModelInfo, inputMethod]);
-
-  // Effect to clear auto-populated data when switching to manual mode
-  useEffect(() => {
-    if (inputMethod === 'manual') {
-      // Keep user-entered data but clear auto-populated fields
-      setFormData(prev => ({
-        ...prev,
-        // Clear fields that were auto-populated from API
-        title: prev.title || '',
-        makeModel: prev.makeModel || '',
-        year: prev.year || '',
-        plateNumber: prev.plateNumber || '',
-        mileage: prev.mileage || '',
-        color: prev.color || '',
-        engineType: prev.engineType || '',
-        transmission: prev.transmission || '',
-        currentCondition: prev.currentCondition || '',
-        knownProblems: prev.knownProblems || '',
-        pros: prev.pros || '',
-        cons: prev.cons || '',
-        tradeIn: prev.tradeIn || '',
-        askingPrice: prev.askingPrice || '',
-        name: prev.name || '',
-        email: prev.email || '',
-        phone: prev.phone || ''
-      }));
-    } else if (inputMethod === 'plate') {
-      // When switching back to plate mode, try to populate with available API data
-      if (carData || yad2ModelInfo) {
-        populateFormDataWithBestSources();
+      if (isManufacturerNameValid && isModelNameValid) {
+        const newTitle = `${manufacturerName} ${modelName} ${formData.yearOfProduction}`.trim();
+        setFormData(prev => ({ ...prev, title: newTitle }));
       }
     }
-  }, [inputMethod]);
+  }, [currentStep, formData.manufacturerName, formData.commercialNickname, formData.yearOfProduction, formData.title, selectedManufacturer, selectedModel]);
 
-  // Function to auto-generate title when moving to next step
-  const autoGenerateTitleIfEmpty = () => {
-    if (!formData.title && selectedManufacturer && selectedModel && selectedYear) {
-      const manufacturerName = manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer;
-      // Use commercialNickname (which stores the title) instead of selectedModel (which stores the ID)
-      const modelName = formData.commercialNickname || selectedModel;
-      const newTitle = `${manufacturerName} ${modelName} ${selectedYear}`.trim();
-      console.log('Auto-generating title on step change:', newTitle);
-      setFormData(prev => ({
-        ...prev,
-        title: newTitle
-      }));
+  // Effect: Populate form data when automatic mode selections change
+  useEffect(() => {
+    if (inputMethod === 'plate' && selectedManufacturer && selectedModel && selectedYear) {
+      // In automatic mode, populate form with the selected submodel data
+      populateFormDataFromSelectedSubmodel();
     }
-  };
+  }, [inputMethod, selectedManufacturer, selectedModel, selectedYear]);
 
-  // Function to handle input method change
-  const handleInputMethodChange = (method: 'plate' | 'manual') => {
+  /**
+   * Handles input method change between plate and manual modes
+   * @param method - The new input method to switch to
+   */
+  const handleInputMethodChange = (method: InputMethod) => {
     setInputMethod(method);
     
     if (method === 'manual') {
       // Clear API-related data when switching to manual mode
       setCarData(null);
       setYad2ModelInfo(null);
-      setError(null);
       
-      // Reset form to manual input mode
+      // Reset form to manual input mode while preserving user inputs
       setFormData(prev => ({
         ...prev,
-        // Keep only user-entered data, clear auto-populated fields
         manufacturerName: '',
         commercialNickname: '',
         yearOfProduction: '',
         fuelType: '',
-        // Keep other user inputs
         title: prev.title || '',
         makeModel: prev.makeModel || '',
         year: prev.year || '',
         plateNumber: prev.plateNumber || '',
-        mileage: prev.mileage || '',
-        color: prev.color || '',
-        engineType: prev.engineType || '',
-        transmission: prev.transmission || '',
-        currentCondition: prev.currentCondition || '',
-        knownProblems: prev.knownProblems || '',
-        description: prev.description || '',
-        pros: prev.pros || '',
-        cons: prev.cons || '',
-        tradeIn: prev.tradeIn || '',
-        askingPrice: prev.askingPrice || '',
-        name: prev.name || '',
-        email: prev.email || '',
-        phone: prev.phone || '',
-        images: prev.images,
         car_data: {}
       }));
     } else if (method === 'plate') {
-      // When switching to plate mode, clear manual inputs and try to populate with API data
+      // When switching to plate mode, clear manual inputs
       setFormData(prev => ({
         ...prev,
-        // Clear manual input fields
         manufacturerName: '',
         commercialNickname: '',
         yearOfProduction: '',
@@ -1072,183 +338,122 @@ export default function AddCarListing() {
         makeModel: '',
         year: '',
         plateNumber: '',
-        // Keep other user inputs
-        mileage: prev.mileage || '',
-        color: prev.color || '',
-        engineType: prev.engineType || '',
-        transmission: prev.transmission || '',
-        currentCondition: prev.currentCondition || '',
-        knownProblems: prev.knownProblems || '',
-        description: prev.description || '',
-        pros: prev.pros || '',
-        cons: prev.cons || '',
-        tradeIn: prev.tradeIn || '',
-        askingPrice: prev.askingPrice || '',
-        name: prev.name || '',
-        email: prev.email || '',
-        phone: prev.phone || '',
-        images: prev.images,
         car_data: {}
       }));
       
-      // Try to populate with available API data
-      if (carData || yad2ModelInfo) {
+      // Populate with the currently selected submodel data from the UI
+      if (selectedManufacturer && selectedModel && selectedYear) {
+        populateFormDataFromSelectedSubmodel();
+      } else if (carData || yad2ModelInfo) {
+        // Fallback to API data if no submodel is selected
         populateFormDataWithBestSources();
       }
     }
   };
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-    
-    console.log('Validating form with data:', formData);
-    console.log('Current dropdown selections:', { selectedManufacturer, selectedModel, selectedYear });
-    
-    // Ensure form data is populated with the best available sources before validation
-    if (carData || yad2ModelInfo) {
-      populateFormDataWithBestSources();
-    }
-    
-    // Validate required fields
-    if (!formData.title) {
-      newErrors.title = t('validation_required');
-      console.log('Title validation failed - current value:', formData.title);
-    }
-    if (!formData.manufacturerName) {
-      newErrors.manufacturer = t('validation_required');
-      console.log('Manufacturer validation failed - current value:', formData.manufacturerName);
-    }
-    if (!formData.commercialNickname) {
-      newErrors.model = t('validation_required');
-      console.log('Model validation failed - current value:', formData.commercialNickname);
-    }
-    if (!formData.yearOfProduction) {
-      newErrors.year = t('validation_required');
-      console.log('Year validation failed - current value:', formData.yearOfProduction);
-    }
-    // Plate number validation: required only in automatic/plate mode
-    if (inputMethod === 'plate') {
-      if (!formData.plateNumber || formData.plateNumber.trim() === '') {
-        newErrors.plateNumber = t('plate_number_required_automatic');
-        console.log('Plate number validation failed - required in plate mode, current value:', formData.plateNumber);
-      } else if (!carData) {
-        newErrors.plateNumber = t('plate_number_must_be_found');
-        console.log('Plate number validation failed - plate not found in system');
-      }
-    } else {
-      // In manual mode, plate number is optional
-      console.log('Plate number validation skipped - manual mode, current value:', formData.plateNumber);
-    }
-    // Email is not required
-    // if (!formData.email) {
-    //   newErrors.email = t('validation_required');
-    //   console.log('Email validation failed - current value:', formData.email);
-    // } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-    //   newErrors.email = t('validation_email');
-    //   console.log('Email format validation failed - current value:', formData.email);
-    // }
-    
-    // Phone validation: Israeli phone number format
-    if (!formData.phone) {
-      newErrors.phone = t('validation_required');
-      console.log('Phone validation failed - current value:', formData.phone);
-    } else {
-      // Israeli phone number validation: +972-XX-XXXXXXX or 05X-XXXXXXX or 0X-XXXXXXX
-      const israeliPhoneRegex = /^(\+972-?|0)?5[0-9]-?[0-9]{7}$|^(\+972-?|0)?[2-4][0-9]-?[0-9]{7}$/;
-      if (!israeliPhoneRegex.test(formData.phone.replace(/\s/g, ''))) {
-        newErrors.phone = t('validation_phone_invalid');
-        console.log('Phone validation failed - invalid Israeli format:', formData.phone);
-      }
-    }
-    if (!formData.images.length) {
-      newErrors.images = t('validation_images');
-      console.log('Images validation failed - current count:', formData.images.length);
-    }
+  /**
+   * Populates form data with the currently selected submodel from the UI
+   * This ensures the form uses the submodel data that the user can see and verify
+   */
+  const populateFormDataFromSelectedSubmodel = () => {
+    if (!selectedManufacturer || !selectedModel || !selectedYear) return;
 
-    console.log('Validation errors:', newErrors);
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-  const handlePlateNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formattedValue = formatPlateNumber(e.target.value);
-    setPlateNumber(formattedValue);
-    setFormData(prev => ({ ...prev, plateNumber: formattedValue }));
-    setError(null);
-  };
+    // Get the manufacturer data
+    const manufacturer = manufacturersData[selectedManufacturer];
+    if (!manufacturer) return;
 
-  // Also update formData.plateNumber when plateNumber state changes (for the plate search input)
-  useEffect(() => {
-    setFormData(prev => ({ ...prev, plateNumber: plateNumber }));
-  }, [plateNumber]);
-  const uploadImages = async (files: File[]) => {
-  //   const uploadPromises = files.map(async (file) => {
-  //     const formData = new FormData();
-  //     formData.append('files', file);
+    // Find the selected submodel
+    const submodel = manufacturer.submodels?.find(
+      sub => sub.id?.toString() === selectedModel
+    );
+    
+    if (submodel) {
+      const manufacturerName = submodel.manufacturer?.title || selectedManufacturer;
+      const modelName = submodel.title || selectedModel;
       
-  //     try {
-  //       const response = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, formData, {
-  //         headers: {
-  //           'Content-Type': 'multipart/form-data',
-  //         },
-  //       });
-  //       return response.data[0].id; // Return the uploaded file ID
-  //     } catch (error) {
-  //       console.error('Error uploading image:', error);
-  //       throw error;
-  //     }
-  //   }
-  // );
-
-    // return Promise.all(uploadPromises);
+      setFormData(prev => ({
+        ...prev,
+        manufacturerName: manufacturerName,
+        commercialNickname: modelName,
+        yearOfProduction: selectedYear,
+        year: selectedYear,
+        makeModel: `${manufacturerName} ${modelName}`.trim(),
+        title: `${manufacturerName} ${modelName} ${selectedYear}`.trim(),
+        // Also update the plate number if it's empty
+        plateNumber: prev.plateNumber || formData.plateNumber || ''
+      }));
+    }
   };
 
-  const generateSlug = (title: string) => {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
+  /**
+   * Populates form data with the best available sources
+   * Priority: Manual input > Yad2 API > Government API
+   */
+  const populateFormDataWithBestSources = () => {
+    if (!carData && !yad2ModelInfo) return;
+
+    const cd: any = carData || {};
+    const yad2: any = yad2ModelInfo?.data || {};
+
+    const getBestDataValue = (field: string, manualValue: any, apiValue: any, yad2Value: any = null) => {
+      if (inputMethod === 'manual' && manualValue) return manualValue;
+      if (yad2Value && yad2Value !== '') return yad2Value;
+      if (apiValue && apiValue !== '') return apiValue;
+      return manualValue || '';
+    };
+
+    setFormData(prev => ({
+      ...prev,
+      manufacturerName: getBestDataValue('manufacturerName', prev.manufacturerName, cd.manufacturer_name, yad2.manufacturerName),
+      commercialNickname: getBestDataValue('commercialNickname', prev.commercialNickname, cd.commercial_nickname, yad2.modelName),
+      yearOfProduction: getBestDataValue('yearOfProduction', prev.yearOfProduction, cd.year_of_production, yad2.year),
+      fuelType: getBestDataValue('fuelType', prev.fuelType, cd.fuel_type, yad2.fuelType),
+      title: prev.title || `${getBestDataValue('manufacturerName', prev.manufacturerName, cd.manufacturer_name, yad2.manufacturerName) || ''} ${cd.commercial_nickname || yad2.modelName || ''} ${cd.year_of_production || yad2.year || ''}`.trim(),
+      makeModel: prev.makeModel || `${getBestDataValue('manufacturerName', prev.manufacturerName, cd.manufacturer_name, yad2.manufacturerName) || ''} ${cd.commercial_nickname || yad2.modelName || ''}`.trim(),
+      year: prev.year || cd.year_of_production || yad2.year || '',
+      plateNumber: prev.plateNumber || cd.plate_number || '',
+      car_data: { ...cd, yad2_data: yad2 }
+    }));
   };
 
+  /**
+   * Auto-generates title if empty when moving to next step
+   */
+  const autoGenerateTitleIfEmpty = () => {
+    if (!formData.title && selectedManufacturer && selectedModel && selectedYear) {
+      // Use the form data values which should already contain the proper titles
+      const manufacturerName = formData.manufacturerName || selectedManufacturer;
+      const modelName = formData.commercialNickname || selectedModel;
+      
+      // Only generate title if we have proper names (not IDs)
+      const isManufacturerNameValid = manufacturerName && manufacturerName.length > 2 && manufacturerName !== selectedManufacturer;
+      const isModelNameValid = modelName && modelName.length > 2 && modelName !== selectedModel;
+      
+      if (isManufacturerNameValid && isModelNameValid) {
+        const newTitle = `${manufacturerName} ${modelName} ${selectedYear}`.trim();
+        setFormData(prev => ({ ...prev, title: newTitle }));
+      }
+    }
+  };
+
+
+
+  /**
+   * Handles form submission
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    console.log('Form submission started');
-    console.log('Current form data:', formData);
-    
-    setCurrentProcessingStep(t('validating_form'));
-    if (!validateForm()) {
-      console.log('Form validation failed');
-      setCurrentProcessingStep('');
-      return;
-    }
+    if (!validateForm()) return;
 
-    console.log('Form validation passed, starting submission');
     setIsSubmitting(true);
+    setCurrentProcessingStep('validating_form');
 
     try {
-      // First upload all images
-      // const imageIds = await uploadImages(formData.images);
-
-      // Format the car details object per requested structure
-      // Use the best available data sources based on input method
-      const cd: any = (formData as any).car_data || {};
-      const yad2Data: any = cd.yad2_data || {};
-      
-      const composedName = [
-        getBestDataValue('manufacturerName', formData.manufacturerName, cd.manufacturer_name, yad2Data.manufacturerName),
-        getBestDataValue('commercialNickname', formData.commercialNickname, cd.commercial_nickname, yad2Data.modelName),
-        getBestDataValue('yearOfProduction', formData.yearOfProduction, cd.year_of_production, yad2Data.year),
-        getBestDataValue('fuelType', formData.fuelType, cd.fuel_type, yad2Data.fuelType),
-      ]
-        .filter(Boolean)
-        .join(' ');
-
-      // Upload image if present
+      // Upload images first
       let imageId = null;
       if (formData.images && formData.images.length > 0) {
-        try {
-          setCurrentProcessingStep(t('uploading_image'));
-          console.log("Uploading image...");
+        setCurrentProcessingStep('uploading_image');
           const formDataToSend = new FormData();
           formDataToSend.append('image', formData.images[0]);
           
@@ -1257,41 +462,27 @@ export default function AddCarListing() {
             body: formDataToSend
           });
           
-          console.log("imagesupload_response is", imagesupload_response);
           if (imagesupload_response.ok) {
             const uploadResult = await imagesupload_response.json();
-            // Handle different possible Strapi response structures
             imageId = uploadResult[0].id;
-            console.log("Extracted imageId is", imageId);
-          } else {
-            console.error("Image upload failed:", imagesupload_response.statusText);
-            // Continue without image if upload fails
-            imageId = null;
-          }
-        } catch (uploadError) {
-          console.error("Error uploading image:", uploadError);
-          // Continue without image if upload fails
-          imageId = null;
         }
       }
 
       // Prepare car details
-      setCurrentProcessingStep(t('preparing_data'));
+      setCurrentProcessingStep('preparing_data');
+      const cd: any = formData.car_data || {};
+      const yad2Data: any = cd.yad2_data || {};
+      
       const carDetails = {
         car: {
-          // Basic car information
-          fuel: getBestDataValue('fuelType', formData.fuelType, cd.fuel_type, yad2Data.fuelType) || '',
+          fuel: formData.fuelType || cd.fuel_type || yad2Data.fuelType || '',
           name: formData.title,
-          year: String(getBestDataValue('yearOfProduction', formData.yearOfProduction, cd.year_of_production, yad2Data.year) || ''),
+          year: String(formData.yearOfProduction || cd.year_of_production || yad2Data.year || ''),
           miles: String(formData.mileage || ''),
           price: parseFloat(formData.askingPrice) || 0,
-          
-          // Owner information
           owner_name: formData.name || '',
           owner_email: formData.email || '',
           owner_phone: formData.phone || '',
-          
-          // Car specifications
           plate_number: formData.plateNumber || '',
           color: formData.color || '',
           engine_type: formData.engineType || '',
@@ -1299,133 +490,55 @@ export default function AddCarListing() {
           known_problems: formData.knownProblems || '',
           trade_in: formData.tradeIn || '',
           asking_price: formData.askingPrice || '',
-          
-          // Manufacturer information
-          manufacturer_name: getBestDataValue('manufacturerName', formData.manufacturerName, cd.manufacturer_name, yad2Data.manufacturerName) || '',
-          commercial_nickname: getBestDataValue('commercialNickname', formData.commercialNickname, cd.commercial_nickname, yad2Data.modelName) || '',
-          year_of_production: getBestDataValue('yearOfProduction', formData.yearOfProduction, cd.year_of_production, yad2Data.year) || '',
-          fuel_type: getBestDataValue('fuelType', formData.engineType, cd.fuel_type, yad2Data.fuelType) || '',
+          manufacturer_name: formData.manufacturerName || cd.manufacturer_name || yad2Data.manufacturerName || '',
+          commercial_nickname: formData.commercialNickname || cd.commercial_nickname || yad2Data.modelName || '',
+          year_of_production: formData.yearOfProduction || cd.year_of_production || yad2Data.year || '',
+          fuel_type: formData.fuelType || cd.fuel_type || yad2Data.fuelType || '',
           trim_level: cd.trim_level || yad2Data.trimLevel || '',
           body_type: cd.body_type || yad2Data.bodyType || '',
           transmission: formData.transmission || '',
-          
-          // Images
-          images: imageId ? {
-            main: [imageId],
-            additional: [imageId],
-          } : {},
-          
-          // Pros and Cons
+          images: imageId ? { main: [imageId], additional: [imageId] } : {},
           pros: formData.pros || '',
           cons: formData.cons || '',
-          
-          // Features array for display
           features: [
-            {  'address': '' }, //String(formData.address || '')
-            {  'makeModel': String(formData.makeModel || '') },
-            {  'yearOfProduction': String(getBestDataValue('yearOfProduction', formData.yearOfProduction, cd.year_of_production, yad2Data.year) || '') },
-            {  'plateNumber': String(formData.plateNumber || '') },
-            {  'mileage': String(formData.mileage || '') },
-            {  'color': String(formData.color || '') },
-            {  'engineType': String(formData.engineType || '') },
-            {  'transmission': String(formData.transmission || '') },
-            {  'currentCondition': String(formData.currentCondition || '') },
-            {  'knownProblems': String(formData.knownProblems || '') },
-            {  'description': String(formData.description || '') },
-            {  'pros': String(formData.pros || '') },
-            {  'cons': String(formData.cons || '') },
-            {  'tradeIn': String(formData.tradeIn || '') },
-            {  'askingPrice': String(formData.askingPrice || '') },
-            {  'name': String(formData.name || '') },
-            {  'email': String(formData.email || '') },
-            {  'phone': String(formData.phone || '') },
-            {  'fuelType': String(getBestDataValue('fuelType', formData.engineType, cd.fuel_type, yad2Data.fuelType) || '') },
-            ...(imageId ? [{  'image': imageId }] : []),
+            { address: '' },
+            { makeModel: String(formData.makeModel || '') },
+            { yearOfProduction: String(formData.yearOfProduction || cd.year_of_production || yad2Data.year || '') },
+            { plateNumber: String(formData.plateNumber || '') },
+            { mileage: String(formData.mileage || '') },
+            { color: String(formData.color || '') },
+            { engineType: String(formData.engineType || '') },
+            { transmission: String(formData.transmission || '') },
+            { currentCondition: String(formData.currentCondition || '') },
+            { knownProblems: String(formData.knownProblems || '') },
+            { description: String(formData.description || '') },
+            { pros: String(formData.pros || '') },
+            { cons: String(formData.cons || '') },
+            { tradeIn: String(formData.tradeIn || '') },
+            { askingPrice: String(formData.askingPrice || '') },
+            { name: String(formData.name || '') },
+            { email: String(formData.email || '') },
+            { phone: String(formData.phone || '') },
+            { fuelType: String(formData.fuelType || cd.fuel_type || yad2Data.fuelType || '') },
+            ...(imageId ? [{ image: imageId }] : []),
           ],
-          
-          // Description - use user input if available, otherwise generate one
-          description: formData.description || `${getBestDataValue('manufacturerName', formData.manufacturerName, cd.manufacturer_name, yad2Data.manufacturerName) || ''} ${getBestDataValue('commercialNickname', formData.commercialNickname, cd.commercial_nickname, yad2Data.modelName) || ''} ${getBestDataValue('yearOfProduction', formData.yearOfProduction, cd.year_of_production, yad2Data.year) || ''}`.trim(),
+          description: formData.description || `${formData.manufacturerName || cd.manufacturer_name || yad2Data.manufacturerName || ''} ${formData.commercialNickname || cd.commercial_nickname || yad2Data.modelName || ''} ${formData.yearOfProduction || cd.year_of_production || yad2Data.year || ''}`.trim(),
         }
       };
 
-      // Send to our new API endpoint
-      setCurrentProcessingStep(t('submitting_listing'));
+      // Submit to API
+      setCurrentProcessingStep('submitting_listing');
       const response = await fetch('/api/addListing', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(carDetails)
       });
 
-      console.log("Final API response:", response);
       if (response.ok) {
-        const responseData = await response.json();
-        console.log("Final API response data:", responseData);
         showPopupModal('success', t('success_title') || 'Success!', t('success_message'));
-        // Reset form
-        setFormData({
-          title: '',
-          makeModel: '',
-          year: '',
-          plateNumber: '',
-          mileage: '',
-          color: '',
-          engineType: '',
-          transmission: '',
-          currentCondition: '',
-          knownProblems: '',
-          description: '',
-          pros: '',
-          cons: '',
-          tradeIn: '',
-          askingPrice: '',
-          name: '',
-          email: '',
-          phone: '',
-          images: [],
-          manufacturerName: '',
-          commercialNickname: '',
-          yearOfProduction: '',
-          fuelType: '',
-          car_data: {},
-          // Basic Ad Info (מאפייני מודעה)
-          hasImage: false,
-          hasPrice: false,
-          fromAgency: false,
-          availableInTradeIn: false,
-          availableInFinancing: false,
-          priceDropped: false,
-          foreclosureAd: false,
-          // Vehicle Specifications
-          price: '',
-          kilometers: '',
-          engineCapacity: '',
-          handOwnershipCount: '',
-          region: '',
-          submodel: '',
-          numberOfSeats: '',
-          // Engine Types (סוגי מנוע)
-          engineTypes: [],
-          // Gearbox (תיבת הילוכים)
-          gearbox: '',
-          // Ownership Type (בעלות)
-          ownershipType: '',
-          // Color (צבע)
-          colors: [],
-          // Additional Features (מאפיינים נוספים)
-          longTestValid: false,
-          adaptedForDisabled: false,
-          // Free Search (חיפוש חופשי)
-          freeSearch: ''
-        });
-        setSelectedManufacturer('');
-        setSelectedModel('');
-        setAvailableModels([]);
-        setAvailableYears([]);
-        setAvailableSubmodels([]);
-        setSelectedSubmodel('');
-        setErrors(prev => ({ ...prev, manufacturer: '', model: '' }));
+        resetForm();
+      } else {
+        throw new Error('Submission failed');
       }
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -1436,88 +549,44 @@ export default function AddCarListing() {
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      setFormData(prev => ({
-        ...prev,
-        images: [...prev.images, ...Array.from(files)].slice(0, 8) // Limit to 8 images
-      }));
-      setErrors(prev => ({ ...prev, images: '' }));
-    }
-  };
-
-  const removeImage = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index)
-    }));
-  };
-
-  const fetchSubmodels = async (modelId: string) => {
-    if (!modelId) return;
-    
-    try {
-      console.log('Fetching submodels for model ID:', modelId);
-      const response = await fetch(`/api/yad2/submodels?modelId=${modelId}`);
-      
-      if (response.ok) {
-        const submodelsData = await response.json();
-        console.log('Submodels data received:', submodelsData);
-        const filteredSubmodels = submodelsData.data ? submodelsData.data.filter((submodel: any) => 
-          submodel.minYear <= Number(formData.yearOfProduction || selectedYear) && 
-          submodel.maxYear >= Number(formData.yearOfProduction || selectedYear)
-        ) : [];
-        setAvailableSubmodels(filteredSubmodels);
-      } else {
-        console.warn('Failed to fetch submodels:', response.status);
+  /**
+   * Resets the form to initial state
+   */
+  const resetForm = () => {
+    setFormData(DEFAULT_VALUES);
+    setSelectedManufacturer('');
+    setSelectedModel('');
+    setAvailableModels([]);
+    setAvailableYears([]);
         setAvailableSubmodels([]);
-      }
-    } catch (error) {
-      console.error('Error fetching submodels:', error);
-      setAvailableSubmodels([]);
-    }
+    setSelectedSubmodel('');
+    setErrors({});
+    setError(null);
+    setCurrentStep(0);
   };
 
-  async function fetchYad2Price() {
-    console.log('fetchYad2Price called with:', { subModelID: subModelID || yad2PriceInfo?.subModelID, year: formData.yearOfProduction });
-    
-    if (!subModelID || !formData.yearOfProduction) {
-      console.warn('Missing required data for Yad2 price:', { subModelID, year: formData.yearOfProduction });
-      return;
+  // Effect: Populate form data when car data changes
+  useEffect(() => {
+    if (carData || yad2ModelInfo) {
+      populateFormDataWithBestSources();
     }
-    
-    try {
-
-      const url = `/api/yad2/price?subModelId=${subModelID}&kilometers=0&ascentYearOnRoad=${formData.yearOfProduction}&ascentMonthOnRoad=1`;
-      console.log('Fetching Yad2 price from:', url);
-      
-      const priceRes = await fetch(url);
-      console.log('Yad2 price response status:', priceRes.status);
-      
-      if (priceRes.ok) {
-        const priceData = await priceRes.json();
-        console.log('Yad2 price data received:', priceData);
-        setYad2PriceInfo(priceData);
-      } else {
-        const err = await priceRes.json().catch(() => ({}));
-        console.warn('Yad2 price API failed:', err);
-        setYad2PriceInfo(null);
-      }
-    } catch (err) {
-      console.error('Error fetching Yad2 price:', err);
-      setYad2PriceInfo(null);
-    }
-  }
+  }, [carData, yad2ModelInfo, inputMethod]);
 
   return (
     <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-[5%] py-8 px-4 sm:px-6 lg:px-8 ${isRTL ? 'rtl' : 'ltr'}`}>
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-3xl mx-auto"
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="max-w-4xl mx-auto"
       >
-        <div className="flex items-center gap-6 mb-8">
+        {/* Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="flex items-center gap-6 mb-8"
+        >
           <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-4 shadow-lg">
             <Car className="h-8 w-8 text-white" />
           </div>
@@ -1525,1060 +594,159 @@ export default function AddCarListing() {
             <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('add_car_listing')}</h1>
             <p className="text-gray-600">{t('fill_details')}</p>
           </div>
-        </div>
+        </motion.div>
 
+        {/* Error Display */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6"
+          >
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          </motion.div>
+        )}
 
+        {/* Step Indicator */}
+        <StepIndicator 
+          currentStep={currentStep}
+          steps={STEP_CONFIGURATION}
+          onStepClick={setCurrentStep}
+        />
 
-        {/* Steps indicator (clickable) */}
-        <div className="mb-8">
-          <ol className="flex items-center text-xs sm:text-sm text-gray-700 gap-2 overflow-hidden" role="list">
-            {STEPS.map((_, index) => (
-              <li key={index} className="flex items-center">
-                <button
-                  type="button"
-                  onClick={() => setCurrentStep(index)}
-                  className={`flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                    currentStep === index ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
-                  }`}
-                  aria-current={currentStep === index ? 'step' : undefined}
-                  aria-label={`Step ${index + 1}`}
-                >
-                  {index + 1}
-                </button>
-                {index < STEPS.length - 1 && (
-                  <span className="w-6 sm:w-8 h-px bg-gray-300 mx-2" aria-hidden="true"></span>
-                )}
-              </li>
-            ))}
-          </ol>
-        </div>
-
-       
-
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Information */}
+          <AnimatePresence mode="wait">
           {currentStep === 0 && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
-          >
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('basic_information')}</h2>
-            
-            {/* Input Method Toggle */}
-            <div className="mb-6">
-              <div className="flex items-center justify-center bg-gray-100 rounded-xl p-1">
-                <button
-                  type="button"
-                  onClick={() => handleInputMethodChange('plate')}
-                  className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
-                    inputMethod === 'plate'
-                      ? 'bg-white text-blue-600 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-800'
-                  }`}
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <Car className="h-5 w-5" />
-                    {t('search_by_plate') || 'Search by Plate Number'}
-                  </div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleInputMethodChange('manual')}
-                  className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
-                    inputMethod === 'manual'
-                      ? 'bg-white text-blue-600 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-800'
-                  }`}
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <Settings className="h-5 w-5" />
-                    {t('enter_manually') || 'Enter Manually'}
-                  </div>
-                </button>
-              </div>
-            </div>
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('title')} <span className="text-gray-500">({t('auto_generated_hint')})</span>
-              </label>
-              <Input
-                placeholder={t('title_placeholder')}
-                value={formData.title}
-                onChange={(e) => {
-                  setFormData(prev => ({ ...prev, title: e.target.value }));
-                  setErrors(prev => ({ ...prev, title: '' }));
-                }}
-                className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.title ? 'border-red-500' : ''}`}
+              <BasicInformationStep
+                key="basic-info"
+                inputMethod={inputMethod}
+                onInputMethodChange={handleInputMethodChange}
+                formData={formData}
+                setFormData={setFormData}
+                errors={errors}
+                setErrors={setErrors}
+                manufacturersData={manufacturersData}
+                selectedManufacturer={selectedManufacturer}
+                setSelectedManufacturer={setSelectedManufacturer}
+                selectedModel={selectedModel}
+                setSelectedModel={setSelectedModel}
+                selectedYear={selectedYear}
+                setSelectedYear={setSelectedYear}
+                selectedSubmodel={selectedSubmodel}
+                setSelectedSubmodel={setSelectedSubmodel}
+                availableModels={availableModels}
+                availableYears={availableYears}
+                availableSubmodels={availableSubmodels}
+                subModelID={subModelID}
+                setSubModelID={setSubModelID}
+                plateNumber={formData.plateNumber}
+                onPlateNumberChange={(value) => setFormData(prev => ({ ...prev, plateNumber: value }))}
+                onFetchCarData={() => fetchCarData(formData.plateNumber)}
+                onFetchSubmodels={fetchSubmodels}
+                loading={loading}
+                govCarInfo={govCarInfo}
+                yad2ModelInfo={yad2ModelInfo}
+                yad2PriceInfo={yad2PriceInfo}
+                t={t}
               />
-              {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
-              {!formData.title && selectedManufacturer && selectedModel && selectedYear && (
-                <p className="mt-2 text-sm text-blue-600">
-                  💡 {t('title_auto_generation_hint')} "{manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer} {formData.commercialNickname || t('model')} {selectedYear}" {t('when_click_next')}
-                </p>
-              )}
-            </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('mileage')} <span className="text-gray-500">({t('in_kilometers')})</span>
-                  </label>
-                  <Input
-                    placeholder={t('mileage')}
-                    value={formData.mileage}
-                    onChange={(e) => setFormData(prev => ({ ...prev, mileage: e.target.value }))}
-                    className={`mb-6 rounded-xl py-5 ${errors.mileage ? 'border-red-500' : ''}`}
-                  />
-                  {errors.mileage && <p className="mt-1 text-sm text-red-500">{errors.mileage}</p>}
-                </div>
-            {/* Plate Number Input Method */}
-            {inputMethod === 'plate' && (
-              <div className="space-y-6">
-                <div className="w-full max-w-xl mx-auto">
-                  <div className="relative">
-                    <div className="relative flex items-center bg-[#ffca11] rounded shadow-lg p-2">
-                      <div className="flex items-center gap-4">
-                        <img 
-                          src="/a1.png" 
-                          alt={t("logo_alt")} 
-                          width={40} 
-                          height={50} 
-                          className="object-fill w-[60px] md:w-[80px] p-[2px]" 
-                        />
-                      </div>
-                      <Input
-                        type="text"
-                        value={plateNumber}
-                        onChange={handlePlateNumberChange}
-                        placeholder={t("enter_plate")}
-                        className="w-full px-4 sm:px-6 py-4 sm:py-8 text-xl sm:text-2xl md:text-3xl font-black tracking-[0.1em] bg-transparent border-0 focus:ring-0 text-center uppercase"
-                        maxLength={10}
-                        style={{
-                          letterSpacing: '0.1em',
-                          fontFamily: 'monospace',
-                          lineHeight: '1',
-                          WebkitTextStroke: '1px black',
-                          textShadow: '2px 2px 0px rgba(0,0,0,0.1)'
-                        }}
-                      />
-                    </div>
-                    <div className="flex items-center gap-2 px-4 w-full justify-center pt-4">
-                      <Button 
-                        onClick={fetchCarData} 
-                        disabled={loading}
-                        className="rounded-full w-50 text-black h-12 hover:bg-blue-700 transition-colors bg-[#ffca11]"
-                      >
-                        {t("search_by_vin")}
-                      </Button>
-                    </div>
-
-                    {showCaptchaPrompt && captchaRequired && (
-                      <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-                        <p className="text-red-700 font-semibold mb-2">Robot check required</p>
-                        <p className="text-sm text-red-700 mb-4">Please complete the captcha challenge to continue.</p>
-                        <div className="flex items-center justify-center gap-3">
-                          <Button
-                            type="button"
-                            onClick={() => {
-                              if (captchaUrl) {
-                                const popup = window.open(captchaUrl, 'captchaPopup', 'width=480,height=720');
-                                if (popup) {
-                                  popup.focus();
-                                }
-                              }
-                            }}
-                            className="bg-red-600 hover:bg-red-700 text-white"
-                          >
-                            Open to see data.
-                          </Button>
-                          <Button
-                            type="button"
-                            onClick={async () => {
-                              try {
-                                setShowCaptchaPrompt(false);
-                                setLoading(true);
-                                const data = await fetchCarDataDirect(plateNumber);
-                                if (data) {
-                                  setYad2ModelInfo(data);
-                                } else {
-                                  console.warn('No car data found from either API');
-                                }
-                              } catch (e) {
-                                console.error(e);
-                                // fallback UI
-                              } finally {
-                                setLoading(false);
-                              }
-                            }}
-                            variant="outline"
-                          >
-                            I completed it, retry
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Yad2 Price Heatmap and Details */}
-                    {(yad2PriceInfo?.data || yad2ModelInfo?.data) && (
-                      <div className="mt-6 space-y-4">
-                        {yad2PriceInfo?.data && (
-                          <div className="bg-gray-50 rounded-lg p-4">
-                                                  <div className="flex items-center justify-between text-sm text-gray-700 font-medium">
-                        <span>{t('min')} {Number(yad2PriceInfo.data.minPrice).toLocaleString()}</span>
-                        <span>{t('predicted')} {Number(yad2PriceInfo.data.predictedPrice).toLocaleString()}</span>
-                        <span>{t('max')} {Number(yad2PriceInfo.data.maxPrice).toLocaleString()}</span>
-                      </div>
-                            <div className="mt-3">
-                              <div className="relative h-3 rounded-full overflow-hidden bg-gradient-to-r from-green-400 via-yellow-300 to-red-500" aria-label="Price heatmap" />
-                              {(() => {
-                                const min = Number(yad2PriceInfo.data.minPrice) || 0;
-                                const max = Number(yad2PriceInfo.data.maxPrice) || 0;
-                                const pred = Number(yad2PriceInfo.data.predictedPrice) || 0;
-                                const range = Math.max(max - min, 1);
-                                const pct = Math.min(100, Math.max(0, ((pred - min) / range) * 100));
-                                return (
-                                  <div className="relative h-6">
-                                    <div className="absolute top-0 -mt-2" style={{ left: `${pct}%`, transform: 'translateX(-50%)' }}>
-                                      <div className="h-4 w-4 rounded-full bg-blue-600 border-2 border-white shadow" />
-                                    </div>
-                                  </div>
-                                );
-                              })()}
-                            </div>
-                            <div className="mt-2 text-xs text-gray-500">
-                              {t('accuracy')}: {String(yad2PriceInfo.data.accuracyId)}
-                            </div>
-                          </div>
-                        )}
-
-                        {yad2ModelInfo?.data && (
-                          <div className="bg-gray-50 rounded-lg p-4">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-xl text-gray-500">{t('model')}</span>
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                              {yad2ModelInfo.data.carTitle && (
-                                <div>
-                                  <div className="text-xs text-gray-500">{t('car')}</div>
-                                  <div className="font-medium text-gray-900">{yad2ModelInfo.data.carTitle}</div>
-                                </div>
-                              )}
-                              {yad2ModelInfo.data.subModelTitle && (
-                                <div>
-                                  <div className="text-xs text-gray-500">{t('submodel')}</div>
-                                  <div className="font-medium text-gray-900">{yad2ModelInfo.data.subModelTitle}</div>
-                                </div>
-                              )}
-                              {yad2ModelInfo.data.carYear && (
-                                <div>
-                                  <div className="text-xs text-gray-500">{t('year')}</div>
-                                  <div className="font-medium text-gray-900">{yad2ModelInfo.data.carYear}</div>
-                                </div>
-                              )}
-                              {yad2ModelInfo.data.owner && (
-                                <div>
-                                  <div className="text-xs text-gray-500">{t('owner')}</div>
-                                  <div className="font-medium text-gray-900">{yad2ModelInfo.data.owner}</div>
-                                </div>
-                              )}
-                              {yad2ModelInfo.data.tokefTestDate && (
-                                <div>
-                                  <div className="text-xs text-gray-500">{t('test_valid_until')}</div>
-                                  <div className="font-medium text-gray-900">{yad2ModelInfo.data.tokefTestDate}</div>
-                                </div>
-                              )}
-                              {yad2ModelInfo.data.yad2CarTitle && (
-                                <div>
-                                  <div className="text-xs text-gray-500">{t('color')}</div>
-                                  <div className="font-medium text-gray-900">{yad2ModelInfo.data.yad2CarTitle}</div>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                
-              </div>
             )}
 
-            {/* Manual Entry Method */}
-            {inputMethod === 'manual' && (
-              <div className="space-y-4">
-                
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('manufacturer') || 'Manufacturer'} <span className="text-red-500">*</span>
-                    </label>
-                    <Select
-                      value={selectedManufacturer}
-                      onValueChange={(value) => {
-                        if (value && manufacturersData[value]) {
-                          const models = manufacturersData[value].submodels || [];
-                          setAvailableModels(models);
-                          setSelectedModel(''); // Reset model selection
-                          setAvailableYears([]); // Clear years until model is selected
-                          setAvailableSubmodels([]); // Clear submodels until model is selected
-                          setSelectedSubmodel(''); // Reset submodel selection
-                        } else {
-                          setAvailableModels([]);
-                          setAvailableYears([]);
-                          setAvailableSubmodels([]);
-                          setSelectedSubmodel('');
-                        }
-                        setSelectedManufacturer(value);
-                        setErrors(prev => ({ ...prev, manufacturer: '' }));
-                      }}
-                    >
-                      <SelectTrigger className="rounded-xl py-5">
-                        <SelectValue placeholder={t('select_manufacturer') || 'Select Manufacturer'} />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white">
-                        {Object.keys(manufacturersData).length === 0 ? (
-                          <SelectItem value="loading_manufacturers" disabled>
-                            Loading manufacturers...
-                          </SelectItem>
-                        ) : (
-                          Object.keys(manufacturersData).map((manufacturer) => (
-                            <SelectItem key={manufacturer} value={manufacturer}>
-                              {manufacturersData[manufacturer]?.submodels?.[0]?.manufacturer?.title || manufacturer}
-                            </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
-                    {errors.manufacturer && <p className="mt-1 text-sm text-red-500">{errors.manufacturer}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('model') || 'Model'} <span className="text-red-500">*</span>
-                    </label>
-                    <Select
-                      value={selectedModel}
-                      onValueChange={(value) => {
-                        setSelectedModel(value);
-                        setSubModelID(value);
-                        // Store the title for display purposes in commercialNickname
-                        const selectedModelData = availableModels.find(model => model.id?.toString() === value);
-                        if (selectedModelData) {
-                          setFormData(prev => ({ ...prev, commercialNickname: selectedModelData.title || '' }));
-                        }
-                        // Fetch submodels when model is selected
-                        fetchSubmodels(value);
-                        // Reset submodel selection
-                        setSelectedSubmodel('');
-                        setErrors(prev => ({ ...prev, model: '' }));
-                      }}
-                      disabled={!selectedManufacturer || availableModels.length === 0}
-                    >
-                      <SelectTrigger className="rounded-xl py-5">
-                        <SelectValue placeholder={t('select_model') || 'Select Model'} />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white">
-                        {!selectedManufacturer ? (
-                          <SelectItem value="no_models_available" disabled>
-                            Select manufacturer first
-                          </SelectItem>
-                        ) : availableModels.length === 0 ? (
-                          <SelectItem value="no_models_available" disabled>
-                            No models available
-                          </SelectItem>
-                        ) : (
-                          availableModels.map((model) => (
-                            <SelectItem key={model.id} value={model.id?.toString()}>
-                              {model.title || 'Unknown Model'}
-                            </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
-                    {errors.model && <p className="mt-1 text-sm text-red-500">{errors.model}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('year') || 'Year'} <span className="text-red-500">*</span>
-                    </label>
-                    <Select
-                      value={selectedYear}
-                      onValueChange={(value) => {
-                        setSelectedYear(value);
-                        setFormData(prev => ({ ...prev, year: value }));
-                        setErrors(prev => ({ ...prev, year: '' }));
-                      }}
-                      disabled={!selectedManufacturer || !selectedModel || availableYears.length === 0}
-                    >
-                      <SelectTrigger className={`rounded-xl py-5 ${errors.year ? 'border-red-500' : ''}`}>
-                        <SelectValue placeholder={t('year') || 'Year'} />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white">
-                        {availableYears.length === 0 ? (
-                          <SelectItem value="no_years_available" disabled>
-                            {!selectedManufacturer ? 'Select manufacturer first' : 
-                             !selectedModel ? 'Select model first' : 'No years available'}
-                          </SelectItem>
-                        ) : (
-                          availableYears.map((year) => (
-                            <SelectItem key={year} value={year.toString()}>
-                              {year}
-                            </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
-                    {errors.year && <p className="mt-1 text-sm text-red-500">{errors.year}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Submodel (תת דגם) <span className="text-gray-500">({t('optional') || 'Optional'})</span>
-                    </label>
-                    <Select
-                      value={selectedSubmodel}
-                      onValueChange={(value) => {
-                        setSelectedSubmodel(value);
-                        // Find the selected submodel data
-                        const selectedSubmodelData = availableSubmodels.find(submodel => 
-                          submodel.id?.toString() === value
-                        );
-                        if (selectedSubmodelData) {
-                          setFormData(prev => ({ 
-                            ...prev, 
-                            submodel: selectedSubmodelData.title || ''
-                          }));
-                          // Update subModelID for price fetching
-                          setSubModelID(value);
-                        }
-                      }}
-                      disabled={!selectedModel || availableSubmodels.length === 0}
-                    >
-                      <SelectTrigger className="rounded-xl py-5">
-                        <SelectValue placeholder="Select Submodel" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white">
-                        {!selectedModel ? (
-                          <SelectItem value="no_submodels_available" disabled>
-                            Select model first
-                          </SelectItem>
-                        ) : availableSubmodels.length === 0 ? (
-                          <SelectItem value="no_submodels_available" disabled>
-                            No submodels available
-                          </SelectItem>
-                        ) : (
-                          availableSubmodels.map((submodel) => (
-                            <SelectItem key={submodel.id} value={submodel.id?.toString()}>
-                              {submodel.title} ({submodel.minYear}-{submodel.maxYear})
-                            </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('plate_number')} <span className="text-gray-500">({t('optional') || 'Optional'})</span>
-                    </label>
-                    <Input
-                      placeholder={t('plate_number')}
-                      value={formData.plateNumber}
-                      onChange={(e) => {
-                        setFormData(prev => ({ ...prev, plateNumber: e.target.value }));
-                        setErrors(prev => ({ ...prev, plateNumber: '' }));
-                      }}
-                      className={`rounded-xl py-5 ${errors.plateNumber ? 'border-red-500' : ''}`}
-                    />
-                    {errors.plateNumber && <p className="mt-1 text-sm text-red-500">{errors.plateNumber}</p>}
-                  </div>
-
-
-
-
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('engine_type')} <span className="text-gray-500">({t('optional')})</span>
-                    </label>
-                    <Select
-                      value={formData.engineType}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, engineType: value }))}
-                    >
-                      <SelectTrigger className="rounded-xl py-5 text-black">
-                        <SelectValue placeholder={t('engine_type')} />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white">
-                        {[
-                          { value: 'petrol', label: 'בנזין' },
-                          { value: 'diesel', label: 'דיזל' },
-                          { value: 'lpg', label: 'גפ"מ' },
-                          { value: 'hybrid_petrol', label: 'היברידי בנזין' },
-                          { value: 'hybrid_diesel', label: 'היברידי דיזל' },
-                          { value: 'plugin_petrol', label: 'פלאג-אין בנזין' },
-                          { value: 'plugin_diesel', label: 'פלאג-אין דיזל' },
-                          { value: 'electric_petrol', label: 'חשמלי בנזין' },
-                          { value: 'electric', label: 'חשמלי' }
-                        ].map((engineType) => (
-                          <SelectItem key={engineType.value} value={engineType.value}>
-                            {engineType.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('transmission')} <span className="text-gray-500">({t('optional')})</span>
-                    </label>
-                    <Select
-                      value={formData.transmission}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, transmission: value }))}
-                    >
-                      <SelectTrigger className="rounded-xl py-5 text-black">
-                        <SelectValue placeholder={t('select_transmission')} />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white">
-                        <SelectItem value="automatic">{t('transmission_automatic')}</SelectItem>
-                        <SelectItem value="manual">{t('transmission_manual')}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Engine capacity (נפח מנוע, סמ״ק) <span className="text-gray-500">(number)</span>
-                    </label>
-                    <Input
-                      type="number"
-                      placeholder="Engine capacity"
-                      value={formData.engineCapacity}
-                      onChange={(e) => setFormData(prev => ({ ...prev, engineCapacity: e.target.value }))}
-                      className="rounded-xl py-5"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Hand / ownership count (יד) <span className="text-gray-500">(integer)</span>
-                    </label>
-                    <Input
-                      type="number"
-                      placeholder="Hand count"
-                      value={formData.handOwnershipCount}
-                      onChange={(e) => setFormData(prev => ({ ...prev, handOwnershipCount: e.target.value }))}
-                      className="rounded-xl py-5"
-                    />
-                  </div>
-
-
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Number of seats (מספר מקומות) <span className="text-gray-500">(enum)</span>
-                    </label>
-                    <Select
-                      value={formData.numberOfSeats}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, numberOfSeats: value }))}
-                    >
-                      <SelectTrigger className="rounded-xl py-5">
-                        <SelectValue placeholder="Select number of seats" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white">
-                        {[2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((seats) => (
-                          <SelectItem key={seats} value={seats.toString()}>
-                            {seats}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Gearbox (תיבת הילוכים) <span className="text-gray-500">(enum)</span>
-                    </label>
-                    <Select
-                      value={formData.gearbox}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, gearbox: value }))}
-                    >
-                      <SelectTrigger className="rounded-xl py-5">
-                        <SelectValue placeholder="Select gearbox" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white">
-                        <SelectItem value="automatic">אוטומטי</SelectItem>
-                        <SelectItem value="manual">ידני</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Ownership Type (בעלות) <span className="text-gray-500">(enum)</span>
-                    </label>
-                    <Select
-                      value={formData.ownershipType}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, ownershipType: value }))}
-                    >
-                      <SelectTrigger className="rounded-xl py-5">
-                        <SelectValue placeholder="Select ownership type" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white">
-                        <SelectItem value="private">פרטית</SelectItem>
-                        <SelectItem value="company">חברה</SelectItem>
-                        <SelectItem value="rental">השכרה</SelectItem>
-                        <SelectItem value="leasing">ליסינג</SelectItem>
-                        <SelectItem value="taxi">מונית</SelectItem>
-                        <SelectItem value="driving_school">לימוד נהיגה</SelectItem>
-                        <SelectItem value="personal_import">ייבוא אישי</SelectItem>
-                        <SelectItem value="parallel_import">ייבוא מקביל</SelectItem>
-                        <SelectItem value="government">ממשלתי</SelectItem>
-                        <SelectItem value="un">או"ם</SelectItem>
-                        <SelectItem value="rental_lease">השכרה / החכר</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Color (צבע) <span className="text-gray-500">(enum)</span>
-                    </label>
-                    <Select
-                      value={formData.color}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, color: value }))}
-                    >
-                      <SelectTrigger className="rounded-xl py-5">
-                        <SelectValue placeholder="Select color" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white">
-                        <SelectItem value="red">אדום</SelectItem>
-                        <SelectItem value="gray">אפור</SelectItem>
-                        <SelectItem value="pink">ורוד</SelectItem>
-                        <SelectItem value="brown">חום</SelectItem>
-                        <SelectItem value="green">ירוק</SelectItem>
-                        <SelectItem value="blue">כחול</SelectItem>
-                        <SelectItem value="orange">כתום</SelectItem>
-                        <SelectItem value="white">לבן</SelectItem>
-                        <SelectItem value="purple">סגול</SelectItem>
-                        <SelectItem value="yellow">צהוב</SelectItem>
-                        <SelectItem value="black">שחור</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-            )}
-          </motion.div>
-          )}
-
-          {/* Condition */}
           {currentStep === 1 && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
-          >
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('condition')}</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('current_condition')} <span className="text-gray-500">({t('optional')})</span>
-                </label>
-                <Select
-                  value={formData.currentCondition}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, currentCondition: value }))}
-                >
-                  <SelectTrigger className="rounded-xl py-5">
-                    <SelectValue placeholder={t('current_condition')} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white">
-                    {conditions.map((condition) => (
-                      <SelectItem key={condition} value={condition}>
-                        {t(`condition_${condition}`)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div>
-                <Textarea
-                  placeholder={`${t('known_problems')} (${t('optional')})`}
-                  value={formData.knownProblems}
-                  onChange={(e) => setFormData(prev => ({ ...prev, knownProblems: e.target.value }))}
-                  className="rounded-xl py-4 min-h-[100px]"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('description')} <span className="text-gray-500">({t('will_be_auto_generated') || 'Will be auto-generated if left empty'})</span>
-                </label>
-                <Textarea
-                  placeholder={t('description_placeholder')}
-                  value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  className="rounded-xl py-4 min-h-[100px]"
-                />
-                <div className="mt-2 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      console.log("govCarInfo is", govCarInfo)
-                      if (!govCarInfo) {
-                        alert(t('fill_description_first'));
-                        return;
-                      }
-                      try {
-                        const response = await fetch('/api/createDescription', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({
-                            make: formData.manufacturerName || govCarInfo.carTitle || '',
-                            model: formData.commercialNickname || govCarInfo.subModelTitle || '',
-                            year: formData.yearOfProduction || govCarInfo.carYear || '',
-                            specs: {
-                              mileage: formData.mileage || '',
-                              color: formData.color || '',
-                              engineType: formData.engineType || '',
-                              transmission: formData.transmission || '',
-                              condition: formData.currentCondition || ''
-                            }
-                          })
-                        });
-                        
-                        if (response.ok) {
-                          const data = await response.json();
-                          setFormData(prev => ({ ...prev, description: data.description }));
-                        } else {
-                          alert(t('failed_to_generate_description'));
-                        }
-                      } catch (error) {
-                        console.error('Error generating description:', error);
-                        alert(t('error_generating_description'));
-                      }
-                    }}
-                    className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
-                  >
-                    🤖 {t('generate_ai_description') || 'Generate AI Description'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-          )}
+              <ConditionStep
+                key="condition"
+                formData={formData}
+                setFormData={setFormData}
+                govCarInfo={govCarInfo}
+                t={t}
+              />
+            )}
 
-          {/* Trade-in Option */}
           {currentStep === 2 && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
-          >
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('trade_in_option')}</h2>
-            <div className="space-y-6">
-              <RadioGroup
-                value={formData.tradeIn}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, tradeIn: value }))}>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="yes" id="yes" />
-                  <Label htmlFor="yes">{t('yes')}</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="no" id="no" />
-                  <Label htmlFor="no">{t('no')}</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="maybe" id="maybe" />
-                  <Label htmlFor="maybe">{t('maybe')}</Label>
-                </div>
-              </RadioGroup>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('pros')} <span className="text-gray-500">({t('will_be_auto_generated')})</span>
-                </label>
-                <Textarea
-                  placeholder={t('pros_placeholder')}
-                  value={formData.pros}
-                  onChange={(e) => setFormData(prev => ({ ...prev, pros: e.target.value }))}
-                  className="rounded-xl py-4 min-h-[100px]"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('cons')} <span className="text-gray-500">({t('will_be_auto_generated')})</span>
-                </label>
-                <Textarea
-                  placeholder={t('cons_placeholder')}
-                  value={formData.cons}
-                  onChange={(e) => setFormData(prev => ({ ...prev, cons: e.target.value }))}
-                  className="rounded-xl py-4 min-h-[100px]"
-                />
-              </div>
-            </div>
-          </motion.div>
-          )}
+              <TradeInStep
+                key="trade-in"
+                formData={formData}
+                setFormData={setFormData}
+                t={t}
+              />
+            )}
 
-
-
-          {/* Price */}
           {currentStep === 3 && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
-          >
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('price')}</h2>
-          
-            {yad2PriceInfo?.data && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="flex items-center justify-between text-sm text-gray-700 font-medium">
-                        <span>{t('min')} {Number(yad2PriceInfo.data.minPrice).toLocaleString()}</span>
-                        <span>{t('predicted')} {Number(yad2PriceInfo.data.predictedPrice).toLocaleString()}</span>
-                        <span>{t('max')} {Number(yad2PriceInfo.data.maxPrice).toLocaleString()}</span>
-                      </div>
-                      <div className="mt-3">
-                        <div className="relative h-3 rounded-full overflow-hidden bg-gradient-to-r from-green-400 via-yellow-300 to-red-500" aria-label="Price heatmap" />
-                        {(() => {
-                          const min = Number(yad2PriceInfo.data.minPrice) || 0;
-                          const max = Number(yad2PriceInfo.data.maxPrice) || 0;
-                          const pred = Number(yad2PriceInfo.data.predictedPrice) || 0;
-                          const range = Math.max(max - min, 1);
-                          const pct = Math.min(100, Math.max(0, ((pred - min) / range) * 100));
-                          return (
-                            <div className="relative h-6">
-                              <div className="absolute top-0 -mt-2" style={{ left: `${pct}%`, transform: 'translateX(-50%)' }}>
-                                <div className="h-4 w-4 rounded-full bg-blue-600 border-2 border-white shadow" />
-                              </div>
-                            </div>
-                          );
-                        })()}
-                      </div>
-                                                  <div className="mt-2 text-xs text-gray-500">
-                              {t('accuracy')}: {String(yad2PriceInfo.data.accuracyId)}
-                            </div>
-                    </div>
-                  )}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('asking_price')} <span className="text-gray-500">({t('in_israeli_shekels') || 'in Israeli Shekels'})</span>
-              </label>
-              <Input
-                placeholder={t('asking_price_placeholder')}
-                type="number"
-                value={formData.askingPrice}
-                onChange={(e) => setFormData(prev => ({ ...prev, askingPrice: e.target.value }))}
-                className="w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+              <PriceStep
+                key="price"
+                formData={formData}
+                setFormData={setFormData}
+                yad2PriceInfo={yad2PriceInfo}
+                t={t}
               />
-            </div>
-          </motion.div>
-          )}
+            )}
 
-
-
-
-
-
-
-
-
-          {/* Contact Info */}
           {currentStep === 4 && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
-          >
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('contact_info')}</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('name')} <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  placeholder={t('name_placeholder')}
-                  value={formData.name}
-                  onChange={(e) => {
-                    setFormData(prev => ({ ...prev, name: e.target.value }));
-                    setErrors(prev => ({ ...prev, name: '' }));
-                  }}
-                  className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.name ? 'border-red-500' : ''}`}
-                />
-                {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('email')} <span className="text-gray-500">({t('optional')})</span>
-                </label>
-                <Input
-                  placeholder={t('email_placeholder')}
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => {
-                    setFormData(prev => ({ ...prev, email: e.target.value }));
-                    setErrors(prev => ({ ...prev, email: '' }));
-                  }}
-                  className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : ''}`}
-                />
-                {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('phone')} <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  placeholder={t('phone_placeholder')}
-                  value={formData.phone}
-                  onChange={(e) => {
-                    setFormData(prev => ({ ...prev, phone: e.target.value }));
-                    setErrors(prev => ({ ...prev, phone: '' }));
-                  }}
-                  className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.phone ? 'border-red-500' : ''}`}
-                />
-                {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Region (אזור) <span className="text-gray-500">(enum)</span>
-                </label>
-                <Select
-                  value={formData.region}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, region: value }))}
-                >
-                  <SelectTrigger className="rounded-xl py-5">
-                    <SelectValue placeholder="Select region" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white">
-                    <SelectItem value="north">North</SelectItem>
-                    <SelectItem value="center">Center</SelectItem>
-                    <SelectItem value="south">South</SelectItem>
-                    <SelectItem value="jerusalem">Jerusalem</SelectItem>
-                    <SelectItem value="haifa">Haifa</SelectItem>
-                    <SelectItem value="tel_aviv">Tel Aviv</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </motion.div>
-          )}
-
-          {/* Image Upload */}
-          {currentStep === 5 && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
-          >
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('upload_images')}</h2>
-            <div className={`border-2 border-dashed rounded-xl p-8 transition-all duration-200 hover:border-blue-500 ${errors.images ? 'border-red-500' : 'border-gray-200'}`}>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImageChange}
-                className="hidden"
-                id="image-upload"
+              <ContactInfoStep
+                key="contact-info"
+                formData={formData}
+                setFormData={setFormData}
+                errors={errors}
+                setErrors={setErrors}
+                t={t}
               />
-              <label
-                htmlFor="image-upload"
-                className="cursor-pointer flex flex-col items-center justify-center"
-              >
-                <div className="bg-blue-50 rounded-full p-4 mb-4">
-                  <Camera className="h-8 w-8 text-blue-500" />
-                </div>
-                <p className="text-lg font-medium text-gray-700 mb-2">{t('drag_drop')}</p>
-                <p className="text-sm text-gray-500">{t('image_requirements')}</p>
-              </label>
-              
-              {errors.images && <p className="mt-2 text-sm text-red-500 text-center">{errors.images}</p>}
-              
-              {formData.images.length > 0 && (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4"
-                >
-                  {formData.images.map((file, index) => (
-                    <motion.div 
-                      key={index}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="relative aspect-square group"
-                    >
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt={t('image_preview', { number: index + 1 })}
-                        className="w-full h-full object-cover rounded-lg shadow-sm"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeImage(index)}
-                        className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                        aria-label={t('remove_image')}
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              )}
-            </div>
-          </motion.div>
-          )}
+            )}
+
+          {currentStep === 5 && (
+              <ImageUploadStep
+                key="image-upload"
+                formData={formData}
+                onImageChange={handleImageChange}
+                onRemoveImage={removeImage}
+                errors={errors}
+                t={t}
+              />
+            )}
+          </AnimatePresence>
 
           {/* Navigation Buttons */}
-          <div className="flex items-center justify-between gap-3">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="flex items-center justify-between gap-3"
+          >
             <Button
               type="button"
               variant="outline"
-              onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
+              onClick={goToPreviousStep}
               disabled={currentStep === 0}
-              className="px-6"
+              className="px-6 transition-all duration-200 hover:scale-105"
             >
               {t('previous') || 'Previous'}
             </Button>
 
-            {currentStep < STEPS.length - 1 && (
+            {currentStep < STEP_CONFIGURATION.length - 1 && (
               <Button
                 type="button"
-                onClick={() => {
-                  // Auto-generate title if moving from step 0 and title is empty
-                  if (currentStep === 0) {
-                    autoGenerateTitleIfEmpty();
-                    
-                  }
-                  if (currentStep === 2) {
-                    // Fetch Yad2 price when moving to step 3 (Price step)
-                    fetchYad2Price();
-                  }
-                  setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1));
-                }}
-                className="px-6"
+                onClick={goToNextStep}
+                disabled={!canProceedToNext()}
+                className="px-6 transition-all duration-200 hover:scale-105"
               >
                 {t('next') || 'Next'}
               </Button>
             )}
-          </div>
+          </motion.div>
 
           {/* Submit Button */}
-          {currentStep === STEPS.length - 1 && (
+          {currentStep === STEP_CONFIGURATION.length - 1 && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
             className="sticky bottom-4 bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg"
           >
             <Button
               type="submit"
-              className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105"
               disabled={isSubmitting}
             >
               {isSubmitting ? (
@@ -2592,98 +760,22 @@ export default function AddCarListing() {
             </Button>
           </motion.div>
           )}
-
-          
         </form>
 
         {/* Loading Overlay */}
-        {isSubmitting && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl text-center"
-            >
-              <div className="bg-blue-100 rounded-full p-4 mb-6 mx-auto w-20 h-20 flex items-center justify-center">
-                <Loader2 className="h-10 w-10 text-blue-600 animate-spin" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                {t('processing') || 'Processing...'}
-              </h3>
-              <p className="text-gray-600 mb-4">
-                {currentProcessingStep || t('processing_description') || 'Please wait while we process your car listing. This may take a few moments.'}
-              </p>
-              <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
+        <LoadingOverlay 
+          isVisible={isSubmitting}
+          currentStep={currentProcessingStep}
+          t={t}
+        />
 
         {/* Popup Modal */}
-        {showPopup && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-            onClick={closePopupModal}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className={`bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl ${
-                popupType === 'success' ? 'border-l-4 border-green-500' : 'border-l-4 border-red-500'
-              }`}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center gap-4 mb-4">
-                <div className={`p-3 rounded-full ${
-                  popupType === 'success' 
-                    ? 'bg-green-100 text-green-600' 
-                    : 'bg-red-100 text-red-600'
-                }`}>
-                  {popupType === 'success' ? (
-                    <ShieldCheck className="h-6 w-6" />
-                  ) : (
-                    <AlertCircle className="h-6 w-6" />
-                  )}
-                </div>
-                <div>
-                  <h3 className={`text-lg font-semibold ${
-                    popupType === 'success' ? 'text-green-800' : 'text-red-800'
-                  }`}>
-                    {popupTitle}
-                  </h3>
-                </div>
-              </div>
-              
-              <p className={`text-gray-700 mb-6 ${
-                popupType === 'success' ? 'text-green-700' : 'text-red-700'
-              }`}>
-                {popupMessage}
-              </p>
-              
-              <div className="flex justify-end">
-                <Button
-                  onClick={closePopupModal}
-                  className={`px-6 py-2 ${
-                    popupType === 'success'
-                      ? 'bg-green-600 hover:bg-green-700 text-white'
-                      : 'bg-red-600 hover:bg-red-700 text-white'
-                  }`}
-                >
-                  {t('close') || 'Close'}
-                </Button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
+        <PopupModalComponent
+          isVisible={showPopup}
+          config={popupConfig}
+          onClose={closePopup}
+          t={t}
+        />
       </motion.div>
     </div>
   );

@@ -8,15 +8,21 @@ export async function GET(request: NextRequest) {
     // Parse query params from the URL
     const { searchParams } = new URL(request.url);
 
-    const licensePlate = searchParams.get('licensePlate');
-    if (!licensePlate) {
-      return NextResponse.json({ error: 'licensePlate is required' }, { status: 400 });
+    const manufacturerName = searchParams.get('manufacturerName');
+    const modelName = searchParams.get('modelName');
+    const year = searchParams.get('year');
+    const submodel = searchParams.get('submodel');
+    const fuelType = searchParams.get('fuelType');
+
+    if (!manufacturerName || !modelName || !year || !submodel || !fuelType) {
+      return NextResponse.json({ error: 'All parameters are required' }, { status: 400 });
     }
 
-    console.log("Fetching vehicle specs for license plate:", licensePlate);
+    console.log("Fetching vehicle specs for license plate:", manufacturerName, modelName, year, submodel, fuelType);
     
-    // Construct the government API URL
-    const govApiUrl = `${GOV_API_BASE_URL}?resource_id=${RESOURCE_ID}&q=${encodeURIComponent(licensePlate)}`;
+    // Construct the government API URL with proper query parameters
+    // The API expects: manufacturer name, model name, year, submodel, fuel type
+    const govApiUrl = `${GOV_API_BASE_URL}?resource_id=${RESOURCE_ID}&q=${encodeURIComponent(manufacturerName)}&q=${encodeURIComponent(modelName)}&q=${encodeURIComponent(year)}&q=${encodeURIComponent(submodel)}&q=${encodeURIComponent(fuelType)}`;
     console.log('Vehicle specs API URL:', govApiUrl);
 
     // Use the exact same headers as the other government API routes
