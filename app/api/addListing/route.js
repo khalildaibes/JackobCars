@@ -133,7 +133,7 @@ export async function POST(request) {
       data: {
         categories: "car-listing",
         quantity: 1,
-        name: car.title,
+        name: car.name,
         slug: generateSlug(`${brand} ${model} ${year}`),
         price: specs.price || 0,
         details: {
@@ -165,7 +165,7 @@ export async function POST(request) {
             // Car details
             miles: car.miles || "",
             fuel: car.fuel || "",
-            name: car.title || "",
+            name: car.name || "",
             year: parseInt(year) || 0,
             price: specs.price || 0,
             

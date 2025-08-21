@@ -2161,28 +2161,7 @@ export default function AddCarListing() {
           </motion.div>
           )}
 
-          {/* Temporary Submit Button for Testing - Always Visible */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="sticky bottom-4 bg-yellow-100/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg border-2 border-yellow-400"
-          >
-            <Button
-              type="submit"
-              onClick={handleSubmit}
-              className="w-full py-4 text-lg font-semibold bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <div className="flex items-center justify-center gap-2">
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                  <span>Testing Submit...</span>
-                </div>
-              ) : (
-                'TEST SUBMIT (Always Visible)'
-              )}
-            </Button>
-          </motion.div>
+          
         </form>
 
         {/* Loading Overlay */}
