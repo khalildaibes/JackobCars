@@ -138,6 +138,7 @@ export default function AddCarListing() {
   const [selectedManufacturer, setSelectedManufacturer] = useState('');
   const [selectedModel, setSelectedModel] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
+  const [subModelID, setSubModelID] = useState<string>('');
   const [availableModels, setAvailableModels] = useState<any[]>([]);
   const [availableYears, setAvailableYears] = useState<number[]>([]);
   const [plateNumber, setPlateNumber] = useState("");
@@ -146,6 +147,7 @@ export default function AddCarListing() {
   const [carData, setCarData] = useState<CarData | null>(null);
   const [yad2ModelInfo, setYad2ModelInfo] = useState<any | null>(null);
   const [yad2PriceInfo, setYad2PriceInfo] = useState<any | null>(null);
+  
   const [captchaRequired, setCaptchaRequired] = useState(false);
   const [captchaUrl, setCaptchaUrl] = useState<string | null>(null);
   const [showCaptchaPrompt, setShowCaptchaPrompt] = useState(false);
@@ -270,6 +272,14 @@ export default function AddCarListing() {
       setAvailableYears([]);
     }
   }, [selectedManufacturer, selectedModel, manufacturersData]);
+
+  // Fetch Yad2 price when step changes to 3 (Price step)
+  useEffect(() => {
+    if (currentStep === 3 && subModelID && formData.yearOfProduction) {
+      console.log('Step 3 reached, fetching Yad2 price with:', { subModelID, year: formData.yearOfProduction });
+      fetchYad2Price();
+    }
+  }, [currentStep, subModelID, formData.yearOfProduction]);
 
   const formatPlateNumber = (value: string) => {
     // Remove all non-alphanumeric characters
@@ -795,7 +805,9 @@ export default function AddCarListing() {
   const autoGenerateTitleIfEmpty = () => {
     if (!formData.title && selectedManufacturer && selectedModel && selectedYear) {
       const manufacturerName = manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer;
-      const newTitle = `${manufacturerName} ${selectedModel} ${selectedYear}`.trim();
+      // Use commercialNickname (which stores the title) instead of selectedModel (which stores the ID)
+      const modelName = formData.commercialNickname || selectedModel;
+      const newTitle = `${manufacturerName} ${modelName} ${selectedYear}`.trim();
       console.log('Auto-generating title on step change:', newTitle);
       setFormData(prev => ({
         ...prev,
@@ -1064,7 +1076,7 @@ export default function AddCarListing() {
         car: {
           // Basic car information
           fuel: getBestDataValue('fuelType', formData.fuelType, cd.fuel_type, yad2Data.fuelType) || '',
-          name: composedName,
+          name: formData.title,
           year: String(getBestDataValue('yearOfProduction', formData.yearOfProduction, cd.year_of_production, yad2Data.year) || ''),
           miles: String(formData.mileage || ''),
           price: parseFloat(formData.askingPrice) || 0,
@@ -1204,6 +1216,37 @@ export default function AddCarListing() {
     }));
   };
 
+  async function fetchYad2Price() {
+    console.log('fetchYad2Price called with:', { subModelID, year: formData.yearOfProduction });
+    
+    if (!subModelID || !formData.yearOfProduction) {
+      console.warn('Missing required data for Yad2 price:', { subModelID, year: formData.yearOfProduction });
+      return;
+    }
+    
+    try {
+
+      const url = `/api/yad2/price?subModelId=${subModelID}&kilometers=0&ascentYearOnRoad=${formData.yearOfProduction}&ascentMonthOnRoad=1`;
+      console.log('Fetching Yad2 price from:', url);
+      
+      const priceRes = await fetch(url);
+      console.log('Yad2 price response status:', priceRes.status);
+      
+      if (priceRes.ok) {
+        const priceData = await priceRes.json();
+        console.log('Yad2 price data received:', priceData);
+        setYad2PriceInfo(priceData);
+      } else {
+        const err = await priceRes.json().catch(() => ({}));
+        console.warn('Yad2 price API failed:', err);
+        setYad2PriceInfo(null);
+      }
+    } catch (err) {
+      console.error('Error fetching Yad2 price:', err);
+      setYad2PriceInfo(null);
+    }
+  }
+
   return (
     <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-[5%] py-8 px-4 sm:px-6 lg:px-8 ${isRTL ? 'rtl' : 'ltr'}`}>
       <motion.div 
@@ -1246,6 +1289,8 @@ export default function AddCarListing() {
             ))}
           </ol>
         </div>
+
+       
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Information */}
@@ -1306,7 +1351,7 @@ export default function AddCarListing() {
               {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
               {!formData.title && selectedManufacturer && selectedModel && selectedYear && (
                 <p className="mt-2 text-sm text-blue-600">
-                  💡 Title will be auto-generated as "{manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer} {selectedModel} {selectedYear}" when you click Next
+                  💡 Title will be auto-generated as "{manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer} {formData.commercialNickname || 'Model'} {selectedYear}" when you click Next
                 </p>
               )}
             </div>
@@ -1580,6 +1625,12 @@ export default function AddCarListing() {
                       value={selectedModel}
                       onValueChange={(value) => {
                         setSelectedModel(value);
+                        setSubModelID(value);
+                        // Store the title for display purposes in commercialNickname
+                        const selectedModelData = availableModels.find(model => model.id?.toString() === value);
+                        if (selectedModelData) {
+                          setFormData(prev => ({ ...prev, commercialNickname: selectedModelData.title || '' }));
+                        }
                         setErrors(prev => ({ ...prev, model: '' }));
                       }}
                       disabled={!selectedManufacturer || availableModels.length === 0}
@@ -1598,7 +1649,7 @@ export default function AddCarListing() {
                           </SelectItem>
                         ) : (
                           availableModels.map((model) => (
-                            <SelectItem key={model.id} value={model.title?.toString()}>
+                            <SelectItem key={model.id} value={model.id?.toString()}>
                               {model.title || 'Unknown Model'}
                             </SelectItem>
                           ))
@@ -1821,6 +1872,7 @@ export default function AddCarListing() {
             className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
           >
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('price')}</h2>
+          
             {yad2PriceInfo?.data && (
                     <div className="bg-gray-50 rounded-lg p-4">
                       <div className="flex items-center justify-between text-sm text-gray-700 font-medium">
@@ -2009,6 +2061,11 @@ export default function AddCarListing() {
                   // Auto-generate title if moving from step 0 and title is empty
                   if (currentStep === 0) {
                     autoGenerateTitleIfEmpty();
+                    
+                  }
+                  if (currentStep === 2) {
+                    // Fetch Yad2 price when moving to step 3 (Price step)
+                    fetchYad2Price();
                   }
                   setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1));
                 }}

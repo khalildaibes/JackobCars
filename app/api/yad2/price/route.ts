@@ -18,8 +18,8 @@ export async function GET(request) {
       );
     }
 
-    const url = `${YAD2_PRICE_BASE_URL}modelMasterId=${subModelId}&kilometers=${kilometers}&ascentYearOnRoad=${ascentYearOnRoad}&ascentMonthOnRoad=${ascentMonthOnRoad}`;
-    fetch(`https://api.scraperapi.com/?api_key=0a06de12ff661cc5e1da2364c97be83b&url=${url}`)
+    const url = `${YAD2_PRICE_BASE_URL}modelMasterId=${subModelId}&kilometers=${kilometers}&ascentYearOnRoad=${ascentYearOnRoad}`;
+    fetch(`${url}`)
       .then(response => {
         console.log("response is", response);
         return NextResponse.json(response); 

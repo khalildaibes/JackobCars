@@ -60,7 +60,7 @@ export async function POST(request) {
     // Generate pros and cons using the dedicated API endpoint
     let generatedData = { pros: [], cons: [] };
     try {
-      const prosConsResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/prosandcons`, {
+      const prosConsResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000' }/api/prosandcons`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ export async function POST(request) {
       data: {
         categories: "car-listing",
         quantity: 1,
-        name: `${brand} ${model} ${year}`,
+        name: car.title,
         slug: generateSlug(`${brand} ${model} ${year}`),
         price: specs.price || 0,
         details: {
@@ -120,7 +120,7 @@ export async function POST(request) {
             manufacturer_name: car.manufacturer_name || "",
             commercial_nickname: car.commercial_nickname || "",
             year_of_production: car.year_of_production || "",
-            fuel_type: car.fuel_type || "",
+            fuel_type: car.engine_type || "",
             trim_level: car.trim_level || "",
             body_type: car.body_type || "",
             transmission: car.transmission || "",
@@ -128,7 +128,7 @@ export async function POST(request) {
             // Car details
             miles: car.miles || "",
             fuel: car.fuel || "",
-            name: car.name || "",
+            name: car.title || "",
             year: parseInt(year) || 0,
             price: specs.price || 0,
             
