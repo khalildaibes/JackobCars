@@ -54,7 +54,7 @@ import React from 'react';
 const API_BASE_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&q=";
 const YAD2_API_BASE_URL = "https://gw.yad2.co.il/car-data-gov/model-master/?licensePlate=";
 const YAD2_API_BASE_URL_PRICE = "https://gw.yad2.co.il/price-list/calculate-price?";
-const ALTERNATE_API_BASE_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=03adc637-b6fe-402b-9937-7c3d3afc9140&q=";
+const ALTERNATE_API_BASE_URL = "https://data.gov.il/he/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&q=";
 const OWNERSHIP_HISTORY_API_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=bb2355dc-9ec7-4f06-9c3f-3344672171da&q=";
 const VEHICLE_SPECS_API_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=142afde2-6228-49f9-8a29-9b6c3a0cbe40&q=";
 const DEFAULT_STORE_ID = 18; // Update if needed
@@ -138,9 +138,12 @@ export default function AddCarListing() {
   const [selectedManufacturer, setSelectedManufacturer] = useState('');
   const [selectedModel, setSelectedModel] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
+  const [govCarInfo, setGovCarInfo] = useState<any | null>(null);
   const [subModelID, setSubModelID] = useState<string>('');
   const [availableModels, setAvailableModels] = useState<any[]>([]);
   const [availableYears, setAvailableYears] = useState<number[]>([]);
+  const [availableSubmodels, setAvailableSubmodels] = useState<any[]>([]);
+  const [selectedSubmodel, setSelectedSubmodel] = useState('');
   const [plateNumber, setPlateNumber] = useState("");
   const resultsRef = React.useRef<HTMLDivElement>(null);
 
@@ -230,7 +233,36 @@ export default function AddCarListing() {
     commercialNickname: '',
     yearOfProduction: '',
     fuelType: '',
-    car_data: {}
+    car_data: {},
+    // Basic Ad Info (מאפייני מודעה)
+    hasImage: false,
+    hasPrice: false,
+    fromAgency: false,
+    availableInTradeIn: false,
+    availableInFinancing: false,
+    priceDropped: false,
+    foreclosureAd: false,
+    // Vehicle Specifications
+    price: '',
+    kilometers: '',
+    engineCapacity: '',
+    handOwnershipCount: '',
+    region: '',
+    submodel: '',
+    numberOfSeats: '',
+    // Engine Types (סוגי מנוע)
+    engineTypes: [] as string[],
+    // Gearbox (תיבת הילוכים)
+    gearbox: '',
+    // Ownership Type (בעלות)
+    ownershipType: '',
+    // Color (צבע)
+    colors: [] as string[],
+    // Additional Features (מאפיינים נוספים)
+    longTestValid: false,
+    adaptedForDisabled: false,
+    // Free Search (חיפוש חופשי)
+    freeSearch: ''
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -282,6 +314,16 @@ export default function AddCarListing() {
     }
   }, [currentStep, subModelID, formData.yearOfProduction]);
 
+  // Auto-update hasImage, hasPrice and availableInTradeIn based on form data
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      hasImage: prev.images.length > 0,
+      hasPrice: !!prev.askingPrice || !!prev.price,
+      availableInTradeIn: prev.tradeIn === 'yes'
+    }));
+  }, [formData.images, formData.askingPrice, formData.price, formData.tradeIn]);
+
   const formatPlateNumber = (value: string) => {
     // Remove all non-alphanumeric characters
     const cleanValue = value.replace(/[^a-zA-Z0-9]/g, '');
@@ -298,6 +340,8 @@ export default function AddCarListing() {
     }
     return cleanValue;
   };
+
+
   const [error, setError] = useState<string | null>(null);
 
   const fetchCarImage = async (manufacturer: string, model: string) => {
@@ -414,20 +458,27 @@ export default function AddCarListing() {
   };
   async function fetchCarDataDirect(plate: string) {
     const upstreamUrl =
-      `https://gw.yad2.co.il/car-data-gov/model-master/?licensePlate=${encodeURIComponent(plate)}`;
+      `api/model-master?licensePlate=${encodeURIComponent(plate)}`;
   
     // Must use credentials if upstream uses them (often not needed here)
-    const r = await fetch(upstreamUrl, {
-      method: "GET",
-      credentials: "include",
-    });
+    const r = await fetch(upstreamUrl);
   
     if (!r.ok) {
       const t = await r.text();
       throw new Error(`Upstream ${r.status}: ${t.slice(0, 500)}`);
     }
   
-    return r.json();
+    const data = await r.json();
+    
+    // Auto-populate form fields from Yad2 data
+    if (data?.data) {
+      const carInfo = data.data;
+      console.log("carInfo is", carInfo)
+      setGovCarInfo(carInfo);
+      }
+    
+    
+    return govCarInfo;
   }
 
   const fetchCarData = async () => {
@@ -452,13 +503,59 @@ export default function AddCarListing() {
       const response = await fetch(`${API_BASE_URL}${cleanPlateNumber}`);
       primaryData  = await response.json();
       console.log("primaryData is", primaryData);
-      try {
-        const yad2Res = await fetch(`/api/yad2/model-master?licensePlate=${cleanPlateNumber}`);
-        if (yad2Res.ok) {
-          yad2Info = await yad2Res.json();
-          console.log('yad2 model-master:', yad2Info);
-          setYad2ModelInfo(yad2Info);
-        } else {
+              try {
+          const yad2Res = await fetch(`/api/yad2/model-master?licensePlate=${cleanPlateNumber}`);
+          if (yad2Res.ok) {
+            yad2Info = await yad2Res.json();
+            console.log('yad2 model-master:', yad2Info);
+            setYad2ModelInfo(yad2Info);
+            
+            // Auto-populate form fields from Yad2 data
+            if (yad2Info?.data) {
+              const carInfo = yad2Info.data;
+              setGovCarInfo(carInfo);
+              // Set year of production
+              if (carInfo.carYear) {
+                setFormData(prev => ({ ...prev, yearOfProduction: carInfo.carYear }));
+                setSelectedYear(carInfo.carYear);
+              }
+              
+              // Set manufacturer and model
+              if (carInfo.manufacturerId) {
+                // Find manufacturer by ID and set it
+                Object.keys(manufacturersData).forEach(manufacturerKey => {
+                  const manufacturer = manufacturersData[manufacturerKey];
+                  // Check if any submodel has the matching manufacturer ID
+                  const hasManufacturer = manufacturer.submodels?.some(submodel => 
+                    submodel.manufacturer?.id === carInfo.manufacturerId
+                  );
+                  
+                  if (hasManufacturer) {
+                    setSelectedManufacturer(manufacturerKey);
+                    // Set available models for this manufacturer
+                    setAvailableModels(manufacturer.submodels || []);
+                    
+                    // Find and set the model
+                    if (carInfo.modelId && manufacturer.submodels) {
+                      const model = manufacturer.submodels.find(m => m.id === carInfo.modelId);
+                      if (model) {
+                        setSelectedModel(model.id.toString());
+                        setSubModelID(model.id.toString());
+                        setFormData(prev => ({ 
+                          ...prev, 
+                          commercialNickname: model.title || '',
+                          manufacturerName: model.manufacturer?.title || ''
+                        }));
+                        
+                        // Fetch submodels for this model
+                        fetchSubmodels(model.id.toString());
+                      }
+                    }
+                  }
+                });
+              }
+            }
+          } else {
           let err: any = {};
           try { err = await yad2Res.json(); } catch {}
           console.warn('yad2 model-master failed', err);
@@ -1187,12 +1284,43 @@ export default function AddCarListing() {
           commercialNickname: '',
           yearOfProduction: '',
           fuelType: '',
-          car_data: {}
+          car_data: {},
+          // Basic Ad Info (מאפייני מודעה)
+          hasImage: false,
+          hasPrice: false,
+          fromAgency: false,
+          availableInTradeIn: false,
+          availableInFinancing: false,
+          priceDropped: false,
+          foreclosureAd: false,
+          // Vehicle Specifications
+          price: '',
+          kilometers: '',
+          engineCapacity: '',
+          handOwnershipCount: '',
+          region: '',
+          submodel: '',
+          numberOfSeats: '',
+          // Engine Types (סוגי מנוע)
+          engineTypes: [],
+          // Gearbox (תיבת הילוכים)
+          gearbox: '',
+          // Ownership Type (בעלות)
+          ownershipType: '',
+          // Color (צבע)
+          colors: [],
+          // Additional Features (מאפיינים נוספים)
+          longTestValid: false,
+          adaptedForDisabled: false,
+          // Free Search (חיפוש חופשי)
+          freeSearch: ''
         });
         setSelectedManufacturer('');
         setSelectedModel('');
         setAvailableModels([]);
         setAvailableYears([]);
+        setAvailableSubmodels([]);
+        setSelectedSubmodel('');
         setErrors(prev => ({ ...prev, manufacturer: '', model: '' }));
       }
     } catch (error) {
@@ -1222,8 +1350,33 @@ export default function AddCarListing() {
     }));
   };
 
+  const fetchSubmodels = async (modelId: string) => {
+    if (!modelId) return;
+    
+    try {
+      console.log('Fetching submodels for model ID:', modelId);
+      const response = await fetch(`/api/yad2/submodels?modelId=${modelId}`);
+      
+      if (response.ok) {
+        const submodelsData = await response.json();
+        console.log('Submodels data received:', submodelsData);
+        const filteredSubmodels = submodelsData.data ? submodelsData.data.filter((submodel: any) => 
+          submodel.minYear <= Number(formData.yearOfProduction || selectedYear) && 
+          submodel.maxYear >= Number(formData.yearOfProduction || selectedYear)
+        ) : [];
+        setAvailableSubmodels(filteredSubmodels);
+      } else {
+        console.warn('Failed to fetch submodels:', response.status);
+        setAvailableSubmodels([]);
+      }
+    } catch (error) {
+      console.error('Error fetching submodels:', error);
+      setAvailableSubmodels([]);
+    }
+  };
+
   async function fetchYad2Price() {
-    console.log('fetchYad2Price called with:', { subModelID, year: formData.yearOfProduction });
+    console.log('fetchYad2Price called with:', { subModelID: subModelID || yad2PriceInfo?.subModelID, year: formData.yearOfProduction });
     
     if (!subModelID || !formData.yearOfProduction) {
       console.warn('Missing required data for Yad2 price:', { subModelID, year: formData.yearOfProduction });
@@ -1492,8 +1645,7 @@ export default function AddCarListing() {
                         {yad2ModelInfo?.data && (
                           <div className="bg-gray-50 rounded-lg p-4">
                             <div className="flex items-center gap-2 mb-2">
-                              <h4 className="text-sm font-semibold text-gray-800">Yad2</h4>
-                              <span className="text-xs text-gray-500">{t('model')}</span>
+                              <span className="text-xl text-gray-500">{t('model')}</span>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               {yad2ModelInfo.data.carTitle && (
@@ -1540,40 +1692,7 @@ export default function AddCarListing() {
                   </div>
                 </div>
 
-                {/* Results Section */}
-                <div ref={resultsRef} className="container mx-auto px-4 py-8 scroll-mt-8">
-                  {error && (
-                    <Alert variant="destructive" className="mb-8">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                  )}
-
-                  {carData && !loading && (
-                    <Card>
-                      <CardContent className="p-6">
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-                          <div>
-                            <div className="text-xs text-gray-500">{t('manufacturer_name')}</div>
-                            <div className="font-medium text-gray-900">{carData.manufacturer_name}</div>
-                          </div>
-                          <div>
-                            <div className="text-xs text-gray-500">{t('commercial_nickname')}</div>
-                            <div className="font-medium text-gray-900">{carData.commercial_nickname}</div>
-                          </div>
-                          <div>
-                            <div className="text-xs text-gray-500">{t('year_of_production')}</div>
-                            <div className="font-medium text-gray-900">{carData.year_of_production}</div>
-                          </div>
-                          <div>
-                            <div className="text-xs text-gray-500">{t('fuel_type')}</div>
-                            <div className="font-medium text-gray-900">{carData.fuel_type}</div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
+                
               </div>
             )}
 
@@ -1595,9 +1714,13 @@ export default function AddCarListing() {
                           setAvailableModels(models);
                           setSelectedModel(''); // Reset model selection
                           setAvailableYears([]); // Clear years until model is selected
+                          setAvailableSubmodels([]); // Clear submodels until model is selected
+                          setSelectedSubmodel(''); // Reset submodel selection
                         } else {
                           setAvailableModels([]);
                           setAvailableYears([]);
+                          setAvailableSubmodels([]);
+                          setSelectedSubmodel('');
                         }
                         setSelectedManufacturer(value);
                         setErrors(prev => ({ ...prev, manufacturer: '' }));
@@ -1637,6 +1760,10 @@ export default function AddCarListing() {
                         if (selectedModelData) {
                           setFormData(prev => ({ ...prev, commercialNickname: selectedModelData.title || '' }));
                         }
+                        // Fetch submodels when model is selected
+                        fetchSubmodels(value);
+                        // Reset submodel selection
+                        setSelectedSubmodel('');
                         setErrors(prev => ({ ...prev, model: '' }));
                       }}
                       disabled={!selectedManufacturer || availableModels.length === 0}
@@ -1701,6 +1828,52 @@ export default function AddCarListing() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Submodel (תת דגם) <span className="text-gray-500">({t('optional') || 'Optional'})</span>
+                    </label>
+                    <Select
+                      value={selectedSubmodel}
+                      onValueChange={(value) => {
+                        setSelectedSubmodel(value);
+                        // Find the selected submodel data
+                        const selectedSubmodelData = availableSubmodels.find(submodel => 
+                          submodel.id?.toString() === value
+                        );
+                        if (selectedSubmodelData) {
+                          setFormData(prev => ({ 
+                            ...prev, 
+                            submodel: selectedSubmodelData.title || ''
+                          }));
+                          // Update subModelID for price fetching
+                          setSubModelID(value);
+                        }
+                      }}
+                      disabled={!selectedModel || availableSubmodels.length === 0}
+                    >
+                      <SelectTrigger className="rounded-xl py-5">
+                        <SelectValue placeholder="Select Submodel" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        {!selectedModel ? (
+                          <SelectItem value="no_submodels_available" disabled>
+                            Select model first
+                          </SelectItem>
+                        ) : availableSubmodels.length === 0 ? (
+                          <SelectItem value="no_submodels_available" disabled>
+                            No submodels available
+                          </SelectItem>
+                        ) : (
+                          availableSubmodels.map((submodel) => (
+                            <SelectItem key={submodel.id} value={submodel.id?.toString()}>
+                              {submodel.title} ({submodel.minYear}-{submodel.maxYear})
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       {t('plate_number')} <span className="text-gray-500">({t('optional') || 'Optional'})</span>
                     </label>
                     <Input
@@ -1715,17 +1888,7 @@ export default function AddCarListing() {
                     {errors.plateNumber && <p className="mt-1 text-sm text-red-500">{errors.plateNumber}</p>}
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('color')} <span className="text-gray-500">({t('optional')})</span>
-                    </label>
-                    <Input
-                      placeholder={t('color')}
-                      value={formData.color}
-                      onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
-                      className="rounded-xl py-5"
-                    />
-                  </div>
+
 
 
 
@@ -1741,9 +1904,19 @@ export default function AddCarListing() {
                         <SelectValue placeholder={t('engine_type')} />
                       </SelectTrigger>
                       <SelectContent className="bg-white">
-                        {['petrol', 'gasoline', 'diesel', 'electric', 'hybrid'].map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {t(`fuel_types.${type}`)}
+                        {[
+                          { value: 'petrol', label: 'בנזין' },
+                          { value: 'diesel', label: 'דיזל' },
+                          { value: 'lpg', label: 'גפ"מ' },
+                          { value: 'hybrid_petrol', label: 'היברידי בנזין' },
+                          { value: 'hybrid_diesel', label: 'היברידי דיזל' },
+                          { value: 'plugin_petrol', label: 'פלאג-אין בנזין' },
+                          { value: 'plugin_diesel', label: 'פלאג-אין דיזל' },
+                          { value: 'electric_petrol', label: 'חשמלי בנזין' },
+                          { value: 'electric', label: 'חשמלי' }
+                        ].map((engineType) => (
+                          <SelectItem key={engineType.value} value={engineType.value}>
+                            {engineType.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -1764,6 +1937,127 @@ export default function AddCarListing() {
                       <SelectContent className="bg-white">
                         <SelectItem value="automatic">{t('transmission_automatic')}</SelectItem>
                         <SelectItem value="manual">{t('transmission_manual')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Engine capacity (נפח מנוע, סמ״ק) <span className="text-gray-500">(number)</span>
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="Engine capacity"
+                      value={formData.engineCapacity}
+                      onChange={(e) => setFormData(prev => ({ ...prev, engineCapacity: e.target.value }))}
+                      className="rounded-xl py-5"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Hand / ownership count (יד) <span className="text-gray-500">(integer)</span>
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="Hand count"
+                      value={formData.handOwnershipCount}
+                      onChange={(e) => setFormData(prev => ({ ...prev, handOwnershipCount: e.target.value }))}
+                      className="rounded-xl py-5"
+                    />
+                  </div>
+
+
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Number of seats (מספר מקומות) <span className="text-gray-500">(enum)</span>
+                    </label>
+                    <Select
+                      value={formData.numberOfSeats}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, numberOfSeats: value }))}
+                    >
+                      <SelectTrigger className="rounded-xl py-5">
+                        <SelectValue placeholder="Select number of seats" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        {[2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((seats) => (
+                          <SelectItem key={seats} value={seats.toString()}>
+                            {seats}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Gearbox (תיבת הילוכים) <span className="text-gray-500">(enum)</span>
+                    </label>
+                    <Select
+                      value={formData.gearbox}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, gearbox: value }))}
+                    >
+                      <SelectTrigger className="rounded-xl py-5">
+                        <SelectValue placeholder="Select gearbox" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        <SelectItem value="automatic">אוטומטי</SelectItem>
+                        <SelectItem value="manual">ידני</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Ownership Type (בעלות) <span className="text-gray-500">(enum)</span>
+                    </label>
+                    <Select
+                      value={formData.ownershipType}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, ownershipType: value }))}
+                    >
+                      <SelectTrigger className="rounded-xl py-5">
+                        <SelectValue placeholder="Select ownership type" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        <SelectItem value="private">פרטית</SelectItem>
+                        <SelectItem value="company">חברה</SelectItem>
+                        <SelectItem value="rental">השכרה</SelectItem>
+                        <SelectItem value="leasing">ליסינג</SelectItem>
+                        <SelectItem value="taxi">מונית</SelectItem>
+                        <SelectItem value="driving_school">לימוד נהיגה</SelectItem>
+                        <SelectItem value="personal_import">ייבוא אישי</SelectItem>
+                        <SelectItem value="parallel_import">ייבוא מקביל</SelectItem>
+                        <SelectItem value="government">ממשלתי</SelectItem>
+                        <SelectItem value="un">או"ם</SelectItem>
+                        <SelectItem value="rental_lease">השכרה / החכר</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Color (צבע) <span className="text-gray-500">(enum)</span>
+                    </label>
+                    <Select
+                      value={formData.color}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, color: value }))}
+                    >
+                      <SelectTrigger className="rounded-xl py-5">
+                        <SelectValue placeholder="Select color" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        <SelectItem value="red">אדום</SelectItem>
+                        <SelectItem value="gray">אפור</SelectItem>
+                        <SelectItem value="pink">ורוד</SelectItem>
+                        <SelectItem value="brown">חום</SelectItem>
+                        <SelectItem value="green">ירוק</SelectItem>
+                        <SelectItem value="blue">כחול</SelectItem>
+                        <SelectItem value="orange">כתום</SelectItem>
+                        <SelectItem value="white">לבן</SelectItem>
+                        <SelectItem value="purple">סגול</SelectItem>
+                        <SelectItem value="yellow">צהוב</SelectItem>
+                        <SelectItem value="black">שחור</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -1826,25 +2120,25 @@ export default function AddCarListing() {
                   <button
                     type="button"
                     onClick={async () => {
-                      if (!formData.manufacturerName || !formData.commercialNickname || !formData.yearOfProduction) {
-                        alert(t('fill_manufacturer_model_year_first'));
+                      console.log("govCarInfo is", govCarInfo)
+                      if (!govCarInfo) {
+                        alert(t('fill_description_first'));
                         return;
                       }
-                      
                       try {
                         const response = await fetch('/api/createDescription', {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify({
-                            make: formData.manufacturerName,
-                            model: formData.commercialNickname,
-                            year: formData.yearOfProduction,
+                            make: formData.manufacturerName || govCarInfo.carTitle || '',
+                            model: formData.commercialNickname || govCarInfo.subModelTitle || '',
+                            year: formData.yearOfProduction || govCarInfo.carYear || '',
                             specs: {
-                              mileage: formData.mileage,
-                              color: formData.color,
-                              engineType: formData.engineType,
-                              transmission: formData.transmission,
-                              condition: formData.currentCondition
+                              mileage: formData.mileage || '',
+                              color: formData.color || '',
+                              engineType: formData.engineType || '',
+                              transmission: formData.transmission || '',
+                              condition: formData.currentCondition || ''
                             }
                           })
                         });
@@ -1978,6 +2272,14 @@ export default function AddCarListing() {
           </motion.div>
           )}
 
+
+
+
+
+
+
+
+
           {/* Contact Info */}
           {currentStep === 4 && (
           <motion.div 
@@ -2034,6 +2336,28 @@ export default function AddCarListing() {
                   className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.phone ? 'border-red-500' : ''}`}
                 />
                 {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Region (אזור) <span className="text-gray-500">(enum)</span>
+                </label>
+                <Select
+                  value={formData.region}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, region: value }))}
+                >
+                  <SelectTrigger className="rounded-xl py-5">
+                    <SelectValue placeholder="Select region" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    <SelectItem value="north">North</SelectItem>
+                    <SelectItem value="center">Center</SelectItem>
+                    <SelectItem value="south">South</SelectItem>
+                    <SelectItem value="jerusalem">Jerusalem</SelectItem>
+                    <SelectItem value="haifa">Haifa</SelectItem>
+                    <SelectItem value="tel_aviv">Tel Aviv</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </motion.div>

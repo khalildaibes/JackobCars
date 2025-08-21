@@ -1,50 +1,61 @@
-import { NextResponse } from 'next/server';
-import fetch from 'node-fetch';
+import { NextRequest, NextResponse } from 'next/server';
 
-const YAD2_API_BASE_URL = 'https://gw.yad2.co.il/car-data-gov/model-master/?licensePlate=';
+const PROXY_BASE_URL = 'http://64.227.112.249:3000/fetch-json?mode=direct&url=';
+const YAD2_API_URL = 'https://gw.yad2.co.il/car-data-gov/model-master?licensePlate=';
 
-export async function GET(request) {
+export async function GET(request: NextRequest) {
   try {
- // Parse query params from the URL
- const { searchParams } = new URL(request.url);
+    // Parse query params from the URL
+    const { searchParams } = new URL(request.url);
 
- // These must match how you call it from the client:
- // /api/car-group-signup?plateNumber=...&phoneNumber=...&ownerName=...&carNickname=...&locale=...
- const licensePlate = searchParams.get('licensePlate');
-  if (!licensePlate || typeof licensePlate !== 'string') {
+    const licensePlate = searchParams.get('licensePlate');
+    if (!licensePlate) {
       return NextResponse.json({ error: 'licensePlate is required' }, { status: 400 });
     }
-// For this example you need the node-fetch npm packages: `npm i node-fetch`
 
-
-    const url = `${YAD2_API_BASE_URL}${encodeURIComponent(licensePlate)}`;
-    // fetch(`https://api.scraperapi.com/?api_key=0a06de12ff661cc5e1da2364c97be83b&url=${url}`)
-    //   .then(response => {
-    //     console.log("response is", response);
-    //     return NextResponse.json(response); 
-    //   })
-    //   .catch(error => {
-    //     console.log(error)
-    //   });
-
-    const response = await fetch(url, {
-      headers: {
-        Accept: 'application/json, text/plain, */*',
-        'User-Agent': 'Mozilla/5.0',
-      },
-      // Revalidate on each request; adjust if needed
-        // cache: 'no-store',
-    });
-    const data = await response.json();
-    console.log("licensePlate data is", data);
-    if (!response.ok) {
-      const text = await response.text();
-      return NextResponse.json({ error: 'Failed to fetch from Yad2', details: text }, { status: response.status });
+    // Convert license plate to number and validate
+    const licensePlateNumber = parseInt(licensePlate, 10);
+    if (isNaN(licensePlateNumber)) {
+      return NextResponse.json({ error: 'licensePlate must be a valid number' }, { status: 400 });
     }
 
+    console.log("Fetching licensePlate:", licensePlateNumber);
+    
+    // Construct the proxy request with proper parameters
+    const proxyUrl = `${PROXY_BASE_URL}`;
+    const targetUrl = `${YAD2_API_URL}${licensePlateNumber}`;
+    
+    console.log('Target Yad2 URL:', targetUrl);
+    console.log('Proxy URL:', proxyUrl);
+
+    const response = await fetch(targetUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      
+    });
+    console.log('Proxy response status:', response.status);
+    
+    if (!response.ok) {
+      const text = await response.text();
+      console.error('Proxy request failed:', response.status, text);
+      return NextResponse.json({ 
+        error: 'Failed to fetch from proxy service', 
+        details: text 
+      }, { status: response.status });
+    }
+
+    const data = await response.json();
+    console.log('License plate data received:', data);
+    
     return NextResponse.json(data);
   } catch (error: any) {
-    return NextResponse.json({ error: error?.message || 'Internal server error' }, { status: 500 });
+    console.error('Error in model-master API:', error);
+    return NextResponse.json({ 
+      error: error?.message || 'Internal server error',
+      stack: process.env.NODE_ENV === 'development' ? error?.stack : undefined
+    }, { status: 500 });
   }
 }
 
