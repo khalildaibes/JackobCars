@@ -65,6 +65,7 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
   const [error, setError] = useState<string | null>(null);
   const [debugInfo, setDebugInfo] = useState<any>(null);
   const [showContactInfo, setShowContactInfo] = useState(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
 
   async function getCarDetails(slug: string) {
@@ -306,20 +307,40 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
 const router = useRouter();
 const searchParams = useSearchParams();
 
-useEffect(() => {
-  if (searchParams.has('hostname')) {
-    // Create new URLSearchParams without hostname
-    const newParams = new URLSearchParams(searchParams);
-    newParams.delete('hostname');
-    
-    // Get the current pathname
-    const pathname = window.location.pathname;
-    
-    // Replace the URL without the hostname parameter
-    const newUrl = newParams.toString() ? `${pathname}?${newParams.toString()}` : pathname;
-    router.replace(newUrl, { scroll: false });
-  }
-}, [searchParams, router]);
+  useEffect(() => {
+    if (searchParams.has('hostname')) {
+      // Create new URLSearchParams without hostname
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete('hostname');
+      
+      // Get the current pathname
+      const pathname = window.location.pathname;
+      
+      // Replace the URL without the hostname parameter
+      const newUrl = newParams.toString() ? `${pathname}?${newParams.toString()}` : pathname;
+      router.replace(newUrl, { scroll: false });
+    }
+  }, [searchParams, router]);
+
+  // Add keyboard support for image modal
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isImageModalOpen) {
+        setIsImageModalOpen(false);
+      }
+    };
+
+    if (isImageModalOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isImageModalOpen]);
   const add_to_favorites = (slug: number) => {
     let updatedFavorites;
     if (favorites.includes(slug)) {
@@ -455,8 +476,34 @@ useEffect(() => {
   const isRTL = locale === 'ar';
   
   return (
-    <div className={`min-h-screen bg-gray-50 mt-[5%] bg-white ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
-      <Toaster position={isRTL ? "top-left" : "top-right"} />
+    <>
+      {isRTL && (
+        <style jsx global>{`
+          .rtl {
+            direction: rtl;
+            text-align: right;
+          }
+          .rtl .space-x-reverse > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-x-reverse: 1;
+          }
+          .rtl .ml-auto {
+            margin-left: unset;
+            margin-right: auto;
+          }
+          .rtl .mr-auto {
+            margin-right: unset;
+            margin-left: auto;
+          }
+          .rtl .text-left {
+            text-align: right;
+          }
+          .rtl .text-right {
+            text-align: left;
+          }
+        `}</style>
+      )}
+      <div className={`min-h-screen bg-gray-50 mt-[5%] bg-white ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+        <Toaster position={isRTL ? "top-left" : "top-right"} />
       {/* Breadcrumb */}
       <div className="mb-6">
         <Link href="/car-listing" className={`text-blue-600 hover:underline flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -539,14 +586,27 @@ useEffect(() => {
                     className="w-full h-[600px] object-cover"
                   /> */}
                   {car.mainImage && (
-                    <Img
-                      src={car.mainImage}
-                      width={1920}
-                      height={1080}
-                      external={true}
-                      alt={car.title}
-                      className="w-full h-[600px] object-cover"
-                    />
+                    <div 
+                      className="cursor-pointer transition-transform hover:scale-[1.02] relative group"
+                      onClick={() => setIsImageModalOpen(true)}
+                    >
+                      <Img
+                        src={car.mainImage}
+                        width={1920}
+                        height={1080}
+                        external={true}
+                        alt={car.title}
+                        className="w-full h-[600px] object-cover"
+                      />
+                      {/* Click indicator overlay */}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 backdrop-blur-sm rounded-full p-3">
+                          <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
                   )}
                   <Button 
                     size="icon" 
@@ -957,7 +1017,7 @@ useEffect(() => {
                 <div className="space-y-4">
                   {listings.filter(c => c.id !== car.id).slice(0, 3).map((similarCar) => (
                   <Link key={similarCar.id} href={`/car-details/${similarCar.slug}?hostname=${similarCar.hostname}`}>
-                      <div className="flex space-x-4 group p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div className={`flex ${isRTL ? 'space-x-reverse space-x-4' : 'space-x-4'} group p-3 rounded-lg hover:bg-gray-50 transition-colors`}>
                         <div className="w-24 h-20 overflow-hidden rounded-lg">
                           {/* <Img
                             external={true}
@@ -975,7 +1035,7 @@ useEffect(() => {
                             />
                           )}
                       </div>
-                      <div>
+                      <div className={isRTL ? 'text-right' : 'text-left'}>
                         <h4 className="font-medium text-sm group-hover:text-blue-600 transition-colors">{similarCar.title}</h4>
                           <p className="text-blue-600 text-sm font-semibold mt-1">{similarCar.price}</p>
                       </div>
@@ -1045,6 +1105,48 @@ useEffect(() => {
         </div>
       </div>
 
+      {/* Full Screen Image Modal */}
+      {isImageModalOpen && (
+        <div 
+          className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center p-4"
+          onClick={() => setIsImageModalOpen(false)}
+        >
+          <div className="relative max-w-7xl max-h-full">
+            {/* Close Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsImageModalOpen(false);
+              }}
+              className={`absolute top-4 z-10 bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors backdrop-blur-sm ${isRTL ? 'left-4' : 'right-4'}`}
+            >
+              <X className="h-6 w-6" />
+            </button>
+            
+            {/* Image */}
+            <div className="relative">
+              {car.mainImage && (
+                <Img
+                  src={car.mainImage}
+                  width={1920}
+                  height={1080}
+                  external={true}
+                  alt={car.title}
+                  className="max-w-full max-h-[90vh] object-contain rounded-lg"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              )}
+            </div>
+            
+            {/* Image Info */}
+            <div className={`absolute bottom-4 bg-black/50 backdrop-blur-sm text-white p-4 rounded-lg ${isRTL ? 'right-4 left-4' : 'left-4 right-4'}`}>
+              <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{car.title}</h3>
+              <p className={`text-sm text-gray-300 ${isRTL ? 'text-right' : 'text-left'}`}>{car.year} • {car.make} • {car.bodyType}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Dialog open={isEmailDialogOpen} onOpenChange={setIsEmailDialogOpen}>
         <DialogContent className="sm:max-w-[425px] bg-white">
           <DialogHeader>
@@ -1065,7 +1167,7 @@ useEffect(() => {
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="phone" className="text-sm font-medium text-gray-700">
+              <label htmlFor="name" className="text-sm font-medium text-gray-700">
                 {t('your_phone')}
               </label>
               <Input
@@ -1086,12 +1188,10 @@ useEffect(() => {
               {sendingEmail ? t('sending') : t('send_contact_request')}
             </button>
           </form>
-          
         </DialogContent>
-        
       </Dialog>
-      */}
-    </div>
+      </div>
+    </>
   );
 };
 
