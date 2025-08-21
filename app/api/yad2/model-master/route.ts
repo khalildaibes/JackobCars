@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     
     // Construct the proxy request with proper parameters
     const proxyUrl = `${PROXY_BASE_URL}`;
-    const targetUrl = `${YAD2_API_URL}${licensePlateNumber}`;
+    const targetUrl = `${PROXY_BASE_URL}${YAD2_API_URL}${licensePlateNumber}`;
     
     console.log('Target Yad2 URL:', targetUrl);
     console.log('Proxy URL:', proxyUrl);

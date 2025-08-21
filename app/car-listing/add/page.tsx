@@ -457,28 +457,90 @@ export default function AddCarListing() {
     }
   };
   async function fetchCarDataDirect(plate: string) {
-    const upstreamUrl =
-      `api/model-master?licensePlate=${encodeURIComponent(plate)}`;
-  
-    // Must use credentials if upstream uses them (often not needed here)
-    const r = await fetch(upstreamUrl);
-  
-    if (!r.ok) {
-      const t = await r.text();
-      throw new Error(`Upstream ${r.status}: ${t.slice(0, 500)}`);
-    }
-  
-    const data = await r.json();
-    
-    // Auto-populate form fields from Yad2 data
-    if (data?.data) {
-      const carInfo = data.data;
-      console.log("carInfo is", carInfo)
-      setGovCarInfo(carInfo);
+    try {
+      // First try Yad2 API
+      const upstreamUrl = `api/model-master?licensePlate=${encodeURIComponent(plate)}`;
+      const r = await fetch(upstreamUrl);
+      
+      if (r.ok) {
+        const data = await r.json();
+        
+        // Auto-populate form fields from Yad2 data
+        if (data?.data) {
+          const carInfo = data.data;
+          console.log("Yad2 carInfo is", carInfo);
+          setGovCarInfo(carInfo);
+          return data;
+        }
+      } else {
+        console.warn('Yad2 API failed, trying government API fallback...');
       }
-    
-    
-    return govCarInfo;
+    } catch (error) {
+      console.warn('Yad2 API error, trying government API fallback...', error);
+    }
+
+    // Fallback to Israeli government API
+    try {
+      const govApiUrl = `https://data.gov.il/he/api/3/action/datastore_search?resource_id=0866573c-40cd-4ca8-91d2-9dd2d7a492e5&q=${encodeURIComponent(plate)}`;
+      console.log('Trying government API fallback:', govApiUrl);
+      
+      const govResponse = await fetch(govApiUrl);
+      
+      if (govResponse.ok) {
+        const govData = await govResponse.json();
+        console.log('Government API response:', govData);
+        
+        if (govData?.result?.records?.length > 0) {
+          const record = govData.result.records[0];
+          console.log('Government API record:', record);
+          
+          // Map government API data to our format
+          const mappedData = {
+            data: {
+              modelId: record.degem_cd || null,
+              manufacturerId: record.tozeret_cd || null,
+              carTitle: `${record.tozeret_nm || ''} ${record.degem_nm || ''}`,
+              subModelTitle: record.ramat_gimur || record.sug_degem || '',
+              subModelId: record.mispar_rechev || null,
+              carYear: record.shnat_yitzur || null,
+              owner: record.baalut || 'פרטי',
+              dateOnRoad: record.moed_aliya_lakvish || null,
+              pollutionGroup: null,
+              tokefTestDate: record.tokef_dt || null,
+              carColorGroupID: record.tzeva_cd || null,
+              yad2ColorID: null,
+              yad2CarTitle: record.tzeva_rechev || null,
+              // Additional fields from government API
+              manufacturerName: record.tozeret_nm || '',
+              modelName: record.degem_nm || '',
+              commercialNickname: record.kinuy_mishari || '',
+              fuelType: record.sug_delek_nm || '',
+              frameNumber: record.misgeret || '',
+              lastTestDate: record.mivchan_acharon_dt || null,
+              engineCode: record.degem_manoa || '',
+              frontTires: record.zmig_kidmi || '',
+              rearTires: record.zmig_ahori || '',
+              seatingCapacity: record.kvutzat_zihum || null,
+              mileage: record.horaat_rishum || null
+            },
+            message: 'OK',
+            source: 'government_api'
+          };
+          
+          console.log('Mapped government data:', mappedData);
+          setGovCarInfo(mappedData.data);
+          return mappedData;
+        }
+      } else {
+        console.error('Government API also failed:', govResponse.status);
+      }
+    } catch (fallbackError) {
+      console.error('Government API fallback error:', fallbackError);
+    }
+
+    // If both APIs fail, return null
+    console.error('Both Yad2 and government APIs failed for plate:', plate);
+    return null;
   }
 
   const fetchCarData = async () => {
@@ -1593,7 +1655,11 @@ export default function AddCarListing() {
                                 setShowCaptchaPrompt(false);
                                 setLoading(true);
                                 const data = await fetchCarDataDirect(plateNumber);
-                                setYad2ModelInfo(data);
+                                if (data) {
+                                  setYad2ModelInfo(data);
+                                } else {
+                                  console.warn('No car data found from either API');
+                                }
                               } catch (e) {
                                 console.error(e);
                                 // fallback UI
