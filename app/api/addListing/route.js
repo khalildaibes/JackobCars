@@ -92,6 +92,42 @@ export async function POST(request) {
       };
     }
 
+        // Generate pros and cons using the dedicated API endpoint
+        let generatedDetails = { pros: [], cons: [] };
+        try {
+          const prosConsResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000' }/api/prosandcons`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              make: brand,
+              model: model,
+              year: year,
+              specs: specs
+            })
+          });
+    
+          if (prosConsResponse.ok) {
+            generatedData = await prosConsResponse.json();
+            console.log('Pros/Cons API response:', generatedData);
+          } else {
+            console.warn('Pros/Cons API failed, using fallback data');
+            generatedData = {
+              pros: [`مميزات ${brand} ${model} ${year}`],
+              cons: [`عيوب ${brand} ${model} ${year}`]
+            };
+          }
+        } catch (error) {
+          console.error('Error calling pros/cons API:', error);
+          // Fallback data if API fails
+          generatedData = {
+            pros: [`مميزات ${brand} ${model} ${year}`],
+            cons: [`عيوب ${brand} ${model} ${year}`]
+          };
+        }
+    
+
     // Now prepare the data for Strapi with the correct structure
     const productData = {
       data: {
@@ -102,6 +138,7 @@ export async function POST(request) {
         price: specs.price || 0,
         details: {
           car: {
+            description: car.description || generatedDetails.description || "",
             // Owner information
             owner_phone: car.owner_phone || "",
             owner_name: car.owner_name || "",

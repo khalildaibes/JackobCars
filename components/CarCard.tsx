@@ -378,6 +378,15 @@ const CarCard = memo(function CarCard({ car, variant = "grid" }: CarCardProps) {
             </div>
           )}
 
+          {/* Description */}
+          {getCarData('description') && (
+            <div className="mb-3">
+              <p className="cd-body-sm text-gray-600 line-clamp-2">
+                {getCarData('description')}
+              </p>
+            </div>
+          )}
+
           <div className="flex items-center justify-between w-full mt-2">
             <div className="flex items-center gap-2">
               <button

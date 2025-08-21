@@ -217,6 +217,7 @@ export default function AddCarListing() {
     transmission: '',
     currentCondition: '',
     knownProblems: '',
+    description: '',
     pros: '',
     cons: '',
     tradeIn: '',
@@ -713,6 +714,7 @@ export default function AddCarListing() {
               transmission: prev.transmission || cd.transmission || yad2.transmission || '',
       currentCondition: prev.currentCondition || cd.condition || '',
       knownProblems: prev.knownProblems || cd.known_problems || '',
+      description: prev.description || cd.description || '',
       pros: prev.pros || cd.pros || '',
       cons: prev.cons || cd.cons || '',
       tradeIn: prev.tradeIn || cd.trade_in || '',
@@ -845,6 +847,7 @@ export default function AddCarListing() {
         transmission: prev.transmission || '',
         currentCondition: prev.currentCondition || '',
         knownProblems: prev.knownProblems || '',
+        description: prev.description || '',
         pros: prev.pros || '',
         cons: prev.cons || '',
         tradeIn: prev.tradeIn || '',
@@ -875,6 +878,7 @@ export default function AddCarListing() {
         transmission: prev.transmission || '',
         currentCondition: prev.currentCondition || '',
         knownProblems: prev.knownProblems || '',
+        description: prev.description || '',
         pros: prev.pros || '',
         cons: prev.cons || '',
         tradeIn: prev.tradeIn || '',
@@ -1126,6 +1130,7 @@ export default function AddCarListing() {
             {  'transmission': String(formData.transmission || '') },
             {  'currentCondition': String(formData.currentCondition || '') },
             {  'knownProblems': String(formData.knownProblems || '') },
+            {  'description': String(formData.description || '') },
             {  'pros': String(formData.pros || '') },
             {  'cons': String(formData.cons || '') },
             {  'tradeIn': String(formData.tradeIn || '') },
@@ -1137,8 +1142,8 @@ export default function AddCarListing() {
             ...(imageId ? [{  'image': imageId }] : []),
           ],
           
-          // Description
-          description: `${getBestDataValue('manufacturerName', formData.manufacturerName, cd.manufacturer_name, yad2Data.manufacturerName) || ''} ${getBestDataValue('commercialNickname', formData.commercialNickname, cd.commercial_nickname, yad2Data.modelName) || ''} ${getBestDataValue('yearOfProduction', formData.yearOfProduction, cd.year_of_production, yad2Data.year) || ''}`.trim(),
+          // Description - use user input if available, otherwise generate one
+          description: formData.description || `${getBestDataValue('manufacturerName', formData.manufacturerName, cd.manufacturer_name, yad2Data.manufacturerName) || ''} ${getBestDataValue('commercialNickname', formData.commercialNickname, cd.commercial_nickname, yad2Data.modelName) || ''} ${getBestDataValue('yearOfProduction', formData.yearOfProduction, cd.year_of_production, yad2Data.year) || ''}`.trim(),
         }
       };
 
@@ -1169,6 +1174,7 @@ export default function AddCarListing() {
           transmission: '',
           currentCondition: '',
           knownProblems: '',
+          description: '',
           pros: '',
           cons: '',
           tradeIn: '',
@@ -1804,6 +1810,61 @@ export default function AddCarListing() {
                   onChange={(e) => setFormData(prev => ({ ...prev, knownProblems: e.target.value }))}
                   className="rounded-xl py-4 min-h-[100px]"
                 />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('description') || 'Description'} <span className="text-gray-500">(Will be auto-generated if left empty)</span>
+                </label>
+                <Textarea
+                  placeholder={t('description_placeholder') || 'Enter description manually or leave empty for AI generation'}
+                  value={formData.description}
+                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  className="rounded-xl py-4 min-h-[100px]"
+                />
+                <div className="mt-2 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!formData.manufacturerName || !formData.commercialNickname || !formData.yearOfProduction) {
+                        alert('Please fill in manufacturer, model, and year first');
+                        return;
+                      }
+                      
+                      try {
+                        const response = await fetch('/api/createDescription', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            make: formData.manufacturerName,
+                            model: formData.commercialNickname,
+                            year: formData.yearOfProduction,
+                            specs: {
+                              mileage: formData.mileage,
+                              color: formData.color,
+                              engineType: formData.engineType,
+                              transmission: formData.transmission,
+                              condition: formData.currentCondition
+                            }
+                          })
+                        });
+                        
+                        if (response.ok) {
+                          const data = await response.json();
+                          setFormData(prev => ({ ...prev, description: data.description }));
+                        } else {
+                          alert('Failed to generate description');
+                        }
+                      } catch (error) {
+                        console.error('Error generating description:', error);
+                        alert('Error generating description');
+                      }
+                    }}
+                    className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+                  >
+                    🤖 Generate AI Description
+                  </button>
+                </div>
               </div>
             </div>
           </motion.div>

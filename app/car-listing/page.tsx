@@ -267,6 +267,7 @@ const CarListings: React.FC = () => {
               store: product.store || {},
               hostname: product.store?.hostname || '64.227.112.249',
               miles: miles,
+              name: product.name,
               fuel: normalizedFuelType,
               condition: condition,
               transmission: transmission,

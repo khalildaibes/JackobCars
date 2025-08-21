@@ -226,6 +226,7 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
         mainImage: mainImage,
         alt: product.name || "Car Image",
         title: product.name,
+        name: product.name,
         miles: miles,
         fuel: normalizedFuelType,
         condition: condition,
@@ -608,6 +609,46 @@ useEffect(() => {
                 <div className="bg-white rounded-xl p-6 shadow-sm">
                   <h3 className="text-lg font-semibold mb-4">{t('description')}</h3>
                   <p className="text-gray-700 leading-relaxed">{car.description || 'No description available'}</p>
+                  {!car.description && (
+                    <div className="mt-4 flex justify-end">
+                      <button
+                        onClick={async () => {
+                          try {
+                            const response = await fetch('/api/createDescription', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({
+                                make: car.manufacturer_name || car.make,
+                                model: car.commercial_nickname || car.name,
+                                year: car.year_of_production || car.year,
+                                specs: {
+                                  mileage: car.mileage || car.miles,
+                                  color: car.color,
+                                  engineType: car.engine_type,
+                                  transmission: car.transmission,
+                                  condition: car.condition
+                                }
+                              })
+                            });
+                            
+                            if (response.ok) {
+                              const data = await response.json();
+                              // Update the car state with the new description
+                              setCar(prev => ({ ...prev, description: data.description }));
+                            } else {
+                              alert('Failed to generate description');
+                            }
+                          } catch (error) {
+                            console.error('Error generating description:', error);
+                            alert('Error generating description');
+                          }
+                        }}
+                        className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        🤖 Generate AI Description
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Additional Car Details */}
