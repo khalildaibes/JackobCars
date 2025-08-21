@@ -51,12 +51,12 @@ const conditions = ['excellent', 'good', 'fair', 'poor'] as const;
 import React from 'react';
 
 // Move these to environment variables
-const API_BASE_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&q=";
+const API_BASE_URL = "/api/gov/car-data?licensePlate=";
 const YAD2_API_BASE_URL = "https://gw.yad2.co.il/car-data-gov/model-master/?licensePlate=";
 const YAD2_API_BASE_URL_PRICE = "https://gw.yad2.co.il/price-list/calculate-price?";
-const ALTERNATE_API_BASE_URL = "https://data.gov.il/he/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&q=";
-const OWNERSHIP_HISTORY_API_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=bb2355dc-9ec7-4f06-9c3f-3344672171da&q=";
-const VEHICLE_SPECS_API_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=142afde2-6228-49f9-8a29-9b6c3a0cbe40&q=";
+const ALTERNATE_API_BASE_URL = "/api/gov/car-data?licensePlate=";
+const OWNERSHIP_HISTORY_API_URL = "/api/gov/ownership-history?licensePlate=";
+const VEHICLE_SPECS_API_URL = "/api/gov/vehicle-specs?licensePlate=";
 const DEFAULT_STORE_ID = 18; // Update if needed
 const DEFAULT_PUBLISHER_ID = 1; // Update if needed
 
@@ -481,7 +481,7 @@ export default function AddCarListing() {
 
     // Fallback to Israeli government API
     try {
-      const govApiUrl = `https://data.gov.il/he/api/3/action/datastore_search?resource_id=0866573c-40cd-4ca8-91d2-9dd2d7a492e5&q=${encodeURIComponent(plate)}`;
+      const govApiUrl = `/api/gov/car-data?licensePlate=${encodeURIComponent(plate)}`;
       console.log('Trying government API fallback:', govApiUrl);
       
       const govResponse = await fetch(govApiUrl);
@@ -529,6 +529,7 @@ export default function AddCarListing() {
           
           console.log('Mapped government data:', mappedData);
           setGovCarInfo(mappedData.data);
+          setYad2ModelInfo(mappedData);
           return mappedData;
         }
       } else {
@@ -561,80 +562,121 @@ export default function AddCarListing() {
     let primaryData = null;
     let yad2Info: any = null;
     try {
-      // First fetch with the primary API
-      const response = await fetch(`${API_BASE_URL}${cleanPlateNumber}`);
-      primaryData  = await response.json();
-      console.log("primaryData is", primaryData);
-              try {
-          const yad2Res = await fetch(`/api/yad2/model-master?licensePlate=${cleanPlateNumber}`);
-          if (yad2Res.ok) {
-            yad2Info = await yad2Res.json();
-            console.log('yad2 model-master:', yad2Info);
-            setYad2ModelInfo(yad2Info);
+      
+        console.log('Yad2 API failed, trying government API fallback...');
+        // If Yad2 API failed, try government API fallback
+        if (!yad2Info?.data) {
+          try {
+            console.log('Yad2 API failed, trying government API fallback...');
+            const govApiUrl = `/api/gov/car-data?licensePlate=${encodeURIComponent(cleanPlateNumber)}`;
+            console.log('Trying government API fallback:', govApiUrl);
             
-            // Auto-populate form fields from Yad2 data
-            if (yad2Info?.data) {
-              const carInfo = yad2Info.data;
-              setGovCarInfo(carInfo);
-              // Set year of production
-              if (carInfo.carYear) {
-                setFormData(prev => ({ ...prev, yearOfProduction: carInfo.carYear }));
-                setSelectedYear(carInfo.carYear);
-              }
+            const govResponse = await fetch(govApiUrl);
+            
+            if (govResponse.ok) {
+              const govData = await govResponse.json();
+              console.log('Government API response:', govData);
               
-              // Set manufacturer and model
-              if (carInfo.manufacturerId) {
-                // Find manufacturer by ID and set it
-                Object.keys(manufacturersData).forEach(manufacturerKey => {
-                  const manufacturer = manufacturersData[manufacturerKey];
-                  // Check if any submodel has the matching manufacturer ID
-                  const hasManufacturer = manufacturer.submodels?.some(submodel => 
-                    submodel.manufacturer?.id === carInfo.manufacturerId
-                  );
+              if (govData?.result?.records?.length > 0) {
+                const record = govData.result.records[0];
+                console.log('Government API record:', record);
+                
+                // Map government API data to our format
+                const mappedData = {
+                  data: {
+                    modelId: record.degem_cd || null,
+                    manufacturerId: record.tozeret_cd || null,
+                    carTitle: `${record.tozeret_nm || ''} ${record.degem_nm || ''}`,
+                    subModelTitle: record.ramat_gimur || record.sug_degem || '',
+                    subModelId: record.mispar_rechev || null,
+                    carYear: record.shnat_yitzur || null,
+                    owner: record.baalut || 'פרטי',
+                    dateOnRoad: record.moed_aliya_lakvish || null,
+                    pollutionGroup: null,
+                    tokefTestDate: record.tokef_dt || null,
+                    carColorGroupID: record.tzeva_cd || null,
+                    yad2ColorID: null,
+                    yad2CarTitle: record.tzeva_rechev || null,
+                    // Additional fields from government API
+                    manufacturerName: record.tozeret_nm || '',
+                    modelName: record.degem_nm || '',
+                    commercialNickname: record.kinuy_mishari || '',
+                    fuelType: record.sug_delek_nm || '',
+                    frameNumber: record.misgeret || '',
+                    lastTestDate: record.mivchan_acharon_dt || null,
+                    engineCode: record.degem_manoa || '',
+                    frontTires: record.zmig_kidmi || '',
+                    rearTires: record.zmig_ahori || '',
+                    seatingCapacity: record.kvutzat_zihum || null,
+                    mileage: record.horaat_rishum || null
+                  },
+                  message: 'OK',
+                  source: 'government_api'
+                };
+                
+                console.log('Mapped government data:', mappedData);
+                setYad2ModelInfo(mappedData);
+                setGovCarInfo(mappedData.data);
+                
+                // Auto-populate form fields from government data
+                if (mappedData.data) {
+                  const carInfo = mappedData.data;
                   
-                  if (hasManufacturer) {
-                    setSelectedManufacturer(manufacturerKey);
-                    // Set available models for this manufacturer
-                    setAvailableModels(manufacturer.submodels || []);
-                    
-                    // Find and set the model
-                    if (carInfo.modelId && manufacturer.submodels) {
-                      const model = manufacturer.submodels.find(m => m.id === carInfo.modelId);
-                      if (model) {
-                        setSelectedModel(model.id.toString());
-                        setSubModelID(model.id.toString());
-                        setFormData(prev => ({ 
-                          ...prev, 
-                          commercialNickname: model.title || '',
-                          manufacturerName: model.manufacturer?.title || ''
-                        }));
-                        
-                        // Fetch submodels for this model
-                        fetchSubmodels(model.id.toString());
-                      }
-                    }
+                  // Set year of production
+                  if (carInfo.carYear) {
+                    setFormData(prev => ({ ...prev, yearOfProduction: carInfo.carYear }));
+                    setSelectedYear(carInfo.carYear);
                   }
-                });
+                  
+                  // Set manufacturer and model
+                  if (carInfo.manufacturerId) {
+                    // Find manufacturer by ID and set it
+                    Object.keys(manufacturersData).forEach(manufacturerKey => {
+                      const manufacturer = manufacturersData[manufacturerKey];
+                      // Check if any submodel has the matching manufacturer ID
+                      const hasManufacturer = manufacturer.submodels?.some(submodel => 
+                        submodel.manufacturer?.id === carInfo.manufacturerId
+                      );
+                      
+                      if (hasManufacturer) {
+                        setSelectedManufacturer(manufacturerKey);
+                        // Set available models for this manufacturer
+                        setAvailableModels(manufacturer.submodels || []);
+                        
+                        // Find and set the model
+                        if (carInfo.modelId && manufacturer.submodels) {
+                          const model = manufacturer.submodels.find(m => m.id === carInfo.modelId);
+                          if (model) {
+                            setSelectedModel(model.id.toString());
+                            setSubModelID(model.id.toString());
+                            setFormData(prev => ({ 
+                              ...prev, 
+                              commercialNickname: model.title || '',
+                              manufacturerName: model.manufacturer?.title || ''
+                            }));
+                            
+                            // Fetch submodels for this model
+                            fetchSubmodels(model.id.toString());
+                          }
+                        }
+                      }
+                    });
+                  }
+                }
+                
+                // Use government data for price fetching if available
+                if (mappedData.data?.subModelId) {
+                  yad2Info = mappedData;
+                }
               }
+            } else {
+              console.error('Government API also failed:', govResponse.status);
             }
-          } else {
-          let err: any = {};
-          try { err = await yad2Res.json(); } catch {}
-          console.warn('yad2 model-master failed', err);
-          const errText = JSON.stringify(err).toLowerCase();
-          if (errText.includes('radware') || errText.includes('captcha') || errText.includes('<head')) {
-            // setCaptchaRequired(true);
-            // const upstreamUrl = `https://gw.yad2.co.il/car-data-gov/model-master/?licensePlate=${cleanPlateNumber}`;
-            // setCaptchaUrl(upstreamUrl);
-            // setShowCaptchaPrompt(true);
-            // Stop further processing until user solves captcha and retries
-            setLoading(false);
-            return;
+          } catch (fallbackError) {
+            console.error('Government API fallback error:', fallbackError);
           }
         }
-      } catch (error) {
-        console.error("Error fetching Yad2 data:", error);
-      }
+        
       // If no records were returned, try the alternate API
       let ascentYearOnRoad = null;
       let ascentMonthOnRoad = null;
