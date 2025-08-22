@@ -1453,45 +1453,7 @@ export default function AddCarListing() {
             )}
 
 
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('basic_information')}</h2>
-            <div className="w-full max-w-xl">
-            <div className="relative">
-              <div className="relative flex items-center bg-[#ffca11] rounded shadow-lg p-2">
-                <div className="flex items-center gap-4">
-                  <img 
-                    src="/a1.png" 
-                    alt={t("logo_alt")} 
-                    width={40} 
-                    height={50} 
-                    className="object-fill w-[60px] md:w-[80px] p-[2px]" 
-                  />
-                </div>
-                <Input
-                  type="text"
-                  value={plateNumber}
-                  onChange={handlePlateNumberChange}
-                  placeholder={t("enter_plate")}
-                  className="w-full px-4 sm:px-6 py-4 sm:py-8 text-xl sm:text-2xl md:text-3xl font-black tracking-[0.1em] bg-transparent border-0 focus:ring-0 text-center uppercase"
-                  maxLength={10}
-                  style={{
-                    letterSpacing: '0.1em',
-                    fontFamily: 'monospace',
-                    lineHeight: '1',
-                    WebkitTextStroke: '1px black',
-                    textShadow: '2px 2px 0px rgba(0,0,0,0.1)'
-                  }}
-                />
-              </div>
-            <div className="flex items-center gap-2 px-4 w-full justify-center pt-4">
-            <Button 
-                    onClick={fetchCarData} 
-                    disabled={loading}
-                    className="rounded-full w-50 text-black h-12 hover:bg-blue-700 transition-colors bg-[#ffca11]"
-                  >
-                    {t("search_by_vin")}
-                    
-                  </Button>
-            </div>
+
             {showCaptchaPrompt && captchaRequired && (
                 <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4 text-center">
                   <p className="text-red-700 font-semibold mb-2">Robot check required</p>
@@ -1520,363 +1482,348 @@ export default function AddCarListing() {
                 </div>
               )}
 
-              {/* Yad2 Price Heatmap and Details */}
-              {(yad2PriceInfo?.data || yad2ModelInfo?.data) && (
-                <div className="mt-6 space-y-4">
-                  {yad2PriceInfo?.data && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="flex items-center justify-between text-sm text-gray-700 font-medium">
-                        <span>Min {Number(yad2PriceInfo.data.minPrice).toLocaleString()}</span>
-                        <span>Predicted {Number(yad2PriceInfo.data.predictedPrice).toLocaleString()}</span>
-                        <span>Max {Number(yad2PriceInfo.data.maxPrice).toLocaleString()}</span>
-                      </div>
-                     
+              {/* ALL Government Car Information - Complete Data Display */}
+              {yad2ModelInfo?.data && (
+                <div className="space-y-4">
+                  {/* Basic Car Information */}
+                  <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="text-xl text-blue-600 font-semibold">🚗 {t('basic_car_info') || 'Basic Car Information'}</span>
                     </div>
-                  )}
-
-                  {yad2ModelInfo?.data && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <h4 className="text-sm font-semibold text-gray-800">Yad2</h4>
-                        <span className="text-xs text-gray-500">model</span>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {yad2ModelInfo.data.carTitle && (
-                          <div>
-                            <div className="text-xs text-gray-500">Car</div>
-                            <div className="font-medium text-gray-900">{yad2ModelInfo.data.carTitle}</div>
-                          </div>
-                        )}
-                        {yad2ModelInfo.data.subModelTitle && (
-                          <div>
-                            <div className="text-xs text-gray-500">Submodel</div>
-                            <div className="font-medium text-gray-900">{yad2ModelInfo.data.subModelTitle}</div>
-                          </div>
-                        )}
-                        {yad2ModelInfo.data.carYear && (
-                          <div>
-                            <div className="text-xs text-gray-500">Year</div>
-                            <div className="font-medium text-gray-900">{yad2ModelInfo.data.carYear}</div>
-                          </div>
-                        )}
-                        {yad2ModelInfo.data.owner && (
-                          <div>
-                            <div className="text-xs text-gray-500">Owner</div>
-                            <div className="font-medium text-gray-900">{yad2ModelInfo.data.owner}</div>
-                          </div>
-                        )}
-                        {yad2ModelInfo.data.tokefTestDate && (
-                          <div>
-                            <div className="text-xs text-gray-500">Test Valid Until</div>
-                            <div className="font-medium text-gray-900">{yad2ModelInfo.data.tokefTestDate}</div>
-                          </div>
-                        )}
-                        {yad2ModelInfo.data.yad2CarTitle && (
-                          <div>
-                            <div className="text-xs text-gray-500">Color</div>
-                            <div className="font-medium text-gray-900">{yad2ModelInfo.data.yad2CarTitle}</div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            
-            </div>
-             {/* Results Section */}
-      <div ref={resultsRef} className="container mx-auto px-4 py-8 scroll-mt-8">
-        {error && (
-          <Alert variant="destructive" className="mb-8">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-
-        {carData && !loading && (
-          <Card>
-            <CardContent className="p-6">
-              {carImage && (
-                <div className="mb-8 rounded-lg overflow-hidden">
-                  <img 
-                    src={carImage} 
-                    alt={`${carData.manufacturer_name} ${carData.model_name}`}
-                    className="w-full h-[400px] object-cover"
-                  />
-                </div>
-              )}
-
-              {/* Performance Data */}
-              {loadingPerformance && (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-                  <span className="ml-3 text-lg">{t('loading_info')}</span>
-                </div>
-              )}
-
-              {performanceData && (
-                <div className="mb-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Performance Section */}
-                    <div className="bg-gray-50 rounded-lg p-6">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <Gauge className="h-6 w-6 text-blue-600" />
-                        </div>
-                        <h3 className="text-xl font-semibold">{t('performance')}</h3>
-                      </div>
-                      <div className="space-y-3">
-                        {Object.entries(performanceData.performance).map(([key, value]) => (
-                          <div key={key} className="flex justify-between">
-                            <span className="text-gray-600">{t(key)}</span>
-                            <span className="font-semibold">{value}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Tuning Section */}
-                    <div className="bg-gray-50 rounded-lg p-6">
-                      <div 
-                        className="flex items-center gap-3 mb-4 cursor-pointer"
-                        onClick={() => setExpandedSections(prev => ({ ...prev, tuning: !prev.tuning }))}
-                      >
-                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <Sparkles className="h-6 w-6 text-blue-600" />
-                        </div>
-                        <h3 className="text-xl font-semibold">{t('tuning')}</h3>
-                        <div className="ml-auto">
-                          <svg 
-                            className={`w-6 h-6 transform transition-transform ${expandedSections.tuning ? 'rotate-180' : ''}`} 
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-                      {expandedSections.tuning && (
-                        <div className="space-y-3">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">{t('tuning_potential')}</span>
-                            <span className="font-semibold">{renderRating(performanceData.tuning.tuning_potential)}</span>
-                          </div>
-                          <div>
-                            <span className="text-gray-600">{t('tuning_notes')}</span>
-                            <p className="mt-1 font-semibold">{performanceData.tuning.tuning_notes}</p>
-                          </div>
-                          <div>
-                            <span className="text-gray-600">{t('common_upgrades')}</span>
-                            <ul className="mt-1 list-disc list-inside">
-                              {performanceData.tuning.common_upgrades.map((upgrade, index) => (
-                                <li key={index} className="font-semibold">{upgrade}</li>
-                              ))}
-                            </ul>
-                          </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {yad2ModelInfo.data.manufacturerName && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('manufacturer') || 'Manufacturer'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.manufacturerName}</div>
                         </div>
                       )}
-                    </div>
-
-                    {/* Handling Section */}
-                    <div className="bg-gray-50 rounded-lg p-6">
-                      <div 
-                        className="flex items-center gap-3 mb-4 cursor-pointer"
-                        onClick={() => setExpandedSections(prev => ({ ...prev, handling: !prev.handling }))}
-                      >
-                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <Activity className="h-6 w-6 text-blue-600" />
-                        </div>
-                        <h3 className="text-xl font-semibold">{t('handling')}</h3>
-                        <div className="ml-auto">
-                          <svg 
-                            className={`w-6 h-6 transform transition-transform ${expandedSections.handling ? 'rotate-180' : ''}`} 
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-                      {expandedSections.handling && (
-                        <div className="space-y-3">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">{t('handling_rating')}</span>
-                            <span className="font-semibold">{renderRating(performanceData.handling.handling_rating)}</span>
-                          </div>
-                          <div>
-                            <span className="text-gray-600">{t('suspension_type')}</span>
-                            <p className="mt-1 font-semibold">{performanceData.handling.suspension_type}</p>
-                          </div>
-                          <div>
-                            <span className="text-gray-600">{t('driving_characteristics')}</span>
-                            <p className="mt-1 font-semibold">{performanceData.handling.driving_characteristics}</p>
-                          </div>
+                      {yad2ModelInfo.data.modelName && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('model') || 'Model'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.modelName}</div>
                         </div>
                       )}
-                    </div>
-
-                    {/* Reliability Section */}
-                    <div className="bg-gray-50 rounded-lg p-6">
-                      <div 
-                        className="flex items-center gap-3 mb-4 cursor-pointer"
-                        onClick={() => setExpandedSections(prev => ({ ...prev, reliability: !prev.reliability }))}
-                      >
-                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <ShieldCheck className="h-6 w-6 text-blue-600" />
+                      {yad2ModelInfo.data.carYear && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('year') || 'Year'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.carYear}</div>
                         </div>
-                        <h3 className="text-xl font-semibold">{t('reliability')}</h3>
-                        <div className="ml-auto">
-                          <svg 
-                            className={`w-6 h-6 transform transition-transform ${expandedSections.reliability ? 'rotate-180' : ''}`} 
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
+                      )}
+                      {yad2ModelInfo.data.subModelTitle && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('submodel') || 'Submodel'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.subModelTitle}</div>
                         </div>
-                      </div>
-                      {expandedSections.reliability && (
-                        <div className="space-y-3">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">{t('reliability_rating')}</span>
-                            <span className="font-semibold">{renderRating(performanceData.reliability.reliability_rating)}</span>
-                          </div>
-                          <div>
-                            <span className="text-gray-600">{t('common_issues')}</span>
-                            <ul className="mt-1 list-disc list-inside">
-                              {performanceData.reliability.common_issues.map((issue, index) => (
-                                <li key={index} className="font-semibold">{issue}</li>
-                              ))}
-                            </ul>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">{t('maintenance_cost')}</span>
-                            <span className="font-semibold">{renderRating(performanceData.reliability.maintenance_cost)}</span>
-                          </div>
+                      )}
+                      {yad2ModelInfo.data.fuelType && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('fuel_type') || 'Fuel Type'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.fuelType}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.owner && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('owner') || 'Owner Type'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.owner}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.carTitle && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('car_title') || 'Car Title'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.carTitle}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.modelId && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('model_id') || 'Model ID'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.modelId}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.manufacturerId && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('manufacturer_id') || 'Manufacturer ID'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.manufacturerId}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.subModelId && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('submodel_id') || 'Submodel ID'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.subModelId}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.commercialNickname && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('commercial_nickname') || 'Commercial Nickname'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.commercialNickname}</div>
                         </div>
                       )}
                     </div>
                   </div>
-                </div>
-              )}
-              
-              {/* Priority Fields */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                {priorityFields.map((key) => (
-                  carData[key] && (
-                    <div key={key} className="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg">
-                      {iconMap[key as keyof typeof iconMap] && (
-                        <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-2">
-                          {React.createElement(iconMap[key as keyof typeof iconMap], {
-                            className: "h-6 w-6 text-blue-600"
-                          })}
+
+                  {/* Technical Specifications */}
+                  <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="text-xl text-green-600 font-semibold">⚙️ {t('technical_specs') || 'Technical Specifications'}</span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {yad2ModelInfo.data.engineCapacity && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('engine_capacity') || 'Engine Capacity'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.engineCapacity} cc</div>
                         </div>
                       )}
-                      <p className="text-sm font-medium text-gray-500 text-center">{t(key)}</p>
-                      <p className="font-semibold text-gray-900 text-center">{carData[`${key}_value`] || carData[key]}</p>
-                    </div>
-                  )
-                ))}
-              </div>
-
-              {/* Other Fields */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {Object.entries(carData).map(([key, value]) => (
-                  !priorityFields.includes(key) && !key.endsWith('_value') && (
-                    <div key={key} className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                      <div className={`flex-shrink-0 ${isRTL ? 'order-2' : 'order-1'}`}>
-                        {iconMap[key as keyof typeof iconMap] && (
-                          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                            {React.createElement(iconMap[key as keyof typeof iconMap], {
-                              className: "h-5 w-5 text-blue-600"
-                            })}
-                          </div>
-                        )}
-                      </div>
-                      <div className={isRTL ? 'order-1 text-right' : 'order-2 text-left'}>
-                        <p className="text-sm font-medium text-gray-500">{t(key).split('.').pop()}</p>
-                        <p className={`font-semibold ${key === 'validity_date' && isLicenseExpired(value) ? 'text-red-600' : 'text-gray-900'}`}>
-                          {String(value)}
-                          {key === 'validity_date' && isLicenseExpired(value) && (
-                            <span className="ml-2 text-sm text-red-600 font-normal">
-                              ({t('license_expired')})
-                            </span>
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  )
-                ))}
-              </div>
-
-              {/* Ownership History Section */}
-              {ownershipHistory.length > 0 && (
-                <div className="mt-8">
-                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-white">
-                    <User className="h-6 w-6 text-blue-600" />
-                    {t('ownership_history')} ({ownershipHistory.length} {t('records')})
-                  </h3>
-                  <div className="bg-gray-50 rounded-lg p-6">
-                    <div className="space-y-4">
-                      {ownershipHistory.map((record, index) => (
-                        <div key={record._id} className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                              <User className="h-5 w-5 text-blue-600" />
-                            </div>
-                            <div>
-                              <p className="font-semibold">{t(record.baalut)}</p>
-                              <p className="text-sm text-gray-500">
-                                {record.baalut_dt.toString().slice(0, 4)}/{record.baalut_dt.toString().slice(4)}
-                              </p>
-                            </div>
-                          </div>
-                          {index === 0 && (
-                            <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                              {t('current_owner')}
-                            </span>
-                          )}
+                      {yad2ModelInfo.data.totalWeight && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('total_weight') || 'Total Weight'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.totalWeight} kg</div>
                         </div>
-                      ))}
+                      )}
+                      {yad2ModelInfo.data.height && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('height') || 'Height'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.height} mm</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.driveType && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('drive_type') || 'Drive Type'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.driveType}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.transmission && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('transmission') || 'Transmission'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.transmission}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.bodyType && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('body_type') || 'Body Type'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.bodyType}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.engineCode && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('engine_code') || 'Engine Code'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.engineCode}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.seatingCapacity && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('seating_capacity') || 'Seating Capacity'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.seatingCapacity}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.pollutionGroup && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('pollution_group') || 'Pollution Group'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.pollutionGroup}</div>
+                        </div>
+                      )}
                     </div>
                   </div>
+
+                  {/* Safety Features */}
+                  <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="text-xl text-yellow-600 font-semibold">🛡️ {t('safety_features') || 'Safety Features'}</span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {yad2ModelInfo.data.abs && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('abs') || 'ABS'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.abs}</div>
+                        </div>
+                      )}
+                      {(yad2ModelInfo.data.airbags !== null && yad2ModelInfo.data.airbags !== undefined) && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('airbags') || 'Airbags'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.airbags}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.safetyRating && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('safety_rating') || 'Safety Rating'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.safetyRating}</div>
+                        </div>
+                      )}
+                      {(yad2ModelInfo.data.powerWindows !== null && yad2ModelInfo.data.powerWindows !== undefined) && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('power_windows') || 'Power Windows'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.powerWindows}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.safetyRatingWithoutSeatbelts && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('safety_rating_no_seatbelts') || 'Safety Rating (No Seatbelts)'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.safetyRatingWithoutSeatbelts}</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Environmental Data */}
+                  <div className="bg-emerald-50 rounded-lg p-4 border border-emerald-200">
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="text-xl text-emerald-600 font-semibold">🌱 {t('environmental_data') || 'Environmental Data'}</span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {yad2ModelInfo.data.co2Emission && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('co2_emission') || 'CO2 Emission'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.co2Emission} g/km</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.noxEmission && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('nox_emission') || 'NOx Emission'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.noxEmission} mg/km</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.pmEmission && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('pm_emission') || 'PM Emission'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.pmEmission} mg/km</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.hcEmission && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('hc_emission') || 'HC Emission'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.hcEmission} mg/km</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.coEmission && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('co_emission') || 'CO Emission'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.coEmission} mg/km</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.greenIndex && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('green_index') || 'Green Index'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.greenIndex}</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Additional Information */}
+                  <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="text-xl text-purple-600 font-semibold">📋 {t('additional_info') || 'Additional Information'}</span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {yad2ModelInfo.data.fuelTankCapacity && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('fuel_tank_capacity') || 'Fuel Tank Capacity'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.fuelTankCapacity} kg</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.fuelTankCapacityWithoutReserve && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('fuel_tank_capacity_no_reserve') || 'Fuel Tank (No Reserve)'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.fuelTankCapacityWithoutReserve} kg</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.dateOnRoad && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('date_on_road') || 'Date on Road'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.dateOnRoad}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.frameNumber && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('frame_number') || 'Frame Number'}</div>
+                          <div className="font-semibold text-gray-900 font-mono text-sm">{yad2ModelInfo.data.frameNumber}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.lastTestDate && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('last_test_date') || 'Last Test Date'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.lastTestDate}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.tokefTestDate && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('tokef_test_date') || 'Tokef Test Date'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.tokefTestDate}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.mileage && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('mileage') || 'Mileage'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.mileage} km</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.rank && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('rank') || 'Rank'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.rank}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.commercialName && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('commercial_name') || 'Commercial Name'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.commercialName}</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Tires and Colors */}
+                  <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="text-xl text-orange-600 font-semibold">🛞 {t('tires_and_colors') || 'Tires and Colors'}</span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {yad2ModelInfo.data.frontTires && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('front_tires') || 'Front Tires'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.frontTires}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.rearTires && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('rear_tires') || 'Rear Tires'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.rearTires}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.carColorGroupID && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('car_color_group_id') || 'Car Color Group ID'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.carColorGroupID}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.yad2ColorID && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('yad2_color_id') || 'Yad2 Color ID'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.yad2ColorID}</div>
+                        </div>
+                      )}
+                      {yad2ModelInfo.data.yad2CarTitle && (
+                        <div className="bg-white p-3 rounded-lg border">
+                          <div className="text-xs text-gray-500 font-medium">{t('yad2_car_title') || 'Yad2 Car Title'}</div>
+                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.yad2CarTitle}</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Debug Information - Raw Data */}
+                  {/* <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="text-xl text-gray-600 font-semibold">🔍 {t('debug_info') || 'Debug Information'}</span>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg border overflow-auto max-h-60">
+                      <pre className="text-xs text-gray-800 font-mono whitespace-pre-wrap">
+                        {JSON.stringify(yad2ModelInfo.data, null, 2)}
+                      </pre>
+                    </div>
+                  </div> */}
                 </div>
               )}
 
-              {/* Vehicle Specs Section */}
-              {vehicleSpecs && (
-                <div className="mt-8">
-                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-white">
-                    <Tag className="h-6 w-6 text-blue-600" />
-                    {t('vehicle_specs')}
-                  </h3>
-                  <div className="bg-gray-50 rounded-lg p-6">
-                    <div className="space-y-4">
-                      {Object.entries(vehicleSpecs).map(([key, value]) => (
-                        <div key={key} className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                              <Tag className="h-5 w-5 text-blue-600" />
-                            </div>
-                            <div>
-                              <p className="font-semibold">{t(key)}</p>
-                              <p className="text-sm text-gray-500">{value}</p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-          </div>
-          </div>
+
           </motion.div>
           )}
 
