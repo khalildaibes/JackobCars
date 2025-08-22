@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useLocale } from 'next-intl';
 import { Input } from "../../../../components/ui/input";
@@ -57,6 +57,27 @@ const YAD2_API_BASE_URL_PRICE = "https://gw.yad2.co.il/price-list/calculate-pric
 const ALTERNATE_API_BASE_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=03adc637-b6fe-402b-9937-7c3d3afc9140&q=";
 const OWNERSHIP_HISTORY_API_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=bb2355dc-9ec7-4f06-9c3f-3344672171da&q=";
 const VEHICLE_SPECS_API_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=142afde2-6228-49f9-8a29-9b6c3a0cbe40&q=";
+
+// Constants
+const VALIDATION_RULES = {
+  MAX_IMAGES: 8,
+  MIN_IMAGES: 1
+};
+
+const ENGINE_TYPES = [
+  { value: 'petrol', label: 'Petrol' },
+  { value: 'diesel', label: 'Diesel' },
+  { value: 'electric', label: 'Electric' },
+  { value: 'hybrid', label: 'Hybrid' }
+];
+
+const TRANSMISSION_OPTIONS = [
+  { value: 'automatic', label: 'Automatic' },
+  { value: 'manual', label: 'Manual' }
+];
+
+// Types
+type InputMethod = 'plate' | 'manual';
 
 interface CarData {
   [key: string]: string;
@@ -132,12 +153,19 @@ export default function AddCarListing() {
   ];
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-    const [manufacturersData, setManufacturersData] = useState<ManufacturersData>(manufacturers_hebrew);
+  const [manufacturersData, setManufacturersData] = useState<ManufacturersData>(manufacturers_hebrew);
   const [selectedManufacturer, setSelectedManufacturer] = useState('');
   const [selectedModel, setSelectedModel] = useState('');
+  const [selectedYear, setSelectedYear] = useState('');
+  const [selectedSubmodel, setSelectedSubmodel] = useState('');
   const [availableModels, setAvailableModels] = useState<any[]>([]);
   const [availableYears, setAvailableYears] = useState<number[]>([]);
+  const [availableSubmodels, setAvailableSubmodels] = useState<any[]>([]);
+  const [globalSubmodelOptions, setGlobalSubmodelOptions] = useState<any[]>([]);
+  const [subModelID, setSubModelID] = useState('');
+  const [inputMethod, setInputMethod] = useState<InputMethod>('plate');
   const [plateNumber, setPlateNumber] = useState("");
+  const [govCarInfo, setGovCarInfo] = useState<any>(null);
   const resultsRef = React.useRef<HTMLDivElement>(null);
 
   const [carData, setCarData] = useState<CarData | null>(null);
@@ -211,10 +239,157 @@ export default function AddCarListing() {
     name: '',
     email: '',
     phone: '',
-    images: [] as File[]
+    images: [] as File[],
+    manufacturerName: '',
+    modelId: '',
+    subModelId: '',
+    commercialNickname: '',
+    yearOfProduction: '',
+    engineCapacity: '',
+    bodyType: '',
+    seatingCapacity: '',
+    fuelType: '',
+    abs: '',
+    airbags: '',
+    powerWindows: '',
+    driveType: '',
+    totalWeight: '',
+    height: '',
+    fuelTankCapacity: '',
+    co2Emission: '',
+    greenIndex: '',
+    commercialName: '',
+    rank: ''
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Hooks functions from the hooks file
+  const fetchVehicleSpecs = useCallback(async (carData: any) => {
+    try {
+      const vehicleSpecsUrl = `/api/gov/vehicle-specs?manufacturerName=${carData.manufacturerName}&modelName=${carData.modelName}&year=${carData.year}&submodel=${carData.subModel || ''}&fuelType=${carData.fuelType || ''}`;
+      console.log('Fetching vehicle specs from:', vehicleSpecsUrl);
+      
+      const vehicleSpecsResponse = await fetch(vehicleSpecsUrl);
+      
+      if (vehicleSpecsResponse.ok) {
+        const vehicleSpecsData = await vehicleSpecsResponse.json();
+        
+        if (vehicleSpecsData?.result?.records?.length > 0) {
+          const specsRecord = vehicleSpecsData.result.records[0];
+          
+          // Merge the additional specs data with the existing car data
+          const enhancedCarData = {
+            ...carData,
+            engineCapacity: specsRecord.nefah_manoa || null,
+            totalWeight: specsRecord.mishkal_kolel || null,
+            height: specsRecord.gova || null,
+            driveType: specsRecord.hanaa_nm || null,
+            transmission: specsRecord.mazgan_ind === 1 ? 'Automatic' : 'Manual',
+            abs: specsRecord.abs_ind === 1 ? 'Yes' : 'No',
+            airbags: specsRecord.mispar_kariot_avir || 0,
+            powerWindows: specsRecord.mispar_halonot_hashmal || 0,
+            fuelTankCapacity: specsRecord.kosher_grira_im_blamim || null,
+            fuelTankCapacityWithoutReserve: specsRecord.kosher_grira_bli_blamim || null,
+            safetyRating: specsRecord.nikud_betihut || null,
+            safetyRatingWithoutSeatbelts: specsRecord.ramat_eivzur_betihuty || null,
+            co2Emission: specsRecord.CO2_WLTP || null,
+            noxEmission: specsRecord.NOX_WLTP || null,
+            pmEmission: specsRecord.PM_WLTP || null,
+            hcEmission: specsRecord.HC_WLTP || null,
+            coEmission: specsRecord.CO_WLTP || null,
+            greenIndex: specsRecord.madad_yarok || null,
+            bodyType: specsRecord.merkav || null,
+            commercialName: specsRecord.kinuy_mishari || null,
+            rank: specsRecord.rank || null
+          };
+          
+          console.log('Vehicle specs data merged successfully');
+          return enhancedCarData;
+        } else {
+          console.log('No vehicle specs records found');
+          return carData;
+        }
+      } else {
+        console.log('Vehicle specs API request failed:', vehicleSpecsResponse.status);
+        return carData;
+      }
+    } catch (error) {
+      console.error('Error fetching vehicle specs:', error);
+      return carData;
+    }
+  }, []);
+
+  const fetchSubmodelOptions = useCallback(async (manufacturerName: string, modelName: string, year: string) => {
+    try {
+      const vehicleSpecsUrl = `/api/gov/vehicle-specs?manufacturerName=${encodeURIComponent(manufacturerName)}&modelName=${encodeURIComponent(modelName)}&year=${encodeURIComponent(year)}`;
+      console.log('Fetching submodel options from:', vehicleSpecsUrl);
+      
+      const vehicleSpecsResponse = await fetch(vehicleSpecsUrl);
+      
+      if (vehicleSpecsResponse.ok) {
+        const vehicleSpecsData = await vehicleSpecsResponse.json();
+        
+        if (vehicleSpecsData?.result?.records?.length > 0) {
+          // Extract unique submodel options from the records
+          const submodelOptions = vehicleSpecsData.result.records.map((record: any) => ({
+            id: record._id,
+            title: `${record.ramat_gimur} מנוע ${(parseInt(record.nefah_manoa)/1000).toFixed(1)}  ${parseInt(record.koah_sus)} כ"ס ` || 'Unknown Submodel',
+            engineCapacity: record.nefah_manoa || null,
+            enginePower: record.koah_sus || null,
+            bodyType: record.merkav || null,
+            trimLevel: record.ramat_gimur || null,
+            fuelType: record.delek_nm || null,
+            transmission: record.mazgan_ind === 1 ? 'Automatic' : 'Manual',
+            seatingCapacity: record.mispar_moshavim || null,
+            doors: record.mispar_dlatot || null,
+            abs: record.abs_ind === 1 ? 'Yes' : 'No',
+            airbags: record.mispar_kariot_avir || 0,
+            powerWindows: record.mispar_halonot_hashmal || 0,
+            driveType: record.hanaa_nm || null,
+            weight: record.mishkal_kolel || null,
+            height: record.gova || null,
+            fuelTankCapacity: record.kosher_grira_im_blamim || null,
+            co2Emission: record.CO2_WLTP || null,
+            greenIndex: record.madad_yarok || null,
+            commercialName: record.kinuy_mishari || null,
+            rank: record.rank || null
+          }));
+          
+          console.log('Submodel options fetched successfully:', submodelOptions.length);
+          return submodelOptions;
+        } else {
+          console.log('No submodel options found');
+          return [];
+        }
+      } else {
+        console.log('Submodel options API request failed:', vehicleSpecsResponse.status);
+        return [];
+      }
+    } catch (error) {
+      console.error('Error fetching submodel options:', error);
+      return [];
+    }
+  }, []);
+
+  const onFetchSubmodels = useCallback(async (modelId: string) => {
+    if (!modelId) return;
+    
+    try {
+      const response = await fetch(`/api/yad2/submodels?modelId=${modelId}`);
+      
+      if (response.ok) {
+        const submodelsData = await response.json();
+        const submodels = submodelsData.data || [];
+        setAvailableSubmodels(submodels);
+      } else {
+        setAvailableSubmodels([]);
+      }
+    } catch (error) {
+      console.error('Error fetching submodels:', error);
+      setAvailableSubmodels([]);
+    }
+  }, []);
 
   // Update available models when manufacturer changes
   useEffect(() => {
@@ -223,11 +398,29 @@ export default function AddCarListing() {
       setAvailableModels(models);
       setSelectedModel(''); // Reset model selection
       setAvailableYears([]); // Clear years until model is selected
+      setSelectedSubmodel('');
+      setAvailableSubmodels([]);
     } else {
       setAvailableModels([]);
       setAvailableYears([]);
+      setSelectedSubmodel('');
+      setAvailableSubmodels([]);
     }
   }, [selectedManufacturer, manufacturersData]);
+
+  // Update formData.makeModel when both manufacturer and model are selected
+  useEffect(() => {
+    if (selectedManufacturer && selectedModel) {
+      const manufacturerName = manufacturersData[selectedManufacturer]?.manufacturerImage ? 
+        Object.keys(manufacturersData).find(key => key === selectedManufacturer) : selectedManufacturer;
+      const modelName = availableModels.find(model => model.id?.toString() === selectedModel)?.title || selectedModel;
+      
+      setFormData(prev => ({
+        ...prev,
+        makeModel: `${manufacturerName} ${modelName}`.trim()
+      }));
+    }
+  }, [selectedManufacturer, selectedModel, availableModels, manufacturersData]);
 
   // Update available years when model changes
   useEffect(() => {
@@ -358,7 +551,7 @@ export default function AddCarListing() {
     }
   };
 
-  const fetchVehicleSpecs = async (carData: CarData) => {
+  const fetchVehicleSpecsFromGov = async (carData: CarData) => {
     try {
       // Construct query from car data
       const query = JSON.stringify([
@@ -487,7 +680,7 @@ export default function AddCarListing() {
               String(record.ramat_gimur)
             ),
             fetchOwnershipHistory(cleanPlateNumber),
-            fetchVehicleSpecs(translatedData)
+            fetchVehicleSpecsFromGov(translatedData)
           ]);
         }
 
@@ -771,178 +964,495 @@ export default function AddCarListing() {
           >
             
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('basic_information')}</h2>
-            <div className="space-y-4">
-              <div>
-                <Input
-                  placeholder={t('title_placeholder')}
-                  value={formData.title}
-                  onChange={(e) => {
-                    setFormData(prev => ({ ...prev, title: e.target.value }));
-                    setErrors(prev => ({ ...prev, title: '' }));
-                  }}
-                  className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.title ? 'border-red-500' : ''}`}
-                />
-                {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Select
-                    value={selectedManufacturer}
-                    onValueChange={(value) => {
-                      if (value && manufacturersData[value]) {
-                        const models = manufacturersData[value].submodels || [];
-                        setAvailableModels(models);
-                        setSelectedModel(''); // Reset model selection
-                        setAvailableYears([]); // Clear years until model is selected
-                      } else {
-                        setAvailableModels([]);
-                        setAvailableYears([]);
-                      }
-                      setSelectedManufacturer(value);
-                      setErrors(prev => ({ ...prev, manufacturer: '' }));
-                    }}
-                  >
-                    <SelectTrigger className="rounded-xl py-5">
-                      <SelectValue placeholder={t('select_manufacturer') || 'Select Manufacturer'} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white">
-                      {Object.keys(manufacturersData).length === 0 ? (
-                        <SelectItem value="loading_manufacturers" disabled>
-                          Loading manufacturers...
-                        </SelectItem>
-                      ) : (
-                        Object.keys(manufacturersData).map((manufacturer) => (
-                          <SelectItem key={manufacturer} value={manufacturer}>
-                            {manufacturersData[manufacturer]?.submodels?.[0]?.manufacturer?.title || manufacturer}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                  {errors.manufacturer && <p className="mt-1 text-sm text-red-500">{errors.manufacturer}</p>}
-                </div>
-
-                <div>
-                  <Select
-                    value={selectedModel}
-                    onValueChange={(value) => {
-                      setSelectedModel(value);
-                      setErrors(prev => ({ ...prev, model: '' }));
-                    }}
-                    disabled={!selectedManufacturer || availableModels.length === 0}
-                  >
-                    <SelectTrigger className="rounded-xl py-5">
-                      <SelectValue placeholder={t('select_model') || 'Select Model'} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white">
-                      {!selectedManufacturer ? (
-                        <SelectItem value="select_manufacturer_first" disabled>
-                          Select manufacturer first
-                        </SelectItem>
-                      ) : availableModels.length === 0 ? (
-                        <SelectItem value="no_models_available" disabled>
-                          No models available
-                        </SelectItem>
-                      ) : (
-                        availableModels.map((model) => (
-                          <SelectItem key={model.id} value={model.id?.toString()}>
-                            {model.title || 'Unknown Model'}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                  {errors.model && <p className="mt-1 text-sm text-red-500">{errors.model}</p>}
-                </div>
-
-                <div>
-                  <Select
-                    value={formData.year}
-                    onValueChange={(value) => {
-                      setFormData(prev => ({ ...prev, year: value }));
-                      setErrors(prev => ({ ...prev, year: '' }));
-                    }}
-                    disabled={!selectedManufacturer || !selectedModel || availableYears.length === 0}
-                  >
-                    <SelectTrigger className={`rounded-xl py-5 ${errors.year ? 'border-red-500' : ''}`}>
-                      <SelectValue placeholder={t('year') || 'Year'} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white">
-                      {availableYears.length === 0 ? (
-                        <SelectItem value="no_years_available" disabled>
-                          {!selectedManufacturer ? 'Select manufacturer first' : 
-                           !selectedModel ? 'Select model first' : 'No years available'}
-                        </SelectItem>
-                      ) : (
-                        availableYears.map((year) => (
-                          <SelectItem key={year} value={year.toString()}>
-                            {year}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                  {errors.year && <p className="mt-1 text-sm text-red-500">{errors.year}</p>}
-                </div>
-
-                <div>
-                  <Input
-                    placeholder={t('plate_number')}
-                    value={formData.plateNumber}
-                    onChange={(e) => {
-                      setFormData(prev => ({ ...prev, plateNumber: e.target.value }));
-                      setErrors(prev => ({ ...prev, plateNumber: '' }));
-                    }}
-                    className={`rounded-xl py-5 ${errors.plateNumber ? 'border-red-500' : ''}`}
-                  />
-                  {errors.plateNumber && <p className="mt-1 text-sm text-red-500">{errors.plateNumber}</p>}
-                </div>
-
-                <Input
-                  placeholder={t('mileage')}
-                  value={formData.mileage}
-                  onChange={(e) => setFormData(prev => ({ ...prev, mileage: e.target.value }))}
-                  className="rounded-xl py-5"
-                />
-
-                <Input
-                  placeholder={t('color')}
-                  value={formData.color}
-                  onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
-                  className="rounded-xl py-5"
-                />
-
-                <Select
-                  value={formData.engineType}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, engineType: value }))}
+            
+            {/* Input Method Toggle */}
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+              className="mb-8"
+            >
+              <div className="flex items-center justify-center bg-gray-100 rounded-xl p-1">
+                <button
+                  type="button"
+                  onClick={() => setInputMethod('plate')}
+                  className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
+                    inputMethod === 'plate'
+                      ? 'bg-white text-blue-600 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
                 >
-                  <SelectTrigger className="rounded-xl py-5">
-                    <SelectValue placeholder={t('engine_type')} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white">
-                    {['petrol', 'diesel', 'electric', 'hybrid'].map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {t(`fuel_types.${type}`)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select
-                  value={formData.transmission}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, transmission: value }))}
+                  <div className="flex items-center justify-center gap-2">
+                    {t('search_by_plate') || 'Search by Plate Number'}
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setInputMethod('manual')}
+                  className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
+                    inputMethod === 'manual'
+                      ? 'bg-white text-blue-600 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
                 >
-                  <SelectTrigger className="rounded-xl py-5">
-                    <SelectValue placeholder={t('transmission')} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white">
-                    <SelectItem value="automatic">{t('transmission_automatic')}</SelectItem>
-                    <SelectItem value="manual">{t('transmission_manual')}</SelectItem>
-                  </SelectContent>
-                </Select>
+                  <div className="flex items-center justify-center gap-2">
+                    {t('enter_manually') || 'Enter Manually'}
+                  </div>
+                </button>
               </div>
-            </div>
+            </motion.div>
+            {/* Title Field */}
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+              className="mb-6"
+            >
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t('title')} <span className="text-gray-500">({t('auto_generated_hint') || 'Auto-generated'})</span>
+              </label>
+              <Input
+                placeholder={t('title_placeholder')}
+                value={formData.title}
+                onChange={(e) => {
+                  setFormData(prev => ({ ...prev, title: e.target.value }));
+                  setErrors(prev => ({ ...prev, title: '' }));
+                }}
+                className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.title ? 'border-red-500' : ''}`}
+              />
+              {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
+              {!formData.title && selectedManufacturer && selectedModel && selectedYear && (
+                <p className="mt-2 text-sm text-blue-600">
+                  💡 {t('title_auto_generation_hint') || 'Title will be auto-generated as'} "{manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer} {formData.commercialNickname || t('model')} {selectedYear}" {t('when_click_next') || 'when you click next'}
+                </p>
+              )}
+            </motion.div>
+
+            {/* Mileage Field */}
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.4 }}
+              className="mb-6"
+            >
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t('mileage')} <span className="text-gray-500">({t('in_kilometers') || 'in kilometers'})</span>
+              </label>
+              <Input
+                placeholder={t('mileage')}
+                value={formData.mileage}
+                onChange={(e) => setFormData(prev => ({ ...prev, mileage: e.target.value }))}
+                className={`rounded-xl py-5 ${errors.mileage ? 'border-red-500' : ''}`}
+              />
+              {errors.mileage && <p className="mt-1 text-sm text-red-500">{errors.mileage}</p>}
+            </motion.div>
+
+            {/* Plate Number Input Method */}
+            {inputMethod === 'plate' && (
+              <motion.div 
+                key="plate-method"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+                className="space-y-6"
+              >
+                <div className="w-full max-w-xl mx-auto">
+                  <div className="relative">
+                    <div className="relative flex items-center bg-[#ffca11] rounded shadow-lg p-2">
+                      <div className="flex items-center gap-4">
+                        <img 
+                          src="/a1.png" 
+                          alt={t("logo_alt") || "Logo"} 
+                          width={40} 
+                          height={50} 
+                          className="object-fill w-[60px] md:w-[80px] p-[2px]" 
+                        />
+                      </div>
+                      <Input
+                        type="text"
+                        value={plateNumber}
+                        onChange={handlePlateNumberChange}
+                        placeholder={t("enter_plate") || "Enter Plate Number"}
+                        className="w-full px-4 sm:px-6 py-4 sm:py-8 text-xl sm:text-2xl md:text-3xl font-black tracking-[0.1em] bg-transparent border-0 focus:ring-0 text-center uppercase"
+                        maxLength={10}
+                        style={{
+                          letterSpacing: '0.1em',
+                          fontFamily: 'monospace',
+                          lineHeight: '1',
+                          WebkitTextStroke: '1px black',
+                          textShadow: '2px 2px 0px rgba(0,0,0,0.1)'
+                        }}
+                      />
+                    </div>
+                    <div className="flex items-center gap-2 px-4 w-full justify-center pt-4">
+                      <Button 
+                        onClick={fetchCarData} 
+                        disabled={loading}
+                        className="rounded-full w-50 text-black h-12 hover:bg-blue-700 transition-colors bg-[#ffca11]"
+                      >
+                        {t("search_by_vin") || "Search by VIN"}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Manual Entry Method */}
+            {inputMethod === 'manual' && (
+              <motion.div 
+                key="manual-method"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+                className="space-y-6"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Manufacturer Selection */}
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.1 }}
+                  >
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('manufacturer') || 'Manufacturer'} <span className="text-red-500">*</span>
+                    </label>
+                    <Select
+                      value={selectedManufacturer}
+                      onValueChange={(value) => {
+                        if (value && manufacturersData[value]) {
+                          const models = manufacturersData[value].submodels || [];
+                          setSelectedModel('');
+                          setSelectedYear('');
+                          setSelectedSubmodel('');
+                          setFormData(prev => ({ 
+                            ...prev, 
+                            manufacturerName: value,
+                            modelId: '',
+                            subModelId: '',
+                            commercialNickname: ''
+                          }));
+                        } else {
+                          setSelectedModel('');
+                          setSelectedYear('');
+                          setSelectedSubmodel('');
+                          setFormData(prev => ({ 
+                            ...prev, 
+                            manufacturerName: '',
+                            modelId: '',
+                            subModelId: '',
+                            commercialNickname: ''
+                          }));
+                        }
+                        setSelectedManufacturer(value);
+                        setErrors(prev => ({ ...prev, manufacturer: '' }));
+                      }}
+                    >
+                      <SelectTrigger className="rounded-xl py-5">
+                        <SelectValue placeholder={t('select_manufacturer') || 'Select Manufacturer'} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        {Object.keys(manufacturersData).length === 0 ? (
+                          <SelectItem value="loading_manufacturers" disabled>
+                            Loading manufacturers...
+                          </SelectItem>
+                        ) : (
+                          Object.keys(manufacturersData).map((manufacturer) => (
+                            <SelectItem key={manufacturer} value={manufacturer}>
+                              {manufacturersData[manufacturer]?.submodels?.[0]?.manufacturer?.title || manufacturer}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                    {errors.manufacturer && <p className="mt-1 text-sm text-red-500">{errors.manufacturer}</p>}
+                  </motion.div>
+
+                  {/* Model Selection */}
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.2 }}
+                  >
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('model') || 'Model'} <span className="text-red-500">*</span>
+                    </label>
+                    <Select
+                      value={selectedModel}
+                      onValueChange={(value) => {
+                        setSelectedModel(value);
+                        setSubModelID(value);
+                        const selectedModelData = availableModels.find(model => model.id?.toString() === value);
+                        if (selectedModelData) {
+                          setFormData(prev => ({ 
+                            ...prev, 
+                            commercialNickname: selectedModelData.title || '',
+                            modelId: selectedModelData.id?.toString() || ''
+                          }));
+                        }
+                        onFetchSubmodels(value);
+                        setSelectedSubmodel('');
+                        setErrors({ ...errors, model: '' });
+                      }}
+                      disabled={!selectedManufacturer || availableModels.length === 0}
+                    >
+                      <SelectTrigger className="rounded-xl py-5">
+                        <SelectValue placeholder={t('select_model') || 'Select Model'} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        {!selectedManufacturer ? (
+                          <SelectItem value="select_manufacturer_first" disabled>
+                            Select manufacturer first
+                          </SelectItem>
+                        ) : availableModels.length === 0 ? (
+                          <SelectItem value="no_models_available" disabled>
+                            No models available
+                          </SelectItem>
+                        ) : (
+                          availableModels.map((model) => (
+                            <SelectItem key={model.id} value={model.id?.toString()}>
+                              {model.title || 'Unknown Model'}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                    {errors.model && <p className="mt-1 text-sm text-red-500">{errors.model}</p>}
+                  </motion.div>
+
+                  {/* Year Selection */}
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.3 }}
+                  >
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('year') || 'Year'} <span className="text-red-500">*</span>
+                    </label>
+                    <Select
+                      value={selectedYear}
+                      onValueChange={async (value) => {
+                        setSelectedYear(value);
+                        setSelectedSubmodel('');
+                        setFormData(prev => ({ 
+                          ...prev, 
+                          year: value,
+                          subModelId: '',
+                          commercialNickname: ''
+                        }));
+                        setErrors({ ...errors, year: '' });
+                        
+                        // Fetch submodel options when year is selected
+                        if (selectedManufacturer && selectedModel && value) {
+                          try {
+                            const manufacturerTitle = manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer;
+                            const modelTitle = availableModels.find(model => model.id?.toString() === selectedModel)?.title || selectedModel;
+                            console.log('here2 ' , manufacturerTitle, modelTitle, value);
+
+                            // Fetch submodel options and set them globally
+                            const submodelOptions = await fetchSubmodelOptions(manufacturerTitle, modelTitle, value);
+                            console.log('Fetched submodel options:', submodelOptions);
+                            setGlobalSubmodelOptions(submodelOptions);
+                            console.log('here3 ' , submodelOptions);
+                            // Update available submodels with the fetched data
+                            if (submodelOptions.length > 0) {
+                              // Convert to the format expected by the existing submodel logic
+                              const formattedSubmodels = submodelOptions.map(option => ({
+                                id: option.id,
+                                title: option.title,
+                                minYear: parseInt(value),
+                                maxYear: parseInt(value)
+                              }));
+                              
+                              // Update the available submodels state
+                              setAvailableSubmodels(formattedSubmodels);
+                              console.log('Fetched submodel options:', formattedSubmodels);
+                            } else {
+                              setAvailableSubmodels([]);
+                            }
+                          } catch (error) {
+                            console.error('Error fetching submodel options:', error);
+                          }
+                        }
+                      }}
+                      disabled={!selectedManufacturer || !selectedModel || availableYears.length === 0}
+                    >
+                      <SelectTrigger className={`rounded-xl py-5 ${errors.year ? 'border-red-500' : ''}`}>
+                        <SelectValue placeholder={t('year') || 'Year'} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        {availableYears.length === 0 ? (
+                          <SelectItem value="no_years_available" disabled>
+                            {!selectedManufacturer ? 'Select manufacturer first' : 
+                             !selectedModel ? 'Select model first' : 'No years available'}
+                          </SelectItem>
+                        ) : (
+                          availableYears.map((year) => (
+                            <SelectItem key={year} value={year.toString()}>
+                              {year}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                    {errors.year && <p className="mt-1 text-sm text-red-500">{errors.year}</p>}
+                  </motion.div>
+
+                  {/* Submodel Selection */}
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.4 }}
+                  >
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('submodel') || 'Submodel'} <span className="text-gray-500">({t('optional') || 'optional'})</span>
+                    </label>
+                    <Select
+                      value={selectedSubmodel}
+                      onValueChange={async (value) => {
+                        setSelectedSubmodel(value);
+                        const selectedSubmodelData = globalSubmodelOptions.find(submodel => submodel.id?.toString() === value);
+                        if (selectedSubmodelData) {
+                          setFormData(prev => ({ 
+                            ...prev, 
+                            commercialNickname: selectedSubmodelData.title || '',
+                            subModelId: selectedSubmodelData.id?.toString() || ''
+                          }));
+                          
+                          // Fetch detailed specifications for the selected submodel
+                          try {
+                            // Try to find the detailed specs from globalSubmodelOptions
+                            let detailedSpecs = selectedSubmodelData;
+                            
+                            if (globalSubmodelOptions.length > 0) {
+                              console.log('here4 ' , detailedSpecs);
+                              console.log('Matching submodel found:', detailedSpecs);
+                            }
+                            
+                            if (detailedSpecs) {
+                              setFormData(prev => ({
+                                ...prev,
+                                engineType: detailedSpecs.transmission,
+                                transmission: detailedSpecs.transmission || prev.transmission,
+                                engineCapacity: detailedSpecs.engineCapacity || prev.engineCapacity,
+                                bodyType: detailedSpecs.bodyType || prev.bodyType,
+                                seatingCapacity: detailedSpecs.seatingCapacity || prev.seatingCapacity,
+                                fuelType: detailedSpecs.fuelType || prev.fuelType,
+                                abs: detailedSpecs.abs || prev.abs,
+                                airbags: detailedSpecs.airbags || prev.airbags,
+                                powerWindows: detailedSpecs.powerWindows || prev.powerWindows,
+                                driveType: detailedSpecs.driveType || prev.driveType,
+                                totalWeight: detailedSpecs.totalWeight || prev.totalWeight,
+                                height: detailedSpecs.height || prev.height,
+                                fuelTankCapacity: detailedSpecs.fuelTankCapacity || prev.fuelTankCapacity,
+                                co2Emission: detailedSpecs.co2Emission || prev.co2Emission,
+                                greenIndex: detailedSpecs.greenIndex || prev.greenIndex,
+                                commercialName: detailedSpecs.commercialName || prev.commercialName,
+                                rank: detailedSpecs.rank || prev.rank
+                              }));
+                              setGovCarInfo(detailedSpecs);
+                              setYad2ModelInfo({data:{...detailedSpecs}});
+                            } else {
+                              console.warn('No detailed specs available for submodel:', selectedSubmodelData.title);
+                              // Still update basic form data even without detailed specs
+                              setFormData(prev => ({
+                                ...prev,
+                                commercialNickname: selectedSubmodelData.title || '',
+                                subModelId: selectedSubmodelData.id?.toString() || ''
+                              }));
+                            }
+                          } catch (error) {
+                            console.error('Error fetching detailed submodel specifications:', error);
+                          }
+                        }
+                        setErrors({ ...errors, submodel: '' });
+                      }}
+                      disabled={!selectedManufacturer || !selectedModel || !selectedYear || availableSubmodels.length === 0}
+                    >
+                      <SelectTrigger className="rounded-xl py-5">
+                        <SelectValue placeholder={t('select_submodel') || 'Select Submodel'} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        {!selectedManufacturer || !selectedModel || !selectedYear ? (
+                          <SelectItem value="no_submodels_available" disabled>
+                            {!selectedManufacturer ? 'Select manufacturer first' : 
+                             !selectedModel ? 'Select model first' : 
+                             !selectedYear ? 'Select year first' : 'No submodels available'}
+                          </SelectItem>
+                        ) : availableSubmodels.length === 0 ? (
+                          <SelectItem value="no_submodels_available" disabled>
+                            {loading ? 'Loading submodels...' : 'No submodels available for this selection'}
+                          </SelectItem>
+                        ) : (
+                          availableSubmodels.map((submodel) => (submodel.minYear <= selectedYear && submodel.maxYear >= selectedYear) && (
+                            <SelectItem key={submodel.id} value={submodel.id?.toString()}>
+                              {submodel.title || 'Unknown Submodel'}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                    {errors.submodel && <p className="mt-1 text-sm text-red-500">{errors.submodel}</p>}
+                  </motion.div>
+                </div>
+
+                {/* Additional Fields */}
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.5 }}
+                  className="space-y-4"
+                >
+                  {/* Engine Type */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('engine_type') || 'Engine Type'} <span className="text-gray-500">({t('optional') || 'optional'})</span>
+                    </label>
+                    <Select
+                      value={formData.engineType}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, engineType: value }))}
+                    >
+                      <SelectTrigger className="rounded-xl py-5 text-black">
+                        <SelectValue placeholder={t('engine_type') || 'Engine Type'} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        {ENGINE_TYPES.map((engineType) => (
+                          <SelectItem key={engineType.value} value={engineType.value}>
+                            {engineType.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Transmission */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('transmission') || 'Transmission'} <span className="text-gray-500">({t('optional') || 'optional'})</span>
+                    </label>
+                    <Select
+                      value={formData.transmission}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, transmission: value }))}
+                    >
+                      <SelectTrigger className="rounded-xl py-5 text-black">
+                        <SelectValue placeholder={t('select_transmission') || 'Select Transmission'} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        {TRANSMISSION_OPTIONS.map((transmission) => (
+                          <SelectItem key={transmission.value} value={transmission.value}>
+                            {transmission.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+
+
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('basic_information')}</h2>
             <div className="w-full max-w-xl">
             <div className="relative">
