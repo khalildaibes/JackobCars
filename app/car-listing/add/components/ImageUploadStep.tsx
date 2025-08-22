@@ -56,8 +56,10 @@ export const ImageUploadStep: React.FC<ImageUploadStepProps> = ({
     if (files.length > 0) {
       // Create a synthetic event for the existing onImageChange handler
       const syntheticEvent = {
-        target: { files: files.slice(0, VALIDATION_RULES.MAX_IMAGES - formData.images.length) }
-      } as React.ChangeEvent<HTMLInputElement>;
+        target: { 
+          files: files.slice(0, VALIDATION_RULES.MAX_IMAGES - formData.images.length) 
+        }
+      } as unknown as React.ChangeEvent<HTMLInputElement>;
       
       onImageChange(syntheticEvent);
     }

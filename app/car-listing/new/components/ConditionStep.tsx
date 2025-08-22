@@ -48,22 +48,7 @@ export const ConditionStep: React.FC<ConditionStepProps> = ({
     setIsGeneratingDescription(true);
     
     try {
-      const response = await fetch('/api/createDescription', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          make: formData.manufacturerName || govCarInfo.carTitle || '',
-          model: formData.commercialNickname || govCarInfo.subModelTitle || '',
-          year: formData.yearOfProduction || govCarInfo.carYear || '',
-          specs: {
-            mileage: formData.mileage || '',
-            color: formData.color || '',
-            engineType: formData.engineType || '',
-            transmission: formData.transmission || '',
-            condition: formData.currentCondition || ''
-          }
-        })
-      });
+      const response = await fetch('/api/createDescription?data=' + encodeURIComponent(JSON.stringify(formData)));
       
       if (response.ok) {
         const data = await response.json();
