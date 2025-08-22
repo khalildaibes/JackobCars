@@ -10,6 +10,125 @@ import { FormData, ValidationErrors, InputMethod, ProcessingStep, PopupModal, Ca
 import { VALIDATION_RULES, ERROR_MESSAGES } from './constants';
 
 /**
+ * Fetches additional vehicle specifications from the government API
+ * @param carData - Basic car data containing manufacturer, model, year, submodel, and fuel type
+ * @returns Enhanced car data with additional specifications
+ */
+export const fetchVehicleSpecs = async (carData: any) => {
+  try {
+    const vehicleSpecsUrl = `/api/gov/vehicle-specs?manufacturerName=${carData.manufacturerName}&modelName=${carData.modelName}&year=${carData.year}&submodel=${carData.subModel || ''}&fuelType=${carData.fuelType || ''}`;
+    console.log('Fetching vehicle specs from:', vehicleSpecsUrl);
+    
+    const vehicleSpecsResponse = await fetch(vehicleSpecsUrl);
+    
+    if (vehicleSpecsResponse.ok) {
+      const vehicleSpecsData = await vehicleSpecsResponse.json();
+      
+      if (vehicleSpecsData?.result?.records?.length > 0) {
+        const specsRecord = vehicleSpecsData.result.records[0];
+        
+        // Merge the additional specs data with the existing car data
+        const enhancedCarData = {
+          ...carData,
+          engineCapacity: specsRecord.nefah_manoa || null,
+          totalWeight: specsRecord.mishkal_kolel || null,
+          height: specsRecord.gova || null,
+          driveType: specsRecord.hanaa_nm || null,
+          transmission: specsRecord.mazgan_ind === 1 ? 'Automatic' : 'Manual',
+          abs: specsRecord.abs_ind === 1 ? 'Yes' : 'No',
+          airbags: specsRecord.mispar_kariot_avir || 0,
+          powerWindows: specsRecord.mispar_halonot_hashmal || 0,
+          fuelTankCapacity: specsRecord.kosher_grira_im_blamim || null,
+          fuelTankCapacityWithoutReserve: specsRecord.kosher_grira_bli_blamim || null,
+          safetyRating: specsRecord.nikud_betihut || null,
+          safetyRatingWithoutSeatbelts: specsRecord.ramat_eivzur_betihuty || null,
+          co2Emission: specsRecord.CO2_WLTP || null,
+          noxEmission: specsRecord.NOX_WLTP || null,
+          pmEmission: specsRecord.PM_WLTP || null,
+          hcEmission: specsRecord.HC_WLTP || null,
+          coEmission: specsRecord.CO_WLTP || null,
+          greenIndex: specsRecord.madad_yarok || null,
+          bodyType: specsRecord.merkav || null,
+          commercialName: specsRecord.kinuy_mishari || null,
+          rank: specsRecord.rank || null
+        };
+        
+        console.log('Vehicle specs data merged successfully');
+        return enhancedCarData;
+      } else {
+        console.log('No vehicle specs records found');
+        return carData;
+      }
+    } else {
+      console.log('Vehicle specs API request failed:', vehicleSpecsResponse.status);
+      return carData;
+    }
+  } catch (error) {
+    console.error('Error fetching vehicle specs:', error);
+    return carData;
+  }
+};
+
+/**
+ * Fetches submodel options from the government API for manual selection
+ * @param manufacturerName - Manufacturer name
+ * @param modelName - Model name  
+ * @param year - Year of production
+ * @returns Array of submodel options with extracted data
+ */
+export const fetchSubmodelOptions = async (manufacturerName: string, modelName: string, year: string) => {
+  try {
+    const vehicleSpecsUrl = `/api/gov/vehicle-specs?manufacturerName=${encodeURIComponent(manufacturerName)}&modelName=${encodeURIComponent(modelName)}&year=${encodeURIComponent(year)}`;
+    console.log('Fetching submodel options from:', vehicleSpecsUrl);
+    
+    const vehicleSpecsResponse = await fetch(vehicleSpecsUrl);
+    
+    if (vehicleSpecsResponse.ok) {
+      const vehicleSpecsData = await vehicleSpecsResponse.json();
+      
+      if (vehicleSpecsData?.result?.records?.length > 0) {
+        // Extract unique submodel options from the records
+        const submodelOptions = vehicleSpecsData.result.records.map((record: any) => ({
+          id: record._id,
+          title: `${record.ramat_gimur} מנוע ${(parseInt(record.nefah_manoa)/1000).toFixed(1)}  ${parseInt(record.koah_sus)} כ"ס ` || 'Unknown Submodel',
+          engineCapacity: record.nefah_manoa || null,
+          enginePower: record.koah_sus || null,
+          bodyType: record.merkav || null,
+          trimLevel: record.ramat_gimur || null,
+          fuelType: record.delek_nm || null,
+          transmission: record.mazgan_ind === 1 ? 'Automatic' : 'Manual',
+          seatingCapacity: record.mispar_moshavim || null,
+          doors: record.mispar_dlatot || null,
+          abs: record.abs_ind === 1 ? 'Yes' : 'No',
+          airbags: record.mispar_kariot_avir || 0,
+          powerWindows: record.mispar_halonot_hashmal || 0,
+          driveType: record.hanaa_nm || null,
+          weight: record.mishkal_kolel || null,
+          height: record.gova || null,
+          fuelTankCapacity: record.kosher_grira_im_blamim || null,
+          co2Emission: record.CO2_WLTP || null,
+          greenIndex: record.madad_yarok || null,
+          commercialName: record.kinuy_mishari || null,
+          rank: record.rank || null
+        }));
+        
+        console.log('Submodel options fetched successfully:', submodelOptions.length);
+        return submodelOptions;
+      } else {
+        console.log('No submodel options found');
+        return [];
+      }
+    } else {
+      console.log('Submodel options API request failed:', vehicleSpecsResponse.status);
+      return [];
+    }
+  } catch (error) {
+    console.error('Error fetching submodel options:', error);
+    return [];
+  }
+};
+
+/**
  * Hook for managing popup modal state
  * @returns Object containing popup state and control functions
  */
@@ -120,10 +239,21 @@ export const useImageHandling = (
   setFormData: (data: FormData | ((prev: FormData) => FormData)) => void,
   setErrors: (errors: ValidationErrors) => void
 ) => {
-  const handleImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      const newImages = [...formData.images, ...Array.from(files)].slice(0, VALIDATION_RULES.MAX_IMAGES);
+  const handleImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement> | File[]) => {
+    let files: File[] = [];
+    
+    if (Array.isArray(e)) {
+      // Handle File[] from drag and drop
+      files = e;
+    } else {
+      // Handle ChangeEvent from file input
+      if (e.target.files) {
+        files = Array.from(e.target.files);
+      }
+    }
+    
+    if (files.length > 0) {
+      const newImages = [...formData.images, ...files].slice(0, VALIDATION_RULES.MAX_IMAGES);
       setFormData(prev => ({ ...prev, images: newImages }));
       setErrors({ images: '' });
     }
@@ -408,55 +538,8 @@ export const useCarDataFetching = (config: CarDataFetchingConfig) => {
             source: 'government_api'
           };
 
-          // Now fetch additional vehicle specs using the vehicle-specs API
-          try {
-            const vehicleSpecsUrl = `/api/gov/vehicle-specs?manufacturerName=${encodeURIComponent(mappedData.data.manufacturerName)}&modelName=${encodeURIComponent(mappedData.data.modelName)}&year=${encodeURIComponent(mappedData.data.carYear)}&submodel=${encodeURIComponent(mappedData.data.subModelTitle)}&fuelType=${encodeURIComponent(mappedData.data.fuelType)}`;
-            console.log('Fetching vehicle specs from:', vehicleSpecsUrl);
-            
-            const vehicleSpecsResponse = await fetch(vehicleSpecsUrl);
-            
-            if (vehicleSpecsResponse.ok) {
-              const vehicleSpecsData = await vehicleSpecsResponse.json();
-              
-              if (vehicleSpecsData?.result?.records?.length > 0) {
-                const specsRecord = vehicleSpecsData.result.records[0];
-                
-                // Merge the additional specs data with the existing mapped data
-                mappedData.data = {
-                  ...mappedData.data,
-                  engineCapacity: specsRecord.nefah_manoa || null,
-                  totalWeight: specsRecord.mishkal_kolel || null,
-                  height: specsRecord.gova || null,
-                  driveType: specsRecord.hanaa_nm || null,
-                  transmission: specsRecord.mazgan_ind === 1 ? 'Automatic' : 'Manual',
-                  abs: specsRecord.abs_ind === 1 ? 'Yes' : 'No',
-                  airbags: specsRecord.mispar_kariot_avir || 0,
-                  powerWindows: specsRecord.mispar_halonot_hashmal || 0,
-                  fuelTankCapacity: specsRecord.kosher_grira_im_blamim || null,
-                  fuelTankCapacityWithoutReserve: specsRecord.kosher_grira_bli_blamim || null,
-                  safetyRating: specsRecord.nikud_betihut || null,
-                  safetyRatingWithoutSeatbelts: specsRecord.ramat_eivzur_betihuty || null,
-                  co2Emission: specsRecord.CO2_WLTP || null,
-                  noxEmission: specsRecord.NOX_WLTP || null,
-                  pmEmission: specsRecord.PM_WLTP || null,
-                  hcEmission: specsRecord.HC_WLTP || null,
-                  coEmission: specsRecord.CO_WLTP || null,
-                  greenIndex: specsRecord.madad_yarok || null,
-                  bodyType: specsRecord.merkav || null,
-                  commercialName: specsRecord.kinuy_mishari || null,
-                  rank: specsRecord.rank || null
-                } as any;
-                
-                console.log('Vehicle specs data merged successfully');
-              } else {
-                console.log('No vehicle specs records found');
-              }
-            } else {
-              console.log('Vehicle specs API request failed:', vehicleSpecsResponse.status);
-            }
-          } catch (error) {
-            console.error('Error fetching vehicle specs:', error);
-          }
+          // Fetch additional vehicle specs using the separated function
+          mappedData.data = await fetchVehicleSpecs(mappedData.data);
 
           // Set the combined data
           setYad2ModelInfo(mappedData);

@@ -83,9 +83,10 @@ export default function AddCarListing() {
   const [manufacturersData, setManufacturersData] = useState<ManufacturersData>(manufacturers_hebrew);
   const [selectedManufacturer, setSelectedManufacturer] = useState('');
   const [selectedModel, setSelectedModel] = useState('');
-  const [selectedYear, setSelectedYear] = useState('');
   const [selectedSubmodel, setSelectedSubmodel] = useState('');
+  const [selectedYear, setSelectedYear] = useState('');
   const [subModelID, setSubModelID] = useState<string>('');
+  const [globalSubmodelOptions, setGlobalSubmodelOptions] = useState<any[]>([]);
 
   // Available options state
   const [availableModels, setAvailableModels] = useState<any[]>([]);
@@ -641,6 +642,11 @@ export default function AddCarListing() {
                 availableModels={availableModels}
                 availableYears={availableYears}
                 availableSubmodels={availableSubmodels}
+                setAvailableSubmodels={setAvailableSubmodels}
+                globalSubmodelOptions={globalSubmodelOptions}
+                setGlobalSubmodelOptions={setGlobalSubmodelOptions}
+                setYad2ModelInfo={setYad2ModelInfo}
+                setGovCarInfo={setGovCarInfo}
                 subModelID={subModelID}
                 setSubModelID={setSubModelID}
                 plateNumber={formData.plateNumber}

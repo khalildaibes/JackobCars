@@ -68,7 +68,20 @@ export const DEFAULT_VALUES = {
   colors: [],
   longTestValid: false,
   adaptedForDisabled: false,
-  freeSearch: ''
+  freeSearch: '',
+  bodyType: '',
+  seatingCapacity: '',
+  abs: false,
+  airbags: false,
+  powerWindows: false,
+  driveType: '',
+  totalWeight: '',
+  height: '',
+  fuelTankCapacity: '',
+  co2Emission: '',
+  greenIndex: '',
+  commercialName: '',
+  rank: ''
 };
 
 // Validation Rules

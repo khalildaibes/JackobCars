@@ -136,6 +136,20 @@ export interface FormData {
   
   // Free Search (חיפוש חופשי)
   freeSearch: string;
+  bodyType: string;
+  seatingCapacity: string;
+  abs: boolean;
+  airbags: boolean;
+  powerWindows: boolean;
+  driveType: string;
+  totalWeight: string;
+  height: string;
+  fuelTankCapacity: string;
+  co2Emission: string;
+  greenIndex: string;
+  commercialName: string;
+  rank: string;
+
 }
 
 export interface ValidationErrors {
