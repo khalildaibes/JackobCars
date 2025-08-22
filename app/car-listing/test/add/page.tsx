@@ -963,7 +963,7 @@ export default function AddCarListing() {
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-[5%] py-8 px-4 sm:px-6 lg:px-8 ${isRTL ? 'rtl' : 'ltr'}`}>
+    <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-[15%] md:mt-[5%] py-8 px-4 sm:px-6 lg:px-8 ${isRTL ? 'rtl' : 'ltr'}`}>
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -2084,24 +2084,34 @@ export default function AddCarListing() {
           )}
 
           {/* Navigation Buttons */}
-          <div className="flex items-center justify-between gap-3">
+          <div className="sticky bottom-6 left-0 right-0 z-50 flex items-center justify-between gap-3 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-gray-200 mx-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
               disabled={currentStep === 0}
-              className="px-6"
+              className="px-6 py-3 rounded-xl transition-all duration-200 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Previous
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Previous
+              </div>
             </Button>
 
             {currentStep < STEPS.length - 1 && (
               <Button
                 type="button"
                 onClick={() => setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))}
-                className="px-6"
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white transition-all duration-200 hover:shadow-md transform hover:scale-105"
               >
-                Next
+                <div className="flex items-center gap-2">
+                  Next
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
               </Button>
             )}
           </div>
