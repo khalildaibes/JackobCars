@@ -50,13 +50,8 @@ import {manufacturers_hebrew} from '../../../../data/manufacturers_multilingual'
 const conditions = ['excellent', 'good', 'fair', 'poor'] as const;
 import React from 'react';
 
-// Move these to environment variables
-const API_BASE_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=053cea08-09bc-40ec-8f7a-156f0677aff3&q=";
-const YAD2_API_BASE_URL = "https://gw.yad2.co.il/car-data-gov/model-master/?licensePlate=";
-const YAD2_API_BASE_URL_PRICE = "https://gw.yad2.co.il/price-list/calculate-price?";
-const ALTERNATE_API_BASE_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=03adc637-b6fe-402b-9937-7c3d3afc9140&q=";
-const OWNERSHIP_HISTORY_API_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=bb2355dc-9ec7-4f06-9c3f-3344672171da&q=";
-const VEHICLE_SPECS_API_URL = "https://data.gov.il/api/3/action/datastore_search?resource_id=142afde2-6228-49f9-8a29-9b6c3a0cbe40&q=";
+// Government car data API endpoint
+const GOV_CAR_DATA_API = "/api/gov/car-data";
 
 // Constants
 const VALIDATION_RULES = {
@@ -83,47 +78,9 @@ interface CarData {
   [key: string]: string;
 }
 
-interface VehicleSpecs {
-  sug_degem: string;
-  ramat_gimur: string;
-  shnat_yitzur: string;
-  degem_nm: string;
-  [key: string]: string;
-}
 
-interface OwnershipRecord {
-  _id: number;
-  mispar_rechev: number;
-  baalut_dt: number;
-  baalut: string;
-  rank: number;
-}
 
-interface CarPerformanceData {
-  performance: {
-    acceleration: string;
-    top_speed: string;
-    horsepower: string;
-    torque: string;
-    fuel_consumption_city: string;
-    fuel_consumption_highway: string;
-  };
-  tuning: {
-    tuning_potential: string;
-    tuning_notes: string;
-    common_upgrades: string[];
-  };
-  handling: {
-    handling_rating: string;
-    suspension_type: string;
-    driving_characteristics: string;
-  };
-  reliability: {
-    reliability_rating: string;
-    common_issues: string[];
-    maintenance_cost: string;
-  };
-}
+
 interface ManufacturerData {
   submodels: any[];
   manufacturerImage: string;
@@ -176,10 +133,9 @@ export default function AddCarListing() {
   const [showCaptchaPrompt, setShowCaptchaPrompt] = useState(false);
   const [loading, setLoading] = useState(false);
   const [carImage, setCarImage] = useState<string | null>(null);
-  const [performanceData, setPerformanceData] = useState<CarPerformanceData | null>(null);
+
   const [loadingPerformance, setLoadingPerformance] = useState(false);
-  const [ownershipHistory, setOwnershipHistory] = useState<OwnershipRecord[]>([]);
-  const [vehicleSpecs, setVehicleSpecs] = useState<VehicleSpecs | null>(null);
+
   const [expandedSections, setExpandedSections] = useState({
     handling: false,
     reliability: false,
@@ -481,106 +437,41 @@ export default function AddCarListing() {
 
 
   const translationMap: Record<string, string> = {
-    _id: t("id"),
-    mispar_rechev: t("plate_number"),
-    tozeret_cd: t("manufacturer_code"),
-    sug_degem: t("model_type"),
-    tozeret_nm: t("manufacturer_name"),
-    degem_cd: t("model_code"),
-    degem_nm: t("model_name"),
-    ramat_gimur: t("trim_level"),
-    ramat_eivzur_betihuty: t("safety_equipment_level"),
-    kvutzat_zihum: t("pollution_group"),
-    shnat_yitzur: t("year_of_production"),
-    degem_manoa: t("engine_model"),
-    mivchan_acharon_dt: t("last_inspection_date"),
-    tokef_dt: t("validity_date"),
-    baalut: t("ownership"),
-    misgeret: t("chassis"),
-    tzeva_cd: t("color_code"),
-    tzeva_rechev: t("car_color"),
-    zmig_kidmi: t("front_tire"),
-    zmig_ahori: t("rear_tire"),
-    sug_delek_nm: t("fuel_type"),
-    horaat_rishum: t("registration_order"),
-    moed_aliya_lakvish: t("road_entry_date"),
-    kinuy_mishari: t("commercial_nickname"),
-    rank: t("rank"),
-  };
-  const fetchCarPerformanceData = async (manufacturer: string, model: string, year: string, trim: string) => {
-    try {
-      // setLoadingPerformance(true);
-      // const response = await fetch('/api/generate-car-information', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     manufacturer,
-      //     model,
-      //     year,
-      //     locale,
-      //     trim
-      //   }),
-      // });
-     
-
-      // const data = await response.json();
-      // setPerformanceData(data);
-    } catch (error) {
-      setError(t('error_loading_info'));
-    } finally {
-      // setLoadingPerformance(false);
-    }
+    _id: "id",
+    mispar_rechev: "plate_number",
+    tozeret_cd: "manufacturer_code",
+    sug_degem: "model_type",
+    tozeret_nm: "manufacturer_name",
+    degem_cd: "model_code",
+    degem_nm: "model_name",
+    ramat_gimur: "trim_level",
+    ramat_eivzur_betihuty: "safety_equipment_level",
+    kvutzat_zihum: "pollution_group",
+    shnat_yitzur: "year_of_production",
+    degem_manoa: "engine_model",
+    mivchan_acharon_dt: "last_inspection_date",
+    tokef_dt: "validity_date",
+    baalut: "ownership",
+    misgeret: "chassis",
+    tzeva_cd: "color_code",
+    tzeva_rechev: "car_color",
+    zmig_kidmi: "front_tire",
+    zmig_ahori: "rear_tire",
+    sug_delek_nm: "fuel_type",
+    horaat_rishum: "registration_order",
+    moed_aliya_lakvish: "road_entry_date",
+    kinuy_mishari: "commercial_nickname",
+    rank: "rank",
   };
 
-  const fetchOwnershipHistory = async (plateNumber: string) => {
-    try {
-      const response = await fetch(`${OWNERSHIP_HISTORY_API_URL}${plateNumber}`);
-      const data = await response.json();
-      
-      if (data?.result?.records) {
-        // Sort records by baalut_dt in descending order (most recent first)
-        const sortedRecords = data.result.records.sort((a: OwnershipRecord, b: OwnershipRecord) => 
-          b.baalut_dt - a.baalut_dt
-        );
-        setOwnershipHistory(sortedRecords);
-      }
-    } catch (error) {
-      console.error("Error fetching ownership history:", error);
-    }
-  };
 
-  const fetchVehicleSpecsFromGov = async (carData: CarData) => {
-    try {
-      // Construct query from car data
-      const query = JSON.stringify([
-        carData.model_type || '',
-        carData.trim_level || '',
-        carData.manufacturer_name || '',
-        carData.year_of_production || ''
-      ]);
-      
-      const response = await fetch(`${VEHICLE_SPECS_API_URL}${encodeURIComponent(query)}`);
-      const data = await response.json();
-      
-      if (data?.result?.records?.length) {
-        const record = data.result.records[0] as Record<string, unknown>;
-        const vehicleSpecs = Object.fromEntries(
-          Object.entries(record).map(([key, value]) => [
-            key,
-            String(value),
-          ])
-        ) as VehicleSpecs;
-        setVehicleSpecs(vehicleSpecs);
-      }
-    } catch (error) {
-      console.error("Error fetching vehicle specs:", error);
-    }
-  };
+
+
+
 
   const fetchCarData = async () => {
     if (!plateNumber) return;
+    
     // Remove dashes before making the API call
     const cleanPlateNumber = plateNumber.replace(/-/g, '');
     setLoading(true);
@@ -591,112 +482,270 @@ export default function AddCarListing() {
     setCaptchaRequired(false);
     setCaptchaUrl(null);
     setShowCaptchaPrompt(false);
-    setOwnershipHistory([]);
-    setVehicleSpecs(null);
-    let data = null;
-    let primaryData = null;
-    let yad2Info: any = null;
+
+    
     try {
-      // First fetch with the primary API
-      const response = await fetch(`${API_BASE_URL}${cleanPlateNumber}`);
-      primaryData  = await response.json();
-      console.log("primaryData is", primaryData);
-      try {
-        const yad2Res = await fetch(`/api/yad2/model-master?licensePlate=${cleanPlateNumber}`);
-        if (yad2Res.ok) {
-          yad2Info = await yad2Res.json();
-          console.log('yad2 model-master:', yad2Info);
-          setYad2ModelInfo(yad2Info);
-        } else {
-          let err: any = {};
-          try { err = await yad2Res.json(); } catch {}
-          console.warn('yad2 model-master failed', err);
-          const errText = JSON.stringify(err).toLowerCase();
-          if (errText.includes('radware') || errText.includes('captcha') || errText.includes('<head')) {
-            setCaptchaRequired(true);
-            const upstreamUrl = `https://gw.yad2.co.il/car-data-gov/model-master/?licensePlate=${cleanPlateNumber}`;
-            setCaptchaUrl(upstreamUrl);
-            setShowCaptchaPrompt(true);
-            setLoading(false);
-            return;
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching Yad2 data:", error);
-      }
-      // If no records were returned, try the alternate API
-      let ascentYearOnRoad = null;
-      let ascentMonthOnRoad = null;
-      if (yad2Info?.data?.subModelId) {
-        if (yad2Info?.data?.dateOnRoad) {
-           ascentYearOnRoad = yad2Info?.data?.dateOnRoad.split('-')[0];
-          ascentMonthOnRoad = yad2Info?.data?.dateOnRoad.split('-')[1];
-        } else {
-          ascentYearOnRoad = yad2Info?.data?.carYear;
-          ascentMonthOnRoad = 1;
-        }
+      // Use only the government car data API
+      const response = await fetch(`/api/gov/car-data?licensePlate=${cleanPlateNumber}`);
+      console.log('Government API response status:', response.status);
 
-        try {
-              const priceRes = await fetch('/api/yad2/price?subModelId='+yad2Info.data.subModelId+'&kilometers=0&ascentYearOnRoad='+ascentYearOnRoad+'&ascentMonthOnRoad='+ascentMonthOnRoad);
-          if (priceRes.ok) {
-            const priceData = await priceRes.json();
-            console.log('yad2 price:', priceData);
-            setYad2PriceInfo(priceData);
-          } else {
-            const err = await priceRes.json().catch(() => ({}));
-            console.warn('yad2 price failed', err);
-          }
-        } catch (err) {
-          console.error('Error fetching Yad2 price:', err);
-        }
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Government API request failed:', response.status, errorData);
+        setError(t("error_fetching") || 'Failed to fetch car data');
+        setLoading(false);
+        return;
       }
-      if (primaryData?.result?.records?.length) {
-        data = primaryData;
-      } else {
-        const alternateResponse = await fetch(`${ALTERNATE_API_BASE_URL}${cleanPlateNumber}`);
-        data = await alternateResponse.json();
-      }
-
-      if (data?.result?.records?.length) {
+      
+      const data = await response.json();
+      console.log('Government car data received:', data);
+      
+      if (data?.result?.records?.length > 0) {
         const record = data.result.records[0] as Record<string, unknown>;
-
+        
+        // Translate the data using the existing translation map
         const translatedData = Object.fromEntries(
           Object.entries(record).map(([key, value]) => [
             translationMap[key as keyof typeof translationMap] || key,
             String(value),
           ])
         );
-
+        
+        console.log('Translated car data:', translatedData);
         setCarData(translatedData);
         
-        // Fetch car image, performance data, and ownership history
-        if (record.tozeret_nm && record.kinuy_mishari && record.shnat_yitzur) {
-          await Promise.all([
-            fetchCarImage(String(record.tozeret_nm), String(record.kinuy_mishari)),
-            fetchCarPerformanceData(
-              String(record.tozeret_nm),
-              String(record.kinuy_mishari),
-              String(record.shnat_yitzur),
-              String(record.ramat_gimur)
-            ),
-            fetchOwnershipHistory(cleanPlateNumber),
-            fetchVehicleSpecsFromGov(translatedData)
-          ]);
-        }
+        
+        // Set the government car info for display
+        setGovCarInfo(translatedData);
+        
 
+        // Create a mock yad2ModelInfo structure for compatibility with existing UI
+        const mockYad2Info = {
+          data: {
+            manufacturerName: translatedData.manufacturer_name || record.tozeret_nm,
+            modelName: translatedData.model_name || record.degem_nm,
+            carYear: translatedData.year_of_production || record.shnat_yitzur,
+            subModelTitle: translatedData.trim_level || record.ramat_gimur,
+            fuelType: translatedData.fuel_type || record.sug_delek_nm,
+            owner: translatedData.ownership || record.baalut,
+            carTitle: translatedData.commercial_nickname || record.kinuy_mishari,
+            modelId: record.degem_cd,
+            manufacturerId: record.tozeret_cd,
+            subModelId: record._id,
+            commercialNickname: translatedData.commercial_nickname || record.kinuy_mishari,
+            // Additional fields that might be available
+            engineCapacity: record.nefah_manoa,
+            totalWeight: record.mishkal_kolel,
+            height: record.gova,
+            driveType: record.hanaa_nm,
+            transmission: record.mazgan_ind === 1 ? 'Automatic' : 'Manual',
+            bodyType: record.merkav,
+            engineCode: record.degem_manoa,
+            seatingCapacity: record.mispar_moshavim,
+            pollutionGroup: record.kvutzat_zihum,
+            abs: record.abs_ind === 1 ? 'Yes' : 'No',
+            airbags: record.mispar_kariot_avir,
+            powerWindows: record.mispar_halonot_hashmal,
+            safetyRating: record.nikud_betihut,
+            safetyRatingWithoutSeatbelts: record.ramat_eivzur_betihuty,
+            co2Emission: record.CO2_WLTP,
+            noxEmission: record.NOX_WLTP,
+            pmEmission: record.PM_WLTP,
+            hcEmission: record.HC_WLTP,
+            coEmission: record.CO_WLTP,
+            greenIndex: record.madad_yarok,
+            fuelTankCapacity: record.kosher_grira_im_blamim,
+            fuelTankCapacityWithoutReserve: record.kosher_grira_bli_blamim,
+            dateOnRoad: record.moed_aliya_lakvish,
+            frameNumber: record.misgeret,
+            lastTestDate: record.mivchan_acharon_dt,
+            tokefTestDate: record.tokef_dt,
+            mileage: record.km,
+            rank: record.rank,
+            commercialName: record.kinuy_mishari,
+            frontTires: record.zmig_kidmi,
+            rearTires: record.zmig_ahori,
+            carColorGroupID: record.tzeva_cd,
+            yad2ColorID: record.tzeva_cd,
+            yad2CarTitle: record.tzeva_rechev
+          }
+        };
+
+
+        setYad2ModelInfo(mockYad2Info);
+        
+        // Fetch additional vehicle specs from the government API
+        try {
+          const response1 = await fetch(`/api/gov/vehicle-specs?submodel=${record.ramat_gimur}&manufacturerName=${record.tozeret_nm}&modelName=${record.degem_nm}&year=${record.shnat_yitzur}`);
+          
+          if (response1.ok) {
+            const data1 = await response1.json();
+            console.log('Government vehicle specs API response data:', data1);
+            
+            if (data1?.result?.records?.length > 0) {
+              const specsRecord = data1.result.records[0];
+              
+              // Merge the vehicle specs with the mock data
+              const enhancedData = {
+                ...mockYad2Info.data,
+                // Map government API fields to the expected structure
+                engineCapacity: specsRecord.nefah_manoa || null,
+                totalWeight: specsRecord.mishkal_kolel || null,
+                height: specsRecord.gova || null,
+                driveType: specsRecord.hanaa_nm || null,
+                transmission: specsRecord.mazgan_ind === 1 ? 'Automatic' : 'Manual',
+                bodyType: specsRecord.merkav || null,
+                engineCode: specsRecord.degem_manoa || null,
+                seatingCapacity: specsRecord.mispar_moshavim || null,
+                pollutionGroup: specsRecord.kvutzat_zihum || null,
+                abs: specsRecord.abs_ind === 1 ? 'Yes' : 'No',
+                airbags: specsRecord.mispar_kariot_avir || null,
+                powerWindows: specsRecord.mispar_halonot_hashmal || null,
+                safetyRating: specsRecord.nikud_betihut || null,
+                safetyRatingWithoutSeatbelts: specsRecord.ramat_eivzur_betihuty || null,
+                co2Emission: specsRecord.CO2_WLTP || specsRecord.kamut_CO2 || null,
+                noxEmission: specsRecord.NOX_WLTP || specsRecord.kamut_NOX || null,
+                pmEmission: specsRecord.PM_WLTP || specsRecord.kamut_PM10 || null,
+                hcEmission: specsRecord.HC_WLTP || specsRecord.kamut_HC || null,
+                coEmission: specsRecord.CO_WLTP || specsRecord.kamut_CO || null,
+                greenIndex: specsRecord.madad_yarok || null,
+                fuelTankCapacity: specsRecord.kosher_grira_im_blamim || null,
+                fuelTankCapacityWithoutReserve: specsRecord.kosher_grira_bli_blamim || null,
+                // Additional fields from the specs
+                enginePower: specsRecord.koah_sus || null,
+                doors: specsRecord.mispar_dlatot || null,
+                fuelType: specsRecord.delek_nm || null,
+                trimLevel: specsRecord.ramat_gimur || null,
+                commercialName: specsRecord.kinuy_mishari || null,
+                rank: specsRecord.rank || null,
+                // Environmental data
+                CO2_WLTP: specsRecord.CO2_WLTP || null,
+                CO2_WLTP_NEDC: specsRecord.CO2_WLTP_NEDC || null,
+                CO_WLTP: specsRecord.CO_WLTP || null,
+                HC_WLTP: specsRecord.HC_WLTP || null,
+                NOX_WLTP: specsRecord.NOX_WLTP || null,
+                PM_WLTP: specsRecord.PM_WLTP || null,
+                // Additional specs
+                abs_ind: specsRecord.abs_ind || null,
+                alco_lock: specsRecord.alco_lock || null,
+                argaz_ind: specsRecord.argaz_ind || null,
+                automatic_ind: specsRecord.automatic_ind || null,
+                bakarat_mehirut_isa: specsRecord.bakarat_mehirut_isa || null,
+                bakarat_shyut_adaptivit_ind: specsRecord.bakarat_shyut_adaptivit_ind || null,
+                bakarat_stiya_activ_s: specsRecord.bakarat_stiya_activ_s || null,
+                bakarat_stiya_menativ_ind: specsRecord.bakarat_stiya_menativ_ind || null,
+                bakarat_stiya_menativ_makor_hatkana: specsRecord.bakarat_stiya_menativ_makor_hatkana || null,
+                bakarat_yatzivut_ind: specsRecord.bakarat_yatzivut_ind || null,
+                blima_otomatit_nesia_leahor: specsRecord.blima_otomatit_nesia_leahor || null,
+                blimat_hirum_lifnei_holhei_regel_ofanaim: specsRecord.blimat_hirum_lifnei_holhei_regel_ofanaim || null,
+                galgaley_sagsoget_kala_ind: specsRecord.galgaley_sagsoget_kala_ind || null,
+                halon_bagg_ind: specsRecord.halon_bagg_ind || null,
+                halonot_hashmal_source: specsRecord.halonot_hashmal_source || null,
+                hanaa_cd: specsRecord.hanaa_cd || null,
+                hayshaney_hagorot_ind: specsRecord.hayshaney_hagorot_ind || null,
+                hayshaney_lahatz_avir_batzmigim_ind: specsRecord.hayshaney_lahatz_avir_batzmigim_ind || null,
+                hege_koah_ind: specsRecord.hege_koah_ind || null,
+                hitnagshut_cad_shetah_met: specsRecord.hitnagshut_cad_shetah_met || null,
+                kamut_CO: specsRecord.kamut_CO || null,
+                kamut_CO2: specsRecord.kamut_CO2 || null,
+                kamut_CO2_city: specsRecord.kamut_CO2_city || null,
+                kamut_CO2_hway: specsRecord.kamut_CO2_hway || null,
+                kamut_CO_city: specsRecord.kamut_CO_city || null,
+                kamut_CO_hway: specsRecord.kamut_CO_hway || null,
+                kamut_HC: specsRecord.kamut_HC || null,
+                kamut_HC_NOX: specsRecord.kamut_HC_NOX || null,
+                kamut_HC_city: specsRecord.kamut_HC_city || null,
+                kamut_HC_hway: specsRecord.kamut_HC_hway || null,
+                kamut_NOX: specsRecord.kamut_NOX || null,
+                kamut_NOX_city: specsRecord.kamut_NOX_city || null,
+                kamut_NOX_hway: specsRecord.kamut_NOX_hway || null,
+                kamut_PM10: specsRecord.kamut_PM10 || null,
+                kamut_PM10_city: specsRecord.kamut_PM10_city || null,
+                kamut_PM10_hway: specsRecord.kamut_PM10_hway || null,
+                kariot_avir_source: specsRecord.kariot_avir_source || null,
+                koah_sus: specsRecord.koah_sus || null,
+                kosher_grira_bli_blamim: specsRecord.kosher_grira_bli_blamim || null,
+                kosher_grira_im_blamim: specsRecord.kosher_grira_im_blamim || null,
+                kvutzat_zihum: specsRecord.kvutzat_zihum || null,
+                kvuzat_agra_cd: specsRecord.kvuzat_agra_cd || null,
+                maarechet_ezer_labalam_ind: specsRecord.maarechet_ezer_labalam_ind || null,
+                madad_yarok: specsRecord.madad_yarok || null,
+                matzlemat_reverse_ind: specsRecord.matzlemat_reverse_ind || null,
+                mazgan_ind: specsRecord.mazgan_ind || null,
+                merkav: specsRecord.merkav || null,
+                mishkal_kolel: specsRecord.mishkal_kolel || null,
+                mispar_dlatot: specsRecord.mispar_dlatot || null,
+                mispar_halonot_hashmal: specsRecord.mispar_halonot_hashmal || null,
+                mispar_kariot_avir: specsRecord.mispar_kariot_avir || null,
+                mispar_moshavim: specsRecord.mispar_moshavim || null,
+                nefah_manoa: specsRecord.nefah_manoa || null,
+                nikud_betihut: specsRecord.nikud_betihut || null,
+                nitur_merhak_milfanim_ind: specsRecord.nitur_merhak_milfanim_ind || null,
+                nitur_merhak_milfanim_makor_hatkana: specsRecord.nitur_merhak_milfanim_makor_hatkana || null,
+                ramat_eivzur_betihuty: specsRecord.ramat_eivzur_betihuty || null,
+                ramat_gimur: specsRecord.ramat_gimur || null,
+                shlita_automatit_beorot_gvohim_ind: specsRecord.shlita_automatit_beorot_gvohim_ind || null,
+                shlita_automatit_beorot_gvohim_makor_hatkana: specsRecord.shlita_automatit_beorot_gvohim_makor_hatkana || null,
+                shnat_yitzur: specsRecord.shnat_yitzur || null,
+                sug_degem: specsRecord.sug_degem || null,
+                sug_mamir_cd: specsRecord.sug_mamir_cd || null,
+                sug_mamir_nm: specsRecord.sug_mamir_nm || null,
+                sug_tkina_cd: specsRecord.sug_tkina_cd || null,
+                sug_tkina_nm: specsRecord.sug_tkina_nm || null,
+                technologiat_hanaa_cd: specsRecord.technologiat_hanaa_cd || null,
+                technologiat_hanaa_nm: specsRecord.technologiat_hanaa_nm || null,
+                teura_automatit_benesiya_kadima_ind: specsRecord.teura_automatit_benesiya_kadima_ind || null,
+                tozar: specsRecord.tozar || null,
+                tozeret_cd: specsRecord.tozeret_cd || null,
+                tozeret_eretz_nm: specsRecord.tozeret_eretz_nm || null,
+                tozeret_nm: specsRecord.tozeret_nm || null,
+                zihuy_beshetah_nistar_ind: specsRecord.zihuy_beshetah_nistar_ind || null,
+                zihuy_holchey_regel_ind: specsRecord.zihuy_holchey_regel_ind || null,
+                zihuy_holchey_regel_makor_hatkana: specsRecord.zihuy_holchey_regel_makor_hatkana || null,
+                zihuy_tatzav_hitkarvut_mesukenet_ind: specsRecord.zihuy_tatzav_hitkarvut_mesukenet_ind || null,
+                zihuy_rechev_do_galgali: specsRecord.zihuy_rechev_do_galgali || null,
+                zihuy_tamrurey_tnua_ind: specsRecord.zihuy_tamrurey_tnua_ind || null,
+                zihuy_tamrurey_tnua_makor_hatkana: specsRecord.zihuy_tamrurey_tnua_makor_hatkana || null
+              };
+              
+              setYad2ModelInfo({ data: enhancedData });
+              console.log('Enhanced yad2ModelInfo with vehicle specs:', enhancedData);
+            } else {
+              // If no vehicle specs found, use the mock data as is
+              setYad2ModelInfo(mockYad2Info);
+              console.log('No vehicle specs found, using mock data:', mockYad2Info);
+            }
+          } else {
+            console.log('Vehicle specs API request failed:', response1.status);
+            // Use the mock data if the vehicle specs API fails
+            setYad2ModelInfo(mockYad2Info);
+          }
+        } catch (error) {
+          console.error('Error fetching vehicle specs:', error);
+          // Use the mock data if there's an error
+          setYad2ModelInfo(mockYad2Info);
+        }
+        
+        // Fetch car image if manufacturer and model are available
+        if (record.tozeret_nm && record.kinuy_mishari) {
+          await fetchCarImage(String(record.tozeret_nm), String(record.kinuy_mishari));
+        }
         // Scroll to results after data is loaded
         setTimeout(() => {
           resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 100);
+        
       } else {
         setCarData(null);
-        setError(t("no_car_found"));
+        setError(t("no_car_found") || 'No car found with this license plate');
       }
+      
     } catch (error) {
-      console.error("Error fetching data:", error);
-      setError(t("error_fetching"));
+      console.error("Error fetching government car data:", error);
+      setError(t("error_fetching") || 'Error fetching car data');
     }
-
+    
     setLoading(false);
   };
 
@@ -1405,8 +1454,7 @@ export default function AddCarListing() {
                   transition={{ duration: 0.4, delay: 0.5 }}
                   className="space-y-4"
                 >
-                  {/* Engine Type */}
-                  <div>
+                  {/* <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       {t('engine_type') || 'Engine Type'} <span className="text-gray-500">({t('optional') || 'optional'})</span>
                     </label>
@@ -1427,7 +1475,6 @@ export default function AddCarListing() {
                     </Select>
                   </div>
 
-                  {/* Transmission */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       {t('transmission') || 'Transmission'} <span className="text-gray-500">({t('optional') || 'optional'})</span>
@@ -1447,7 +1494,7 @@ export default function AddCarListing() {
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
+                  </div> */}
                 </motion.div>
               </motion.div>
             )}
