@@ -39,7 +39,8 @@ import {
   Disc,
   Sparkles,
   Activity,
-  ShieldCheck
+  ShieldCheck,
+  Building
 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "../../../../components/ui/radio-group";
 import { Label } from "../../../../components/ui/label";
@@ -103,11 +104,13 @@ export default function AddCarListing() {
   const locale = useLocale();
   const isRTL = locale === 'ar' || locale === 'he-IL';
   const STEPS = [
+    'Car Type',
     'Basic Information',
     'Condition & Trade-in & description',
     'Price',
     'Contact Info',
     'Upload Images',
+    'Package Selection',
   ];
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -216,7 +219,14 @@ export default function AddCarListing() {
     co2Emission: '',
     greenIndex: '',
     commercialName: '',
-    rank: ''
+    rank: '',
+    carType: '',
+    ownerType: '',
+    previousOwners: [],
+    priceNegotiable: false,
+    region: '',
+    termsAccepted: false,
+    selectedPackage: 'website_release',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -798,6 +808,13 @@ export default function AddCarListing() {
     if (!selectedModel) newErrors.model = t('validation_required');
     if (!formData.year) newErrors.year = t('validation_required');
     if (!formData.plateNumber) newErrors.plateNumber = t('validation_required');
+    if (!formData.mileage) newErrors.mileage = t('validation_required');
+    if (!formData.carType) newErrors.carType = t('validation_required');
+    if (!formData.ownerType) newErrors.ownerType = t('validation_required');
+    if (!formData.askingPrice) newErrors.askingPrice = t('validation_required');
+    if (!formData.region) newErrors.region = t('validation_required');
+    if (!formData.termsAccepted) newErrors.termsAccepted = t('validation_required');
+    if (!formData.selectedPackage) newErrors.selectedPackage = t('validation_required');
     if (!formData.email) {
       newErrors.email = t('validation_required');
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
@@ -1037,11 +1054,18 @@ export default function AddCarListing() {
           year_of_production: formData.yearOfProduction || yad2ModelInfo?.data?.year || '',
           fuel_type: formData.fuelType || yad2ModelInfo?.data?.fuelType || '',
           trim_level: yad2ModelInfo?.data?.trimLevel || '',
-          body_type: yad2ModelInfo?.data?.bodyType || '',
+          body_type: formData.bodyType || yad2ModelInfo?.data?.bodyType || '',
           transmission: formData.transmission || '',
           images: imageId ? { main: [imageId], additional: [imageId] } : {},
           pros: formData.pros || '',
           cons: formData.cons || '',
+          car_type: formData.carType || '',
+          owner_type: formData.ownerType || '',
+          previous_owners: formData.previousOwners || [],
+          price_negotiable: formData.priceNegotiable || false,
+          region: formData.region || '',
+          selected_package: formData.selectedPackage || '',
+          terms_accepted: formData.termsAccepted || false,
           features: [
             { address: '' },
             { makeModel: String(formData.makeModel || '') },
@@ -1062,6 +1086,12 @@ export default function AddCarListing() {
             { email: String(formData.email || '') },
             { phone: String(formData.phone || '') },
             { fuelType: String(formData.fuelType || yad2ModelInfo?.data?.fuelType || '') },
+            { carType: String(formData.carType || '') },
+            { ownerType: String(formData.ownerType || '') },
+            { region: String(formData.region || '') },
+            { priceNegotiable: String(formData.priceNegotiable || '') },
+            { selectedPackage: String(formData.selectedPackage || '') },
+            { termsAccepted: String(formData.termsAccepted || '') },
             ...(imageId ? [{ image: imageId }] : []),
           ],
           description: formData.description || `${formData.manufacturerName || yad2ModelInfo?.data?.manufacturerName || ''} ${formData.commercialNickname || yad2ModelInfo?.data?.modelName || ''} ${formData.yearOfProduction || yad2ModelInfo?.data?.year || ''}`.trim(),
@@ -1114,7 +1144,7 @@ export default function AddCarListing() {
       name: '',
       email: '',
       phone: '',
-      images: [] as File[],
+      images: [],
       manufacturerName: '',
       modelId: '',
       subModelId: '',
@@ -1135,17 +1165,19 @@ export default function AddCarListing() {
       greenIndex: '',
       commercialName: '',
       rank: '',
-
+      carType: '',
+      ownerType: '',
+      previousOwners: [],
+      priceNegotiable: false,
+      region: '',
+      termsAccepted: false,
+      selectedPackage: 'website_release',
     });
     setSelectedManufacturer('');
     setSelectedModel('');
     setAvailableModels([]);
     setAvailableYears([]);
-        setAvailableSubmodels([]);
-    setSelectedSubmodel('');
-    setErrors({});
-    setError(null);
-    setCurrentStep(0);
+    setErrors(prev => ({ ...prev, manufacturer: '', model: '' }));
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1208,8 +1240,59 @@ export default function AddCarListing() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Information */}
+          {/* Car Type Selection */}
           {currentStep === 0 && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
+          >
+            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('car_type_selection') || 'Car Type Selection'}</h2>
+            
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-4">
+                  {t('what_type_of_car') || 'What type of car are you selling?'} <span className="text-red-500">*</span>
+                </label>
+                <RadioGroup
+                  value={formData.carType}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, carType: value }))}
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="border-2 border-gray-200 rounded-xl p-6 hover:border-blue-300 transition-colors cursor-pointer">
+                      <RadioGroupItem value="private" id="private" className="sr-only" />
+                      <Label htmlFor="private" className="cursor-pointer">
+                        <div className="text-center">
+                          <div className="bg-blue-100 rounded-full p-4 w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                            <Car className="h-8 w-8 text-blue-600" />
+                          </div>
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('private_car') || 'Private Car'}</h3>
+                          <p className="text-sm text-gray-600">{t('private_car_description') || 'Personal vehicle for individual use'}</p>
+                        </div>
+                      </Label>
+                    </div>
+                    
+                    <div className="border-2 border-gray-200 rounded-xl p-6 hover:border-blue-300 transition-colors cursor-pointer">
+                      <RadioGroupItem value="commercial" id="commercial" className="sr-only" />
+                      <Label htmlFor="commercial" className="cursor-pointer">
+                        <div className="text-center">
+                          <div className="bg-green-100 rounded-full p-4 w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                            <Truck className="h-8 w-8 text-green-600" />
+                          </div>
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('commercial_car') || 'Commercial Car'}</h3>
+                          <p className="text-sm text-gray-600">{t('commercial_car_description') || 'Business vehicle or fleet car'}</p>
+                        </div>
+                      </Label>
+                    </div>
+                  </div>
+                </RadioGroup>
+              </div>
+            </div>
+          </motion.div>
+          )}
+
+          {/* Basic Information */}
+          {currentStep === 1 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -1290,7 +1373,7 @@ export default function AddCarListing() {
               className="mb-6"
             >
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('mileage')} <span className="text-gray-500">({t('in_kilometers') || 'in kilometers'})</span>
+                {t('mileage')} <span className="text-red-500">*</span> <span className="text-gray-500">({t('in_kilometers') || 'in kilometers'})</span>
               </label>
               <Input
                 placeholder={t('mileage')}
@@ -1753,7 +1836,7 @@ export default function AddCarListing() {
           )}
 
           {/* Condition, Trade-in & description - Combined Step */}
-          {currentStep === 1 && (
+          {currentStep === 2 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -1812,29 +1895,204 @@ export default function AddCarListing() {
                 className="h-24 rounded-xl py-5"
               />
             </div>
+
+            {/* Owner Type Section */}
+            <div className="mt-8">
+              <h3 className="text-lg font-medium text-gray-700 mb-4">{t('owner_type') || 'Owner Type'} <span className="text-red-500">*</span></h3>
+              <RadioGroup
+                value={formData.ownerType}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, ownerType: value }))}
+              >
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="border-2 border-gray-200 rounded-xl p-4 hover:border-blue-300 transition-colors cursor-pointer">
+                    <RadioGroupItem value="private" id="owner-private" className="sr-only" />
+                    <Label htmlFor="owner-private" className="cursor-pointer">
+                      <div className="text-center">
+                        <div className="bg-blue-100 rounded-full p-3 w-12 h-12 mx-auto mb-2 flex items-center justify-center">
+                          <User className="h-6 w-6 text-blue-600" />
+                        </div>
+                        <h4 className="font-medium text-gray-900">{t('private_owner') || 'Private'}</h4>
+                      </div>
+                    </Label>
+                  </div>
+                  
+                  <div className="border-2 border-gray-200 rounded-xl p-4 hover:border-blue-300 transition-colors cursor-pointer">
+                    <RadioGroupItem value="company" id="owner-company" className="sr-only" />
+                    <Label htmlFor="owner-company" className="cursor-pointer">
+                      <div className="text-center">
+                        <div className="bg-green-100 rounded-full p-3 w-12 h-12 mx-auto mb-2 flex items-center justify-center">
+                          <Building className="h-6 w-6 text-green-600" />
+                        </div>
+                        <h4 className="font-medium text-gray-900">{t('company_owner') || 'Company'}</h4>
+                      </div>
+                    </Label>
+                  </div>
+                  
+                  <div className="border-2 border-gray-200 rounded-xl p-4 hover:border-blue-300 transition-colors cursor-pointer">
+                    <RadioGroupItem value="rental" id="owner-rental" className="sr-only" />
+                    <Label htmlFor="owner-rental" className="cursor-pointer">
+                      <div className="text-center">
+                        <div className="bg-purple-100 rounded-full p-3 w-12 h-12 mx-auto mb-2 flex items-center justify-center">
+                          <Key className="h-6 w-6 text-purple-600" />
+                        </div>
+                        <h4 className="font-medium text-gray-900">{t('rental_owner') || 'Rental'}</h4>
+                      </div>
+                    </Label>
+                  </div>
+                </div>
+              </RadioGroup>
+            </div>
+
+            {/* Previous Owners Section */}
+            <div className="mt-8">
+              <h3 className="text-lg font-medium text-gray-700 mb-4">{t('previous_owners') || 'Previous Owners'} <span className="text-gray-500">({t('optional') || 'optional'})</span></h3>
+              <div className="space-y-4">
+                {formData.previousOwners.map((owner, index) => (
+                  <div key={index} className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg">
+                    <div className="flex-1">
+                      <Input
+                        placeholder={t('owner_name') || 'Owner name'}
+                        value={owner.name}
+                        onChange={(e) => {
+                          const newOwners = [...formData.previousOwners];
+                          newOwners[index].name = e.target.value;
+                          setFormData(prev => ({ ...prev, previousOwners: newOwners }));
+                        }}
+                        className="mb-2"
+                      />
+                      <Input
+                        placeholder={t('owner_type') || 'Owner type (private/company/rental)'}
+                        value={owner.type}
+                        onChange={(e) => {
+                          const newOwners = [...formData.previousOwners];
+                          newOwners[index].type = e.target.value;
+                          setFormData(prev => ({ ...prev, previousOwners: newOwners }));
+                        }}
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const newOwners = formData.previousOwners.filter((_, i) => i !== index);
+                        setFormData(prev => ({ ...prev, previousOwners: newOwners }));
+                      }}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+                
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setFormData(prev => ({
+                      ...prev,
+                      previousOwners: [...prev.previousOwners, { name: '', type: '' }]
+                    }));
+                  }}
+                  className="w-full"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  {t('add_previous_owner') || 'Add Previous Owner'}
+                </Button>
+              </div>
+            </div>
           </motion.div>
           )}
 
           {/* Price */}
-          {currentStep === 2 && (
+          {currentStep === 3 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
           >
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('price')}</h2>
-            <Input
-              placeholder={t('asking_price_placeholder')}
-              type="number"
-              value={formData.askingPrice}
-              onChange={(e) => setFormData(prev => ({ ...prev, askingPrice: e.target.value }))}
-              className="w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500"
-            />
+            
+            <div className="space-y-6">
+              {/* Asking Price */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('asking_price') || 'Asking Price'} <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  placeholder={t('asking_price_placeholder')}
+                  type="number"
+                  value={formData.askingPrice}
+                  onChange={(e) => setFormData(prev => ({ ...prev, askingPrice: e.target.value }))}
+                  className="w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              {/* Price Negotiable */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-4">
+                  {t('price_negotiable') || 'Are you willing to negotiate on the price?'}
+                </label>
+                <RadioGroup
+                  value={formData.priceNegotiable ? 'yes' : 'no'}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, priceNegotiable: value === 'yes' }))}
+                >
+                  <div className="flex items-center space-x-6">
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="yes" id="negotiable-yes" />
+                      <Label htmlFor="negotiable-yes">{t('yes') || 'Yes'}</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="no" id="negotiable-no" />
+                      <Label htmlFor="negotiable-no">{t('no') || 'No'}</Label>
+                    </div>
+                  </div>
+                </RadioGroup>
+                {formData.priceNegotiable && (
+                  <p className="mt-2 text-sm text-blue-600">
+                    💡 {t('negotiable_hint') || 'Buyers will know you are open to reasonable offers'}
+                  </p>
+                )}
+              </div>
+
+              {/* Region */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('region') || 'Region in Israel'} <span className="text-red-500">*</span>
+                </label>
+                <Select
+                  value={formData.region}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, region: value }))}
+                >
+                  <SelectTrigger className="rounded-xl py-5">
+                    <SelectValue placeholder={t('select_region') || 'Select your region'} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    <SelectItem value="jerusalem">{t('jerusalem') || 'Jerusalem'}</SelectItem>
+                    <SelectItem value="tel_aviv">{t('tel_aviv') || 'Tel Aviv'}</SelectItem>
+                    <SelectItem value="haifa">{t('haifa') || 'Haifa'}</SelectItem>
+                    <SelectItem value="beer_sheva">{t('beer_sheva') || 'Beer Sheva'}</SelectItem>
+                    <SelectItem value="ashdod">{t('ashdod') || 'Ashdod'}</SelectItem>
+                    <SelectItem value="petah_tikva">{t('petah_tikva') || 'Petah Tikva'}</SelectItem>
+                    <SelectItem value="netanya">{t('netanya') || 'Netanya'}</SelectItem>
+                    <SelectItem value="rishon_lezion">{t('rishon_lezion') || 'Rishon LeZion'}</SelectItem>
+                    <SelectItem value="holon">{t('holon') || 'Holon'}</SelectItem>
+                    <SelectItem value="bnei_brak">{t('bnei_brak') || 'Bnei Brak'}</SelectItem>
+                    <SelectItem value="ramat_gan">{t('ramat_gan') || 'Ramat Gan'}</SelectItem>
+                    <SelectItem value="bat_yam">{t('bat_yam') || 'Bat Yam'}</SelectItem>
+                    <SelectItem value="kfar_saba">{t('kfar_saba') || 'Kfar Saba'}</SelectItem>
+                    <SelectItem value="herzliya">{t('herzliya') || 'Herzliya'}</SelectItem>
+                    <SelectItem value="modiin">{t('modiin') || 'Modiin'}</SelectItem>
+                    <SelectItem value="other">{t('other_region') || 'Other'}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </motion.div>
           )}
 
           {/* Contact Info */}
-          {currentStep === 3 && (
+          {currentStep === 4 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -1886,7 +2144,7 @@ export default function AddCarListing() {
           )}
 
           {/* Image Upload */}
-          {currentStep === 4 && (
+          {currentStep === 5 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -1946,6 +2204,106 @@ export default function AddCarListing() {
                 </motion.div>
               )}
             </div>
+
+            {/* Terms and Privacy Policy Checkbox */}
+            <div className="mt-8">
+              <div className="flex items-start space-x-3">
+                <input
+                  type="checkbox"
+                  id="terms-checkbox"
+                  checked={formData.termsAccepted || false}
+                  onChange={(e) => setFormData(prev => ({ ...prev, termsAccepted: e.target.checked }))}
+                  className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  required
+                />
+                <label htmlFor="terms-checkbox" className="text-sm text-gray-700 leading-relaxed">
+                  <span className="text-red-500">*</span> אני מאשר/ת את התקנון ומדיניות הפרטיות באתר ומאשר קבלת תוכן שיווקי מ MAXSPEEDLIMIT או מצדדים שלישיים באמצעי הקשר שמסרתי (גם בשירותי דיוור ישיר)
+                </label>
+              </div>
+              {errors.termsAccepted && (
+                <p className="mt-2 text-sm text-red-500">{errors.termsAccepted}</p>
+              )}
+            </div>
+          </motion.div>
+          )}
+
+          {/* Package Selection */}
+          {currentStep === 6 && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
+          >
+            <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">{t('choose_your_package') || 'בחירת המסלול שלך'}</h2>
+            
+            <div className="space-y-6">
+              {/* Free Package - Website Release */}
+              <div className="border-2 border-green-500 rounded-xl p-6 bg-green-50 relative">
+                <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                  {t('recommended') || 'מומלץ'}
+                </div>
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-green-700 mb-2">{t('website_release') || 'שחרור האתר'}</h3>
+                  <p className="text-green-600 mb-4">{t('free_first_3_months') || 'חינם ל-3 חודשים ראשונים - כל הפרימיום'}</p>
+                  <div className="text-3xl font-bold text-green-700 mb-2">₪0</div>
+                  <p className="text-sm text-green-600 mb-4">{t('first_3_months') || 'ל-3 חודשים ראשונים'}</p>
+                  <Button
+                    type="button"
+                    className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl font-semibold"
+                    onClick={() => setFormData(prev => ({ ...prev, selectedPackage: 'website_release' }))}
+                  >
+                    {t('select_package') || 'בחר חבילה'}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Premium Package - Unselectable */}
+              <div className="border-2 border-gray-300 rounded-xl p-6 bg-gray-50 opacity-60 cursor-not-allowed">
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-gray-500 mb-2">{t('premium') || 'פרימיום'}</h3>
+                  <p className="text-gray-500 mb-4">{t('premium_description') || 'הדרך למכור מהר ולקבל את המחיר המקסימלי!'}</p>
+                  <ul className="text-sm text-gray-500 mb-4 space-y-2 text-right">
+                    <li>• {t('max_exposure') || 'מקסימום חשיפה ובראש התוצאות'}</li>
+                    <li>• {t('auto_bump') || 'הקפצה אוטומטית בכל 4 שעות'}</li>
+                    <li>• {t('more_calls') || 'יותר שיחות לקידום העסקה המתאימה'}</li>
+                  </ul>
+                  <div className="text-3xl font-bold text-gray-500 mb-2">₪254/28 {t('days') || 'ימים'}</div>
+                  <Button
+                    type="button"
+                    disabled
+                    className="bg-gray-400 text-gray-600 px-8 py-3 rounded-xl font-semibold cursor-not-allowed"
+                  >
+                    {t('coming_soon') || 'בקרוב'}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Enhanced Package - Unselectable */}
+              <div className="border-2 border-gray-300 rounded-xl p-6 bg-gray-50 opacity-60 cursor-not-allowed">
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-gray-500 mb-2">{t('enhanced') || 'משודרגת'}</h3>
+                  <p className="text-gray-500 mb-4">{t('enhanced_description') || 'חשיפה גבוהה יותר מהמסלול הבסיסי'}</p>
+                  <ul className="text-sm text-gray-500 mb-4 space-y-2 text-right">
+                    <li>• {t('manual_bump') || 'הקפצה באופן ידני בכל 4 שעות'}</li>
+                    <li>• {t('higher_position') || 'מיקום גבוה יותר בעמודי החיפוש'}</li>
+                  </ul>
+                  <div className="text-3xl font-bold text-gray-500 mb-2">₪204/28 {t('days') || 'ימים'}</div>
+                  <Button
+                    type="button"
+                    disabled
+                    className="bg-gray-400 text-gray-600 px-8 py-3 rounded-xl font-semibold cursor-not-allowed"
+                  >
+                    {t('coming_soon') || 'בקרוב'}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Payment Method Info */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="font-semibold text-blue-800 mb-2">{t('payment_method') || 'שיטת תשלום'}</h4>
+                <p className="text-sm text-blue-700">{t('payment_info') || 'כל החבילות כוללות תשלום בטוח דרך מערכת התשלומים שלנו'}</p>
+              </div>
+            </div>
           </motion.div>
           )}
 
@@ -1968,6 +2326,7 @@ export default function AddCarListing() {
             </Button>
 
             {(() => {
+              console.log('Rendering navigation - Current step:', currentStep, 'Total steps:', STEPS.length, 'Should show submit:', currentStep >= STEPS.length - 1);
               return currentStep < STEPS.length - 1 ? (
                 <Button
                   type="button"
@@ -1975,6 +2334,13 @@ export default function AddCarListing() {
                     {
                       console.log('Current step:', currentStep, 'Total steps:', STEPS.length);
                       if (currentStep === 0) {
+                        // Validate car type selection
+                        if (!formData.carType) {
+                          alert(t('please_select_car_type') || 'Please select a car type');
+                          return;
+                        }
+                        setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                      } else if (currentStep === 1) {
                         if (inputMethod === "manual") {
                           console.log('yad2ModelInfo?.data', yad2ModelInfo)
                           console.log('formData', formData)
@@ -1994,13 +2360,66 @@ export default function AddCarListing() {
                             setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
                           }
                       } 
-                    }else if(currentStep === 1){
+                    }else if(currentStep === 2){
+                      // Validate mandatory fields in step 2
+                      if (!formData.ownerType) {
+                        alert(t('please_select_owner_type') || 'Please select an owner type');
+                        return;
+                      }
+                      if (!formData.mileage) {
+                        alert(t('please_enter_mileage') || 'Please enter the mileage');
+                        return;
+                      }
                       if(formData.description === "" || formData.description === undefined || formData.description === null || formData.description === "null" ){
                         generateAIDescription();
                         setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
                       }else{
                         setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
                       }
+                    }else if(currentStep === 3){
+                      // Validate mandatory fields in price step
+                      if (!formData.askingPrice) {
+                        alert(t('please_enter_price') || 'Please enter the asking price');
+                        return;
+                      }
+                      if (!formData.region) {
+                        alert(t('please_select_region') || 'Please select your region');
+                        return;
+                      }
+                      setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                    }else if(currentStep === 4){
+                      // Validate mandatory fields in contact step
+                      if (!formData.name) {
+                        alert(t('please_enter_name') || 'Please enter your name');
+                        return;
+                      }
+                      if (!formData.email) {
+                        alert(t('please_enter_email') || 'Please enter your email');
+                        return;
+                      }
+                      if (!formData.phone) {
+                        alert(t('please_enter_phone') || 'Please enter your phone number');
+                        return;
+                      }
+                      setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                    }else if(currentStep === 5){
+                      // Validate mandatory fields in image upload step
+                      if (!formData.images.length) {
+                        alert(t('please_upload_images') || 'Please upload at least one image');
+                        return;
+                      }
+                      if (!formData.termsAccepted) {
+                        alert(t('please_accept_terms') || 'Please accept the terms and privacy policy');
+                        return;
+                      }
+                      setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                    }else if(currentStep === 6){
+                      // Validate package selection
+                      if (!formData.selectedPackage) {
+                        alert(t('please_select_package') || 'Please select a package');
+                        return;
+                      }
+                      setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
                     }else {
                         setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
                       }
