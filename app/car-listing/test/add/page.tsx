@@ -1279,6 +1279,7 @@ export default function AddCarListing() {
                   💡 {t('title_auto_generation_hint') || 'Title will be auto-generated as'} "{manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer} {formData.commercialName || t('model')} {selectedYear} {yad2ModelInfo?.data?.koah_sus || t('model')}  {yad2ModelInfo?.data?.transmission || t('model')} {yad2ModelInfo?.data?.fuelType || t('model')} {t('when_click_next') || 'when you click next'}
                 </p>
               )}
+             
             </motion.div>
 
             {/* Mileage Field */}
@@ -1948,67 +1949,7 @@ export default function AddCarListing() {
           </motion.div>
           )}
 
-          {/* Debug Section */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-            <h3 className="text-lg font-semibold text-yellow-800 mb-2">Debug Info</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <strong>Current Step:</strong> {currentStep}
-              </div>
-              <div>
-                <strong>Total Steps:</strong> {STEPS.length}
-              </div>
-              <div>
-                <strong>Should Show Submit:</strong> {currentStep >= STEPS.length - 1 ? 'Yes' : 'No'}
-              </div>
-              <div>
-                <strong>Step Name:</strong> {STEPS[currentStep]}
-              </div>
-            </div>
-            <div className="mt-3 flex gap-2">
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => setCurrentStep(0)}
-                className="bg-blue-500 hover:bg-blue-600"
-              >
-                Go to Step 0
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => setCurrentStep(1)}
-                className="bg-blue-500 hover:bg-blue-600"
-              >
-                Go to Step 1
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => setCurrentStep(2)}
-                className="bg-blue-500 hover:bg-blue-600"
-              >
-                Go to Step 2
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => setCurrentStep(3)}
-                className="bg-blue-500 hover:bg-blue-600"
-              >
-                Go to Step 3
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => setCurrentStep(4)}
-                className="bg-blue-500 hover:bg-blue-600"
-              >
-                Go to Step 4
-              </Button>
-            </div>
-          </div>
-
+         
           {/* Navigation Buttons */}
           <div className="sticky bottom-6 left-0 right-0 z-50 flex items-center justify-between gap-3 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-gray-200 mx-4">
             <Button
