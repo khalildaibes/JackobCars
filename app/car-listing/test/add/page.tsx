@@ -51,6 +51,7 @@ const conditions = ['excellent', 'good', 'fair', 'poor'] as const;
 import React from 'react';
 import CarDetailsSections from './CarDetailsSections';
 import { title } from 'process';
+import { DEFAULT_VALUES } from '../../new/constants';
 
 // Government car data API endpoint
 const GOV_CAR_DATA_API = "/api/gov/car-data";
@@ -842,121 +843,309 @@ export default function AddCarListing() {
       .replace(/(^-|-$)/g, '');
   };
 
+  /**
+   * Handles input method change between plate and manual modes
+   * @param method - The new input method to switch to
+   */
+  const handleInputMethodChange = (method: InputMethod) => {
+    setInputMethod(method);
+    
+    if (method === 'manual') {
+      // Clear API-related data when switching to manual mode
+      setCarData(null);
+      setYad2ModelInfo(null);
+      
+      // Reset form to manual input mode while preserving user inputs
+      setFormData(prev => ({
+        ...prev,
+        manufacturerName: '',
+        commercialNickname: '',
+        yearOfProduction: '',
+        fuelType: '',
+        title: prev.title || '',
+        makeModel: prev.makeModel || '',
+        year: prev.year || '',
+        plateNumber: prev.plateNumber || '',
+        car_data: {}
+      }));
+    } else if (method === 'plate') {
+      // When switching to plate mode, clear manual inputs
+      setFormData(prev => ({
+        ...prev,
+        manufacturerName: '',
+        commercialNickname: '',
+        yearOfProduction: '',
+        fuelType: '',
+        title: '',
+        makeModel: '',
+        year: '',
+        plateNumber: '',
+        car_data: {}
+      }));
+      
+      // Populate with the currently selected submodel data from the UI
+      if (selectedManufacturer && selectedModel && selectedYear) {
+        populateFormDataFromSelectedSubmodel();
+      } else if (carData || yad2ModelInfo) {
+        // Fallback to API data if no submodel is selected
+        populateFormDataWithBestSources();
+      }
+    }
+  };
+
+  /**
+   * Populates form data with the currently selected submodel from the UI
+   * This ensures the form uses the submodel data that the user can see and verify
+   */
+  const populateFormDataFromSelectedSubmodel = () => {
+    if (!selectedManufacturer || !selectedModel || !selectedYear) return;
+
+    // Get the manufacturer data
+    const manufacturer = manufacturersData[selectedManufacturer];
+    if (!manufacturer) return;
+
+    // Find the selected submodel
+    const submodel = manufacturer.submodels?.find(
+      sub => sub.id?.toString() === selectedModel
+    );
+    
+    if (submodel) {
+      const manufacturerName = submodel.manufacturer?.title || selectedManufacturer;
+      const modelName = submodel.title || selectedModel;
+      
+      setFormData(prev => ({
+        ...prev,
+        manufacturerName: manufacturerName,
+        commercialNickname: modelName,
+        yearOfProduction: selectedYear,
+        year: selectedYear,
+        makeModel: `${manufacturerName} ${modelName}`.trim(),
+        title: `${manufacturerName} ${modelName} ${selectedYear}`.trim(),
+        // Also update the plate number if it's empty
+        plateNumber: prev.plateNumber || formData.plateNumber || ''
+      }));
+    }
+  };
+
+  /**
+   * Populates form data with the best available sources
+   * Priority: Manual input > Yad2 API > Government API
+   */
+  const populateFormDataWithBestSources = () => {
+    if (!carData && !yad2ModelInfo) return;
+
+    const cd: any = carData || {};
+    const yad2: any = yad2ModelInfo?.data || {};
+
+    const getBestDataValue = (field: string, manualValue: any, apiValue: any, yad2Value: any = null) => {
+      if (inputMethod === 'manual' && manualValue) return manualValue;
+      if (yad2Value && yad2Value !== '') return yad2Value;
+      if (apiValue && apiValue !== '') return apiValue;
+      return manualValue || '';
+    };
+
+    setFormData(prev => ({
+      ...prev,
+      manufacturerName: getBestDataValue('manufacturerName', prev.manufacturerName, cd.manufacturer_name, yad2.manufacturerName),
+      commercialNickname: getBestDataValue('commercialNickname', prev.commercialNickname, cd.commercial_nickname, yad2.modelName),
+      yearOfProduction: getBestDataValue('yearOfProduction', prev.yearOfProduction, cd.year_of_production, yad2.year),
+      fuelType: getBestDataValue('fuelType', prev.fuelType, cd.fuel_type, yad2.fuelType),
+      title: prev.title || `${getBestDataValue('manufacturerName', prev.manufacturerName, cd.manufacturer_name, yad2.manufacturerName) || ''} ${cd.commercial_nickname || yad2.modelName || ''} ${cd.year_of_production || yad2.year || ''}`.trim(),
+      makeModel: prev.makeModel || `${getBestDataValue('manufacturerName', prev.manufacturerName, cd.manufacturer_name, yad2.manufacturerName) || ''} ${cd.commercial_nickname || yad2.modelName || ''}`.trim(),
+      year: prev.year || cd.year_of_production || yad2.year || '',
+      plateNumber: prev.plateNumber || cd.plate_number || '',
+      car_data: { ...cd, yad2_data: yad2 }
+    }));
+  };
+
+  /**
+   * Auto-generates title if empty when moving to next step
+   */
+  const autoGenerateTitleIfEmpty = () => {
+    if (!formData.title && selectedManufacturer && selectedModel && selectedYear) {
+      // Use the form data values which should already contain the proper titles
+      const manufacturerName = formData.manufacturerName || selectedManufacturer;
+      const modelName = formData.commercialNickname || selectedModel;
+      
+      // Only generate title if we have proper names (not IDs)
+      const isManufacturerNameValid = manufacturerName && manufacturerName.length > 2 && manufacturerName !== selectedManufacturer;
+      const isModelNameValid = modelName && modelName.length > 2 && modelName !== selectedModel;
+      
+      if (isManufacturerNameValid && isModelNameValid) {
+        const newTitle = `${manufacturerName} ${modelName} ${selectedYear}`.trim();
+        setFormData(prev => ({ ...prev, title: newTitle }));
+      }
+    }
+  };
+
+
+
+  /**
+   * Handles form submission
+   */
   const handleSubmit = async (e: React.FormEvent) => {
-    // e.preventDefault();
-    // if (!validateForm()) return;
+    console.log('formData');
 
-    // setIsSubmitting(true);
+    e.preventDefault();
+    
+    setIsSubmitting(true);
+    // setCurrentProcessingStep('validating_form');
 
-    // try {
-    //   // First upload all images
-    //   const imageIds = await uploadImages(formData.images);
+    try {
+      // Upload images first
+      let imageId = null;
+      if (formData.images && formData.images.length > 0) {
+        // setCurrentProcessingStep('uploading_image');
+          const formDataToSend = new FormData();
+          formDataToSend.append('image', formData.images[0]);
+          
+          const imagesupload_response = await fetch('/api/upload/image', {
+            method: 'POST',
+            body: formDataToSend
+          });
+          
+          if (imagesupload_response.ok) {
+            const uploadResult = await imagesupload_response.json();
+            imageId = uploadResult[0].id;
+        }
+      }
 
-    //   // Format the car details object
-    //   const carDetails = {
-    //     car: {
-    //       name: formData.title,
-    //       year: parseInt(formData.year),
-    //       fuel: formData.engineType,
-    //       transmission: formData.transmission,
-    //       mileage: `${formData.mileage} KM`,
-    //       price: parseFloat(formData.askingPrice),
-    //       body_type: formData.makeModel.split(' ')[0], // This is a simplification
-    //       pros: formData.pros.split('\n').filter(item => item.trim() !== ''),
-    //       cons: formData.cons.split('\n').filter(item => item.trim() !== ''),
-    //       features: [
-    //         {
-    //           icon: "img_calendar_indigo_a400.svg",
-    //           label: t('year'),
-    //           value: formData.year.toString()
-    //         },
-    //         {
-    //           icon: "img_icon_indigo_a400.svg",
-    //           label: t('mileage'),
-    //           value: `${formData.mileage} KM`
-    //         },
-    //         {
-    //           icon: "img_icon_indigo_a400_18x18.svg",
-    //           label: t('transmission'),
-    //           value: formData.transmission
-    //         },
-    //         {
-    //           icon: "img_icon_4.svg",
-    //           label: t('fuel_type'),
-    //           value: formData.engineType
-    //         }
-    //       ],
-    //       description: formData.knownProblems,
-    //       images: {
-    //         main: imageIds[0] || '',
-    //         additional: imageIds.slice(1)
-    //       }
-    //     }
-    //   };
+      // Prepare car details
+      // setCurrentProcessingStep('preparing_data');
+      // const cd: any = formData.car_data || {};
+      // const yad2Data: any = cd.yad2_data || {};
+      
+      const carDetails = {
+        car: {
+          fuel: formData.fuelType || yad2ModelInfo?.data?.fuelType || '',
+          name: formData.title,
+          year: String(formData.yearOfProduction || yad2ModelInfo?.data?.year || ''),
+          miles: String(formData.mileage || ''),
+          price: parseFloat(formData.askingPrice) || 0,
+          owner_name: formData.name || '',
+          owner_email: formData.email || '',
+          owner_phone: formData.phone || '',
+          plate_number: formData.plateNumber || '',
+          color: formData.color || '',
+          engine_type: formData.engineType || '',
+          condition: formData.currentCondition || '',
+          known_problems: formData.knownProblems || '',
+          trade_in: formData.tradeIn || '',
+          asking_price: formData.askingPrice || '',
+          manufacturer_name: formData.manufacturerName || yad2ModelInfo?.data?.manufacturerName || '',
+          commercial_nickname: formData.commercialNickname || yad2ModelInfo?.data?.modelName || '',
+          year_of_production: formData.yearOfProduction || yad2ModelInfo?.data?.year || '',
+          fuel_type: formData.fuelType || yad2ModelInfo?.data?.fuelType || '',
+          trim_level: yad2ModelInfo?.data?.trimLevel || '',
+          body_type: yad2ModelInfo?.data?.bodyType || '',
+          transmission: formData.transmission || '',
+          images: imageId ? { main: [imageId], additional: [imageId] } : {},
+          pros: formData.pros || '',
+          cons: formData.cons || '',
+          features: [
+            { address: '' },
+            { makeModel: String(formData.makeModel || '') },
+            { yearOfProduction: String(formData.yearOfProduction || yad2ModelInfo?.data?.year || '') },
+            { plateNumber: String(formData.plateNumber || '') },
+            { mileage: String(formData.mileage || '') },
+            { color: String(formData.color || '') },
+            { engineType: String(formData.engineType || '') },
+            { transmission: String(formData.transmission || '') },
+            { currentCondition: String(formData.currentCondition || '') },
+            { knownProblems: String(formData.knownProblems || '') },
+            { description: String(formData.description || '') },
+            { pros: String(formData.pros || '') },
+            { cons: String(formData.cons || '') },
+            { tradeIn: String(formData.tradeIn || '') },
+            { askingPrice: String(formData.askingPrice || '') },
+            { name: String(formData.name || '') },
+            { email: String(formData.email || '') },
+            { phone: String(formData.phone || '') },
+            { fuelType: String(formData.fuelType || yad2ModelInfo?.data?.fuelType || '') },
+            ...(imageId ? [{ image: imageId }] : []),
+          ],
+          description: formData.description || `${formData.manufacturerName || yad2ModelInfo?.data?.manufacturerName || ''} ${formData.commercialNickname || yad2ModelInfo?.data?.modelName || ''} ${formData.yearOfProduction || yad2ModelInfo?.data?.year || ''}`.trim(),
+        },
+        data_object : yad2ModelInfo?.data || {}
+      };
 
-    //   // Prepare the data for Strapi
-    //   const carListingData = {
-    //     data: {
-    //       image: imageIds[0], // First image as main image
-    //       categories: ['car-listing'],
-    //       quantity: 1,
-    //       name: formData.title,
-    //       slug: generateSlug(formData.title),
-    //       price: parseFloat(formData.askingPrice),
-    //       details: carDetails,
-    //       store: 'khalil store', // You might want to make this dynamic
-    //       locale: locale,
-    //       publishedAt: null // Will be published after admin approval
-    //     }
-    //   };
+      // Submit to API
+      // setCurrentProcessingStep('submitting_listing');
+      const response = await fetch('/api/addListing', {
+        method: 'POST',
+        body: JSON.stringify(carDetails)
+      });
 
-    //   // Send the data to Strapi
-    //   const response = await axios.post(
-    //     `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/car-listings`, 
-    //     carListingData,
-    //     {
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //       },
-    //     }
-    //   );
+      if (response.ok) {
+        // showPopupModal('success', t('success_title') || 'Success!', t('success_message'));
+        resetForm();
+      } else {
+        throw new Error('Submission failed');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      // showPopupModal('error', t('error_title') || 'Error!', t('error_message'));
+    } finally {
+      setIsSubmitting(false);
+      // setCurrentProcessingStep('');
+    }
+  };
 
-    //   if (response.data) {
-    //     alert(t('success_message'));
-    //     // Reset form
-    //     setFormData({
-    //       title: '',
-    //       makeModel: '',
-    //       year: '',
-    //       plateNumber: '',
-    //       mileage: '',
-    //       color: '',
-    //       engineType: '',
-    //       transmission: 'Automatic',
-    //       currentCondition: '',
-    //       knownProblems: '',
-    //       pros: '',
-    //       cons: '',
-    //       tradeIn: '',
-    //       description: '',
-    //       askingPrice: '',
-    //       name: '',
-    //       email: '',
-    //       phone: '',
-    //       images: []
-    //     });
-    //     setSelectedManufacturer('');
-    //     setSelectedModel('');
-    //     setAvailableModels([]);
-    //     setAvailableYears([]);
-    //     setErrors(prev => ({ ...prev, manufacturer: '', model: '' }));
-    //   }
-    // } catch (error) {
-    //   console.error('Error submitting form:', error);
-    //   alert(t('error_message'));
-    // } finally {
-    //   setIsSubmitting(false);
-    // }
+  /**
+   * Resets the form to initial state
+   */
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      makeModel: '',
+      year: '',
+      plateNumber: '',
+      mileage: '',
+      color: '',
+      engineType: '',
+      transmission: 'Automatic',
+      currentCondition: '',
+      knownProblems: '',
+      pros: '',
+      cons: '',
+      tradeIn: '',
+      description: '',
+      askingPrice: '',
+      name: '',
+      email: '',
+      phone: '',
+      images: [] as File[],
+      manufacturerName: '',
+      modelId: '',
+      subModelId: '',
+      commercialNickname: '',
+      yearOfProduction: '',
+      engineCapacity: '',
+      bodyType: '',
+      seatingCapacity: '',
+      fuelType: '',
+      abs: '',
+      airbags: '',
+      powerWindows: '',
+      driveType: '',
+      totalWeight: '',
+      height: '',
+      fuelTankCapacity: '',
+      co2Emission: '',
+      greenIndex: '',
+      commercialName: '',
+      rank: '',
+
+    });
+    setSelectedManufacturer('');
+    setSelectedModel('');
+    setAvailableModels([]);
+    setAvailableYears([]);
+        setAvailableSubmodels([]);
+    setSelectedSubmodel('');
+    setErrors({});
+    setError(null);
+    setCurrentStep(0);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1759,6 +1948,67 @@ export default function AddCarListing() {
           </motion.div>
           )}
 
+          {/* Debug Section */}
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+            <h3 className="text-lg font-semibold text-yellow-800 mb-2">Debug Info</h3>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <strong>Current Step:</strong> {currentStep}
+              </div>
+              <div>
+                <strong>Total Steps:</strong> {STEPS.length}
+              </div>
+              <div>
+                <strong>Should Show Submit:</strong> {currentStep >= STEPS.length - 1 ? 'Yes' : 'No'}
+              </div>
+              <div>
+                <strong>Step Name:</strong> {STEPS[currentStep]}
+              </div>
+            </div>
+            <div className="mt-3 flex gap-2">
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setCurrentStep(0)}
+                className="bg-blue-500 hover:bg-blue-600"
+              >
+                Go to Step 0
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setCurrentStep(1)}
+                className="bg-blue-500 hover:bg-blue-600"
+              >
+                Go to Step 1
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setCurrentStep(2)}
+                className="bg-blue-500 hover:bg-blue-600"
+              >
+                Go to Step 2
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setCurrentStep(3)}
+                className="bg-blue-500 hover:bg-blue-600"
+              >
+                Go to Step 3
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setCurrentStep(4)}
+                className="bg-blue-500 hover:bg-blue-600"
+              >
+                Go to Step 4
+              </Button>
+            </div>
+          </div>
+
           {/* Navigation Buttons */}
           <div className="sticky bottom-6 left-0 right-0 z-50 flex items-center justify-between gap-3 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-gray-200 mx-4">
             <Button
@@ -1776,80 +2026,87 @@ export default function AddCarListing() {
               </div>
             </Button>
 
-            {currentStep < STEPS.length - 1 ? (
-              <Button
-                type="button"
-                onClick={() =>
-                  {
-                    if (currentStep === 0) {
-                      if (inputMethod === "manual") {
-                        console.log('yad2ModelInfo?.data', yad2ModelInfo)
-                        console.log('formData', formData)
-                        setFormData(prev => ({ ...prev, title: yad2ModelInfo?.data?.commercialName + " מנוע " + (parseInt(yad2ModelInfo?.data?.engineCapacity)/1000 ).toFixed(1) + " שנת " + formData?.year + " דגם " + yad2ModelInfo?.data?.trimLevel + ' כ"ס ' + yad2ModelInfo?.data?.enginePower + " גיר " + yad2ModelInfo?.data?.transmission + ' דלק ' + yad2ModelInfo?.data?.fuelType }));
-                        setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
-                      }
-                      else{if (formData.title === "" || formData.title === undefined || formData.title === null || formData.title === "null" ) {
-                          if (yad2ModelInfo?.data?.manufacturerName && yad2ModelInfo?.data?.commercialName && yad2ModelInfo?.data?.shnat_yitzur) {
-                            setFormData(prev => ({ ...prev, title: yad2ModelInfo?.data?.commercialName + " מנוע " + (parseInt(yad2ModelInfo?.data?.nefah_manoa)/1000 ).toFixed(1) + " שנת " + yad2ModelInfo?.data?.shnat_yitzur + " דגם " + yad2ModelInfo?.data?.subModelTitle + ' כ"ס ' + yad2ModelInfo?.data?.koah_sus + " גיר " + yad2ModelInfo?.data?.transmission + ' דלק ' + yad2ModelInfo?.data?.fuelType + '  ' }));
-                            setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
-                          } else {
-                            setErrors(prev => ({ ...prev, title: 'Title is required' }));
-                            setCurrentStep(0)
-                          }
-                        } else {
-                          setFormData(prev => ({ ...prev, title: yad2ModelInfo?.data?.commercialName + " מנוע " + (parseInt(yad2ModelInfo?.data?.nefah_manoa)/1000 ).toFixed(1) + " שנת " + yad2ModelInfo?.data?.shnat_yitzur + " דגם " + yad2ModelInfo?.data?.subModelTitle + ' כ"ס ' + yad2ModelInfo?.data?.koah_sus + " גיר " + yad2ModelInfo?.data?.transmission + ' דלק ' + yad2ModelInfo?.data?.fuelType + '  ' }));
+            {(() => {
+              return currentStep < STEPS.length - 1 ? (
+                <Button
+                  type="button"
+                  onClick={() =>
+                    {
+                      console.log('Current step:', currentStep, 'Total steps:', STEPS.length);
+                      if (currentStep === 0) {
+                        if (inputMethod === "manual") {
+                          console.log('yad2ModelInfo?.data', yad2ModelInfo)
+                          console.log('formData', formData)
+                          setFormData(prev => ({ ...prev, title: yad2ModelInfo?.data?.commercialName + " מנוע " + (parseInt(yad2ModelInfo?.data?.engineCapacity)/1000 ).toFixed(1) + " שנת " + formData?.year + " דגם " + yad2ModelInfo?.data?.trimLevel + ' כ"ס ' + yad2ModelInfo?.data?.enginePower + " גיר " + yad2ModelInfo?.data?.transmission + ' דלק ' + yad2ModelInfo?.data?.fuelType }));
                           setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
                         }
-                    } 
-                  }else if(currentStep === 1){
-                    if(formData.description === "" || formData.description === undefined || formData.description === null || formData.description === "null" ){
-                      generateAIDescription()
-                    }else{
-                      setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                        else{if (formData.title === "" || formData.title === undefined || formData.title === null || formData.title === "null" ) {
+                            if (yad2ModelInfo?.data?.manufacturerName && yad2ModelInfo?.data?.commercialName && yad2ModelInfo?.data?.shnat_yitzur) {
+                              setFormData(prev => ({ ...prev, title: yad2ModelInfo?.data?.commercialName + " מנוע " + (parseInt(yad2ModelInfo?.data?.nefah_manoa)/1000 ).toFixed(1) + " שנת " + yad2ModelInfo?.data?.shnat_yitzur + " דגם " + yad2ModelInfo?.data?.subModelTitle + ' כ"ס ' + yad2ModelInfo?.data?.koah_sus + " גיר " + yad2ModelInfo?.data?.transmission + ' דלק ' + yad2ModelInfo?.data?.fuelType + '  ' }));
+                              setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                            } else {
+                              setErrors(prev => ({ ...prev, title: 'Title is required' }));
+                              setCurrentStep(0)
+                            }
+                          } else {
+                            setFormData(prev => ({ ...prev, title: yad2ModelInfo?.data?.commercialName + " מנוע " + (parseInt(yad2ModelInfo?.data?.nefah_manoa)/1000 ).toFixed(1) + " שנת " + yad2ModelInfo?.data?.shnat_yitzur + " דגם " + yad2ModelInfo?.data?.subModelTitle + ' כ"ס ' + yad2ModelInfo?.data?.koah_sus + " גיר " + yad2ModelInfo?.data?.transmission + ' דלק ' + yad2ModelInfo?.data?.fuelType + '  ' }));
+                            setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                          }
+                      } 
+                    }else if(currentStep === 1){
+                      if(formData.description === "" || formData.description === undefined || formData.description === null || formData.description === "null" ){
+                        generateAIDescription();
+                        setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                      }else{
+                        setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                      }
+                    }else {
+                        setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                      }
+                      
                     }
                   }
-                  
-                  else {
-                      setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
-                    }
-                    
-                  }
-                }
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white transition-all duration-200 hover:shadow-md transform hover:scale-105"
-              >
-                <div className="flex items-center gap-2">
-                  {t("next")}
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </Button>
-            ) : (
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white transition-all duration-200 hover:shadow-md transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <div className="flex items-center gap-2">
-                  {isSubmitting ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      {t('submitting') || 'Submitting...'}
-                    </>
-                  ) : (
-                    <>
-                      {t('submit_listing') || 'Submit Listing'}
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </>
-                  )}
-                </div>
-              </Button>
-            )}
+                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white transition-all duration-200 hover:shadow-md transform hover:scale-105"
+                >
+                  <div className="flex items-center gap-2">
+                    {t("next")}
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  onClick={() => {
+                    console.log('Submit button clicked on step:', currentStep);
+                    // Handle form submission here
+                    handleSubmit(new Event('submit') as any);
+                  }}
+                  disabled={isSubmitting}
+                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white transition-all duration-200 hover:shadow-md transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <div className="flex items-center gap-2">
+                    {isSubmitting ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        {t('submitting') || 'Submitting...'}
+                      </>
+                    ) : (
+                      <>
+                        {t('submit_listing') || 'Submit Listing'}
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </>
+                    )}
+                  </div>
+                </Button>
+              )
+            })()}
           </div>
         </form>
       </motion.div>

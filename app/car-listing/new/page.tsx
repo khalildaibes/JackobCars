@@ -458,7 +458,10 @@ export default function AddCarListing() {
           const formDataToSend = new FormData();
           formDataToSend.append('image', formData.images[0]);
           
-          const imagesupload_response = await fetch('/api/upload/image?data=' + encodeURIComponent(JSON.stringify(formDataToSend)));
+          const imagesupload_response = await fetch('/api/upload/image', {
+            method: 'POST',
+            body: formDataToSend
+          });
           
           if (imagesupload_response.ok) {
             const uploadResult = await imagesupload_response.json();
@@ -526,7 +529,11 @@ export default function AddCarListing() {
 
       // Submit to API
       setCurrentProcessingStep('submitting_listing');
-      const response = await fetch(`/api/addListing?data=${encodeURIComponent(JSON.stringify(carDetails))}`);
+      const response = await fetch('/api/addListing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(carDetails)
+      });
 
       if (response.ok) {
         showPopupModal('success', t('success_title') || 'Success!', t('success_message'));
