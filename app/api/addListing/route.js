@@ -138,41 +138,42 @@ export async function POST(request) {
         price: specs.price || 0,
         details: {
           car: {
-            description: car.description || generatedDetails.description || "",
-            // Owner information
-            owner_phone: car.owner_phone || "",
-            owner_name: car.owner_name || "",
-            owner_email: car.owner_email || "",
-            
-            // Car specifications
-            plate_number: car.plate_number || "",
+            // Basic car information
+            title: car.title || "",
+            makeModel: car.makeModel || "",
+            year: car.year || parseInt(year) || 0,
+            plateNumber: car.plateNumber || "",
+            mileage: car.mileage || car.miles || "",
             color: car.color || "",
-            engine_type: car.engine_type || "",
-            condition: car.condition || "",
-            known_problems: car.known_problems || "",
-            trade_in: car.trade_in || "",
-            asking_price: car.asking_price || "",
-            
-            // Manufacturer information
-            manufacturer_name: car.manufacturer_name || "",
-            commercial_nickname: car.commercial_nickname || "",
-            year_of_production: car.year_of_production || "",
-            fuel_type: car.engine_type || "",
-            trim_level: car.trim_level || "",
-            body_type: car.body_type || "",
+            engineType: car.engineType || car.engine_type || "",
             transmission: car.transmission || "",
             
-            // Car details
-            miles: car.miles || "",
-            fuel: car.fuel || "",
-            name: car.name || "",
-            year: parseInt(year) || 0,
-            price: specs.price || 0,
-            
-            // Generated content - use manual input if available, otherwise use generated
+            // Condition and trade-in
+            currentCondition: car.currentCondition || car.condition || "",
+            knownProblems: car.knownProblems || car.known_problems || "",
             pros: car.pros ? [car.pros] : (generatedData.pros || []),
             cons: car.cons ? [car.cons] : (generatedData.cons || []),
-            description: car.description || `سيارة ${brand} ${model} ${year}`,
+            tradeIn: car.tradeIn || car.trade_in || "",
+            description: car.description || generatedDetails.description || `سيارة ${brand} ${model} ${year}`,
+            
+            // Pricing and region
+            askingPrice: car.askingPrice || car.asking_price || specs.price || 0,
+            priceNegotiable: car.priceNegotiable || false,
+            region: car.region || "",
+            
+            // Owner information
+            name: car.name || car.owner_name || "",
+            email: car.email || car.owner_email || "",
+            phone: car.phone || car.owner_phone || "",
+            
+            // Car type and ownership
+            carType: car.carType || "",
+            ownerType: car.ownerType || "",
+            previousOwners: car.previousOwners || [],
+            
+            // Package and terms
+            selectedPackage: car.selectedPackage || "website_release",
+            termsAccepted: car.termsAccepted || false,
             
             // Images
             images: {
@@ -180,27 +181,103 @@ export async function POST(request) {
               additional: images?.additional || []
             },
             
-            // Features array
+            // Manufacturer and model details
+            manufacturerName: car.manufacturerName || car.manufacturer_name || "",
+            modelId: car.modelId || "",
+            subModelId: car.subModelId || "",
+            commercialNickname: car.commercialNickname || car.commercial_nickname || "",
+            yearOfProduction: car.yearOfProduction || car.year_of_production || "",
+            
+            // Technical specifications
+            engineCapacity: car.engineCapacity || "",
+            bodyType: car.bodyType || car.body_type || "",
+            seatingCapacity: car.seatingCapacity || "",
+            fuelType: car.fuelType || car.fuel_type || car.engine_type || "",
+            abs: car.abs || "",
+            airbags: car.airbags || "",
+            powerWindows: car.powerWindows || "",
+            driveType: car.driveType || "",
+            totalWeight: car.totalWeight || "",
+            height: car.height || "",
+            fuelTankCapacity: car.fuelTankCapacity || "",
+            co2Emission: car.co2Emission || "",
+            greenIndex: car.greenIndex || "",
+            commercialName: car.commercialName || "",
+            rank: car.rank || "",
+            
+            // Additional technical data
+            engineCode: car.engineCode || "",
+            frameNumber: car.frameNumber || "",
+            lastTestDate: car.lastTestDate || "",
+            tokefTestDate: car.tokefTestDate || "",
+            frontTires: car.frontTires || "",
+            rearTires: car.rearTires || "",
+            pollutionGroup: car.pollutionGroup || "",
+            dateOnRoad: car.dateOnRoad || "",
+            owner: car.owner || "",
+            carTitle: car.carTitle || "",
+            carColorGroupID: car.carColorGroupID || "",
+            yad2ColorID: car.yad2ColorID || "",
+            yad2CarTitle: car.yad2CarTitle || "",
+            
+            // Engine power and performance
+            enginePower: car.enginePower || "",
+            doors: car.doors || "",
+            trimLevel: car.trimLevel || car.trim_level || "",
+            
+            // Environmental data
+            noxEmission: car.noxEmission || "",
+            pmEmission: car.pmEmission || "",
+            hcEmission: car.hcEmission || "",
+            coEmission: car.coEmission || "",
+            
+            // Safety and features
+            safetyRating: car.safetyRating || "",
+            safetyRatingWithoutSeatbelts: car.safetyRatingWithoutSeatbelts || "",
+            fuelTankCapacityWithoutReserve: car.fuelTankCapacityWithoutReserve || "",
+            
+            // Legacy fields for backward compatibility
+            miles: car.miles || car.mileage || "",
+            fuel: car.fuel || car.fuelType || "",
+            price: specs.price || 0,
+            
+            // Features array with enhanced data
             features: car.features || [
               {
                 label: "سنة الصنع",
-                value: year.toString()
+                value: (car.year || year).toString()
               },
               {
                 label: "عدد الكيلومترات",
-                value: specs.miles || ""
+                value: (car.mileage || car.miles || specs.miles || "").toString()
               },
               {
                 label: "ناقل الحركة",
-                value: specs.transmission || "غير محدد"
+                value: car.transmission || specs.transmission || "غير محدد"
               },
               {
                 label: "نوع الوقود",
-                value: specs.fuel || "غير معروف"
+                value: car.fuelType || specs.fuel || "غير معروف"
               },
               {
                 label: "السعر المطلوب",
-                value: specs.price?.toString() || ""
+                value: (car.askingPrice || specs.price || "").toString()
+              },
+              {
+                label: "نوع السيارة",
+                value: car.carType || "غير محدد"
+              },
+              {
+                label: "نوع المالك",
+                value: car.ownerType || "غير محدد"
+              },
+              {
+                label: "المنطقة",
+                value: car.region || "غير محدد"
+              },
+              {
+                label: "الحزمة المختارة",
+                value: car.selectedPackage || "website_release"
               }
             ]
           }

@@ -86,7 +86,7 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
       console.log('Processing product:', product);
       
       // Get the fuel type from the new structure
-      const rawFuelType = product.details?.car?.fuel_type || product.details?.car?.fuel || "Unknown";
+      const rawFuelType = product.details?.car?.fuelType || product.details?.car?.fuel || "Unknown";
       let normalizedFuelType = rawFuelType;
       
       // Normalize fuel type values to English
@@ -115,7 +115,7 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
       }
   
       // Get manufacturer name from the new structure
-      const rawMake = product.details?.car?.manufacturer_name || "Unknown";
+      const rawMake = product.details?.car?.manufacturerName || product.details?.car?.manufacturer_name || "Unknown";
       let normalizedMake = rawMake;
       
       // Check if rawMake is a number (array index) and convert it to the actual manufacturer name
@@ -167,7 +167,7 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
       }
   
       // Get body type from the new structure
-      const rawBodyType = product.details?.car?.body_type || "Unknown";
+      const rawBodyType = product.details?.car?.bodyType || product.details?.car?.body_type || "Unknown";
       let normalizedBodyType = rawBodyType;
       if (rawBodyType.toLowerCase().includes("sedan") || rawBodyType === "סדאן" || rawBodyType === "سيدان") {
         normalizedBodyType = "Sedan";
@@ -189,26 +189,26 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
 
       // Get additional fields from new structure
       const transmission = product.details?.car?.transmission || "Unknown";
-      const condition = product.details?.car?.condition || "Used";
-      const miles = product.details?.car?.miles || "N/A";
-      const year = product.details?.car?.year || "Unknown";
+      const condition = product.details?.car?.currentCondition || product.details?.car?.condition || "Used";
+      const miles = product.details?.car?.mileage || product.details?.car?.miles || "N/A";
+      const year = product.details?.car?.year || product.details?.car?.yearOfProduction || "Unknown";
       const description = product.details?.car?.description || "";
       const features = product.details?.car?.features || [];
       const pros = product.details?.car?.pros || [];
       const cons = product.details?.car?.cons || [];
-      const owner_name = product.details?.car?.owner_name || "";
-      const owner_phone = product.details?.car?.owner_phone || "";
-      const owner_email = product.details?.car?.owner_email || "";
-      const plate_number = product.details?.car?.plate_number || "";
+      const owner_name = product.details?.car?.name || product.details?.car?.owner_name || "";
+      const owner_phone = product.details?.car?.phone || product.details?.car?.owner_phone || "";
+      const owner_email = product.details?.car?.email || product.details?.car?.owner_email || "";
+      const plate_number = product.details?.car?.plateNumber || product.details?.car?.plate_number || "";
       const color = product.details?.car?.color || "";
-      const engine_type = product.details?.car?.engine_type || "";
-      const known_problems = product.details?.car?.known_problems || "";
-      const trade_in = product.details?.car?.trade_in || "";
-      const asking_price = product.details?.car?.asking_price || "";
-      const manufacturer_name = product.details?.car?.manufacturer_name || "";
-      const commercial_nickname = product.details?.car?.commercial_nickname || "";
-      const year_of_production = product.details?.car?.year_of_production || "";
-      const trim_level = product.details?.car?.trim_level || "";
+      const engine_type = product.details?.car?.engineType || product.details?.car?.engine_type || "";
+      const known_problems = product.details?.car?.knownProblems || product.details?.car?.known_problems || "";
+      const trade_in = product.details?.car?.tradeIn || product.details?.car?.trade_in || "";
+      const asking_price = product.details?.car?.askingPrice || product.details?.car?.asking_price || "";
+      const manufacturer_name = product.details?.car?.manufacturerName || product.details?.car?.manufacturer_name || "";
+      const commercial_nickname = product.details?.car?.commercialNickname || product.details?.car?.commercial_nickname || "";
+      const year_of_production = product.details?.car?.yearOfProduction || product.details?.car?.year_of_production || "";
+      const trim_level = product.details?.car?.trimLevel || product.details?.car?.trim_level || "";
 
       // Build image URL with fallbacks
       const mainImage = (() => {
@@ -266,6 +266,51 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
         commercial_nickname: commercial_nickname,
         year_of_production: year_of_production,
         trim_level: trim_level,
+        // New fields from updated structure
+        carType: product.details?.car?.carType || "",
+        ownerType: product.details?.car?.ownerType || "",
+        region: product.details?.car?.region || "",
+        priceNegotiable: product.details?.car?.priceNegotiable || false,
+        selectedPackage: product.details?.car?.selectedPackage || "",
+        termsAccepted: product.details?.car?.termsAccepted || false,
+        previousOwners: product.details?.car?.previousOwners || [],
+        // Technical specifications
+        engineCapacity: product.details?.car?.engineCapacity || "",
+        seatingCapacity: product.details?.car?.seatingCapacity || "",
+        abs: product.details?.car?.abs || "",
+        airbags: product.details?.car?.airbags || "",
+        powerWindows: product.details?.car?.powerWindows || "",
+        driveType: product.details?.car?.driveType || "",
+        totalWeight: product.details?.car?.totalWeight || "",
+        height: product.details?.car?.height || "",
+        fuelTankCapacity: product.details?.car?.fuelTankCapacity || "",
+        co2Emission: product.details?.car?.co2Emission || "",
+        greenIndex: product.details?.car?.greenIndex || "",
+        enginePower: product.details?.car?.enginePower || "",
+        doors: product.details?.car?.doors || "",
+        // Additional technical data
+        engineCode: product.details?.car?.engineCode || "",
+        frameNumber: product.details?.car?.frameNumber || "",
+        lastTestDate: product.details?.car?.lastTestDate || "",
+        tokefTestDate: product.details?.car?.tokefTestDate || "",
+        frontTires: product.details?.car?.frontTires || "",
+        rearTires: product.details?.car?.rearTires || "",
+        pollutionGroup: product.details?.car?.pollutionGroup || "",
+        dateOnRoad: product.details?.car?.dateOnRoad || "",
+        owner: product.details?.car?.owner || "",
+        carTitle: product.details?.car?.carTitle || "",
+        carColorGroupID: product.details?.car?.carColorGroupID || "",
+        yad2ColorID: product.details?.car?.yad2ColorID || "",
+        yad2CarTitle: product.details?.car?.yad2CarTitle || "",
+        // Environmental data
+        noxEmission: product.details?.car?.noxEmission || "",
+        pmEmission: product.details?.car?.pmEmission || "",
+        hcEmission: product.details?.car?.hcEmission || "",
+        coEmission: product.details?.car?.coEmission || "",
+        // Safety and features
+        safetyRating: product.details?.car?.safetyRating || "",
+        safetyRatingWithoutSeatbelts: product.details?.car?.safetyRatingWithoutSeatbelts || "",
+        fuelTankCapacityWithoutReserve: product.details?.car?.fuelTankCapacityWithoutReserve || "",
         // Store info
         store: product.store || {},
         hostname: product.store?.hostname || hostname,
@@ -724,7 +769,7 @@ const searchParams = useSearchParams();
                 </div>
 
                 {/* Additional Car Details */}
-                {(car.color || car.engine_type || car.trim_level || car.known_problems || car.trade_in) && (
+                {(car.color || car.engine_type || car.trim_level || car.known_problems || car.trade_in || car.carType || car.ownerType || car.region || car.priceNegotiable || car.selectedPackage) && (
                   <div className="bg-white rounded-xl p-6 shadow-sm">
                     <h3 className="text-lg font-semibold mb-4">{t('additional_details')}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -759,6 +804,61 @@ const searchParams = useSearchParams();
                           </div>
                         </div>
                       )}
+                      {car.carType && (
+                        <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
+                          <div className="p-2 bg-indigo-100 rounded-lg">
+                            <Car className="h-4 w-4 text-indigo-600" />
+                          </div>
+                          <div className={isRTL ? 'text-right' : 'text-left'}>
+                            <div className="text-xs text-gray-500">{t('car_type') || 'Car Type'}</div>
+                            <div className="font-medium">{car.carType === 'private' ? 'Private Car' : 'Commercial Car'}</div>
+                          </div>
+                        </div>
+                      )}
+                      {car.ownerType && (
+                        <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
+                          <div className="p-2 bg-orange-100 rounded-lg">
+                            <User className="h-4 w-4 text-orange-600" />
+                          </div>
+                          <div className={isRTL ? 'text-right' : 'text-left'}>
+                            <div className="text-xs text-gray-500">{t('owner_type') || 'Owner Type'}</div>
+                            <div className="font-medium">{car.ownerType === 'private' ? 'Private' : car.ownerType === 'company' ? 'Company' : 'Rental'}</div>
+                          </div>
+                        </div>
+                      )}
+                      {car.region && (
+                        <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
+                          <div className="p-2 bg-teal-100 rounded-lg">
+                            <MapPin className="h-4 w-4 text-teal-600" />
+                          </div>
+                          <div className={isRTL ? 'text-right' : 'text-left'}>
+                            <div className="text-xs text-gray-500">{t('region') || 'Region'}</div>
+                            <div className="font-medium">{car.region.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+                          </div>
+                        </div>
+                      )}
+                      {car.priceNegotiable !== undefined && (
+                        <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
+                          <div className="p-2 bg-yellow-100 rounded-lg">
+                            <DollarSign className="h-4 w-4 text-yellow-600" />
+                          </div>
+                          <div className={isRTL ? 'text-right' : 'text-left'}>
+                            <div className="text-xs text-gray-500">{t('price_negotiable') || 'Price Negotiable'}</div>
+                            <div className="font-medium">{car.priceNegotiable ? 'Yes' : 'No'}</div>
+                          </div>
+                        </div>
+                      )}
+                      {car.selectedPackage && (
+                        <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
+                          <div className="p-2 bg-purple-100 rounded-lg">
+                            <Sparkles className="h-4 w-4 text-purple-600" />
+                          </div>
+                          <div className={isRTL ? 'text-right' : 'text-left'}>
+                            <div className="text-xs text-gray-500">{t('selected_package') || 'Selected Package'}</div>
+                            <div className="font-medium">{car.selectedPackage === 'website_release' ? 'Website Release' : car.selectedPackage}</div>
+                          </div>
+                        </div>
+                      )}
                       {car.trade_in && (
                         <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
                           <div className="p-2 bg-purple-100 rounded-lg">
@@ -779,6 +879,136 @@ const searchParams = useSearchParams();
                     )}
                   </div>
                 )}
+              {/* Technical Specifications Section */}
+              {(car.engineCapacity || car.seatingCapacity || car.abs || car.airbags || car.powerWindows || car.driveType || car.totalWeight || car.height || car.fuelTankCapacity || car.co2Emission || car.greenIndex || car.enginePower || car.doors || car.engineCode || car.frameNumber || car.lastTestDate || car.tokefTestDate || car.frontTires || car.rearTires || car.pollutionGroup || car.dateOnRoad || car.noxEmission || car.pmEmission || car.hcEmission || car.coEmission || car.safetyRating || car.safetyRatingWithoutSeatbelts || car.fuelTankCapacityWithoutReserve) && (
+                <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
+                  <h3 className="text-lg font-semibold mb-4">{t('technical_specifications') || 'Technical Specifications'}</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {car.engineCapacity && (
+                      <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
+                        <div className="p-2 bg-blue-100 rounded-lg">
+                          <Car className="h-4 w-4 text-blue-600" />
+                        </div>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <div className="text-xs text-gray-500">{t('engine_capacity') || 'Engine Capacity'}</div>
+                          <div className="font-medium">{car.engineCapacity} cc</div>
+                        </div>
+                      </div>
+                    )}
+                    {car.seatingCapacity && (
+                      <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
+                        <div className="p-2 bg-green-100 rounded-lg">
+                          <User className="h-4 w-4 text-green-600" />
+                        </div>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <div className="text-xs text-gray-500">{t('seating_capacity') || 'Seating Capacity'}</div>
+                          <div className="font-medium">{car.seatingCapacity} seats</div>
+                        </div>
+                      </div>
+                    )}
+                    {car.abs && (
+                      <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
+                        <div className="p-2 bg-red-100 rounded-lg">
+                          <Shield className="h-4 w-4 text-red-600" />
+                        </div>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <div className="text-xs text-gray-500">{t('abs') || 'ABS'}</div>
+                          <div className="font-medium">{car.abs}</div>
+                        </div>
+                      </div>
+                    )}
+                    {car.airbags && (
+                      <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
+                        <div className="p-2 bg-yellow-100 rounded-lg">
+                          <Shield className="h-4 w-4 text-yellow-600" />
+                        </div>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <div className="text-xs text-gray-500">{t('airbags') || 'Airbags'}</div>
+                          <div className="font-medium">{car.airbags}</div>
+                        </div>
+                      </div>
+                    )}
+                    {car.powerWindows && (
+                      <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
+                        <div className="p-2 bg-purple-100 rounded-lg">
+                          <Car className="h-4 w-4 text-purple-600" />
+                        </div>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <div className="text-xs text-gray-500">{t('power_windows') || 'Power Windows'}</div>
+                          <div className="font-medium">{car.powerWindows}</div>
+                        </div>
+                      </div>
+                    )}
+                    {car.driveType && (
+                      <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
+                        <div className="p-2 bg-indigo-100 rounded-lg">
+                          <Car className="h-4 w-4 text-indigo-600" />
+                        </div>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <div className="text-xs text-gray-500">{t('drive_type') || 'Drive Type'}</div>
+                          <div className="font-medium">{car.driveType}</div>
+                        </div>
+                      </div>
+                    )}
+                    {car.totalWeight && (
+                      <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
+                        <div className="p-2 bg-gray-100 rounded-lg">
+                          <Gauge className="h-4 w-4 text-gray-600" />
+                        </div>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <div className="text-xs text-gray-500">{t('total_weight') || 'Total Weight'}</div>
+                          <div className="font-medium">{car.totalWeight} kg</div>
+                        </div>
+                      </div>
+                    )}
+                    {car.enginePower && (
+                      <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
+                        <div className="p-2 bg-orange-100 rounded-lg">
+                          <Car className="h-4 w-4 text-orange-600" />
+                        </div>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <div className="text-xs text-gray-500">{t('engine_power') || 'Engine Power'}</div>
+                          <div className="font-medium">{car.enginePower} HP</div>
+                        </div>
+                      </div>
+                    )}
+                    {car.doors && (
+                      <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
+                        <div className="p-2 bg-teal-100 rounded-lg">
+                          <Car className="h-4 w-4 text-teal-600" />
+                        </div>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <div className="text-xs text-gray-500">{t('doors') || 'Doors'}</div>
+                          <div className="font-medium">{car.doors}</div>
+                        </div>
+                      </div>
+                    )}
+                    {car.co2Emission && (
+                      <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
+                        <div className="p-2 bg-emerald-100 rounded-lg">
+                          <Car className="h-4 w-4 text-emerald-600" />
+                        </div>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <div className="text-xs text-gray-500">{t('co2_emission') || 'CO2 Emission'}</div>
+                          <div className="font-medium">{car.co2Emission} g/km</div>
+                        </div>
+                      </div>
+                    )}
+                    {car.greenIndex && (
+                      <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
+                        <div className="p-2 bg-green-100 rounded-lg">
+                          <Car className="h-4 w-4 text-green-600" />
+                        </div>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <div className="text-xs text-gray-500">{t('green_index') || 'Green Index'}</div>
+                          <div className="font-medium">{car.greenIndex}</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Pros and Cons Section */}
               <div className="bg-white rounded-xl p-6 shadow-sm">
                 <h3 className="text-lg font-semibold mb-4">{t('pros_and_cons') || 'Pros and Cons'}</h3>
