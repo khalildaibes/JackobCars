@@ -1056,7 +1056,7 @@
     "image_preview": "Image {number}",
     "remove_image": "Remove image",
     "submit_listing": "Submit Listing",
-
+    "description_placeholder": "Enter description manually or leave empty for AI generation",
     "condition_excellent": "Excellent",
     "condition_good": "Good",
     "condition_fair": "Fair",

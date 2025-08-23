@@ -6,16 +6,17 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-export async function POST(request: Request) {
+export async function GET(request: Request) {
   try {
     const cookieStore = await cookies();
     const locale = cookieStore.get('NEXT_LOCALE')?.value ?? 'ar';
-    
-    const body = await request.json();
-    const { make, model, year, specs } = body;
+ // Parse query params from the URL
+ const { searchParams } = new URL(request.url);
 
+      const data = JSON.parse(searchParams.get('data') || '{}');
+      console.log('data', data)
     const prompt = `
-      Create a detailed and engaging description for this ${year} ${make} ${model} car in ${locale} language.
+      Create a detailed and engaging description for this ${data.year} ${data.make} ${data.model} car in ${locale} language.
       
       The description should be comprehensive and include:
       1. An overview of the car's design and style
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
       6. Overall appeal and target audience
       
       Car specifications:
-      ${JSON.stringify(specs, null, 2)}
+      ${JSON.stringify(data, null, 2)}
       
       The description should be:
       - Written in ${locale} language

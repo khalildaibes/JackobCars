@@ -313,7 +313,7 @@ export const BasicInformationStep: React.FC<BasicInformationStepProps> = ({
         {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
         {!formData.title && selectedManufacturer && selectedModel && selectedYear && (
           <p className="mt-2 text-sm text-blue-600">
-            💡 {t('title_auto_generation_hint')} "{manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer} {formData.commercialNickname || t('model')} {selectedYear}" {t('when_click_next')}
+            💡 {t('title_auto_generation_hint')} "{manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer} {yad2ModelInfo?.data?.commercialName || t('model')} {selectedYear} {yad2ModelInfo?.data?.koah_sus || t('model')} {yad2ModelInfo?.data?.transmission || t('model')} {yad2ModelInfo?.data?.fuelType || t('model')} {t('when_click_next') || 'when you click next'}"
           </p>
         )}
       </motion.div>

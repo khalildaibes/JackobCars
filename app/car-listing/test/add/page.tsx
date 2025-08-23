@@ -49,6 +49,8 @@ import { useRouter } from 'next/navigation';
 import {manufacturers_hebrew} from '../../../../data/manufacturers_multilingual';
 const conditions = ['excellent', 'good', 'fair', 'poor'] as const;
 import React from 'react';
+import CarDetailsSections from './CarDetailsSections';
+import { title } from 'process';
 
 // Government car data API endpoint
 const GOV_CAR_DATA_API = "/api/gov/car-data";
@@ -101,9 +103,7 @@ export default function AddCarListing() {
   const isRTL = locale === 'ar' || locale === 'he-IL';
   const STEPS = [
     'Basic Information',
-    'Condition',
-    'Trade-in Option',
-    'Target Buyer',
+    'Condition & Trade-in & description',
     'Price',
     'Contact Info',
     'Upload Images',
@@ -190,7 +190,7 @@ export default function AddCarListing() {
     pros: '',
     cons: '',
     tradeIn: '',
-    targetBuyer: '',
+    description: '',
     askingPrice: '',
     name: '',
     email: '',
@@ -224,7 +224,6 @@ export default function AddCarListing() {
   const fetchVehicleSpecs = useCallback(async (carData: any) => {
     try {
       const vehicleSpecsUrl = `/api/gov/vehicle-specs?manufacturerName=${carData.manufacturerName}&modelName=${carData.modelName}&year=${carData.year}&submodel=${carData.subModel || ''}&fuelType=${carData.fuelType || ''}`;
-      console.log('Fetching vehicle specs from:', vehicleSpecsUrl);
       
       const vehicleSpecsResponse = await fetch(vehicleSpecsUrl);
       
@@ -260,14 +259,11 @@ export default function AddCarListing() {
             rank: specsRecord.rank || null
           };
           
-          console.log('Vehicle specs data merged successfully');
           return enhancedCarData;
         } else {
-          console.log('No vehicle specs records found');
           return carData;
         }
       } else {
-        console.log('Vehicle specs API request failed:', vehicleSpecsResponse.status);
         return carData;
       }
     } catch (error) {
@@ -279,7 +275,6 @@ export default function AddCarListing() {
   const fetchSubmodelOptions = useCallback(async (manufacturerName: string, modelName: string, year: string) => {
     try {
       const vehicleSpecsUrl = `/api/gov/vehicle-specs?manufacturerName=${encodeURIComponent(manufacturerName)}&modelName=${encodeURIComponent(modelName)}&year=${encodeURIComponent(year)}`;
-      console.log('Fetching submodel options from:', vehicleSpecsUrl);
       
       const vehicleSpecsResponse = await fetch(vehicleSpecsUrl);
       
@@ -312,14 +307,11 @@ export default function AddCarListing() {
             rank: record.rank || null
           }));
           
-          console.log('Submodel options fetched successfully:', submodelOptions.length);
           return submodelOptions;
         } else {
-          console.log('No submodel options found');
           return [];
         }
       } else {
-        console.log('Submodel options API request failed:', vehicleSpecsResponse.status);
         return [];
       }
     } catch (error) {
@@ -466,6 +458,36 @@ export default function AddCarListing() {
 
 
 
+  const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
+
+  /**
+   * Generates AI description for the car
+   */
+  const generateAIDescription = async () => {
+    if (!yad2ModelInfo?.data) {
+      alert(t('fill_description_first'));
+      return;
+    }
+
+    setIsGeneratingDescription(true);
+
+    try {
+      const response = await fetch('/api/createDescription?data=' + encodeURIComponent(JSON.stringify(formData)));
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('data', data)
+        setFormData(prev => ({ ...prev, description: data.description }));
+      } else {
+        alert(t('failed_to_generate_description'));
+      }
+    } catch (error) {
+      console.error('Error generating description:', error);
+      alert(t('error_generating_description'));
+    } finally {
+      setIsGeneratingDescription(false);
+    }
+  };
 
 
 
@@ -487,7 +509,6 @@ export default function AddCarListing() {
     try {
       // Use only the government car data API
       const response = await fetch(`/api/gov/car-data?licensePlate=${cleanPlateNumber}`);
-      console.log('Government API response status:', response.status);
 
       
       if (!response.ok) {
@@ -499,7 +520,6 @@ export default function AddCarListing() {
       }
       
       const data = await response.json();
-      console.log('Government car data received:', data);
       
       if (data?.result?.records?.length > 0) {
         const record = data.result.records[0] as Record<string, unknown>;
@@ -512,7 +532,6 @@ export default function AddCarListing() {
           ])
         );
         
-        console.log('Translated car data:', translatedData);
         setCarData(translatedData);
         
         
@@ -581,7 +600,6 @@ export default function AddCarListing() {
           
           if (response1.ok) {
             const data1 = await response1.json();
-            console.log('Government vehicle specs API response data:', data1);
             
             if (data1?.result?.records?.length > 0) {
               const specsRecord = data1.result.records[0];
@@ -710,14 +728,11 @@ export default function AddCarListing() {
               };
               
               setYad2ModelInfo({ data: enhancedData });
-              console.log('Enhanced yad2ModelInfo with vehicle specs:', enhancedData);
             } else {
               // If no vehicle specs found, use the mock data as is
               setYad2ModelInfo(mockYad2Info);
-              console.log('No vehicle specs found, using mock data:', mockYad2Info);
             }
           } else {
-            console.log('Vehicle specs API request failed:', response1.status);
             // Use the mock data if the vehicle specs API fails
             setYad2ModelInfo(mockYad2Info);
           }
@@ -923,7 +938,7 @@ export default function AddCarListing() {
     //       pros: '',
     //       cons: '',
     //       tradeIn: '',
-    //       targetBuyer: '',
+    //       description: '',
     //       askingPrice: '',
     //       name: '',
     //       email: '',
@@ -1072,7 +1087,7 @@ export default function AddCarListing() {
               {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
               {!formData.title && selectedManufacturer && selectedModel && selectedYear && (
                 <p className="mt-2 text-sm text-blue-600">
-                  💡 {t('title_auto_generation_hint') || 'Title will be auto-generated as'} "{manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer} {formData.commercialNickname || t('model')} {selectedYear}" {t('when_click_next') || 'when you click next'}
+                  💡 {t('title_auto_generation_hint') || 'Title will be auto-generated as'} "{manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer} {formData.commercialName || t('model')} {selectedYear} {yad2ModelInfo?.data?.koah_sus || t('model')}  {yad2ModelInfo?.data?.transmission || t('model')} {yad2ModelInfo?.data?.fuelType || t('model')} {t('when_click_next') || 'when you click next'}
                 </p>
               )}
             </motion.div>
@@ -1298,13 +1313,10 @@ export default function AddCarListing() {
                           try {
                             const manufacturerTitle = manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer;
                             const modelTitle = availableModels.find(model => model.id?.toString() === selectedModel)?.title || selectedModel;
-                            console.log('here2 ' , manufacturerTitle, modelTitle, value);
 
                             // Fetch submodel options and set them globally
                             const submodelOptions = await fetchSubmodelOptions(manufacturerTitle, modelTitle, value);
-                            console.log('Fetched submodel options:', submodelOptions);
                             setGlobalSubmodelOptions(submodelOptions);
-                            console.log('here3 ' , submodelOptions);
                             // Update available submodels with the fetched data
                             if (submodelOptions.length > 0) {
                               // Convert to the format expected by the existing submodel logic
@@ -1317,7 +1329,6 @@ export default function AddCarListing() {
                               
                               // Update the available submodels state
                               setAvailableSubmodels(formattedSubmodels);
-                              console.log('Fetched submodel options:', formattedSubmodels);
                             } else {
                               setAvailableSubmodels([]);
                             }
@@ -1376,8 +1387,7 @@ export default function AddCarListing() {
                             let detailedSpecs = selectedSubmodelData;
                             
                             if (globalSubmodelOptions.length > 0) {
-                              console.log('here4 ' , detailedSpecs);
-                              console.log('Matching submodel found:', detailedSpecs);
+
                             }
                             
                             if (detailedSpecs) {
@@ -1530,331 +1540,9 @@ export default function AddCarListing() {
               )}
 
               {/* ALL Government Car Information - Complete Data Display */}
-              {yad2ModelInfo?.data && (
-                <div className="space-y-4">
-                  {/* Basic Car Information */}
-                  <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="text-xl text-blue-600 font-semibold">🚗 {t('basic_car_info') || 'Basic Car Information'}</span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {yad2ModelInfo.data.manufacturerName && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('manufacturer') || 'Manufacturer'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.manufacturerName}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.modelName && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('model') || 'Model'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.modelName}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.carYear && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('year') || 'Year'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.carYear}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.subModelTitle && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('submodel') || 'Submodel'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.subModelTitle}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.fuelType && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('fuel_type') || 'Fuel Type'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.fuelType}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.owner && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('owner') || 'Owner Type'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.owner}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.carTitle && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('car_title') || 'Car Title'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.carTitle}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.modelId && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('model_id') || 'Model ID'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.modelId}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.manufacturerId && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('manufacturer_id') || 'Manufacturer ID'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.manufacturerId}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.subModelId && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('submodel_id') || 'Submodel ID'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.subModelId}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.commercialNickname && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('commercial_nickname') || 'Commercial Nickname'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.commercialNickname}</div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+              {/* {yad2ModelInfo?.data && ( */}
+               
 
-                  {/* Technical Specifications */}
-                  <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="text-xl text-green-600 font-semibold">⚙️ {t('technical_specs') || 'Technical Specifications'}</span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {yad2ModelInfo.data.engineCapacity && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('engine_capacity') || 'Engine Capacity'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.engineCapacity} cc</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.totalWeight && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('total_weight') || 'Total Weight'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.totalWeight} kg</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.height && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('height') || 'Height'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.height} mm</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.driveType && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('drive_type') || 'Drive Type'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.driveType}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.transmission && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('transmission') || 'Transmission'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.transmission}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.bodyType && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('body_type') || 'Body Type'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.bodyType}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.engineCode && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('engine_code') || 'Engine Code'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.engineCode}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.seatingCapacity && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('seating_capacity') || 'Seating Capacity'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.seatingCapacity}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.pollutionGroup && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('pollution_group') || 'Pollution Group'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.pollutionGroup}</div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Safety Features */}
-                  <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="text-xl text-yellow-600 font-semibold">🛡️ {t('safety_features') || 'Safety Features'}</span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {yad2ModelInfo.data.abs && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('abs') || 'ABS'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.abs}</div>
-                        </div>
-                      )}
-                      {(yad2ModelInfo.data.airbags !== null && yad2ModelInfo.data.airbags !== undefined) && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('airbags') || 'Airbags'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.airbags}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.safetyRating && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('safety_rating') || 'Safety Rating'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.safetyRating}</div>
-                        </div>
-                      )}
-                      {(yad2ModelInfo.data.powerWindows !== null && yad2ModelInfo.data.powerWindows !== undefined) && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('power_windows') || 'Power Windows'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.powerWindows}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.safetyRatingWithoutSeatbelts && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('safety_rating_no_seatbelts') || 'Safety Rating (No Seatbelts)'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.safetyRatingWithoutSeatbelts}</div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Environmental Data */}
-                  <div className="bg-emerald-50 rounded-lg p-4 border border-emerald-200">
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="text-xl text-emerald-600 font-semibold">🌱 {t('environmental_data') || 'Environmental Data'}</span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {yad2ModelInfo.data.co2Emission && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('co2_emission') || 'CO2 Emission'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.co2Emission} g/km</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.noxEmission && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('nox_emission') || 'NOx Emission'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.noxEmission} mg/km</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.pmEmission && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('pm_emission') || 'PM Emission'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.pmEmission} mg/km</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.hcEmission && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('hc_emission') || 'HC Emission'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.hcEmission} mg/km</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.coEmission && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('co_emission') || 'CO Emission'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.coEmission} mg/km</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.greenIndex && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('green_index') || 'Green Index'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.greenIndex}</div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Additional Information */}
-                  <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="text-xl text-purple-600 font-semibold">📋 {t('additional_info') || 'Additional Information'}</span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {yad2ModelInfo.data.fuelTankCapacity && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('fuel_tank_capacity') || 'Fuel Tank Capacity'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.fuelTankCapacity} kg</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.fuelTankCapacityWithoutReserve && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('fuel_tank_capacity_no_reserve') || 'Fuel Tank (No Reserve)'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.fuelTankCapacityWithoutReserve} kg</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.dateOnRoad && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('date_on_road') || 'Date on Road'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.dateOnRoad}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.frameNumber && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('frame_number') || 'Frame Number'}</div>
-                          <div className="font-semibold text-gray-900 font-mono text-sm">{yad2ModelInfo.data.frameNumber}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.lastTestDate && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('last_test_date') || 'Last Test Date'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.lastTestDate}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.tokefTestDate && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('tokef_test_date') || 'Tokef Test Date'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.tokefTestDate}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.mileage && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('mileage') || 'Mileage'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.mileage} km</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.rank && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('rank') || 'Rank'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.rank}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.commercialName && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('commercial_name') || 'Commercial Name'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.commercialName}</div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Tires and Colors */}
-                  <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="text-xl text-orange-600 font-semibold">🛞 {t('tires_and_colors') || 'Tires and Colors'}</span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {yad2ModelInfo.data.frontTires && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('front_tires') || 'Front Tires'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.frontTires}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.rearTires && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('rear_tires') || 'Rear Tires'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.rearTires}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.carColorGroupID && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('car_color_group_id') || 'Car Color Group ID'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.carColorGroupID}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.yad2ColorID && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('yad2_color_id') || 'Yad2 Color ID'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.yad2ColorID}</div>
-                        </div>
-                      )}
-                      {yad2ModelInfo.data.yad2CarTitle && (
-                        <div className="bg-white p-3 rounded-lg border">
-                          <div className="text-xs text-gray-500 font-medium">{t('yad2_car_title') || 'Yad2 Car Title'}</div>
-                          <div className="font-semibold text-gray-900">{yad2ModelInfo.data.yad2CarTitle}</div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
 
                   {/* Debug Information - Raw Data */}
                   {/* <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
@@ -1867,22 +1555,25 @@ export default function AddCarListing() {
                       </pre>
                     </div>
                   </div> */}
-                </div>
-              )}
-
+                
+              {/* )} */}
+            <CarDetailsSections data={yad2ModelInfo?.data} t={t} />
 
           </motion.div>
           )}
 
-          {/* Condition */}
+          {/* Condition, Trade-in & description - Combined Step */}
           {currentStep === 1 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
           >
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('condition')}</h2>
-            <div className="space-y-4">
+            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('condition_trade_in_description') || 'Condition, Trade-in & description'}</h2>
+            
+            {/* Condition Section */}
+            <div className="mb-8">
+              <h3 className="text-lg font-medium text-gray-700 mb-4">{t('condition') || 'Condition'}</h3>
               <Select
                 value={formData.currentCondition}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, currentCondition: value }))}
@@ -1898,59 +1589,44 @@ export default function AddCarListing() {
                   ))}
                 </SelectContent>
               </Select>
-              
-              
-              
+            </div>
+
+            {/* Trade-in Option Section */}
+            <div className="mb-8">
+              <h3 className="text-lg font-medium text-gray-700 mb-4">{t('trade_in_option') || 'Trade-in Option'}</h3>
+              <RadioGroup
+                value={formData.tradeIn}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, tradeIn: value }))}>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="yes" id="yes" />
+                  <Label htmlFor="yes">{t('yes')}</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="no" id="no" />
+                  <Label htmlFor="no">{t('no')}</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="maybe" id="maybe" />
+                  <Label htmlFor="maybe">{t('maybe')}</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            {/* description Section */}
+            <div>
+              <h3 className="text-lg font-medium text-gray-700 mb-4">{t('description') || 'description'}</h3>
+              <Textarea
+                placeholder={t('description_placeholder')}
+                value={formData.description}
+                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                className="h-24 rounded-xl py-5"
+              />
             </div>
           </motion.div>
           )}
 
-          {/* Trade-in Option */}
-          {currentStep === 2 && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
-          >
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('trade_in_option')}</h2>
-            <RadioGroup
-              value={formData.tradeIn}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, tradeIn: value }))}>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="yes" id="yes" />
-                <Label htmlFor="yes">{t('yes')}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="no" id="no" />
-                <Label htmlFor="no">{t('no')}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="maybe" id="maybe" />
-                <Label htmlFor="maybe">{t('maybe')}</Label>
-              </div>
-            </RadioGroup>
-          </motion.div>
-          )}
-
-          {/* Target Buyer */}
-          {currentStep === 3 && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
-          >
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('target_buyer')}</h2>
-            <Textarea
-              placeholder={t('target_buyer_placeholder')}
-              value={formData.targetBuyer}
-              onChange={(e) => setFormData(prev => ({ ...prev, targetBuyer: e.target.value }))}
-              className="h-24 rounded-xl py-5"
-            />
-          </motion.div>
-          )}
-
           {/* Price */}
-          {currentStep === 4 && (
+          {currentStep === 2 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -1968,7 +1644,7 @@ export default function AddCarListing() {
           )}
 
           {/* Contact Info */}
-          {currentStep === 5 && (
+          {currentStep === 3 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -2020,7 +1696,7 @@ export default function AddCarListing() {
           )}
 
           {/* Image Upload */}
-          {currentStep === 6 && (
+          {currentStep === 4 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -2096,42 +1772,85 @@ export default function AddCarListing() {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
-                Previous
+                {t("previous")}
               </div>
             </Button>
 
-            {currentStep < STEPS.length - 1 && (
+            {currentStep < STEPS.length - 1 ? (
               <Button
                 type="button"
-                onClick={() => setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))}
+                onClick={() =>
+                  {
+                    if (currentStep === 0) {
+                      if (inputMethod === "manual") {
+                        console.log('yad2ModelInfo?.data', yad2ModelInfo)
+                        console.log('formData', formData)
+                        setFormData(prev => ({ ...prev, title: yad2ModelInfo?.data?.commercialName + " מנוע " + (parseInt(yad2ModelInfo?.data?.engineCapacity)/1000 ).toFixed(1) + " שנת " + formData?.year + " דגם " + yad2ModelInfo?.data?.trimLevel + ' כ"ס ' + yad2ModelInfo?.data?.enginePower + " גיר " + yad2ModelInfo?.data?.transmission + ' דלק ' + yad2ModelInfo?.data?.fuelType }));
+                        setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                      }
+                      else{if (formData.title === "" || formData.title === undefined || formData.title === null || formData.title === "null" ) {
+                          if (yad2ModelInfo?.data?.manufacturerName && yad2ModelInfo?.data?.commercialName && yad2ModelInfo?.data?.shnat_yitzur) {
+                            setFormData(prev => ({ ...prev, title: yad2ModelInfo?.data?.commercialName + " מנוע " + (parseInt(yad2ModelInfo?.data?.nefah_manoa)/1000 ).toFixed(1) + " שנת " + yad2ModelInfo?.data?.shnat_yitzur + " דגם " + yad2ModelInfo?.data?.subModelTitle + ' כ"ס ' + yad2ModelInfo?.data?.koah_sus + " גיר " + yad2ModelInfo?.data?.transmission + ' דלק ' + yad2ModelInfo?.data?.fuelType + '  ' }));
+                            setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                          } else {
+                            setErrors(prev => ({ ...prev, title: 'Title is required' }));
+                            setCurrentStep(0)
+                          }
+                        } else {
+                          setFormData(prev => ({ ...prev, title: yad2ModelInfo?.data?.commercialName + " מנוע " + (parseInt(yad2ModelInfo?.data?.nefah_manoa)/1000 ).toFixed(1) + " שנת " + yad2ModelInfo?.data?.shnat_yitzur + " דגם " + yad2ModelInfo?.data?.subModelTitle + ' כ"ס ' + yad2ModelInfo?.data?.koah_sus + " גיר " + yad2ModelInfo?.data?.transmission + ' דלק ' + yad2ModelInfo?.data?.fuelType + '  ' }));
+                          setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                        }
+                    } 
+                  }else if(currentStep === 1){
+                    if(formData.description === "" || formData.description === undefined || formData.description === null || formData.description === "null" ){
+                      generateAIDescription()
+                    }else{
+                      setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                    }
+                  }
+                  
+                  else {
+                      setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                    }
+                    
+                  }
+                }
                 className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white transition-all duration-200 hover:shadow-md transform hover:scale-105"
               >
                 <div className="flex items-center gap-2">
-                  Next
+                  {t("next")}
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </div>
               </Button>
+            ) : (
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white transition-all duration-200 hover:shadow-md transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <div className="flex items-center gap-2">
+                  {isSubmitting ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      {t('submitting') || 'Submitting...'}
+                    </>
+                  ) : (
+                    <>
+                      {t('submit_listing') || 'Submit Listing'}
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </>
+                  )}
+                </div>
+              </Button>
             )}
           </div>
-
-          {/* Submit Button */}
-          {currentStep === STEPS.length - 1 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="sticky bottom-4 bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg"
-          >
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-200 transform hover:scale-[1.01] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? t('submitting') : t('submit_listing')}
-            </Button>
-          </motion.div>
-          )}
         </form>
       </motion.div>
     </div>
