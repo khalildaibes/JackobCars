@@ -24,7 +24,6 @@ import {
 } from "lucide-react";
 
 // Data and Types
-import { manufacturers_hebrew } from '../../../data/manufacturers_multilingual';
 import { 
   CarData, VehicleSpecs, OwnershipRecord, CarPerformanceData, 
   ManufacturerData, ManufacturersData, FormData as CarFormData, ValidationErrors,
@@ -38,6 +37,7 @@ import {
   useCarDataFetching, useFormValidation, useImageHandling,
   useStepNavigation, usePopupModal 
 } from './hooks';
+import { useLocaleManufacturers } from '../new/hooks/useLocaleManufacturers';
 
 // Step Components
 import { BasicInformationStep } from './components/BasicInformationStep';
@@ -79,8 +79,8 @@ export default function AddCarListing() {
   const [formData, setFormData] = useState<CarFormData>(DEFAULT_VALUES);
   const [errors, setErrors] = useState<ValidationErrors>({});
 
-  // Car data and API state
-  const [manufacturersData, setManufacturersData] = useState<ManufacturersData>(manufacturers_hebrew);
+  // Car data and API state - using locale-based data
+  const { displayData: manufacturersData, hebrewData, isLoading: manufacturersLoading, error: manufacturersError } = useLocaleManufacturers();
   const [selectedManufacturer, setSelectedManufacturer] = useState('');
   const [selectedModel, setSelectedModel] = useState('');
   const [selectedSubmodel, setSelectedSubmodel] = useState('');
@@ -142,6 +142,7 @@ export default function AddCarListing() {
     setPerformanceData,
     setCarImage,
     manufacturersData,
+    hebrewData, // Pass Hebrew data for API calls
     setFormData,
     setSelectedManufacturer,
     setSelectedModel,
@@ -372,10 +373,21 @@ export default function AddCarListing() {
       const manufacturerName = submodel.manufacturer?.title || selectedManufacturer;
       const modelName = submodel.title || selectedModel;
       
+      // Get Hebrew versions for API calls
+      const hebrewManufacturerName = hebrewData[selectedManufacturer]?.submodels?.find(
+        (sub: any) => sub.id?.toString() === selectedModel
+      )?.manufacturer?.title || manufacturerName;
+      
+      const hebrewModelName = hebrewData[selectedManufacturer]?.submodels?.find(
+        (sub: any) => sub.id?.toString() === selectedModel
+      )?.title || modelName;
+      
       setFormData(prev => ({
         ...prev,
-        manufacturerName: manufacturerName,
-        commercialNickname: modelName,
+        manufacturerName: manufacturerName, // Localized for display
+        manufacturerNameHebrew: hebrewManufacturerName, // Hebrew for API
+        commercialNickname: modelName, // Localized for display
+        commercialNicknameHebrew: hebrewModelName, // Hebrew for API
         yearOfProduction: selectedYear,
         year: selectedYear,
         makeModel: `${manufacturerName} ${modelName}`.trim(),
@@ -491,8 +503,9 @@ export default function AddCarListing() {
           known_problems: formData.knownProblems || '',
           trade_in: formData.tradeIn || '',
           asking_price: formData.askingPrice || '',
-          manufacturer_name: formData.manufacturerName || cd.manufacturer_name || yad2Data.manufacturerName || '',
-          commercial_nickname: formData.commercialNickname || cd.commercial_nickname || yad2Data.modelName || '',
+          // Use Hebrew names for API calls
+          manufacturer_name: formData.manufacturerNameHebrew || formData.manufacturerName || cd.manufacturer_name || yad2Data.manufacturerName || '',
+          commercial_nickname: formData.commercialNicknameHebrew || formData.commercialNickname || cd.commercial_nickname || yad2Data.modelName || '',
           year_of_production: formData.yearOfProduction || cd.year_of_production || yad2Data.year || '',
           fuel_type: formData.fuelType || cd.fuel_type || yad2Data.fuelType || '',
           trim_level: cd.trim_level || yad2Data.trimLevel || '',
@@ -523,7 +536,8 @@ export default function AddCarListing() {
             { fuelType: String(formData.fuelType || cd.fuel_type || yad2Data.fuelType || '') },
             ...(imageId ? [{ image: imageId }] : []),
           ],
-          description: formData.description || `${formData.manufacturerName || cd.manufacturer_name || yad2Data.manufacturerName || ''} ${formData.commercialNickname || cd.commercial_nickname || yad2Data.modelName || ''} ${formData.yearOfProduction || cd.year_of_production || yad2Data.year || ''}`.trim(),
+          // Use Hebrew names for API description
+          description: formData.description || `${formData.manufacturerNameHebrew || formData.manufacturerName || cd.manufacturer_name || yad2Data.manufacturerName || ''} ${formData.commercialNicknameHebrew || formData.commercialNickname || cd.commercial_nickname || yad2Data.modelName || ''} ${formData.yearOfProduction || cd.year_of_production || yad2Data.year || ''}`.trim(),
         }
       };
 
@@ -631,6 +645,7 @@ export default function AddCarListing() {
                 errors={errors}
                 setErrors={setErrors}
                 manufacturersData={manufacturersData}
+                hebrewData={hebrewData}
                 selectedManufacturer={selectedManufacturer}
                 setSelectedManufacturer={setSelectedManufacturer}
                 selectedModel={selectedModel}

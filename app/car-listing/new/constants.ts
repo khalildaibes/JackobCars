@@ -47,6 +47,8 @@ export const DEFAULT_VALUES = {
   commercialNickname: '',
   yearOfProduction: '',
   fuelType: '',
+  manufacturerNameHebrew: '',
+  commercialNicknameHebrew: '',
   car_data: {},
   hasImage: false,
   hasPrice: false,

@@ -318,8 +318,15 @@
     "book_now": "הזמן עכשיו"
   },
   "CarListing": {
-
-    "fuel_type":{
+    "engine": "מנוע",
+    "year": "שנת",
+    "model": "דגם",
+    "hp": "כ\"ס",
+    "horsepower": "כ\"ס",
+    "gearbox": "גיר",
+    "fuel_type": "דלק",
+    "please_enter_mileage": "אנא הכנס קילומטראז'",
+    "fuel_type_options": {
       "petrol": "דלק",
       "diesel": "דיזל",
       "hybrid": "מערבל",

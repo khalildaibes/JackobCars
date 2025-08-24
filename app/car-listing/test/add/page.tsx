@@ -1,5 +1,18 @@
 "use client";
 
+/**
+ * Car Listing Add Page with Multilingual Support
+ * 
+ * This component automatically displays manufacturer, model, and submodel names
+ * in the user's selected language (Arabic, English, or Hebrew) while maintaining
+ * ID-based logic for form submission.
+ * 
+ * Localization Strategy:
+ * - UI Display: Uses localized names from manufacturers_multilingual.ts
+ * - Form Submission: Keeps original IDs for proper data handling
+ * - Fallback: Shows original names if localized versions aren't available
+ */
+
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useLocale } from 'next-intl';
@@ -47,7 +60,7 @@ import { Label } from "../../../../components/ui/label";
 import { Textarea } from "../../../../components/ui/textarea";
 import { motion } from "framer-motion";
 import { useRouter } from 'next/navigation';
-import {manufacturers_hebrew} from '../../../../data/manufacturers_multilingual';
+import {manufacturers_hebrew, manufacturers_arabic, manufacturers_english} from '../../../../data/manufacturers_multilingual';
 const conditions = ['excellent', 'good', 'fair', 'poor'] as const;
 import React from 'react';
 import CarDetailsSections from './CarDetailsSections';
@@ -82,9 +95,6 @@ interface CarData {
   [key: string]: string;
 }
 
-
-
-
 interface ManufacturerData {
   submodels: any[];
   manufacturerImage: string;
@@ -103,6 +113,37 @@ export default function AddCarListing() {
   const t = useTranslations('CarListing');
   const locale = useLocale();
   const isRTL = locale === 'ar' || locale === 'he-IL';
+  
+  // Debug log to see what locale is being detected
+  console.log('AddCarListing component rendered with locale:', locale, 'isRTL:', isRTL);
+  
+  // Get the appropriate manufacturers data based on locale
+  const getManufacturersData = () => {
+    console.log('getManufacturersData called with locale:', locale);
+    let result;
+    switch (locale) {
+      case 'ar':
+        result = manufacturers_arabic;
+        break;
+      case 'en':
+        result = manufacturers_english;
+        break;
+      case 'he-IL':
+      case 'he':
+        result = manufacturers_hebrew;
+        break;
+      default:
+        result = manufacturers_english; // fallback to English
+        break;
+    }
+    console.log('getManufacturersData returning:', {
+      locale,
+      resultKeys: Object.keys(result).slice(0, 3),
+      sampleManufacturer: result[Object.keys(result)[0]]
+    });
+    return result;
+  };
+
   const STEPS = [
     'Car Type',
     'Basic Information',
@@ -114,7 +155,7 @@ export default function AddCarListing() {
   ];
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-    const [manufacturersData, setManufacturersData] = useState<ManufacturersData>(manufacturers_hebrew);
+  const [manufacturersData, setManufacturersData] = useState<ManufacturersData>({});
   const [selectedManufacturer, setSelectedManufacturer] = useState('');
   const [selectedModel, setSelectedModel] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
@@ -125,6 +166,17 @@ export default function AddCarListing() {
   const [globalSubmodelOptions, setGlobalSubmodelOptions] = useState<any[]>([]);
   const [subModelID, setSubModelID] = useState('');
   const [inputMethod, setInputMethod] = useState<InputMethod>('plate');
+  
+  // Debug log to show the current state of manufacturers data
+  useEffect(() => {
+    console.log('Current manufacturers data state:', {
+      locale,
+      manufacturersDataKeys: Object.keys(manufacturersData).slice(0, 5),
+      selectedManufacturer,
+      availableModelsCount: availableModels.length,
+      sampleManufacturer: manufacturersData[Object.keys(manufacturersData)[0]]
+    });
+  }, [locale, manufacturersData, selectedManufacturer, availableModels]);
   const [plateNumber, setPlateNumber] = useState("");
   const [govCarInfo, setGovCarInfo] = useState<any>(null);
   const resultsRef = React.useRef<HTMLDivElement>(null);
@@ -146,7 +198,28 @@ export default function AddCarListing() {
     tuning: true
   });
 
-  
+  // Update manufacturers data when locale changes
+  useEffect(() => {
+    if (locale) {
+      const newManufacturersData = getManufacturersData();
+      console.log('Locale changed, updating manufacturers data:', {
+        locale,
+        newManufacturersDataKeys: Object.keys(newManufacturersData).slice(0, 5), // Show first 5 keys
+        sampleManufacturer: newManufacturersData[Object.keys(newManufacturersData)[0]]
+      });
+      setManufacturersData(newManufacturersData);
+      
+      // Clear current selections when locale changes to force user to reselect with new localized data
+      setSelectedManufacturer('');
+      setSelectedModel('');
+      setSelectedYear('');
+      setSelectedSubmodel('');
+      setAvailableModels([]);
+      setAvailableYears([]);
+      setAvailableSubmodels([]);
+    }
+  }, [locale]);
+
   const iconMap = {
     transmission: Cog,
     drive_type: Cog,
@@ -231,10 +304,97 @@ export default function AddCarListing() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Function to clear all form data and reset to initial state
+  const clearFormData = useCallback(() => {
+    // Reset form data to initial values
+    setFormData(prev => ({
+      ...prev,
+      title: '',
+      makeModel: '',
+      year: '',
+      plateNumber: '',
+      mileage: '',
+      color: '',
+      engineType: '',
+      transmission: 'Automatic',
+      currentCondition: '',
+      knownProblems: '',
+      pros: '',
+      cons: '',
+      tradeIn: '',
+      description: '',
+      askingPrice: '',
+      name: '',
+      email: '',
+      phone: '',
+      images: [],
+      manufacturerName: '',
+      modelId: '',
+      subModelId: '',
+      commercialNickname: '',
+      yearOfProduction: '',
+      engineCapacity: '',
+      bodyType: '',
+      seatingCapacity: '',
+      fuelType: '',
+      abs: '',
+      airbags: '',
+      powerWindows: '',
+      driveType: '',
+      totalWeight: '',
+      height: '',
+      fuelTankCapacity: '',
+      co2Emission: '',
+      greenIndex: '',
+      commercialName: '',
+      rank: '',
+      carType: '',
+      ownerType: '',
+      previousOwners: [],
+      priceNegotiable: false,
+      region: '',
+      termsAccepted: false,
+      selectedPackage: 'website_release',
+    }));
+
+    // Reset all form-related state
+    setCurrentStep(1);
+    setIsSubmitting(false);
+    setSelectedManufacturer('');
+    setSelectedModel('');
+    setSelectedYear('');
+    setSelectedSubmodel('');
+    setAvailableModels([]);
+    setAvailableYears([]);
+    setAvailableSubmodels([]);
+    setGlobalSubmodelOptions([]);
+    setSubModelID('');
+    setInputMethod('plate');
+    setPlateNumber('');
+    setGovCarInfo(null);
+    setCarData(null);
+    setYad2ModelInfo(null);
+    setYad2PriceInfo(null);
+    setCaptchaRequired(false);
+    setCaptchaUrl(null);
+    setShowCaptchaPrompt(false);
+    setLoading(false);
+    setCarImage(null);
+    setLoadingPerformance(false);
+    setExpandedSections({
+      handling: false,
+      reliability: false,
+      tuning: true
+    });
+    setErrors({});
+    setError(null);
+    setIsGeneratingDescription(false);
+  }, []);
+
   // Hooks functions from the hooks file
   const fetchVehicleSpecs = useCallback(async (carData: any) => {
     try {
-      const vehicleSpecsUrl = `/api/gov/vehicle-specs?manufacturerName=${carData.manufacturerName}&modelName=${carData.modelName}&year=${carData.year}&submodel=${carData.subModel || ''}&fuelType=${carData.fuelType || ''}`;
+      const vehicleSpecsUrl = `/api/gov/vehicle-specs?manufacturerName=${carData.manufacturer_id}&modelName=${carData.model_id}&year=${carData.year}&submodel=${carData.submodel_id || ''}&fuelType=${carData.fuel_type || ''}`;
       
       const vehicleSpecsResponse = await fetch(vehicleSpecsUrl);
       
@@ -296,7 +456,7 @@ export default function AddCarListing() {
           // Extract unique submodel options from the records
           const submodelOptions = vehicleSpecsData.result.records.map((record: any) => ({
             id: record._id,
-            title: `${record.ramat_gimur} מנוע ${(parseInt(record.nefah_manoa)/1000).toFixed(1)}  ${parseInt(record.koah_sus)} כ"ס ` || 'Unknown Submodel',
+            title: `${record.ramat_gimur} ${t('engine')} ${(parseInt(record.nefah_manoa)/1000).toFixed(1)}  ${parseInt(record.koah_sus)} ${t('horsepower')} ` || 'Unknown Submodel',
             engineCapacity: record.nefah_manoa || null,
             enginePower: record.koah_sus || null,
             bodyType: record.merkav || null,
@@ -359,19 +519,27 @@ export default function AddCarListing() {
       setAvailableYears([]); // Clear years until model is selected
       setSelectedSubmodel('');
       setAvailableSubmodels([]);
+      
+      // Debug log to see what models are being loaded
+      console.log('Models loaded for manufacturer:', {
+        locale,
+        selectedManufacturer,
+        manufacturerData: manufacturersData[selectedManufacturer],
+        models: models.map(m => ({ id: m.id, title: m.title, manufacturer: m.manufacturer?.title }))
+      });
     } else {
       setAvailableModels([]);
       setAvailableYears([]);
       setSelectedSubmodel('');
       setAvailableSubmodels([]);
     }
-  }, [selectedManufacturer, manufacturersData]);
+  }, [selectedManufacturer, manufacturersData, locale]);
 
   // Update formData.makeModel when both manufacturer and model are selected
   useEffect(() => {
     if (selectedManufacturer && selectedModel) {
-      const manufacturerName = manufacturersData[selectedManufacturer]?.manufacturerImage ? 
-        Object.keys(manufacturersData).find(key => key === selectedManufacturer) : selectedManufacturer;
+      // Use localized names for display while keeping IDs for form submission
+      const manufacturerName = manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer;
       const modelName = availableModels.find(model => model.id?.toString() === selectedModel)?.title || selectedModel;
       
       setFormData(prev => ({
@@ -789,8 +957,8 @@ export default function AddCarListing() {
   // Update formData.makeModel when both manufacturer and model are selected
   useEffect(() => {
     if (selectedManufacturer && selectedModel) {
-      const manufacturerName = manufacturersData[selectedManufacturer]?.manufacturerImage ? 
-        Object.keys(manufacturersData).find(key => key === selectedManufacturer) : selectedManufacturer;
+      // Use localized names for display while keeping IDs for form submission
+      const manufacturerName = manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer;
       const modelName = availableModels.find(model => model.id?.toString() === selectedModel)?.title || selectedModel;
       
       setFormData(prev => ({
@@ -927,17 +1095,18 @@ export default function AddCarListing() {
     );
     
     if (submodel) {
+      // Use localized names for display while keeping IDs for form submission
       const manufacturerName = submodel.manufacturer?.title || selectedManufacturer;
       const modelName = submodel.title || selectedModel;
       
       setFormData(prev => ({
         ...prev,
-        manufacturerName: manufacturerName,
-        commercialNickname: modelName,
+        manufacturerName: selectedManufacturer, // Keep the ID for form submission
+        commercialNickname: selectedModel, // Keep the ID for form submission
         yearOfProduction: selectedYear,
         year: selectedYear,
-        makeModel: `${manufacturerName} ${modelName}`.trim(),
-        title: `${manufacturerName} ${modelName} ${selectedYear}`.trim(),
+        makeModel: `${manufacturerName} ${modelName}`.trim(), // Use localized names for display
+        title: `${manufacturerName} ${modelName} ${selectedYear}`.trim(), // Use localized names for display
         // Also update the plate number if it's empty
         plateNumber: prev.plateNumber || formData.plateNumber || ''
       }));
@@ -980,9 +1149,9 @@ export default function AddCarListing() {
    */
   const autoGenerateTitleIfEmpty = () => {
     if (!formData.title && selectedManufacturer && selectedModel && selectedYear) {
-      // Use the form data values which should already contain the proper titles
-      const manufacturerName = formData.manufacturerName || selectedManufacturer;
-      const modelName = formData.commercialNickname || selectedModel;
+      // Get localized names for display
+      const manufacturerName = manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer;
+      const modelName = availableModels.find(model => model.id?.toString() === selectedModel)?.title || selectedModel;
       
       // Only generate title if we have proper names (not IDs)
       const isManufacturerNameValid = manufacturerName && manufacturerName.length > 2 && manufacturerName !== selectedManufacturer;
@@ -1434,7 +1603,10 @@ export default function AddCarListing() {
               <div className="flex items-center justify-center bg-gray-100 rounded-xl p-1">
                 <button
                   type="button"
-                  onClick={() => setInputMethod('plate')}
+                  onClick={() => {
+                    clearFormData();
+                    setInputMethod('plate');
+                  }}
                   className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
                     inputMethod === 'plate'
                       ? 'bg-white text-blue-600 shadow-sm'
@@ -1447,7 +1619,10 @@ export default function AddCarListing() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setInputMethod('manual')}
+                  onClick={() => {
+                    clearFormData();
+                    setInputMethod('manual');
+                  }}
                   className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
                     inputMethod === 'manual'
                       ? 'bg-white text-blue-600 shadow-sm'
@@ -1603,7 +1778,7 @@ export default function AddCarListing() {
                           setSelectedSubmodel('');
                           setFormData(prev => ({ 
                             ...prev, 
-                            manufacturerName: value,
+                            manufacturerName: value, // Keep the ID for form submission
                             modelId: '',
                             subModelId: '',
                             commercialNickname: ''
@@ -1630,7 +1805,7 @@ export default function AddCarListing() {
                     <SelectContent className="bg-white">
                       {Object.keys(manufacturersData).length === 0 ? (
                         <SelectItem value="loading_manufacturers" disabled>
-                          Loading manufacturers...
+                          {locale ? `Loading manufacturers for ${locale}...` : 'Loading manufacturers...'}
                         </SelectItem>
                       ) : (
                         Object.keys(manufacturersData).map((manufacturer) => (
@@ -1663,7 +1838,7 @@ export default function AddCarListing() {
                           setFormData(prev => ({ 
                             ...prev, 
                             commercialNickname: selectedModelData.title || '',
-                            modelId: selectedModelData.id?.toString() || ''
+                            modelId: selectedModelData.id?.toString() || '' // Keep the ID for form submission
                           }));
                         }
                         onFetchSubmodels(value);
@@ -1721,24 +1896,62 @@ export default function AddCarListing() {
                         // Fetch submodel options when year is selected
                         if (selectedManufacturer && selectedModel && value) {
                           try {
-                            const manufacturerTitle = manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer;
-                            const modelTitle = availableModels.find(model => model.id?.toString() === selectedModel)?.title || selectedModel;
+                            // Use Hebrew names for API calls to government system
+                            const manufacturerTitleHebrew = manufacturers_hebrew[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer;
+                            const modelTitleEnglish = manufacturers_english[selectedManufacturer]?.submodels?.find(
+                              (model: any) => model.id?.toString() === selectedModel
+                            )?.title || selectedModel;
 
-                            // Fetch submodel options and set them globally
-                            const submodelOptions = await fetchSubmodelOptions(manufacturerTitle, modelTitle, value);
+                            // Fetch submodel options and set them globally using Hebrew names
+                            const submodelOptions = await fetchSubmodelOptions(manufacturerTitleHebrew, modelTitleEnglish, value);
                             setGlobalSubmodelOptions(submodelOptions);
                             // Update available submodels with the fetched data
                             if (submodelOptions.length > 0) {
                               // Convert to the format expected by the existing submodel logic
-                              const formattedSubmodels = submodelOptions.map(option => ({
-                                id: option.id,
-                                title: option.title,
-                                minYear: parseInt(value),
-                                maxYear: parseInt(value)
-                              }));
+                              // Use localized names from our manufacturers data when available
+                              const formattedSubmodels = submodelOptions.map(option => {
+                                // Try to find a matching submodel in our localized data by ID first
+                                let localizedSubmodel = manufacturersData[selectedManufacturer]?.submodels?.find(
+                                  sub => sub.id?.toString() === option.id?.toString()
+                                );
+                                
+                                // If no match by ID, try to find by name similarity (fallback)
+                                if (!localizedSubmodel) {
+                                  const optionTrimLevel = option.trimLevel || '';
+                                  localizedSubmodel = manufacturersData[selectedManufacturer]?.submodels?.find(
+                                    sub => sub.title?.toLowerCase().includes(optionTrimLevel.toLowerCase()) ||
+                                           optionTrimLevel.toLowerCase().includes(sub.title?.toLowerCase() || '')
+                                  );
+                                }
+                                
+                                return {
+                                  id: option.id,
+                                  title: localizedSubmodel?.title || option.title, // Use localized name if available
+                                  minYear: parseInt(value),
+                                  maxYear: parseInt(value),
+                                  // Keep the original government API data for form submission
+                                  originalTitle: option.title,
+                                  ...option
+                                };
+                              });
                               
                               // Update the available submodels state
                               setAvailableSubmodels(formattedSubmodels);
+                              
+                              // Debug log to see what's happening with localization
+                              console.log('Submodel localization debug:', {
+                                locale,
+                                selectedManufacturer,
+                                manufacturerTitleHebrew,
+                                modelTitleEnglish,
+                                submodelOptions: submodelOptions.length,
+                                formattedSubmodels: formattedSubmodels.map(s => ({
+                                  id: s.id,
+                                  title: s.title,
+                                  originalTitle: s.originalTitle,
+                                  isLocalized: s.title !== s.originalTitle
+                                }))
+                              });
                             } else {
                               setAvailableSubmodels([]);
                             }
@@ -1785,10 +1998,13 @@ export default function AddCarListing() {
                         setSelectedSubmodel(value);
                         const selectedSubmodelData = globalSubmodelOptions.find(submodel => submodel.id?.toString() === value);
                         if (selectedSubmodelData) {
+                          // Use the localized name for display but keep the government API ID for submission
+                          const displayName = selectedSubmodelData.title || selectedSubmodelData.originalTitle || '';
+                          
                           setFormData(prev => ({ 
                             ...prev, 
-                            commercialNickname: selectedSubmodelData.title || '',
-                            subModelId: selectedSubmodelData.id?.toString() || ''
+                            commercialNickname: displayName,
+                            subModelId: selectedSubmodelData.id?.toString() || '' // Keep the ID for form submission
                           }));
                           
                           // Fetch detailed specifications for the selected submodel
@@ -1829,7 +2045,7 @@ export default function AddCarListing() {
                               setFormData(prev => ({
                                 ...prev,
                                 commercialNickname: selectedSubmodelData.title || '',
-                                subModelId: selectedSubmodelData.id?.toString() || ''
+                                subModelId: selectedSubmodelData.id?.toString() || '' // Keep the ID for form submission
                               }));
                             }
                           } catch (error) {
@@ -1858,8 +2074,13 @@ export default function AddCarListing() {
                           availableSubmodels.map((submodel) => (submodel.minYear <= selectedYear && submodel.maxYear >= selectedYear) && (
                             <SelectItem key={submodel.id} value={submodel.id?.toString()}>
                               {submodel.title || 'Unknown Submodel'}
+                              {submodel.originalTitle && submodel.title !== submodel.originalTitle && (
+                                <span className="text-xs text-gray-500 ml-2">
+                                  ({submodel.originalTitle})
+                                </span>
+                              )}
                             </SelectItem>
-                          ))
+                          )).filter(Boolean) // Filter out undefined values from the && operator
                         )}
                       </SelectContent>
                     </Select>
@@ -2559,19 +2780,103 @@ export default function AddCarListing() {
                         if (inputMethod === "manual") {
                           console.log('yad2ModelInfo?.data', yad2ModelInfo)
                           console.log('formData', formData)
-                          setFormData(prev => ({ ...prev, title: yad2ModelInfo?.data?.commercialName + " מנוע " + (parseInt(yad2ModelInfo?.data?.engineCapacity)/1000 ).toFixed(1) + " שנת " + formData?.year + " דגם " + yad2ModelInfo?.data?.trimLevel + ' כ"ס ' + yad2ModelInfo?.data?.enginePower + " גיר " + yad2ModelInfo?.data?.transmission + ' דלק ' + yad2ModelInfo?.data?.fuelType }));
+                          setFormData(prev => ({ ...prev, title: yad2ModelInfo?.data?.commercialName +  ` ${t('engine')} ` + (parseInt(yad2ModelInfo?.data?.engineCapacity)/1000 ).toFixed(1) + ` ${t('year')} ` + formData?.year + ` ${t('model')} ` + yad2ModelInfo?.data?.trimLevel + ` ${t('horsepower')} ` + yad2ModelInfo?.data?.enginePower + ` ${t('gearbox')} ` + yad2ModelInfo?.data?.transmission }));
                           setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
                         }
-                        else{if (formData.title === "" || formData.title === undefined || formData.title === null || formData.title === "null" ) {
+                        else{
+                          console.log('yad2ModelInfo?.data', yad2ModelInfo)
+                          console.log('yad2ModelInfo?.data?.manufacturerName', yad2ModelInfo?.data?.manufacturerName)
+                          if (formData.title === "" || formData.title === undefined || formData.title === null || formData.title === "null" ) {
                             if (yad2ModelInfo?.data?.manufacturerName && yad2ModelInfo?.data?.commercialName && yad2ModelInfo?.data?.shnat_yitzur) {
-                              setFormData(prev => ({ ...prev, title: yad2ModelInfo?.data?.commercialName + " מנוע " + (parseInt(yad2ModelInfo?.data?.nefah_manoa)/1000 ).toFixed(1) + " שנת " + yad2ModelInfo?.data?.shnat_yitzur + " דגם " + yad2ModelInfo?.data?.subModelTitle + ' כ"ס ' + yad2ModelInfo?.data?.koah_sus + " גיר " + yad2ModelInfo?.data?.transmission + ' דלק ' + yad2ModelInfo?.data?.fuelType + '  ' }));
+                              setFormData(prev => ({
+                                ...prev,
+                                title:
+                                  yad2ModelInfo?.data?.commercialName +
+                                  (yad2ModelInfo?.data?.nefah_manoa !== undefined &&
+                                   yad2ModelInfo?.data?.nefah_manoa !== null &&
+                                   yad2ModelInfo?.data?.nefah_manoa !== ""
+                                    ? ` ${t('engine')} ` + (parseInt(yad2ModelInfo?.data?.nefah_manoa) / 1000).toFixed(1)
+                                    : ""
+                                  ) +
+                                  +
+                                  (yad2ModelInfo?.data?.shnat_yitzur !== undefined && yad2ModelInfo?.data?.shnat_yitzur !== null && yad2ModelInfo?.data?.shnat_yitzur !== "" 
+                                    ? ` ${t('year')} ` + yad2ModelInfo?.data?.shnat_yitzur 
+                                    : ""
+                                  ) +
+                                  (yad2ModelInfo?.data?.subModelTitle !== undefined && yad2ModelInfo?.data?.subModelTitle !== null && yad2ModelInfo?.data?.subModelTitle !== "" 
+                                    ? ` ${t('model')} ` + yad2ModelInfo?.data?.subModelTitle 
+                                    : ""
+                                  ) +
+                                  (yad2ModelInfo?.data?.koah_sus !== undefined && yad2ModelInfo?.data?.koah_sus !== null && yad2ModelInfo?.data?.koah_sus !== "" 
+                                    ? ` ${t('horsepower')} ` + yad2ModelInfo?.data?.koah_sus 
+                                    : ""
+                                  ) +
+                                  (yad2ModelInfo?.data?.transmission !== undefined && yad2ModelInfo?.data?.transmission !== null && yad2ModelInfo?.data?.transmission !== "" 
+                                    ? ` ${t('gearbox')} ` + yad2ModelInfo?.data?.transmission 
+                                    : ""
+                                  ) 
+                              }));
                               setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
                             } else {
-                              setErrors(prev => ({ ...prev, title: 'Title is required' }));
-                              setCurrentStep(0)
+                              setFormData(prev => ({
+                                ...prev,
+                                title:
+                                  yad2ModelInfo?.data?.commercialName +
+                                  (yad2ModelInfo?.data?.nefah_manoa !== undefined &&
+                                   yad2ModelInfo?.data?.nefah_manoa !== null &&
+                                   yad2ModelInfo?.data?.nefah_manoa !== ""
+                                    ? ` ${t('engine')} ` + (parseInt(yad2ModelInfo?.data?.nefah_manoa) / 1000).toFixed(1)
+                                    : ""
+                                  ) +
+                                  +
+                                  (yad2ModelInfo?.data?.shnat_yitzur !== undefined && yad2ModelInfo?.data?.shnat_yitzur !== null && yad2ModelInfo?.data?.shnat_yitzur !== "" 
+                                    ? ` ${t('year')} ` + yad2ModelInfo?.data?.shnat_yitzur 
+                                    : ""
+                                  ) +
+                                  (yad2ModelInfo?.data?.subModelTitle !== undefined && yad2ModelInfo?.data?.subModelTitle !== null && yad2ModelInfo?.data?.subModelTitle !== "" 
+                                    ? ` ${t('model')} ` + yad2ModelInfo?.data?.subModelTitle 
+                                    : ""
+                                  ) +
+                                  (yad2ModelInfo?.data?.koah_sus !== undefined && yad2ModelInfo?.data?.koah_sus !== null && yad2ModelInfo?.data?.koah_sus !== "" 
+                                    ? ` ${t('horsepower')} ` + yad2ModelInfo?.data?.koah_sus 
+                                    : ""
+                                  ) +
+                                  (yad2ModelInfo?.data?.transmission !== undefined && yad2ModelInfo?.data?.transmission !== null && yad2ModelInfo?.data?.transmission !== "" 
+                                    ? ` ${t('gearbox')} ` + yad2ModelInfo?.data?.transmission 
+                                    : ""
+                                  ) 
+                              }));                             
+                              setCurrentStep(1)
                             }
                           } else {
-                            setFormData(prev => ({ ...prev, title: yad2ModelInfo?.data?.commercialName + " מנוע " + (parseInt(yad2ModelInfo?.data?.nefah_manoa)/1000 ).toFixed(1) + " שנת " + yad2ModelInfo?.data?.shnat_yitzur + " דגם " + yad2ModelInfo?.data?.subModelTitle + ' כ"ס ' + yad2ModelInfo?.data?.koah_sus + " גיר " + yad2ModelInfo?.data?.transmission + ' דלק ' + yad2ModelInfo?.data?.fuelType + '  ' }));
+                            setFormData(prev => ({
+                              ...prev,
+                              title:
+                                yad2ModelInfo?.data?.commercialName +
+                                (yad2ModelInfo?.data?.nefah_manoa !== undefined &&
+                                 yad2ModelInfo?.data?.nefah_manoa !== null &&
+                                 yad2ModelInfo?.data?.nefah_manoa !== ""
+                                  ? ` ${t('engine')} ` + (parseInt(yad2ModelInfo?.data?.nefah_manoa) / 1000).toFixed(1)
+                                  : ""
+                                ) +
+                                +
+                                (yad2ModelInfo?.data?.shnat_yitzur !== undefined && yad2ModelInfo?.data?.shnat_yitzur !== null && yad2ModelInfo?.data?.shnat_yitzur !== "" 
+                                  ? ` ${t('year')} ` + yad2ModelInfo?.data?.shnat_yitzur 
+                                  : ""
+                                ) +
+                                (yad2ModelInfo?.data?.subModelTitle !== undefined && yad2ModelInfo?.data?.subModelTitle !== null && yad2ModelInfo?.data?.subModelTitle !== "" 
+                                  ? ` ${t('model')} ` + yad2ModelInfo?.data?.subModelTitle 
+                                  : ""
+                                ) +
+                                (yad2ModelInfo?.data?.koah_sus !== undefined && yad2ModelInfo?.data?.koah_sus !== null && yad2ModelInfo?.data?.koah_sus !== "" 
+                                  ? ` ${t('horsepower')} ` + yad2ModelInfo?.data?.koah_sus 
+                                  : ""
+                                ) +
+                                (yad2ModelInfo?.data?.transmission !== undefined && yad2ModelInfo?.data?.transmission !== null && yad2ModelInfo?.data?.transmission !== "" 
+                                  ? ` ${t('gearbox')} ` + yad2ModelInfo?.data?.transmission 
+                                  : ""
+                                ) 
+                            }));
                             setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
                           }
                       } 

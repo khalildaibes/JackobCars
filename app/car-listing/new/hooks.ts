@@ -343,6 +343,7 @@ export const useCarDataFetching = (config: CarDataFetchingConfig) => {
     setAvailableSubmodels,
     setSelectedSubmodel,
     manufacturersData,
+    hebrewData, // Hebrew data for API calls
     formData,
     selectedManufacturer,
     selectedModel,
@@ -395,10 +396,13 @@ export const useCarDataFetching = (config: CarDataFetchingConfig) => {
                     if (model) {
                       setSelectedModel(model.id.toString());
                       setSubModelID(model.id.toString());
+                      // Get Hebrew title for API calls
+                      const hebrewManufacturerTitle = hebrewData[manufacturerKey]?.submodels?.[0]?.manufacturer?.title || '';
+                      
                       setFormData(prev => ({ 
                         ...prev, 
                         commercialNickname: model.title || '',
-                        manufacturerName: model.manufacturer?.title || ''
+                        manufacturerName: hebrewManufacturerTitle
                       }));
                       
                       fetchSubmodels(model.id.toString());
@@ -424,7 +428,7 @@ export const useCarDataFetching = (config: CarDataFetchingConfig) => {
     } finally {
       setLoading(false);
     }
-  }, [setLoading, setError, setGovCarInfo, setYad2ModelInfo, setFormData, setSelectedManufacturer, setAvailableModels, setSelectedModel, setSubModelID, manufacturersData]);
+  }, [setLoading, setError, setGovCarInfo, setYad2ModelInfo, setFormData, setSelectedManufacturer, setAvailableModels, setSelectedModel, setSubModelID, manufacturersData, hebrewData]);
 
   /**
    * Fetches car data directly (bypassing plate input)
@@ -569,10 +573,13 @@ export const useCarDataFetching = (config: CarDataFetchingConfig) => {
                     if (model) {
                       setSelectedModel(model.id.toString());
                       setSubModelID(model.id.toString());
+                      // Get Hebrew title for API calls
+                      const hebrewManufacturerTitle = hebrewData[manufacturerKey]?.submodels?.[0]?.manufacturer?.title || '';
+                      
                       setFormData(prev => ({ 
                         ...prev, 
                         commercialNickname: model.title || '',
-                        manufacturerName: model.manufacturer?.title || ''
+                        manufacturerName: hebrewManufacturerTitle
                       }));
                       
                       fetchSubmodels(model.id.toString());
@@ -587,7 +594,7 @@ export const useCarDataFetching = (config: CarDataFetchingConfig) => {
     } catch (error) {
       console.error('Error fetching government car data:', error);
     }
-  }, [setYad2ModelInfo, setGovCarInfo, setFormData, setSelectedManufacturer, setAvailableModels, setSelectedModel, setSubModelID, manufacturersData, fetchSubmodels]);
+  }, [setYad2ModelInfo, setGovCarInfo, setFormData, setSelectedManufacturer, setAvailableModels, setSelectedModel, setSubModelID, manufacturersData, hebrewData, fetchSubmodels]);
 
   return {
     fetchCarData,

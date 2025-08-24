@@ -322,6 +322,16 @@
     "open_7_days": "Open 7 days a week",
     "book_now": "Book Now"
   },
+  "CarListing": {
+    "engine": "Engine",
+    "year": "Year",
+    "model": "Model",
+    "hp": "HP",
+    "horsepower": "HP",
+    "gearbox": "Gearbox",
+    "fuel_type": "Fuel Type",
+    "please_enter_mileage": "Please enter mileage"
+  },
   "BookingPage": {
     "loading": "Loading...",
     "error_title": "Error",

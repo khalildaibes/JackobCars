@@ -91,11 +91,15 @@ export interface FormData {
   // Images
   images: File[];
   
-  // Manufacturer information
+  // Manufacturer information - Localized versions for display
   manufacturerName: string;
   commercialNickname: string;
   yearOfProduction: string;
   fuelType: string;
+  
+  // Hebrew versions for API calls
+  manufacturerNameHebrew: string;
+  commercialNicknameHebrew: string;
   
   // Car data from APIs
   car_data: any;
@@ -149,7 +153,6 @@ export interface FormData {
   greenIndex: string;
   commercialName: string;
   rank: string;
-
 }
 
 export interface ValidationErrors {
@@ -191,6 +194,7 @@ export interface CarDataFetchingConfig {
   setPerformanceData: (data: CarPerformanceData | null) => void;
   setCarImage: (image: string | null) => void;
   manufacturersData: ManufacturersData;
+  hebrewData: ManufacturersData; // Hebrew data for API calls
   setFormData: (data: FormData | ((prev: FormData) => FormData)) => void;
   setSelectedManufacturer: (manufacturer: string) => void;
   setSelectedModel: (model: string) => void;

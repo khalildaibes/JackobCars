@@ -128,6 +128,7 @@ interface BasicInformationStepProps {
   errors: ValidationErrors;
   setErrors: (errors: ValidationErrors) => void;
   manufacturersData: any;
+  hebrewData: any; // Hebrew data for API calls
   selectedManufacturer: string;
   setSelectedManufacturer: (manufacturer: string) => void;
   selectedModel: string;
@@ -167,6 +168,7 @@ export const BasicInformationStep: React.FC<BasicInformationStepProps> = ({
   errors,
   setErrors,
   manufacturersData,
+  hebrewData,
   selectedManufacturer,
   setSelectedManufacturer,
   selectedModel,
@@ -717,12 +719,19 @@ export const BasicInformationStep: React.FC<BasicInformationStepProps> = ({
                       setSelectedModel('');
                       setSelectedYear('');
                       setSelectedSubmodel('');
+                      
+                      // Get both localized and Hebrew versions
+                      const localizedManufacturerName = manufacturersData[value]?.submodels?.[0]?.manufacturer?.title || value;
+                      const hebrewManufacturerName = hebrewData[value]?.submodels?.[0]?.manufacturer?.title || localizedManufacturerName;
+                      
                       setFormData(prev => ({ 
                         ...prev, 
-                        manufacturerName: value,
+                        manufacturerName: localizedManufacturerName, // Localized for display
+                        manufacturerNameHebrew: hebrewManufacturerName, // Hebrew for API
                         modelId: '',
                         subModelId: '',
-                        commercialNickname: ''
+                        commercialNickname: '',
+                        commercialNicknameHebrew: ''
                       }));
                     } else {
                       setSelectedModel('');
@@ -731,9 +740,11 @@ export const BasicInformationStep: React.FC<BasicInformationStepProps> = ({
                       setFormData(prev => ({ 
                         ...prev, 
                         manufacturerName: '',
+                        manufacturerNameHebrew: '',
                         modelId: '',
                         subModelId: '',
-                        commercialNickname: ''
+                        commercialNickname: '',
+                        commercialNicknameHebrew: ''
                       }));
                     }
                     setSelectedManufacturer(value);
@@ -773,9 +784,16 @@ export const BasicInformationStep: React.FC<BasicInformationStepProps> = ({
                     setSubModelID(value);
                     const selectedModelData = availableModels.find(model => model.id?.toString() === value);
                     if (selectedModelData) {
+                      // Get both localized and Hebrew versions
+                      const localizedModelName = selectedModelData.title || '';
+                      const hebrewModelName = hebrewData[selectedManufacturer]?.submodels?.find(
+                        (model: any) => model.id?.toString() === value
+                      )?.title || localizedModelName;
+                      
                       setFormData(prev => ({ 
                         ...prev, 
-                        commercialNickname: selectedModelData.title || '',
+                        commercialNickname: localizedModelName, // Localized for display
+                        commercialNicknameHebrew: hebrewModelName, // Hebrew for API
                         modelId: selectedModelData.id?.toString() || ''
                       }));
                     }
@@ -831,12 +849,16 @@ export const BasicInformationStep: React.FC<BasicInformationStepProps> = ({
                     // Fetch submodel options when year is selected
                     if (selectedManufacturer && selectedModel && value) {
                       try {
-                        const manufacturerTitle = manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer;
-                        const modelTitle = availableModels.find(model => model.id?.toString() === selectedModel)?.title || selectedModel;
-                        console.log('here2 ' , manufacturerTitle, modelTitle, selectedYear);
+                        // Use Hebrew names for API calls
+                        const manufacturerTitleHebrew = hebrewData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer;
+                        const modelTitleHebrew = hebrewData[selectedManufacturer]?.submodels?.find(
+                          (model: any) => model.id?.toString() === selectedModel
+                        )?.title || selectedModel;
+                        
+                        console.log('here2 - Hebrew names for API:', manufacturerTitleHebrew, modelTitleHebrew, selectedYear);
 
-                        // Fetch submodel options and set them globally
-                        submodelOptions = await fetchSubmodelOptions(manufacturerTitle, modelTitle, value);
+                        // Fetch submodel options and set them globally using Hebrew names
+                        submodelOptions = await fetchSubmodelOptions(manufacturerTitleHebrew, modelTitleHebrew, value);
                         console.log('Fetched submodel options:', submodelOptions);
                         setGlobalSubmodelOptions(submodelOptions);
                         console.log('here3 ' , submodelOptions);
@@ -921,8 +943,8 @@ export const BasicInformationStep: React.FC<BasicInformationStepProps> = ({
                         //     const modelTitle = availableModels.find(model => model.id?.toString() === selectedModel)?.title || selectedModel;
                             
                         //     detailedSpecs = await fetchVehicleSpecs({
-                        //       manufacturerName: manufacturerTitle,
-                        //       modelName: modelTitle,
+                        //       manufacturerName: manufacturerTitleHebrew,
+                        //       modelName: modelTitleHebrew,
                         //       year: selectedModel,
                         //       subModel: selectedSubmodelData.title,
                         //       fuelType: ''
