@@ -1674,9 +1674,20 @@ export default function AddCarListing() {
                 {t('mileage')} <span className="text-red-500">*</span> <span className="text-gray-500">({t('in_kilometers') || 'in kilometers'})</span>
               </label>
               <Input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9,]*"
                 placeholder={t('mileage')}
-                value={formData.mileage}
-                onChange={(e) => setFormData(prev => ({ ...prev, mileage: e.target.value }))}
+                value={
+                  formData.mileage
+                    ? Number(formData.mileage.replace(/,/g, '')).toLocaleString('en-US')
+                    : ''
+                }
+                onChange={(e) => {
+                  // Remove all non-digit characters
+                  const rawValue = e.target.value.replace(/,/g, '').replace(/\D/g, '');
+                  setFormData(prev => ({ ...prev, mileage: rawValue }));
+                }}
                 className={`rounded-xl py-5 ${errors.mileage ? 'border-red-500' : ''}`}
               />
               {errors.mileage && <p className="mt-1 text-sm text-red-500">{errors.mileage}</p>}
@@ -2252,22 +2263,25 @@ export default function AddCarListing() {
             {/* Trade-in Option Section */}
             <div className="mb-8">
               <h3 className="text-lg font-medium text-gray-700 mb-4">{t('trade_in_option') || 'Trade-in Option'}</h3>
-            <RadioGroup
-              value={formData.tradeIn}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, tradeIn: value }))}>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="yes" id="yes" />
-                <Label htmlFor="yes">{t('yes')}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="no" id="no" />
-                <Label htmlFor="no">{t('no')}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="maybe" id="maybe" />
-                <Label htmlFor="maybe">{t('maybe')}</Label>
-              </div>
-            </RadioGroup>
+              <RadioGroup
+                value={formData.tradeIn}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, tradeIn: value }))}
+                className="rtl"
+                dir="rtl"
+              >
+                <div className="flex items-center space-x-reverse space-x-2" dir="rtl">
+                  <Label htmlFor="yes">{t('yes')}</Label>
+                  <RadioGroupItem value="yes" id="yes" />
+                </div>
+                <div className="flex items-center space-x-reverse space-x-2" dir="rtl">
+                  <Label htmlFor="no">{t('no')}</Label>
+                  <RadioGroupItem value="no" id="no" />
+                </div>
+                <div className="flex items-center space-x-reverse space-x-2" dir="rtl">
+                  <Label htmlFor="maybe">{t('maybe')}</Label>
+                  <RadioGroupItem value="maybe" id="maybe" />
+                </div>
+              </RadioGroup>
             </div>
 
             {/* description Section */}
@@ -2462,9 +2476,19 @@ export default function AddCarListing() {
                 </label>
             <Input
               placeholder={t('asking_price_placeholder')}
-              type="number"
-              value={formData.askingPrice}
-              onChange={(e) => setFormData(prev => ({ ...prev, askingPrice: e.target.value }))}
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9,]*"
+              value={
+                formData.askingPrice
+                  ? Number(formData.askingPrice.replace(/,/g, '')).toLocaleString('en-US')
+                  : ''
+              }
+              onChange={(e) => {
+                // Remove all non-digit characters except commas, then format
+                const rawValue = e.target.value.replace(/,/g, '').replace(/\D/g, '');
+                setFormData(prev => ({ ...prev, askingPrice: rawValue }));
+              }}
               className="w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500"
             />
               </div>

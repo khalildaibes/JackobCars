@@ -330,7 +330,8 @@
     "horsepower": "HP",
     "gearbox": "Gearbox",
     "fuel_type": "Fuel Type",
-    "please_enter_mileage": "Please enter mileage"
+    "please_enter_mileage": "Please enter mileage",
+    "please_search_for_a_car_first": "Please search for a car first"
   },
   "BookingPage": {
     "loading": "Loading...",

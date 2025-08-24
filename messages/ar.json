@@ -491,16 +491,7 @@
     "open_7_days": "مفتوح 7 أيام في الأسبوع",
     "book_now": "احجز الآن"
   },
-  "CarListing": {
-    "engine": "محرك",
-    "year": "سنة",
-    "model": "موديل",
-    "hp": "حصان",
-    "horsepower": "حصان",
-    "gearbox": "ناقل حركة",
-    "fuel_type": "نوع الوقود",
-    "please_enter_mileage": "يرجى إدخال المسافة المقطوعة"
-  },
+
   "BookingPage": {
     "loading": "جاري التحميل...",
     "error_title": "خطأ",
@@ -801,6 +792,14 @@
     "default_currency": "$"
   },
   "CarListing": {
+     "engine": "محرك",
+    "year": "سنة",
+    "model": "موديل",
+    "hp": "حصان",
+    "horsepower": "حصان",
+    "gearbox": "ناقل حركة",
+    "fuel_type": "نوع الوقود",
+    "please_enter_mileage": "يرجى إدخال المسافة المقطوعة",
     "records_found": "تم العثور على {{count}} سيارة",
     "ownership_history": "التاريخ الملكي",
     "records": "السجلات",
