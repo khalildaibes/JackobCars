@@ -327,6 +327,7 @@
     "fuel_type": "דלק",
     "please_enter_mileage": "אנא הכנס קילומטראז'",
     "please_search_for_a_car_first": "אנא חפש רכב תחילה",
+    "please_select_car_type": "אנא בחר סוג רכב",
     "fuel_type_options": {
       "petrol": "דלק",
       "diesel": "דיזל",

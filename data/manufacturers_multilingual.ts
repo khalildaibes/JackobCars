@@ -28808,14 +28808,3 @@ export const manufacturers_hebrew = {
       }
     }
 };
-
-
-
-
-
-
-
-
-
-
-

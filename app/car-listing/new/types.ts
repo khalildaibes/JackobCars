@@ -91,6 +91,9 @@ export interface FormData {
   // Images
   images: File[];
   
+  // Video
+  video?: File | null;
+  
   // Manufacturer information - Localized versions for display
   manufacturerName: string;
   commercialNickname: string;

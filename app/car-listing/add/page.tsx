@@ -115,7 +115,7 @@ export default function AddCarListing() {
   // Custom hooks
   const { showPopup, popupConfig, showPopupModal, closePopup } = usePopupModal();
   const { validateForm, clearErrors } = useFormValidation(formData, inputMethod, setErrors);
-  const { handleImageChange, removeImage, uploadImages } = useImageHandling(formData, setFormData, setErrors);
+  const { handleImageChange, handleVideoChange, removeImage, uploadImages } = useImageHandling(formData, setFormData, setErrors);
   const { goToNextStep, goToPreviousStep, canProceedToNext } = useStepNavigation(
     currentStep, 
     STEP_CONFIGURATION.length, 
@@ -722,6 +722,7 @@ export default function AddCarListing() {
                 formData={formData}
                 onImageChange={handleImageChange}
                 onRemoveImage={removeImage}
+                onVideoChange={handleVideoChange}
                 errors={errors}
                 t={t}
               />

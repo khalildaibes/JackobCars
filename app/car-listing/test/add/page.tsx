@@ -21,7 +21,7 @@ import { Button } from "../../../../components/ui/button";
 import { Upload, Plus,  X, Camera } from 'lucide-react';
 import { Alert, AlertDescription } from "../../../../components/ui/alert";
 import { Card, CardContent } from "../../../../components/ui/card";
-
+import Cookies from 'js-cookie';
 
 import {
   Select,
@@ -72,8 +72,9 @@ const GOV_CAR_DATA_API = "/api/gov/car-data";
 
 // Constants
 const VALIDATION_RULES = {
-  MAX_IMAGES: 8,
-  MIN_IMAGES: 1
+  MAX_IMAGES: 10,
+  MIN_IMAGES: 1,
+  MAX_VIDEO_DURATION: 15
 };
 
 const ENGINE_TYPES = [
@@ -87,6 +88,98 @@ const TRANSMISSION_OPTIONS = [
   { value: 'automatic', label: 'Automatic' },
   { value: 'manual', label: 'Manual' }
 ];
+
+// Cookie management constants
+const COOKIE_KEYS = {
+  CURRENT_STEP: 'car_listing_current_step',
+  FORM_DATA: 'car_listing_form_data',
+  SELECTIONS: 'car_listing_selections',
+  INPUT_METHOD: 'car_listing_input_method',
+  YAD2_MODEL_INFO: 'car_listing_yad2_model_info',
+  PLATE_NUMBER: 'car_listing_plate_number',
+  CAR_DATA: 'car_listing_car_data',
+  GOV_CAR_INFO: 'car_listing_gov_car_info'
+};
+
+// Cookie management functions
+const saveToCookie = (key: string, data: any, options: any = {}) => {
+  try {
+    const defaultOptions = {
+      expires: 7, // 7 days
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict' as 'strict'
+    };
+    Cookies.set(key, JSON.stringify(data), { ...defaultOptions, ...options });
+    
+    // Also save to localStorage as backup
+    saveToStorage(key, data);
+  } catch (error) {
+    console.error('Error saving to cookie:', error);
+    // Fallback to localStorage only
+    saveToStorage(key, data);
+  }
+};
+
+const loadFromCookie = (key: string) => {
+  try {
+    // Try cookies first
+    const cookieData = Cookies.get(key);
+    if (cookieData) {
+      return JSON.parse(cookieData);
+    }
+    
+    // Fallback to localStorage
+    return loadFromStorage(key);
+  } catch (error) {
+    console.error('Error loading from cookie:', error);
+    // Fallback to localStorage
+    return loadFromStorage(key);
+  }
+};
+
+const clearCookies = () => {
+  try {
+    // Clear cookies
+    Object.values(COOKIE_KEYS).forEach(key => {
+      Cookies.remove(key);
+    });
+    
+    // Clear localStorage backup
+    Object.values(COOKIE_KEYS).forEach(key => {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.removeItem(key);
+      }
+    });
+    
+    console.log('All cookies and localStorage cleared successfully');
+  } catch (error) {
+    console.error('Error clearing cookies and localStorage:', error);
+  }
+};
+
+// Fallback to localStorage if cookies are disabled
+const saveToStorage = (key: string, data: any) => {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem(key, JSON.stringify(data));
+    }
+  } catch (error) {
+    console.error('Error saving to localStorage:', error);
+  }
+};
+
+const loadFromStorage = (key: string) => {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : null;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error loading from localStorage:', error);
+    return null;
+  }
+};
 
 // Types
 type InputMethod = 'plate' | 'manual';
@@ -220,6 +313,115 @@ export default function AddCarListing() {
     }
   }, [locale]);
 
+  // Restore state from cookies on component mount
+  useEffect(() => {
+    try {
+      // Load current step
+      const savedStep = loadFromCookie(COOKIE_KEYS.CURRENT_STEP);
+      if (savedStep !== null && savedStep >= 0 && savedStep < STEPS.length) {
+        setCurrentStep(savedStep);
+      }
+
+      // Load form data
+      const savedFormData = loadFromCookie(COOKIE_KEYS.FORM_DATA);
+      if (savedFormData) {
+        setFormData(prev => ({ ...prev, ...savedFormData }));
+      }
+
+      // Load selections
+      const savedSelections = loadFromCookie(COOKIE_KEYS.SELECTIONS);
+      if (savedSelections) {
+        if (savedSelections.manufacturer) setSelectedManufacturer(savedSelections.manufacturer);
+        if (savedSelections.model) setSelectedModel(savedSelections.model);
+        if (savedSelections.year) setSelectedYear(savedSelections.year);
+        if (savedSelections.submodel) setSelectedSubmodel(savedSelections.submodel);
+      }
+
+      // Load input method
+      const savedInputMethod = loadFromCookie(COOKIE_KEYS.INPUT_METHOD);
+      if (savedInputMethod && (savedInputMethod === 'plate' || savedInputMethod === 'manual')) {
+        setInputMethod(savedInputMethod);
+      }
+
+      // Load yad2ModelInfo
+      const savedYad2ModelInfo = loadFromCookie(COOKIE_KEYS.YAD2_MODEL_INFO);
+      if (savedYad2ModelInfo) {
+        setYad2ModelInfo(savedYad2ModelInfo);
+      }
+
+      // Load plate number
+      const savedPlateNumber = loadFromCookie(COOKIE_KEYS.PLATE_NUMBER);
+      if (savedPlateNumber) {
+        setPlateNumber(savedPlateNumber);
+      }
+
+      // Load car data
+      const savedCarData = loadFromCookie(COOKIE_KEYS.CAR_DATA);
+      if (savedCarData) {
+        setCarData(savedCarData);
+      }
+
+      // Load government car info
+      const savedGovCarInfo = loadFromCookie(COOKIE_KEYS.GOV_CAR_INFO);
+      if (savedGovCarInfo) {
+        setGovCarInfo(savedGovCarInfo);
+      }
+
+      console.log('State restored from cookies:', {
+        step: savedStep,
+        hasFormData: !!savedFormData,
+        hasSelections: !!savedSelections,
+        inputMethod: savedInputMethod,
+        hasYad2ModelInfo: !!savedYad2ModelInfo,
+        hasPlateNumber: !!savedPlateNumber,
+        hasCarData: !!savedCarData,
+        hasGovCarInfo: !!savedGovCarInfo
+      });
+    } catch (error) {
+      console.error('Error restoring state from cookies:', error);
+    }
+  }, []); // Only run once on mount
+
+  // Save input method to cookies whenever it changes
+  useEffect(() => {
+    saveToCookie(COOKIE_KEYS.INPUT_METHOD, inputMethod);
+  }, [inputMethod]);
+
+  // Save yad2ModelInfo to cookies whenever it changes
+  useEffect(() => {
+    if (yad2ModelInfo) {
+      saveToCookie(COOKIE_KEYS.YAD2_MODEL_INFO, yad2ModelInfo);
+    }
+  }, [yad2ModelInfo]);
+
+  // Save plate number to cookies whenever it changes
+  useEffect(() => {
+    if (plateNumber) {
+      saveToCookie(COOKIE_KEYS.PLATE_NUMBER, plateNumber);
+    }
+  }, [plateNumber]);
+
+  // Save car data to cookies whenever it changes
+  useEffect(() => {
+    if (carData) {
+      saveToCookie(COOKIE_KEYS.CAR_DATA, carData);
+    }
+  }, [carData]);
+
+  // Save government car info to cookies whenever it changes
+  useEffect(() => {
+    if (govCarInfo) {
+      saveToCookie(COOKIE_KEYS.GOV_CAR_INFO, govCarInfo);
+    }
+  }, [govCarInfo]);
+
+  // Restore plate number to formData when it's loaded from cookies
+  useEffect(() => {
+    if (plateNumber) {
+      setFormData(prev => ({ ...prev, plateNumber }));
+    }
+  }, [plateNumber]);
+
   const iconMap = {
     transmission: Cog,
     drive_type: Cog,
@@ -273,6 +475,7 @@ export default function AddCarListing() {
     email: '',
     phone: '',
     images: [] as File[],
+    video: null as File | null,
     manufacturerName: '',
     modelId: '',
     subModelId: '',
@@ -304,6 +507,35 @@ export default function AddCarListing() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Save state to cookies whenever it changes
+  useEffect(() => {
+    saveToCookie(COOKIE_KEYS.CURRENT_STEP, currentStep);
+  }, [currentStep]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      saveToCookie(COOKIE_KEYS.FORM_DATA, formData);
+    }, 500); // Debounce by 500ms to avoid excessive cookie writes
+
+    return () => clearTimeout(timeoutId);
+  }, [formData]);
+
+  useEffect(() => {
+    const selections = {
+      manufacturer: selectedManufacturer,
+      model: selectedModel,
+      year: selectedYear,
+      submodel: selectedSubmodel
+    };
+    saveToCookie(COOKIE_KEYS.SELECTIONS, selections);
+  }, [selectedManufacturer, selectedModel, selectedYear, selectedSubmodel]);
+
+  useEffect(() => {
+    saveToCookie(COOKIE_KEYS.INPUT_METHOD, inputMethod);
+  }, [inputMethod]);
+
+
+
   // Function to clear all form data and reset to initial state
   const clearFormData = useCallback(() => {
     // Reset form data to initial values
@@ -328,6 +560,7 @@ export default function AddCarListing() {
       email: '',
       phone: '',
       images: [],
+      video: null,
       manufacturerName: '',
       modelId: '',
       subModelId: '',
@@ -389,7 +622,143 @@ export default function AddCarListing() {
     setErrors({});
     setError(null);
     setIsGeneratingDescription(false);
+    
+    // Clear cookies when form is reset
+    clearCookies();
+    
+    // Also clear the additional state variables
+    setYad2ModelInfo(null);
+    setPlateNumber('');
+    setCarData(null);
+    setGovCarInfo(null);
   }, []);
+
+  // Function to manually clear saved progress
+  const clearSavedProgress = useCallback(() => {
+    clearCookies();
+    clearFormData();
+    setCurrentStep(0);
+  }, [clearFormData]);
+
+  // Function to clear just the plate number and related data
+  const clearPlateData = useCallback(() => {
+    setPlateNumber('');
+    setCarData(null);
+    setYad2ModelInfo(null);
+    setGovCarInfo(null);
+    
+    // Clear only the plate-related cookies
+    Cookies.remove(COOKIE_KEYS.PLATE_NUMBER);
+    Cookies.remove(COOKIE_KEYS.CAR_DATA);
+    Cookies.remove(COOKIE_KEYS.YAD2_MODEL_INFO);
+    Cookies.remove(COOKIE_KEYS.GOV_CAR_INFO);
+    
+    // Also clear from localStorage
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.removeItem(COOKIE_KEYS.PLATE_NUMBER);
+      localStorage.removeItem(COOKIE_KEYS.CAR_DATA);
+      localStorage.removeItem(COOKIE_KEYS.YAD2_MODEL_INFO);
+      localStorage.removeItem(COOKIE_KEYS.GOV_CAR_INFO);
+    }
+    
+    console.log('Plate data cleared successfully');
+  }, []);
+
+  // Function to refresh car data for current plate number
+  const refreshCarData = useCallback(async () => {
+    if (plateNumber) {
+      console.log('Refreshing car data for plate:', plateNumber);
+      await fetchCarData();
+    }
+  }, [plateNumber]);
+
+  // Check if user has saved progress
+  const hasSavedProgress = useCallback(() => {
+    return loadFromCookie(COOKIE_KEYS.CURRENT_STEP) !== null;
+  }, []);
+
+  // Get storage status for debugging
+  const getStorageStatus = useCallback(() => {
+    const cookieStatus = {
+      currentStep: loadFromCookie(COOKIE_KEYS.CURRENT_STEP),
+      hasFormData: !!loadFromCookie(COOKIE_KEYS.FORM_DATA),
+      hasSelections: !!loadFromCookie(COOKIE_KEYS.SELECTIONS),
+      inputMethod: loadFromCookie(COOKIE_KEYS.INPUT_METHOD),
+      hasYad2ModelInfo: !!loadFromCookie(COOKIE_KEYS.YAD2_MODEL_INFO),
+      hasPlateNumber: !!loadFromCookie(COOKIE_KEYS.PLATE_NUMBER),
+      hasCarData: !!loadFromCookie(COOKIE_KEYS.CAR_DATA),
+      hasGovCarInfo: !!loadFromCookie(COOKIE_KEYS.GOV_CAR_INFO)
+    };
+    
+    const localStorageStatus = {
+      currentStep: loadFromStorage(COOKIE_KEYS.CURRENT_STEP),
+      hasFormData: !!loadFromStorage(COOKIE_KEYS.FORM_DATA),
+      hasSelections: !!loadFromStorage(COOKIE_KEYS.SELECTIONS),
+      inputMethod: loadFromStorage(COOKIE_KEYS.INPUT_METHOD),
+      hasYad2ModelInfo: !!loadFromStorage(COOKIE_KEYS.YAD2_MODEL_INFO),
+      hasPlateNumber: !!loadFromStorage(COOKIE_KEYS.PLATE_NUMBER),
+      hasCarData: !!loadFromStorage(COOKIE_KEYS.CAR_DATA),
+      hasGovCarInfo: !!loadFromStorage(COOKIE_KEYS.GOV_CAR_INFO)
+    };
+    
+    return { cookieStatus, localStorageStatus };
+  }, []);
+
+  // Check if cookies are about to expire (within 24 hours)
+  const checkCookieExpiration = useCallback(() => {
+    try {
+      const currentStep = loadFromCookie(COOKIE_KEYS.CURRENT_STEP);
+      if (currentStep !== null) {
+        // Check if cookies will expire soon (this is a simplified check)
+        // In a real implementation, you might want to store expiration time in the cookie
+        return true; // For now, just return true if cookies exist
+      }
+      return false;
+    } catch (error) {
+      return false;
+    }
+  }, []);
+
+  // Extend cookie expiration when user is active
+  const extendCookieExpiration = useCallback(() => {
+    if (hasSavedProgress()) {
+      // Re-save current state with extended expiration
+      saveToCookie(COOKIE_KEYS.CURRENT_STEP, currentStep);
+      saveToCookie(COOKIE_KEYS.FORM_DATA, formData);
+      saveToCookie(COOKIE_KEYS.SELECTIONS, {
+        manufacturer: selectedManufacturer,
+        model: selectedModel,
+        year: selectedYear,
+        submodel: selectedSubmodel
+      });
+      saveToCookie(COOKIE_KEYS.INPUT_METHOD, inputMethod);
+      
+      // Also extend expiration for additional fields
+      if (yad2ModelInfo) {
+        saveToCookie(COOKIE_KEYS.YAD2_MODEL_INFO, yad2ModelInfo);
+      }
+      if (plateNumber) {
+        saveToCookie(COOKIE_KEYS.PLATE_NUMBER, plateNumber);
+      }
+      if (carData) {
+        saveToCookie(COOKIE_KEYS.CAR_DATA, carData);
+      }
+      if (govCarInfo) {
+        saveToCookie(COOKIE_KEYS.GOV_CAR_INFO, govCarInfo);
+      }
+    }
+  }, [currentStep, formData, selectedManufacturer, selectedModel, selectedYear, selectedSubmodel, inputMethod, hasSavedProgress, yad2ModelInfo, plateNumber, carData, govCarInfo]);
+
+  // Extend cookie expiration when user is active (every 5 minutes)
+  useEffect(() => {
+    if (hasSavedProgress()) {
+      const interval = setInterval(() => {
+        extendCookieExpiration();
+      }, 5 * 60 * 1000); // 5 minutes
+
+      return () => clearInterval(interval);
+    }
+  }, [hasSavedProgress, extendCookieExpiration]);
 
   // Hooks functions from the hooks file
   const fetchVehicleSpecs = useCallback(async (carData: any) => {
@@ -651,7 +1020,16 @@ export default function AddCarListing() {
     setIsGeneratingDescription(true);
 
     try {
-      const response = await fetch('/api/createDescription?data=' + encodeURIComponent(JSON.stringify(formData)));
+      const response = await fetch('/api/createDescription', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          info: yad2ModelInfo,
+          form: formData
+        })
+      });
       
       if (response.ok) {
       const data = await response.json();
@@ -1210,6 +1588,9 @@ export default function AddCarListing() {
       // Images
       images: formData.images || [],
       
+      // Video
+      video: formData.video || null,
+      
       // Manufacturer and model details
       manufacturerName: formData.manufacturerName || yad2Data?.manufacturerName || '',
       modelId: formData.modelId || yad2Data?.modelId || '',
@@ -1294,6 +1675,7 @@ export default function AddCarListing() {
       email: '',
       phone: '',
       images: [],
+      video: null,
       manufacturerName: '',
       modelId: '',
       subModelId: '',
@@ -1327,6 +1709,15 @@ export default function AddCarListing() {
     setAvailableModels([]);
     setAvailableYears([]);
     setErrors(prev => ({ ...prev, manufacturer: '', model: '' }));
+    
+    // Clear cookies when form is reset
+    clearCookies();
+    
+    // Also clear the additional state variables
+    setYad2ModelInfo(null);
+    setPlateNumber('');
+    setCarData(null);
+    setGovCarInfo(null);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1334,7 +1725,7 @@ export default function AddCarListing() {
     if (files) {
       setFormData(prev => ({
         ...prev,
-        images: [...prev.images, ...Array.from(files)].slice(0, 8) // Limit to 8 images
+        images: [...prev.images, ...Array.from(files)].slice(0, VALIDATION_RULES.MAX_IMAGES) // Limit to 10 images
       }));
       setErrors(prev => ({ ...prev, images: '' }));
     }
@@ -1348,36 +1739,134 @@ export default function AddCarListing() {
   };
 
   /**
+   * Handles video file selection and validation
+   */
+  const handleVideoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      // Check file type
+      const validVideoTypes = ['video/mp4', 'video/mov', 'video/avi', 'video/quicktime'];
+      if (!validVideoTypes.includes(file.type)) {
+        setErrors(prev => ({ ...prev, video: 'Invalid video format. Please upload MP4, MOV, or AVI files.' }));
+        return;
+      }
+
+      // Check file size (max 100MB)
+      const maxSizeBytes = 100 * 1024 * 1024; // 100MB
+      if (file.size > maxSizeBytes) {
+        setErrors(prev => ({ ...prev, video: 'Video file is too large. Maximum size is 100MB.' }));
+        return;
+      }
+
+      // Check duration using video element
+      const video = document.createElement('video');
+      const url = URL.createObjectURL(file);
+      
+      video.onloadedmetadata = () => {
+        const duration = video.duration;
+        URL.revokeObjectURL(url);
+        
+        if (duration > VALIDATION_RULES.MAX_VIDEO_DURATION) {
+          setErrors(prev => ({ 
+            ...prev, 
+            video: `Video duration (${duration.toFixed(1)}s) exceeds maximum allowed duration (${VALIDATION_RULES.MAX_VIDEO_DURATION}s)` 
+          }));
+        } else {
+          setFormData(prev => ({ ...prev, video: file }));
+          setErrors(prev => ({ ...prev, video: '' }));
+        }
+      };
+      
+      video.onerror = () => {
+        URL.revokeObjectURL(url);
+        setErrors(prev => ({ ...prev, video: 'Failed to read video file. Please try again.' }));
+      };
+      
+      video.src = url;
+    } catch (error) {
+      setErrors(prev => ({ ...prev, video: 'Error validating video file. Please try again.' }));
+    }
+  };
+
+  /**
+   * Removes video file
+   */
+  const removeVideo = () => {
+    setFormData(prev => ({ ...prev, video: null }));
+    setErrors(prev => ({ ...prev, video: '' }));
+  };
+
+  /**
    * Handles form submission
    */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-
     setIsSubmitting(true);
     console.log('Starting form submission...');
 
     try {
-      // Upload images first if any exist
-      let imageId = null;
+      // Upload all images first if any exist
+      let uploadedImageIds: {id: string, url: string} [] = [];
       if (formData.images && formData.images.length > 0) {
-        console.log('Uploading images...');
+        console.log(`Uploading ${formData.images.length} images...`);
         
-        const formDataToSend = new FormData();
-        formDataToSend.append('image', formData.images[0]);
+        try {
+          const imageUploadPromises = formData.images.map(async (image, index) => {
+            const formDataToSend = new FormData();
+            formDataToSend.append('image', image);
+            
+            const imageUploadResponse = await fetch('/api/upload/image', {
+              method: 'POST',
+              body: formDataToSend
+            });
+            
+            if (imageUploadResponse.ok) {
+              const uploadResult = await imageUploadResponse.json();
+              const imageId = {id :uploadResult[0]?.id, url:uploadResult[0]?.url};
+              console.log(`Image ${index + 1} uploaded successfully, ID:`, imageId);
+              return imageId;
+            } else {
+              console.error(`Image ${index + 1} upload failed:`, imageUploadResponse.status);
+              throw new Error(`Image ${index + 1} upload failed`);
+            }
+          });
+          
+          uploadedImageIds = await Promise.all(imageUploadPromises);
+          console.log('All images uploaded successfully:', uploadedImageIds);
+        } catch (error) {
+          console.error('Error uploading images:', error);
+          throw new Error('Failed to upload one or more images');
+        }
+      }
+
+      // Upload video if exists
+      let uploadedVideoId: {id: string, url: string} | null = null;
+      if (formData.video) {
+        console.log('Uploading video...');
         
-        const imageUploadResponse = await fetch('/api/upload/image', {
-          method: 'POST',
-          body: formDataToSend
-        });
-        
-        if (imageUploadResponse.ok) {
-          const uploadResult = await imageUploadResponse.json();
-          imageId = uploadResult[0]?.id;
-          console.log('Image uploaded successfully, ID:', imageId);
-        } else {
-          console.error('Image upload failed:', imageUploadResponse.status);
-          throw new Error('Image upload failed');
+        try {
+          const formDataToSend = new FormData();
+          formDataToSend.append('video', formData.video);
+          
+          const videoUploadResponse = await fetch('/api/upload/video', {
+            method: 'POST',
+            body: formDataToSend
+          });
+          
+          if (videoUploadResponse.ok) {
+            const uploadResult = await videoUploadResponse.json();
+            uploadedVideoId = {id :uploadResult[0]?.id, url:uploadResult[0]?.url};
+            console.log('Video uploaded successfully, ID:', uploadedVideoId);
+          } else {
+            console.error('Video upload failed:', videoUploadResponse.status);
+            throw new Error('Video upload failed');
+          }
+        } catch (error) {
+          console.error('Error uploading video:', error);
+          throw new Error('Failed to upload video');
         }
       }
 
@@ -1386,15 +1875,32 @@ export default function AddCarListing() {
       const mergedCarData = mergeCarData(yad2ModelInfo?.data, formData);
       console.log('Merged car data:', mergedCarData);
 
-      // Add image ID to merged data if available
-      if (imageId) {
-        mergedCarData.images = { main: [imageId], additional: [imageId] };
+      // Add image IDs to merged data if available
+      if (uploadedImageIds.length > 0) {
+        mergedCarData.images = {
+          main: uploadedImageIds[0], // First image as main
+          additional: uploadedImageIds.map(image => image) // All images as additional
+        };
+      }
+
+      // Add video data if available
+      if (formData.video) {
+        mergedCarData.video = {
+          file: {
+            url: uploadedVideoId?.url,
+            name: formData.video.name,
+            type: formData.video.type,
+            id: uploadedVideoId?.id,
+            size: formData.video.size
+          },
+          id: uploadedVideoId?.id // Include the uploaded video ID if available
+        };
       }
 
       // Prepare final car details object for API
       const carDetails = {
         car: mergedCarData,
-        data_object: yad2ModelInfo?.data || {},
+        formData: yad2ModelInfo?.data || {},
         submission_timestamp: new Date().toISOString(),
         form_version: '1.0'
       };
@@ -1432,6 +1938,9 @@ export default function AddCarListing() {
         setYad2ModelInfo(null);
         setCarData(null);
         
+        // Clear cookies after successful submission
+        clearCookies();
+        
       } else {
         const errorData = await response.json().catch(() => ({}));
         console.error('API submission failed:', response.status, errorData);
@@ -1457,15 +1966,88 @@ export default function AddCarListing() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-3xl mx-auto"
       >
-        <div className="flex items-center gap-6 mb-8">
-          <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-4 shadow-lg">
-            <Car className="h-8 w-8 text-white" />
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-6">
+            <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-4 shadow-lg">
+              <Car className="h-8 w-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('add_car_listing')}</h1>
+              <p className="text-gray-600">{t('fill_details')}</p>
+              {/* Progress indicator */}
+              {loadFromCookie(COOKIE_KEYS.CURRENT_STEP) !== null && (
+                <div className="flex items-center gap-2 mt-2 text-sm text-blue-600">
+                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+                  <span>{t('progress_saved') || 'Progress saved automatically'}</span>
+                </div>
+              )}
+            </div>
           </div>
-          <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('add_car_listing')}</h1>
-            <p className="text-gray-600">{t('fill_details')}</p>
-          </div>
+          
+          {/* Clear Progress Button */}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={clearSavedProgress}
+            className="px-4 py-2 text-sm text-gray-600 hover:text-red-600 hover:border-red-300 transition-colors duration-200"
+            title={t('clear_saved_progress') || 'Clear saved progress and start over'}
+          >
+            <X className="h-4 w-4 mr-2" />
+            {t('clear_progress') || 'Clear Progress'}
+          </Button>
+          
+          {/* Clear Plate Data Button */}
+          {plateNumber && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={clearPlateData}
+              className="px-4 py-2 text-sm text-gray-600 hover:text-orange-600 hover:border-orange-300 transition-colors duration-200"
+              title={t('clear_plate_data') || 'Clear plate number and car data to search for a different car'}
+            >
+              <Car className="h-4 w-4 mr-2" />
+              {t('clear_plate') || 'Clear Plate'}
+            </Button>
+          )}
+          
+          {/* Debug Storage Button (only in development) */}
+          {process.env.NODE_ENV === 'development' && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                const status = getStorageStatus();
+                console.log('Storage Status:', status);
+                alert(`Storage Status:\nCookies: ${JSON.stringify(status.cookieStatus, null, 2)}\nlocalStorage: ${JSON.stringify(status.localStorageStatus, null, 2)}`);
+              }}
+              className="px-4 py-2 text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300 transition-colors duration-200"
+              title="Debug storage status (development only)"
+            >
+              🔍 Debug
+            </Button>
+          )}
         </div>
+
+        {/* Welcome back message for users with saved progress */}
+        {hasSavedProgress() && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 bg-blue-50 border border-blue-200 rounded-xl p-4"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+              <div>
+                <h3 className="font-medium text-blue-800">
+                  {t('welcome_back') || 'Welcome back!'}
+                </h3>
+                <p className="text-sm text-blue-700">
+                  {t('progress_restored') || 'Your progress has been automatically restored. You can continue from where you left off.'}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Steps indicator (clickable) */}
         <div className="mb-8">
@@ -1731,6 +2313,12 @@ export default function AddCarListing() {
                             textShadow: '2px 2px 0px rgba(0,0,0,0.1)'
                           }}
                         />
+                        {/* Show restored indicator if plate number was loaded from cookies */}
+                        {plateNumber && loadFromCookie(COOKIE_KEYS.PLATE_NUMBER) === plateNumber && (
+                          <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">
+                            ✓ Restored
+                          </div>
+                        )}
                         {loading && (
                           <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
                             <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
@@ -1753,6 +2341,22 @@ export default function AddCarListing() {
                           t("search_by_vin") || "Search by VIN"
                         )}
                       </Button>
+                      
+                      {/* Refresh button - only show if we have existing data */}
+                      {yad2ModelInfo?.data && (
+                        <Button 
+                          type="button"
+                          onClick={refreshCarData}
+                          disabled={loading}
+                          variant="outline"
+                          className="rounded-full w-12 h-12 hover:bg-blue-50 transition-colors border-blue-300"
+                          title={t("refresh_car_data") || "Refresh car data"}
+                        >
+                          <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                          </svg>
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -2225,7 +2829,15 @@ export default function AddCarListing() {
               
               {/* Show Car Details when not loading and data is available */}
               {!loading && yad2ModelInfo?.data && (
-                <CarDetailsSections data={yad2ModelInfo.data} t={t} />
+                <div className="relative">
+                  {/* Show restored indicator if yad2ModelInfo was loaded from cookies */}
+                  {loadFromCookie(COOKIE_KEYS.YAD2_MODEL_INFO) && (
+                    <div className="absolute top-4 right-4 bg-green-500 text-white text-xs px-3 py-1 rounded-full animate-pulse z-10">
+                      ✓ Data Restored
+                    </div>
+                  )}
+                  <CarDetailsSections data={yad2ModelInfo.data} t={t} />
+                </div>
               )}
 
           </motion.div>
@@ -2502,7 +3114,7 @@ export default function AddCarListing() {
                   value={formData.priceNegotiable ? 'yes' : 'no'}
                   onValueChange={(value) => setFormData(prev => ({ ...prev, priceNegotiable: value === 'yes' }))}
                 >
-                  <div className="flex items-center space-x-6">
+                  <div className="flex items-center space-x-6 rtl">
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="yes" id="negotiable-yes" />
                       <Label htmlFor="negotiable-yes">{t('yes') || 'Yes'}</Label>
@@ -2599,89 +3211,208 @@ export default function AddCarListing() {
           </motion.div>
           )}
 
-          {/* Image Upload */}
+          {/* Upload Images */}
           {currentStep === 5 && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
-          >
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('upload_images')}</h2>
-            <div className={`border-2 border-dashed rounded-xl p-8 transition-all duration-200 hover:border-blue-500 ${errors.images ? 'border-red-500' : 'border-gray-200'}`}>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImageChange}
-                className="hidden"
-                id="image-upload"
-              />
-              <label
-                htmlFor="image-upload"
-                className="cursor-pointer flex flex-col items-center justify-center"
-              >
-                <div className="bg-blue-50 rounded-full p-4 mb-4">
-                  <Camera className="h-8 w-8 text-blue-500" />
-                </div>
-                <p className="text-lg font-medium text-gray-700 mb-2">{t('drag_drop')}</p>
-                <p className="text-sm text-gray-500">{t('image_requirements')}</p>
-              </label>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
+            >
+              <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('upload_images') || 'Upload Images'}</h2>
               
-              {errors.images && <p className="mt-2 text-sm text-red-500 text-center">{errors.images}</p>}
-              
-              {formData.images.length > 0 && (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4"
-                >
-                  {formData.images.map((file, index) => (
-                    <motion.div 
-                      key={index}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="relative aspect-square group"
-                    >
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt={t('image_preview', { number: index + 1 })}
-                        className="w-full h-full object-cover rounded-lg shadow-sm"
-                      />
+              {/* Image Upload Section */}
+              <div className="space-y-6">
+                <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-400 transition-colors">
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                    id="image-upload"
+                  />
+                  
+                  <div className="space-y-4">
+                    <div className="bg-blue-50 rounded-full p-4 w-16 h-16 mx-auto flex items-center justify-center">
+                      <Camera className="h-8 w-8 text-blue-600" />
+                    </div>
+                    
+                    <div>
+                      <p className="text-lg font-medium text-gray-700 mb-2">
+                        {t('drag_drop') || 'Drag and drop images here or click to upload'}
+                      </p>
+                      <p className="text-sm text-gray-500 mb-4">
+                        {t('image_requirements') || 'PNG, JPG, GIF up to 10MB. Maximum 10 images.'}
+                      </p>
+                      
                       <button
                         type="button"
-                        onClick={() => removeImage(index)}
-                        className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                        aria-label={t('remove_image')}
+                        onClick={() => document.getElementById('image-upload')?.click()}
+                        className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2 mx-auto"
+                      >
+                        <Upload className="h-4 w-4" />
+                        {t('select_images') || 'Select Images'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Video Upload Section */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-gray-800 flex items-center gap-2">
+                    <svg className="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    {t('upload_video') || 'Upload Video (Optional)'}
+                  </h3>
+                  
+                  <div className={`border-2 border-dashed rounded-xl p-6 transition-all duration-200 hover:border-purple-500 ${
+                    formData.video ? 'border-purple-500 bg-purple-50' : 'border-gray-200'
+                  } ${errors.video ? 'border-red-500' : ''}`}>
+                    <input
+                      type="file"
+                      accept="video/*"
+                      onChange={handleVideoChange}
+                      className="hidden"
+                      id="video-upload"
+                    />
+                    
+                    <div className="text-center">
+                      <div className="bg-purple-50 rounded-full p-4 mb-4 mx-auto w-16 h-16 flex items-center justify-center">
+                        {formData.video ? (
+                          <svg className="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        ) : (
+                          <svg className="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        )}
+                      </div>
+                      
+                      <p className="text-lg font-medium text-gray-700 mb-2">
+                        {formData.video ? t('video_uploaded') || 'Video Uploaded' : t('upload_video_here') || 'Upload Video Here'}
+                      </p>
+                      <p className="text-sm text-gray-500 mb-4">
+                        {t('video_requirements') || 'MP4, MOV, AVI up to 100MB. Maximum 15 seconds.'}
+                      </p>
+                      
+                      {!formData.video && (
+                        <button
+                          type="button"
+                          onClick={() => document.getElementById('video-upload')?.click()}
+                          className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium flex items-center gap-2 mx-auto"
+                        >
+                          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                          {t('select_video') || 'Select Video'}
+                        </button>
+                      )}
+                      
+                      {errors.video && (
+                        <p className="mt-2 text-sm text-red-500 text-center">
+                          {errors.video}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Image Preview Grid */}
+                {formData.images.length > 0 && (
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium text-gray-800">
+                      {t('uploaded_images') || 'Uploaded Images'} ({formData.images.length}/{VALIDATION_RULES.MAX_IMAGES})
+                    </h3>
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {formData.images.map((image, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={URL.createObjectURL(image)}
+                            alt={`Image ${index + 1}`}
+                            className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeImage(index)}
+                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                          <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2 rounded-b-lg">
+                            {image.name.length > 20 ? `${image.name.substring(0, 20)}...` : image.name}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Video Preview */}
+                {formData.video && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-medium text-gray-800">
+                        {t('uploaded_video') || 'Uploaded Video'}
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={removeVideo}
+                        className="text-red-600 hover:text-red-800 text-sm font-medium flex items-center gap-1"
                       >
                         <X className="h-4 w-4" />
+                        {t('remove_video') || 'Remove Video'}
                       </button>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              )}
-            </div>
+                    </div>
+                    
+                    <div className="relative">
+                      <video
+                        src={URL.createObjectURL(formData.video)}
+                        controls
+                        className="w-full max-w-md mx-auto rounded-lg shadow-sm"
+                        preload="metadata"
+                      >
+                        Your browser does not support the video tag.
+                      </video>
+                      
+                      <div className="mt-2 text-center text-sm text-gray-600">
+                        <p className="font-medium">{formData.video.name}</p>
+                        <p className="text-gray-500">
+                          {(formData.video.size / 1024 / 1024).toFixed(1)} MB
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
-            {/* Terms and Privacy Policy Checkbox */}
-            <div className="mt-8">
-              <div className="flex items-start space-x-3">
-                <input
-                  type="checkbox"
-                  id="terms-checkbox"
-                  checked={formData.termsAccepted || false}
-                  onChange={(e) => setFormData(prev => ({ ...prev, termsAccepted: e.target.checked }))}
-                  className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  required
-                />
-                <label htmlFor="terms-checkbox" className="text-sm text-gray-700 leading-relaxed">
-                  <span className="text-red-500">*</span> {t('terms_checkbox') || 'אני מאשר/ת את התקנון ומדיניות הפרטיות באתר ומאשר קבלת תוכן שיווקי מ MAXSPEEDLIMIT או מצדדים שלישיים באמצעי הקשר שמסרתי (גם בשירותי דיוור ישיר)'}
-                </label>
-              </div>
-              {errors.termsAccepted && (
-                <p className="mt-2 text-sm text-red-500">{errors.termsAccepted}</p>
-              )}
-            </div>
-          </motion.div>
-          )}
+                                 {errors.images && (
+                   <p className="text-sm text-red-500 text-center">{errors.images}</p>
+                 )}
+               </div>
+
+               {/* Terms and Privacy Policy Checkbox */}
+               <div className="mt-8">
+                 <div className="flex items-start space-x-3">
+                   <input
+                     type="checkbox"
+                     id="terms-checkbox"
+                     checked={formData.termsAccepted || false}
+                     onChange={(e) => setFormData(prev => ({ ...prev, termsAccepted: e.target.checked }))}
+                     className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                     required
+                   />
+                   <label htmlFor="terms-checkbox" className="text-sm text-gray-700 leading-relaxed">
+                     <span className="text-red-500">*</span> {t('terms_checkbox') || 'אני מאשר/ת את התקנון ומדיניות הפרטיות באתר ומאשר קבלת תוכן שיווקי מ MAXSPEEDLIMIT או מצדדים שלישיים באמצעי הקשר שמסרתי (גם בשירותי דיוור ישיר)'}
+                   </label>
+                 </div>
+                 {errors.termsAccepted && (
+                   <p className="mt-2 text-sm text-red-500">{errors.termsAccepted}</p>
+                 )}
+               </div>
+             </motion.div>
+           )}
 
           {/* Package Selection */}
           {currentStep === 6 && (
@@ -2807,7 +3538,13 @@ export default function AddCarListing() {
                           setFormData(prev => ({ ...prev, title: yad2ModelInfo?.data?.commercialName +  ` ${t('engine')} ` + (parseInt(yad2ModelInfo?.data?.engineCapacity)/1000 ).toFixed(1) + ` ${t('year')} ` + formData?.year + ` ${t('model')} ` + yad2ModelInfo?.data?.trimLevel + ` ${t('horsepower')} ` + yad2ModelInfo?.data?.enginePower + ` ${t('gearbox')} ` + yad2ModelInfo?.data?.transmission }));
                           setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
                         }
+                       
                         else{
+                           // Check if user has searched for a car first
+                           if (!yad2ModelInfo?.data) {
+                            alert(t('please_search_for_a_car_first') || 'Please search for a car first');
+                            return;
+                          }
                           console.log('yad2ModelInfo?.data', yad2ModelInfo)
                           console.log('yad2ModelInfo?.data?.manufacturerName', yad2ModelInfo?.data?.manufacturerName)
                           if (formData.title === "" || formData.title === undefined || formData.title === null || formData.title === "null" ) {

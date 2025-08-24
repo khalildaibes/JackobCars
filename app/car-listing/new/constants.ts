@@ -43,6 +43,7 @@ export const DEFAULT_VALUES = {
   email: '',
   phone: '',
   images: [] as File[],
+  video: null,
   manufacturerName: '',
   commercialNickname: '',
   yearOfProduction: '',
@@ -90,7 +91,8 @@ export const DEFAULT_VALUES = {
 export const VALIDATION_RULES = {
   PHONE_REGEX: /^(\+972-?|0)?5[0-9]-?[0-9]{7}$|^(\+972-?|0)?[2-4][0-9]-?[0-9]{7}$/,
   EMAIL_REGEX: /\S+@\S+\.\S+/,
-  MAX_IMAGES: 8,
+  MAX_IMAGES: 10,
+  MAX_VIDEO_DURATION: 15, // Maximum video duration in seconds
   MIN_TITLE_LENGTH: 3,
   MAX_TITLE_LENGTH: 100,
 } as const;
@@ -265,7 +267,9 @@ export const ERROR_MESSAGES = {
   INVALID_EMAIL: 'Please enter a valid email address',
   INVALID_PHONE: 'Please enter a valid Israeli phone number',
   MIN_IMAGES: 'At least one image is required',
-  MAX_IMAGES: 'Maximum 8 images allowed',
+  MAX_IMAGES: 'Maximum 10 images allowed',
+  MAX_VIDEO_DURATION: 'Video must be 15 seconds or less',
+  INVALID_VIDEO_FORMAT: 'Please upload a valid video file (MP4, MOV, AVI)',
   INVALID_PLATE: 'Please enter a valid license plate number',
   CAR_NOT_FOUND: 'Car not found in the system',
 } as const;

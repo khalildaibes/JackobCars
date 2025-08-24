@@ -259,6 +259,10 @@ export const useImageHandling = (
     }
   }, [formData.images, setFormData, setErrors]);
 
+  const handleVideoChange = useCallback((file: File | null) => {
+    setFormData(prev => ({ ...prev, video: file }));
+  }, [setFormData]);
+
   const removeImage = useCallback((index: number) => {
     setFormData(prev => ({
       ...prev,
@@ -274,6 +278,7 @@ export const useImageHandling = (
 
   return {
     handleImageChange,
+    handleVideoChange,
     removeImage,
     uploadImages
   };

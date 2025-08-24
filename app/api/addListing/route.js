@@ -32,15 +32,15 @@ export async function POST(request) {
     const requestData = await request.json();
     console.log('Received request data:', JSON.stringify(requestData, null, 2));
     
-    const { car } = requestData;
+    let { car, formData } = requestData;
     if (!car) {
       throw new Error('No car data provided in request body');
     }
-    const formData = car.formData || {};
+    const { manufacturerName, subModelTitle, carYear } = formData;
     // Extract the needed fields from the car object
-    const brand = car.manufacturer_name || formData.makeModel || 'Unknown';
-    const model = car.commercial_nickname || formData.commercial_nickname || 'Unknown';
-    const year = car.year_of_production || formData.yearOfProduction || 'Unknown';
+    const brand = formData.manufacturerName || car.manufacturer_name || formData.makeModel || manufacturerName ||'Unknown';
+    const model = car.commercial_nickname || formData.commercialName || subModelTitle || 'Unknown';
+    const year = car.year_of_production || formData.yearOfProduction || carYear || 'Unknown';
     const specs = {
       price: car.asking_price || formData.askingPrice || 0,
       miles: car.miles || formData.mileage || '',
@@ -56,6 +56,13 @@ export async function POST(request) {
     const video = car.video || null;
     
     console.log('Extracted data:', { brand, model, year, specs, images, video });
+    
+    // Validate video if present
+    if (video && video.file) {
+      // Note: Video validation should be done on the frontend before submission
+      // This is just a safety check for the API
+      console.log('Video file received:', video.file.name, video.file.size, video.file.type);
+    }
 
     // Generate pros and cons using the dedicated API endpoint
     let generatedData = { pros: [], cons: [] };
@@ -133,7 +140,7 @@ export async function POST(request) {
       data: {
         categories: "car-listing",
         quantity: 1,
-        name: car.name,
+        name: car.title,
         slug: generateSlug(`${brand} ${model} ${year}`),
         price: specs.price || 0,
         details: {
@@ -177,9 +184,18 @@ export async function POST(request) {
             
             // Images
             images: {
-              main: images?.main?.[0] || "",
+              main: images?.main || "",
               additional: images?.additional || []
             },
+            
+            // Video
+            video: video?.file ? {
+              id: video.file.id,
+              url: video.file.url,
+              file: video.file.name,
+              type: video.file.type,
+              size: video.file.size
+            } : null,
             
             // Manufacturer and model details
             manufacturerName: car.manufacturerName || car.manufacturer_name || "",
@@ -283,7 +299,7 @@ export async function POST(request) {
           }
         },
         store: [18], // Store ID as array
-        image: images?.main?.[0] ? [images.main[0]] : [], // Image ID as array
+        image: images?.main?.id ? [images.main.id] : [], // Image ID as array
         publisher: [1], // Publisher ID as array
         category: [], // Empty category array
         services: [], // Empty services array
