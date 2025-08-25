@@ -55,6 +55,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ description });
   } catch (error) {
+    return NextResponse.json({  });
     console.error('Error in createDescription API:', error);
     return NextResponse.json(
       { error: 'Failed to generate description' },
