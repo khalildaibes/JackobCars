@@ -21,7 +21,6 @@ import { Button } from "../../../../components/ui/button";
 import { Upload, Plus,  X, Camera } from 'lucide-react';
 import { Alert, AlertDescription } from "../../../../components/ui/alert";
 import { Card, CardContent } from "../../../../components/ui/card";
-import Cookies from 'js-cookie';
 
 import {
   Select,
@@ -89,97 +88,7 @@ const TRANSMISSION_OPTIONS = [
   { value: 'manual', label: 'Manual' }
 ];
 
-// Cookie management constants
-const COOKIE_KEYS = {
-  CURRENT_STEP: 'car_listing_current_step',
-  FORM_DATA: 'car_listing_form_data',
-  SELECTIONS: 'car_listing_selections',
-  INPUT_METHOD: 'car_listing_input_method',
-  YAD2_MODEL_INFO: 'car_listing_yad2_model_info',
-  PLATE_NUMBER: 'car_listing_plate_number',
-  CAR_DATA: 'car_listing_car_data',
-  GOV_CAR_INFO: 'car_listing_gov_car_info'
-};
 
-// Cookie management functions
-const saveToCookie = (key: string, data: any, options: any = {}) => {
-  try {
-    const defaultOptions = {
-      expires: 7, // 7 days
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict' as 'strict'
-    };
-    Cookies.set(key, JSON.stringify(data), { ...defaultOptions, ...options });
-    
-    // Also save to localStorage as backup
-    saveToStorage(key, data);
-  } catch (error) {
-    console.error('Error saving to cookie:', error);
-    // Fallback to localStorage only
-    saveToStorage(key, data);
-  }
-};
-
-const loadFromCookie = (key: string) => {
-  try {
-    // Try cookies first
-    const cookieData = Cookies.get(key);
-    if (cookieData) {
-      return JSON.parse(cookieData);
-    }
-    
-    // Fallback to localStorage
-    return loadFromStorage(key);
-  } catch (error) {
-    console.error('Error loading from cookie:', error);
-    // Fallback to localStorage
-    return loadFromStorage(key);
-  }
-};
-
-const clearCookies = () => {
-  try {
-    // Clear cookies
-    Object.values(COOKIE_KEYS).forEach(key => {
-      Cookies.remove(key);
-    });
-    
-    // Clear localStorage backup
-    Object.values(COOKIE_KEYS).forEach(key => {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        localStorage.removeItem(key);
-      }
-    });
-    
-    console.log('All cookies and localStorage cleared successfully');
-  } catch (error) {
-    console.error('Error clearing cookies and localStorage:', error);
-  }
-};
-
-// Fallback to localStorage if cookies are disabled
-const saveToStorage = (key: string, data: any) => {
-  try {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      localStorage.setItem(key, JSON.stringify(data));
-    }
-  } catch (error) {
-    console.error('Error saving to localStorage:', error);
-  }
-};
-
-const loadFromStorage = (key: string) => {
-  try {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const data = localStorage.getItem(key);
-      return data ? JSON.parse(data) : null;
-    }
-    return null;
-  } catch (error) {
-    console.error('Error loading from localStorage:', error);
-    return null;
-  }
-};
 
 // Types
 type InputMethod = 'plate' | 'manual';
@@ -313,107 +222,9 @@ export default function AddCarListing() {
     }
   }, [locale]);
 
-  // Restore state from cookies on component mount
-  useEffect(() => {
-    try {
-      // Load current step
-      const savedStep = loadFromCookie(COOKIE_KEYS.CURRENT_STEP);
-      if (savedStep !== null && savedStep >= 0 && savedStep < STEPS.length) {
-        setCurrentStep(savedStep);
-      }
 
-      // Load form data
-      const savedFormData = loadFromCookie(COOKIE_KEYS.FORM_DATA);
-      if (savedFormData) {
-        setFormData(prev => ({ ...prev, ...savedFormData }));
-      }
 
-      // Load selections
-      const savedSelections = loadFromCookie(COOKIE_KEYS.SELECTIONS);
-      if (savedSelections) {
-        if (savedSelections.manufacturer) setSelectedManufacturer(savedSelections.manufacturer);
-        if (savedSelections.model) setSelectedModel(savedSelections.model);
-        if (savedSelections.year) setSelectedYear(savedSelections.year);
-        if (savedSelections.submodel) setSelectedSubmodel(savedSelections.submodel);
-      }
 
-      // Load input method
-      const savedInputMethod = loadFromCookie(COOKIE_KEYS.INPUT_METHOD);
-      if (savedInputMethod && (savedInputMethod === 'plate' || savedInputMethod === 'manual')) {
-        setInputMethod(savedInputMethod);
-      }
-
-      // Load yad2ModelInfo
-      const savedYad2ModelInfo = loadFromCookie(COOKIE_KEYS.YAD2_MODEL_INFO);
-      if (savedYad2ModelInfo) {
-        setYad2ModelInfo(savedYad2ModelInfo);
-      }
-
-      // Load plate number
-      const savedPlateNumber = loadFromCookie(COOKIE_KEYS.PLATE_NUMBER);
-      if (savedPlateNumber) {
-        setPlateNumber(savedPlateNumber);
-      }
-
-      // Load car data
-      const savedCarData = loadFromCookie(COOKIE_KEYS.CAR_DATA);
-      if (savedCarData) {
-        setCarData(savedCarData);
-      }
-
-      // Load government car info
-      const savedGovCarInfo = loadFromCookie(COOKIE_KEYS.GOV_CAR_INFO);
-      if (savedGovCarInfo) {
-        setGovCarInfo(savedGovCarInfo);
-      }
-
-      console.log('State restored from cookies:', {
-        step: savedStep,
-        hasFormData: !!savedFormData,
-        hasSelections: !!savedSelections,
-        inputMethod: savedInputMethod,
-        hasYad2ModelInfo: !!savedYad2ModelInfo,
-        hasPlateNumber: !!savedPlateNumber,
-        hasCarData: !!savedCarData,
-        hasGovCarInfo: !!savedGovCarInfo
-      });
-    } catch (error) {
-      console.error('Error restoring state from cookies:', error);
-    }
-  }, []); // Only run once on mount
-
-  // Save input method to cookies whenever it changes
-  useEffect(() => {
-    saveToCookie(COOKIE_KEYS.INPUT_METHOD, inputMethod);
-  }, [inputMethod]);
-
-  // Save yad2ModelInfo to cookies whenever it changes
-  useEffect(() => {
-    if (yad2ModelInfo) {
-      saveToCookie(COOKIE_KEYS.YAD2_MODEL_INFO, yad2ModelInfo);
-    }
-  }, [yad2ModelInfo]);
-
-  // Save plate number to cookies whenever it changes
-  useEffect(() => {
-    if (plateNumber) {
-      saveToCookie(COOKIE_KEYS.PLATE_NUMBER, plateNumber);
-    }
-  }, [plateNumber]);
-
-  // Save car data to cookies whenever it changes
-  useEffect(() => {
-    if (carData) {
-      saveToCookie(COOKIE_KEYS.CAR_DATA, carData);
-    }
-  }, [carData]);
-
-  // Save government car info to cookies whenever it changes
-  useEffect(() => {
-    if (govCarInfo) {
-      saveToCookie(COOKIE_KEYS.GOV_CAR_INFO, govCarInfo);
-    }
-  }, [govCarInfo]);
 
   // Restore plate number to formData when it's loaded from cookies
   useEffect(() => {
@@ -507,32 +318,7 @@ export default function AddCarListing() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Save state to cookies whenever it changes
-  useEffect(() => {
-    saveToCookie(COOKIE_KEYS.CURRENT_STEP, currentStep);
-  }, [currentStep]);
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      saveToCookie(COOKIE_KEYS.FORM_DATA, formData);
-    }, 500); // Debounce by 500ms to avoid excessive cookie writes
-
-    return () => clearTimeout(timeoutId);
-  }, [formData]);
-
-  useEffect(() => {
-    const selections = {
-      manufacturer: selectedManufacturer,
-      model: selectedModel,
-      year: selectedYear,
-      submodel: selectedSubmodel
-    };
-    saveToCookie(COOKIE_KEYS.SELECTIONS, selections);
-  }, [selectedManufacturer, selectedModel, selectedYear, selectedSubmodel]);
-
-  useEffect(() => {
-    saveToCookie(COOKIE_KEYS.INPUT_METHOD, inputMethod);
-  }, [inputMethod]);
 
 
 
@@ -623,9 +409,6 @@ export default function AddCarListing() {
     setError(null);
     setIsGeneratingDescription(false);
     
-    // Clear cookies when form is reset
-    clearCookies();
-    
     // Also clear the additional state variables
     setYad2ModelInfo(null);
     setPlateNumber('');
@@ -635,7 +418,6 @@ export default function AddCarListing() {
 
   // Function to manually clear saved progress
   const clearSavedProgress = useCallback(() => {
-    clearCookies();
     clearFormData();
     setCurrentStep(0);
   }, [clearFormData]);
@@ -646,20 +428,6 @@ export default function AddCarListing() {
     setCarData(null);
     setYad2ModelInfo(null);
     setGovCarInfo(null);
-    
-    // Clear only the plate-related cookies
-    Cookies.remove(COOKIE_KEYS.PLATE_NUMBER);
-    Cookies.remove(COOKIE_KEYS.CAR_DATA);
-    Cookies.remove(COOKIE_KEYS.YAD2_MODEL_INFO);
-    Cookies.remove(COOKIE_KEYS.GOV_CAR_INFO);
-    
-    // Also clear from localStorage
-    if (typeof window !== 'undefined' && window.localStorage) {
-      localStorage.removeItem(COOKIE_KEYS.PLATE_NUMBER);
-      localStorage.removeItem(COOKIE_KEYS.CAR_DATA);
-      localStorage.removeItem(COOKIE_KEYS.YAD2_MODEL_INFO);
-      localStorage.removeItem(COOKIE_KEYS.GOV_CAR_INFO);
-    }
     
     console.log('Plate data cleared successfully');
   }, []);
@@ -672,93 +440,7 @@ export default function AddCarListing() {
     }
   }, [plateNumber]);
 
-  // Check if user has saved progress
-  const hasSavedProgress = useCallback(() => {
-    return loadFromCookie(COOKIE_KEYS.CURRENT_STEP) !== null;
-  }, []);
 
-  // Get storage status for debugging
-  const getStorageStatus = useCallback(() => {
-    const cookieStatus = {
-      currentStep: loadFromCookie(COOKIE_KEYS.CURRENT_STEP),
-      hasFormData: !!loadFromCookie(COOKIE_KEYS.FORM_DATA),
-      hasSelections: !!loadFromCookie(COOKIE_KEYS.SELECTIONS),
-      inputMethod: loadFromCookie(COOKIE_KEYS.INPUT_METHOD),
-      hasYad2ModelInfo: !!loadFromCookie(COOKIE_KEYS.YAD2_MODEL_INFO),
-      hasPlateNumber: !!loadFromCookie(COOKIE_KEYS.PLATE_NUMBER),
-      hasCarData: !!loadFromCookie(COOKIE_KEYS.CAR_DATA),
-      hasGovCarInfo: !!loadFromCookie(COOKIE_KEYS.GOV_CAR_INFO)
-    };
-    
-    const localStorageStatus = {
-      currentStep: loadFromStorage(COOKIE_KEYS.CURRENT_STEP),
-      hasFormData: !!loadFromStorage(COOKIE_KEYS.FORM_DATA),
-      hasSelections: !!loadFromStorage(COOKIE_KEYS.SELECTIONS),
-      inputMethod: loadFromStorage(COOKIE_KEYS.INPUT_METHOD),
-      hasYad2ModelInfo: !!loadFromStorage(COOKIE_KEYS.YAD2_MODEL_INFO),
-      hasPlateNumber: !!loadFromStorage(COOKIE_KEYS.PLATE_NUMBER),
-      hasCarData: !!loadFromStorage(COOKIE_KEYS.CAR_DATA),
-      hasGovCarInfo: !!loadFromStorage(COOKIE_KEYS.GOV_CAR_INFO)
-    };
-    
-    return { cookieStatus, localStorageStatus };
-  }, []);
-
-  // Check if cookies are about to expire (within 24 hours)
-  const checkCookieExpiration = useCallback(() => {
-    try {
-      const currentStep = loadFromCookie(COOKIE_KEYS.CURRENT_STEP);
-      if (currentStep !== null) {
-        // Check if cookies will expire soon (this is a simplified check)
-        // In a real implementation, you might want to store expiration time in the cookie
-        return true; // For now, just return true if cookies exist
-      }
-      return false;
-    } catch (error) {
-      return false;
-    }
-  }, []);
-
-  // Extend cookie expiration when user is active
-  const extendCookieExpiration = useCallback(() => {
-    if (hasSavedProgress()) {
-      // Re-save current state with extended expiration
-      saveToCookie(COOKIE_KEYS.CURRENT_STEP, currentStep);
-      saveToCookie(COOKIE_KEYS.FORM_DATA, formData);
-      saveToCookie(COOKIE_KEYS.SELECTIONS, {
-        manufacturer: selectedManufacturer,
-        model: selectedModel,
-        year: selectedYear,
-        submodel: selectedSubmodel
-      });
-      saveToCookie(COOKIE_KEYS.INPUT_METHOD, inputMethod);
-      
-      // Also extend expiration for additional fields
-      if (yad2ModelInfo) {
-        saveToCookie(COOKIE_KEYS.YAD2_MODEL_INFO, yad2ModelInfo);
-      }
-      if (plateNumber) {
-        saveToCookie(COOKIE_KEYS.PLATE_NUMBER, plateNumber);
-      }
-      if (carData) {
-        saveToCookie(COOKIE_KEYS.CAR_DATA, carData);
-      }
-      if (govCarInfo) {
-        saveToCookie(COOKIE_KEYS.GOV_CAR_INFO, govCarInfo);
-      }
-    }
-  }, [currentStep, formData, selectedManufacturer, selectedModel, selectedYear, selectedSubmodel, inputMethod, hasSavedProgress, yad2ModelInfo, plateNumber, carData, govCarInfo]);
-
-  // Extend cookie expiration when user is active (every 5 minutes)
-  useEffect(() => {
-    if (hasSavedProgress()) {
-      const interval = setInterval(() => {
-        extendCookieExpiration();
-      }, 5 * 60 * 1000); // 5 minutes
-
-      return () => clearInterval(interval);
-    }
-  }, [hasSavedProgress, extendCookieExpiration]);
 
   // Hooks functions from the hooks file
   const fetchVehicleSpecs = useCallback(async (carData: any) => {
@@ -1707,9 +1389,6 @@ export default function AddCarListing() {
     setAvailableYears([]);
     setErrors(prev => ({ ...prev, manufacturer: '', model: '' }));
     
-    // Clear cookies when form is reset
-    clearCookies();
-    
     // Also clear the additional state variables
     setYad2ModelInfo(null);
     setPlateNumber('');
@@ -1932,9 +1611,6 @@ export default function AddCarListing() {
         setYad2ModelInfo(null);
         setCarData(null);
         
-        // Clear cookies after successful submission
-        clearCookies();
-        
       } else {
         const errorData = await response.json().catch(() => ({}));
         console.error('API submission failed:', response.status, errorData);
@@ -1968,13 +1644,7 @@ export default function AddCarListing() {
             <div>
               <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('add_car_listing')}</h1>
               <p className="text-gray-600">{t('fill_details')}</p>
-              {/* Progress indicator */}
-              {loadFromCookie(COOKIE_KEYS.CURRENT_STEP) !== null && (
-                <div className="flex items-center gap-2 mt-2 text-sm text-blue-600">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
-                  <span>{t('progress_saved') || 'Progress saved automatically'}</span>
-                </div>
-              )}
+
             </div>
           </div>
           
@@ -2004,44 +1674,10 @@ export default function AddCarListing() {
             </Button>
           )}
           
-          {/* Debug Storage Button (only in development) */}
-          {process.env.NODE_ENV === 'development' && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                const status = getStorageStatus();
-                console.log('Storage Status:', status);
-                alert(`Storage Status:\nCookies: ${JSON.stringify(status.cookieStatus, null, 2)}\nlocalStorage: ${JSON.stringify(status.localStorageStatus, null, 2)}`);
-              }}
-              className="px-4 py-2 text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300 transition-colors duration-200"
-              title="Debug storage status (development only)"
-            >
-              🔍 Debug
-            </Button>
-          )}
+
         </div>
 
-        {/* Welcome back message for users with saved progress */}
-        {hasSavedProgress() && (
-          <motion.div 
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6 bg-blue-50 border border-blue-200 rounded-xl p-4"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
-              <div>
-                <h3 className="font-medium text-blue-800">
-                  {t('welcome_back') || 'Welcome back!'}
-                </h3>
-                <p className="text-sm text-blue-700">
-                  {t('progress_restored') || 'Your progress has been automatically restored. You can continue from where you left off.'}
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        )}
+
 
         {/* Steps indicator (clickable) */}
         <div className="mb-8">
@@ -2307,12 +1943,7 @@ export default function AddCarListing() {
                             textShadow: '2px 2px 0px rgba(0,0,0,0.1)'
                           }}
                         />
-                        {/* Show restored indicator if plate number was loaded from cookies */}
-                        {plateNumber && loadFromCookie(COOKIE_KEYS.PLATE_NUMBER) === plateNumber && (
-                          <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">
-                            ✓ Restored
-                          </div>
-                        )}
+
                         {loading && (
                           <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
                             <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
@@ -2824,12 +2455,7 @@ export default function AddCarListing() {
               {/* Show Car Details when not loading and data is available */}
               {!loading && yad2ModelInfo?.data && (
                 <div className="relative">
-                  {/* Show restored indicator if yad2ModelInfo was loaded from cookies */}
-                  {loadFromCookie(COOKIE_KEYS.YAD2_MODEL_INFO) && (
-                    <div className="absolute top-4 right-4 bg-green-500 text-white text-xs px-3 py-1 rounded-full animate-pulse z-10">
-                      ✓ Data Restored
-                    </div>
-                  )}
+
                   <CarDetailsSections data={yad2ModelInfo.data} t={t} />
                 </div>
               )}
