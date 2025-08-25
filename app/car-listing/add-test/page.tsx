@@ -64,7 +64,7 @@ const conditions = ['excellent', 'good', 'fair', 'poor'] as const;
 import React from 'react';
 import CarDetailsSections from './CarDetailsSections';
 import { title } from 'process';
-import { DEFAULT_VALUES } from '../new/constants';
+import { DEFAULT_VALUES } from '../add/constants';
 
 // Government car data API endpoint
 const GOV_CAR_DATA_API = "/api/gov/car-data";
