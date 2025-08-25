@@ -11,7 +11,7 @@ import { Button } from "../../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
 import { Check, Heart, MessageSquare, Plus, Car,Calendar, Gauge, Fuel, Sparkles, Scale } from "lucide-react";
 import { Badge } from "../../components/ui/badge";
-import { fetchStrapiData } from '../lib/strapiClient';
+
 import { Img } from '../../components/Img';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -112,13 +112,11 @@ const CarListings: React.FC = () => {
           setLoading(true);
           setError(null);
           
-          // const response = await fetch(`/api/deals?store_hostname=64.227.112.249`);
-          // if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
+          // Call the Next.js API route instead of Strapi directly
+          const response = await fetch(`/api/deals?store_hostname=64.227.112.249`);
+          if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
       
-          // const data = await response.json();
-          const data = await fetchStrapiData('deals', {
-            store_hostname: '64.227.112.249'
-          });
+          const data = await response.json();
           console.log(data);
           if (!data || !data.data) throw new Error("Invalid API response structure");
       

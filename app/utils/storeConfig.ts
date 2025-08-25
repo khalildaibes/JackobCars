@@ -10,7 +10,12 @@ let isInitialized = false;
 
 export async function initializeStoreConfigs() {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/stores?populate=*`, {
+    // Ensure we have the correct Strapi URL with port
+    const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || '64.227.112.249';
+    const baseUrl = strapiUrl.replace(/^https?:\/\//, '').replace(/:\d+$/, '');
+    const fullStrapiUrl = `http://${baseUrl}:1337`;
+    
+    const response = await fetch(`${fullStrapiUrl}/api/stores?populate=*`, {
       headers: {
         'Authorization': `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
         'Content-Type': 'application/json',
