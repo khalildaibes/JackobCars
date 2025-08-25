@@ -112,10 +112,14 @@ const CarListings: React.FC = () => {
           setLoading(true);
           setError(null);
           
-          const response = await fetch(`/api/deals?store_hostname=64.227.112.249`);
-          if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
+          // const response = await fetch(`/api/deals?store_hostname=64.227.112.249`);
+          // if (!response.ok) throw new Error(`Failed to fetch homepage: ${response.statusText}`);
       
-          const data = await response.json();
+          // const data = await response.json();
+          const data = await fetchStrapiData('deals', {
+            store_hostname: '64.227.112.249'
+          });
+          console.log(data);
           if (!data || !data.data) throw new Error("Invalid API response structure");
       
 
