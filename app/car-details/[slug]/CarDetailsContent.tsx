@@ -66,7 +66,12 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
   const [showContactInfo, setShowContactInfo] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isClient, setIsClient] = useState(false);
 
+  // Ensure component is mounted on client side
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   async function getCarDetails(slug: string) {
     // Get the host from headers for SSR absolute URL
@@ -415,20 +420,20 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
     };
   }
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (isClient) {
       const storedFavorites = localStorage.getItem("favorites");
       if (storedFavorites) {
         setFavorites(JSON.parse(storedFavorites));
       }
     }
-  }, []);
+  }, [isClient]);
 
 // In your component
 const router = useRouter();
 const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (searchParams.has('hostname')) {
+    if (isClient && searchParams.has('hostname')) {
       // Create new URLSearchParams without hostname
       const newParams = new URLSearchParams(searchParams);
       newParams.delete('hostname');
@@ -440,12 +445,12 @@ const searchParams = useSearchParams();
       const newUrl = newParams.toString() ? `${pathname}?${newParams.toString()}` : pathname;
       router.replace(newUrl, { scroll: false });
     }
-  }, [searchParams, router]);
+  }, [searchParams, router, isClient]);
 
   // Add keyboard support for image modal and media navigation
   useEffect(() => {
-    // Don't add event listeners if car data is not loaded yet
-    if (!car) return;
+    // Don't add event listeners if car data is not loaded yet or not on client
+    if (!car || !isClient) return;
     
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isImageModalOpen) {
@@ -493,9 +498,9 @@ const searchParams = useSearchParams();
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
     };
-  }, [isImageModalOpen, car?.allImages, car?.video]);
+  }, [isImageModalOpen, car?.allImages, car?.video, isClient]);
   const add_to_favorites = (slug: number) => {
-    if (!car) return;
+    if (!car || !isClient) return;
     
     let updatedFavorites;
     if (favorites.includes(slug)) {
@@ -505,7 +510,9 @@ const searchParams = useSearchParams();
     }
 
     setFavorites(updatedFavorites);
-    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+    if (isClient) {
+      localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+    }
   };
 
 
@@ -598,14 +605,14 @@ const searchParams = useSearchParams();
     }
   }, [slug, locale]);
 
-  if (loading) {
+  // Show loading state while not on client or while loading
+  if (!isClient || loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
-
 
   if (!car) {
     return (
@@ -657,8 +664,8 @@ const searchParams = useSearchParams();
           }
         `}</style>
       )}
-      <div className={`min-h-screen bg-gray-50 mt-[5%] bg-white ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
-        <Toaster position={isRTL ? "top-left" : "top-right"} />
+             <div className={`min-h-screen bg-gray-50 mt-[5%] bg-white ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+         {isClient && <Toaster position={isRTL ? "top-left" : "top-right"} />}
       {/* Breadcrumb */}
       <div className="mb-6">
         <Link href="/car-listing" className={`text-blue-600 hover:underline flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -692,25 +699,25 @@ const searchParams = useSearchParams();
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{car.title}</h1>
             <div className={`flex items-center text-gray-600 mt-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <Clock className={`h-4 w-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
-                <span className="text-sm px-1">
-                  {(() => {
-                    const diffInMs = new Date().getTime() - new Date(car.createdAt).getTime();
-                    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-                    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-                    const diffInMonths = Math.floor(diffInDays / 30);
-                    const diffInYears = Math.floor(diffInDays / 365);
-                    
-                    if (diffInYears > 0) {
-                      return t('listed_years_ago', { years: diffInYears });
-                    } else if (diffInMonths > 0) {
-                      return t('listed_months_ago', { months: diffInMonths });
-                    } else if (diffInDays > 0) {
-                      return t('listed_days_ago', { days: diffInDays });
-                    } else {
-                      return t('listed_hours_ago', { hours: diffInHours });
-                    }
-                  })()}
-                </span>
+                                 <span className="text-sm px-1">
+                   {isClient ? (() => {
+                     const diffInMs = new Date().getTime() - new Date(car.createdAt).getTime();
+                     const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+                     const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+                     const diffInMonths = Math.floor(diffInDays / 30);
+                     const diffInYears = Math.floor(diffInDays / 365);
+                     
+                     if (diffInYears > 0) {
+                       return t('listed_years_ago', { years: diffInYears });
+                     } else if (diffInMonths > 0) {
+                       return t('listed_months_ago', { months: diffInMonths });
+                     } else if (diffInDays > 0) {
+                       return t('listed_days_ago', { days: diffInDays });
+                     } else {
+                       return t('listed_hours_ago', { hours: diffInHours });
+                     }
+                   })() : t('recently_listed')}
+                 </span>
                 <span className="mx-1">•</span>
               <MapPin className={`h-4 w-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
                 <span className="text-sm px-1">{car.location}</span>

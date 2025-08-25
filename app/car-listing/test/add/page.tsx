@@ -206,13 +206,23 @@ export default function AddCarListing() {
   const t = useTranslations('CarListing');
   const locale = useLocale();
   const isRTL = locale === 'ar' || locale === 'he-IL';
+  const [isClient, setIsClient] = useState(false);
+
+  // Ensure component is mounted on client side
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   
   // Debug log to see what locale is being detected
-  console.log('AddCarListing component rendered with locale:', locale, 'isRTL:', isRTL);
+  if (isClient) {
+    console.log('AddCarListing component rendered with locale:', locale, 'isRTL:', isRTL);
+  }
   
   // Get the appropriate manufacturers data based on locale
   const getManufacturersData = () => {
-    console.log('getManufacturersData called with locale:', locale);
+    if (isClient) {
+      console.log('getManufacturersData called with locale:', locale);
+    }
     let result;
     switch (locale) {
       case 'ar':
@@ -229,11 +239,13 @@ export default function AddCarListing() {
         result = manufacturers_english; // fallback to English
         break;
     }
-    console.log('getManufacturersData returning:', {
-      locale,
-      resultKeys: Object.keys(result).slice(0, 3),
-      sampleManufacturer: result[Object.keys(result)[0]]
-    });
+    if (isClient) {
+      console.log('getManufacturersData returning:', {
+        locale,
+        resultKeys: Object.keys(result).slice(0, 3),
+        sampleManufacturer: result[Object.keys(result)[0]]
+      });
+    }
     return result;
   };
 
@@ -262,14 +274,16 @@ export default function AddCarListing() {
   
   // Debug log to show the current state of manufacturers data
   useEffect(() => {
-    console.log('Current manufacturers data state:', {
-      locale,
-      manufacturersDataKeys: Object.keys(manufacturersData).slice(0, 5),
-      selectedManufacturer,
-      availableModelsCount: availableModels.length,
-      sampleManufacturer: manufacturersData[Object.keys(manufacturersData)[0]]
-    });
-  }, [locale, manufacturersData, selectedManufacturer, availableModels]);
+    if (isClient) {
+      console.log('Current manufacturers data state:', {
+        locale,
+        manufacturersDataKeys: Object.keys(manufacturersData).slice(0, 5),
+        selectedManufacturer,
+        availableModelsCount: availableModels.length,
+        sampleManufacturer: manufacturersData[Object.keys(manufacturersData)[0]]
+      });
+    }
+  }, [locale, manufacturersData, selectedManufacturer, availableModels, isClient]);
   const [plateNumber, setPlateNumber] = useState("");
   const [govCarInfo, setGovCarInfo] = useState<any>(null);
   const resultsRef = React.useRef<HTMLDivElement>(null);
@@ -295,11 +309,13 @@ export default function AddCarListing() {
   useEffect(() => {
     if (locale) {
       const newManufacturersData = getManufacturersData();
-      console.log('Locale changed, updating manufacturers data:', {
-        locale,
-        newManufacturersDataKeys: Object.keys(newManufacturersData).slice(0, 5), // Show first 5 keys
-        sampleManufacturer: newManufacturersData[Object.keys(newManufacturersData)[0]]
-      });
+      if (isClient) {
+        console.log('Locale changed, updating manufacturers data:', {
+          locale,
+          newManufacturersDataKeys: Object.keys(newManufacturersData).slice(0, 5), // Show first 5 keys
+          sampleManufacturer: newManufacturersData[Object.keys(newManufacturersData)[0]]
+        });
+      }
       setManufacturersData(newManufacturersData);
       
       // Clear current selections when locale changes to force user to reselect with new localized data
@@ -367,16 +383,18 @@ export default function AddCarListing() {
         setGovCarInfo(savedGovCarInfo);
       }
 
-      console.log('State restored from cookies:', {
-        step: savedStep,
-        hasFormData: !!savedFormData,
-        hasSelections: !!savedSelections,
-        inputMethod: savedInputMethod,
-        hasYad2ModelInfo: !!savedYad2ModelInfo,
-        hasPlateNumber: !!savedPlateNumber,
-        hasCarData: !!savedCarData,
-        hasGovCarInfo: !!savedGovCarInfo
-      });
+      if (isClient) {
+        console.log('State restored from cookies:', {
+          step: savedStep,
+          hasFormData: !!savedFormData,
+          hasSelections: !!savedSelections,
+          inputMethod: savedInputMethod,
+          hasYad2ModelInfo: !!savedYad2ModelInfo,
+          hasPlateNumber: !!savedPlateNumber,
+          hasCarData: !!savedCarData,
+          hasGovCarInfo: !!savedGovCarInfo
+        });
+      }
     } catch (error) {
       console.error('Error restoring state from cookies:', error);
     }
@@ -890,12 +908,14 @@ export default function AddCarListing() {
       setAvailableSubmodels([]);
       
       // Debug log to see what models are being loaded
-      console.log('Models loaded for manufacturer:', {
-        locale,
-        selectedManufacturer,
-        manufacturerData: manufacturersData[selectedManufacturer],
-        models: models.map(m => ({ id: m.id, title: m.title, manufacturer: m.manufacturer?.title }))
-      });
+      if (isClient) {
+        console.log('Models loaded for manufacturer:', {
+          locale,
+          selectedManufacturer,
+          manufacturerData: manufacturersData[selectedManufacturer],
+          models: models.map(m => ({ id: m.id, title: m.title, manufacturer: m.manufacturer?.title }))
+        });
+      }
     } else {
       setAvailableModels([]);
       setAvailableYears([]);
@@ -1953,6 +1973,15 @@ export default function AddCarListing() {
     }
   };
 
+  // Show loading state while not on client
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-[15%] md:mt-[5%] py-8 px-4 sm:px-6 lg:px-8 ${isRTL ? 'rtl' : 'ltr'}`}>
       <motion.div 
@@ -1969,7 +1998,7 @@ export default function AddCarListing() {
               <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('add_car_listing')}</h1>
               <p className="text-gray-600">{t('fill_details')}</p>
               {/* Progress indicator */}
-              {loadFromCookie(COOKIE_KEYS.CURRENT_STEP) !== null && (
+              {isClient && loadFromCookie(COOKIE_KEYS.CURRENT_STEP) !== null && (
                 <div className="flex items-center gap-2 mt-2 text-sm text-blue-600">
                   <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
                   <span>{t('progress_saved') || 'Progress saved automatically'}</span>
@@ -2005,7 +2034,7 @@ export default function AddCarListing() {
           )}
           
           {/* Debug Storage Button (only in development) */}
-          {process.env.NODE_ENV === 'development' && (
+          {isClient && process.env.NODE_ENV === 'development' && (
             <Button
               type="button"
               variant="outline"
@@ -2023,7 +2052,7 @@ export default function AddCarListing() {
         </div>
 
         {/* Welcome back message for users with saved progress */}
-        {hasSavedProgress() && (
+        {isClient && hasSavedProgress() && (
           <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -2231,7 +2260,7 @@ export default function AddCarListing() {
                   className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.title ? 'border-red-500' : ''}`}
                 />
                 {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
-              {!formData.title && selectedManufacturer && selectedModel && selectedYear && (
+              {isClient && !formData.title && selectedManufacturer && selectedModel && selectedYear && (
                 <p className="mt-2 text-sm text-blue-600">
                   💡 {t('title_auto_generation_hint') || 'Title will be auto-generated as'} "{manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer} {formData.commercialName || t('model')} {selectedYear} {yad2ModelInfo?.data?.koah_sus || t('model')}  {yad2ModelInfo?.data?.transmission || t('model')} {yad2ModelInfo?.data?.fuelType || t('model')} {t('when_click_next') || 'when you click next'}
                 </p>
@@ -2308,7 +2337,7 @@ export default function AddCarListing() {
                           }}
                         />
                         {/* Show restored indicator if plate number was loaded from cookies */}
-                        {plateNumber && loadFromCookie(COOKIE_KEYS.PLATE_NUMBER) === plateNumber && (
+                        {isClient && plateNumber && loadFromCookie(COOKIE_KEYS.PLATE_NUMBER) === plateNumber && (
                           <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">
                             ✓ Restored
                           </div>
@@ -2548,19 +2577,21 @@ export default function AddCarListing() {
                               setAvailableSubmodels(formattedSubmodels);
                               
                               // Debug log to see what's happening with localization
-                              console.log('Submodel localization debug:', {
-                                locale,
-                                selectedManufacturer,
-                                manufacturerTitleHebrew,
-                                modelTitleEnglish,
-                                submodelOptions: submodelOptions.length,
-                                formattedSubmodels: formattedSubmodels.map(s => ({
-                                  id: s.id,
-                                  title: s.title,
-                                  originalTitle: s.originalTitle,
-                                  isLocalized: s.title !== s.originalTitle
-                                }))
-                              });
+                              if (isClient) {
+                                console.log('Submodel localization debug:', {
+                                  locale,
+                                  selectedManufacturer,
+                                  manufacturerTitleHebrew,
+                                  modelTitleEnglish,
+                                  submodelOptions: submodelOptions.length,
+                                  formattedSubmodels: formattedSubmodels.map(s => ({
+                                    id: s.id,
+                                    title: s.title,
+                                    originalTitle: s.originalTitle,
+                                    isLocalized: s.title !== s.originalTitle
+                                  }))
+                                });
+                              }
                             } else {
                               setAvailableSubmodels([]);
                             }
@@ -2825,7 +2856,7 @@ export default function AddCarListing() {
               {!loading && yad2ModelInfo?.data && (
                 <div className="relative">
                   {/* Show restored indicator if yad2ModelInfo was loaded from cookies */}
-                  {loadFromCookie(COOKIE_KEYS.YAD2_MODEL_INFO) && (
+                  {isClient && loadFromCookie(COOKIE_KEYS.YAD2_MODEL_INFO) && (
                     <div className="absolute top-4 right-4 bg-green-500 text-white text-xs px-3 py-1 rounded-full animate-pulse z-10">
                       ✓ Data Restored
                     </div>
@@ -3119,7 +3150,7 @@ export default function AddCarListing() {
                     </div>
                   </div>
                 </RadioGroup>
-                {formData.priceNegotiable && (
+                {isClient && formData.priceNegotiable && (
                   <p className="mt-2 text-sm text-blue-600">
                     💡 {t('negotiable_hint') || 'Buyers will know you are open to reasonable offers'}
                   </p>
@@ -3507,13 +3538,17 @@ export default function AddCarListing() {
             </Button>
 
             {(() => {
-              console.log('Rendering navigation - Current step:', currentStep, 'Total steps:', STEPS.length, 'Should show submit:', currentStep >= STEPS.length - 1);
+              if (isClient) {
+                console.log('Rendering navigation - Current step:', currentStep, 'Total steps:', STEPS.length, 'Should show submit:', currentStep >= STEPS.length - 1);
+              }
               return currentStep < STEPS.length - 1 ? (
                 <Button
                   type="button"
                   onClick={() =>
                     {
-                      console.log('Current step:', currentStep, 'Total steps:', STEPS.length);
+                      if (isClient) {
+                        console.log('Current step:', currentStep, 'Total steps:', STEPS.length);
+                      }
                       if (currentStep === 0) {
                         // Validate car type selection
                         if (!formData.carType) {
@@ -3527,8 +3562,10 @@ export default function AddCarListing() {
                           return;
                         }
                         if (inputMethod === "manual") {
-                          console.log('yad2ModelInfo?.data', yad2ModelInfo)
-                          console.log('formData', formData)
+                          if (isClient) {
+                            console.log('yad2ModelInfo?.data', yad2ModelInfo)
+                            console.log('formData', formData)
+                          }
                           setFormData(prev => ({ ...prev, title: yad2ModelInfo?.data?.commercialName +  ` ${t('engine')} ` + (parseInt(yad2ModelInfo?.data?.engineCapacity)/1000 ).toFixed(1) + ` ${t('year')} ` + formData?.year + ` ${t('model')} ` + yad2ModelInfo?.data?.trimLevel + ` ${t('horsepower')} ` + yad2ModelInfo?.data?.enginePower + ` ${t('gearbox')} ` + yad2ModelInfo?.data?.transmission }));
                           setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
                         }
@@ -3539,8 +3576,10 @@ export default function AddCarListing() {
                             alert(t('please_search_for_a_car_first') || 'Please search for a car first');
                             return;
                           }
-                          console.log('yad2ModelInfo?.data', yad2ModelInfo)
-                          console.log('yad2ModelInfo?.data?.manufacturerName', yad2ModelInfo?.data?.manufacturerName)
+                          if (isClient) {
+                            console.log('yad2ModelInfo?.data', yad2ModelInfo)
+                            console.log('yad2ModelInfo?.data?.manufacturerName', yad2ModelInfo?.data?.manufacturerName)
+                          }
                           if (formData.title === "" || formData.title === undefined || formData.title === null || formData.title === "null" ) {
                             if (yad2ModelInfo?.data?.manufacturerName && yad2ModelInfo?.data?.commercialName && yad2ModelInfo?.data?.shnat_yitzur) {
                               setFormData(prev => ({

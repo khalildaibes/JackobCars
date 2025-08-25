@@ -33,41 +33,48 @@ const CarListings: React.FC = () => {
   const t = useTranslations('CarListing');
   const router = useRouter();
   
-  // Move the arrays inside the component where useTranslations is available
-  const MAKES = [
-    { value: "Any", label: t('makes.any') },
-    { value: "Toyota", label: t('makes.toyota') },
-    { value: "Honda", label: t('makes.honda') },
-    { value: "Ford", label: t('makes.ford') },
-    { value: "Chevrolet", label: t('makes.chevrolet') },
-    { value: "BMW", label: t('makes.bmw') },
-    { value: "Mercedes-Benz", label: t('makes.mercedes') },
-    { value: "Audi", label: t('makes.audi') },
-    { value: "Tesla", label: t('makes.tesla') },
-    { value: "Lexus", label: t('makes.lexus') },
-    { value: "Subaru", label: t('makes.subaru') }
-  ];
+  // Initialize state for translation arrays
+  const [MAKES, setMAKES] = useState<Array<{ value: string; label: string }>>([]);
+  const [BODY_TYPES, setBODY_TYPES] = useState<Array<{ value: string; label: string }>>([]);
+  const [FUEL_TYPES, setFUEL_TYPES] = useState<Array<{ value: string; label: string }>>([]);
+  
+  // Set translation arrays after component mounts to prevent hydration issues
+  useEffect(() => {
+    setMAKES([
+      { value: "Any", label: t('makes.any') },
+      { value: "Toyota", label: t('makes.toyota') },
+      { value: "Honda", label: t('makes.honda') },
+      { value: "Ford", label: t('makes.ford') },
+      { value: "Chevrolet", label: t('makes.chevrolet') },
+      { value: "BMW", label: t('makes.bmw') },
+      { value: "Mercedes-Benz", label: t('makes.mercedes') },
+      { value: "Audi", label: t('makes.audi') },
+      { value: "Tesla", label: t('makes.tesla') },
+      { value: "Lexus", label: t('makes.lexus') },
+      { value: "Subaru", label: t('makes.subaru') }
+    ]);
 
-  const BODY_TYPES = [
-    { value: "Any", label: t('body_types.any') },
-    { value: "Sedan", label: t('body_types.sedan') },
-    { value: "SUV", label: t('body_types.suv') },
-    { value: "Truck", label: t('body_types.truck') },
-    { value: "Coupe", label: t('body_types.coupe') },
-    { value: "Convertible", label: t('body_types.convertible') },
-    { value: "Hatchback", label: t('body_types.hatchback') },
-    { value: "Wagon", label: t('body_types.wagon') },
-    { value: "Van", label: t('body_types.van') }
-  ];
+    setBODY_TYPES([
+      { value: "Any", label: t('body_types.any') },
+      { value: "Sedan", label: t('body_types.sedan') },
+      { value: "SUV", label: t('body_types.suv') },
+      { value: "Truck", label: t('body_types.truck') },
+      { value: "Coupe", label: t('body_types.coupe') },
+      { value: "Convertible", label: t('body_types.convertible') },
+      { value: "Hatchback", label: t('body_types.hatchback') },
+      { value: "Wagon", label: t('body_types.wagon') },
+      { value: "Van", label: t('body_types.van') }
+    ]);
 
-  const FUEL_TYPES = [
-    { value: "Any", label: t('fuel_types.any') },
-    { value: "Gasoline", label: t('fuel_types.gasoline') },
-    { value: "Diesel", label: t('fuel_types.diesel') },
-    { value: "Electric", label: t('fuel_types.electric') },
-    { value: "Hybrid", label: t('fuel_types.hybrid') },
-    { value: "Plug-in Hybrid", label: t('fuel_types.plug_in_hybrid') }
-  ];
+    setFUEL_TYPES([
+      { value: "Any", label: t('fuel_types.any') },
+      { value: "Gasoline", label: t('fuel_types.gasoline') },
+      { value: "Diesel", label: t('fuel_types.diesel') },
+      { value: "Electric", label: t('fuel_types.electric') },
+      { value: "Hybrid", label: t('fuel_types.hybrid') },
+      { value: "Plug-in Hybrid", label: t('fuel_types.plug_in_hybrid') }
+    ]);
+  }, [t]);
 
   // Add new state for min and max price
   const [minMaxPrices, setMinMaxPrices] = useState<{ min: number; max: number }>({ min: 5000, max: 100000 });
@@ -381,7 +388,17 @@ const CarListings: React.FC = () => {
     router.push(`/car-details/${slug}`);
   };
 
-
+  // Don't render until translation arrays are populated to prevent hydration issues
+  if (MAKES.length === 0 || BODY_TYPES.length === 0 || FUEL_TYPES.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-7xl mt-[15%] md:mt-[5%] bg-white rounded-lg">
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl mt-[15%] md:mt-[5%] bg-white rounded-lg">

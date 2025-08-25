@@ -9,8 +9,10 @@ const LanguageSwitcher = () => {
   ];
 
   const [currentLocale, setCurrentLocale] = useState('ar');
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     // Read the current locale from cookie (if available), default to "ar"
     const match = document.cookie.match(/NEXT_LOCALE=([^;]+)/);
     setCurrentLocale(match ? match[1] : 'ar');
@@ -18,9 +20,10 @@ const LanguageSwitcher = () => {
 
   // Set the site's text direction based on the current locale.
   useEffect(() => {
+    if (!isClient) return;
     // if the current locale is not "en", set the direction to rtl; otherwise, ltr
     document.documentElement.setAttribute("dir", currentLocale !== "en" ? "rtl" : "ltr");
-  }, [currentLocale]);
+  }, [currentLocale, isClient]);
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const newLocale = event.target.value;
@@ -30,6 +33,18 @@ const LanguageSwitcher = () => {
     // Reload the page so that the provider can re-read the new locale and update the direction
     window.location.reload();
   };
+
+  // Don't render until client-side to prevent hydration issues
+  if (!isClient) {
+    return (
+      <select 
+        className="bg-white px-3 py-2 border text-black border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        disabled
+      >
+        <option>Loading...</option>
+      </select>
+    );
+  }
 
   return (
     <select 

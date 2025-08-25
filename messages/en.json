@@ -332,7 +332,15 @@
     "fuel_type": "Fuel Type",
     "please_enter_mileage": "Please enter mileage",
     "please_search_for_a_car_first": "Please search for a car first",
-    "please_select_car_type": "Please select a car type"
+    "please_select_car_type": "Please select a car type",
+    
+    "progress_saved": "Progress Saved",
+    "clear_saved_progress": "Clear Saved Progress",
+    "clear_progress": "Clear Progress",
+    "clear_plate_data": "Clear Plate Data",
+    "clear_plate": "Clear Plate",
+    "welcome_back": "Welcome Back",
+    "progress_restored": "Progress Restored"
   },
   "BookingPage": {
     "loading": "Loading...",
@@ -1252,7 +1260,15 @@
     "condition_trade_in_description": "Condition & Trade-in Description",
     "owner_name": "Owner Name",
     "select_owner_type": "Select Owner Type",
-    "terms_checkbox": "I agree to the terms and privacy policy"
+    "terms_checkbox": "I agree to the terms and privacy policy",
+    
+    "progress_saved": "Progress Saved",
+    "clear_saved_progress": "Clear Saved Progress",
+    "clear_progress": "Clear Progress",
+    "clear_plate_data": "Clear Plate Data",
+    "clear_plate": "Clear Plate",
+    "welcome_back": "Welcome Back",
+    "progress_restored": "Progress Restored"
   },
   "CarDetails": {
     "financing_options": "Financing Options",

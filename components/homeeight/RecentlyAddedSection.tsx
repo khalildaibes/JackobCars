@@ -6,7 +6,7 @@ import { Img } from "../Img/index";
 import { Text } from "../Text";
 import { Slider } from "../Slider";
 import Link from "next/link";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import AliceCarousel, { EventObject } from "react-alice-carousel";
 import { useTranslations } from "next-intl";
 import { cn } from "../../app/lib/utils";
@@ -25,7 +25,14 @@ export default function RecentlyAddedSection({
 }: RecentlyAddedSectionProps) {
   const t = useTranslations("HomePage");
   const [sliderState, setSliderState] = React.useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const sliderRef = React.useRef<AliceCarousel>(null);
+
+  useEffect(() => {
+    // Set mobile state after component mounts to prevent hydration issues
+    setIsMobile(window.innerWidth <= 768);
+  }, []);
+
   return (
     <>
       <div className="flex justify-end self-stretch">
@@ -80,7 +87,7 @@ export default function RecentlyAddedSection({
                     paddingRight={10}
                     items={listings.map((car) => (
                       <div key={car.id} className="px-2 ">
-                      <CarCard key={car.id} car={car} variant={window.innerWidth <= 768 ? "list" : "grid"} />
+                      <CarCard key={car.id} car={car} variant={isMobile ? "list" : "grid"} />
                   </div>
                     ))}
                     ref={sliderRef}

@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import { useTranslations } from 'next-intl';
 
 interface ComparisonContextType {
   selectedCars: any[];
@@ -17,7 +16,6 @@ const ComparisonContext = createContext<ComparisonContextType | undefined>(undef
 
 export function ComparisonProvider({ children }: { children: React.ReactNode }) {
   const [selectedCars, setSelectedCars] = useState<any[]>([]);
-  const t = useTranslations('Comparison');
 
   useEffect(() => {
     const storedCars = localStorage.getItem('selectedCars');
@@ -29,33 +27,33 @@ export function ComparisonProvider({ children }: { children: React.ReactNode }) 
   const addToComparison = (car: any) => {
     // Check if car is already in comparison
     if (selectedCars.some(selectedCar => selectedCar.id === car.id)) {
-      toast.error(t('car_already_added'));
+      toast.error('Car already added to comparison');
       return;
     }
 
     // Check if we've reached the maximum limit
     if (selectedCars.length >= 3) {
-      toast.error(t('max_cars_reached'));
+      toast.error('Maximum of 3 cars allowed for comparison');
       return;
     }
 
     const updatedCars = [...selectedCars, car];
     setSelectedCars(updatedCars);
     localStorage.setItem('selectedCars', JSON.stringify(updatedCars));
-    toast.success(t('car_added_to_comparison'));
+    toast.success('Car added to comparison');
   };
 
   const removeFromComparison = (carId: string) => {
     const updatedCars = selectedCars.filter(car => car.id !== carId);
     setSelectedCars(updatedCars);
     localStorage.setItem('selectedCars', JSON.stringify(updatedCars));
-    toast.success(t('car_removed_from_comparison'));
+    toast.success('Car removed from comparison');
   };
 
   const clearComparison = () => {
     setSelectedCars([]);
     localStorage.removeItem('selectedCars');
-    toast.success(t('comparison_cleared'));
+    toast.success('Comparison cleared');
   };
 
   const isInComparison = (carId: string) => {
@@ -68,18 +66,18 @@ export function ComparisonProvider({ children }: { children: React.ReactNode }) 
     if (navigator.share) {
       try {
         await navigator.share({
-          title: t('share_title'),
-          text: t('share_text'),
+          title: 'Car Comparison',
+          text: 'Check out this car comparison',
           url: comparisonUrl
         });
       } catch (error) {
         console.error('Error sharing:', error);
-        toast.error(t('share_error'));
+        toast.error('Failed to share comparison');
       }
     } else {
       // Fallback to copying to clipboard
       navigator.clipboard.writeText(comparisonUrl);
-      toast.success(t('copied_to_clipboard'));
+      toast.success('Comparison link copied to clipboard');
     }
   };
 

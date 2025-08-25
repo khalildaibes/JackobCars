@@ -1953,6 +1953,238 @@ export default function AddCarListing() {
     }
   };
 
+  // Move the complex logic outside JSX to avoid hydration issues
+  const renderNextButton = () => {
+    if (currentStep < STEPS.length - 1) {
+      return (
+        <Button
+          type="button"
+          onClick={() => {
+            console.log('Current step:', currentStep, 'Total steps:', STEPS.length);
+            if (currentStep === 0) {
+              // Validate car type selection
+              if (!formData.carType) {
+                alert(t('please_select_car_type') || 'Please select a car type');
+                return;
+              }
+              setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+            } else if (currentStep === 1) {
+              if (!formData.mileage) {
+                alert(t('please_enter_mileage') || 'Please enter the mileage');
+                return;
+              }
+              if (inputMethod === "manual") {
+                console.log('yad2ModelInfo?.data', yad2ModelInfo)
+                console.log('formData', formData)
+                setFormData(prev => ({ ...prev, title: yad2ModelInfo?.data?.commercialName +  ` ${t('engine')} ` + (parseInt(yad2ModelInfo?.data?.engineCapacity)/1000 ).toFixed(1) + ` ${t('year')} ` + formData?.year + ` ${t('model')} ` + yad2ModelInfo?.data?.trimLevel + ` ${t('horsepower')} ` + yad2ModelInfo?.data?.enginePower + ` ${t('gearbox')} ` + yad2ModelInfo?.data?.transmission }));
+                setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+              } else {
+                // Check if user has searched for a car first
+                if (!yad2ModelInfo?.data) {
+                  alert(t('please_search_for_a_car_first') || 'Please search for a car first');
+                  return;
+                }
+                console.log('yad2ModelInfo?.data', yad2ModelInfo)
+                console.log('yad2ModelInfo?.data?.manufacturerName', yad2ModelInfo?.data?.manufacturerName)
+                if (formData.title === "" || formData.title === undefined || formData.title === null || formData.title === "null" ) {
+                  if (yad2ModelInfo?.data?.manufacturerName && yad2ModelInfo?.data?.commercialName && yad2ModelInfo?.data?.shnat_yitzur) {
+                    setFormData(prev => ({
+                      ...prev,
+                      title:
+                        yad2ModelInfo?.data?.commercialName +
+                        (yad2ModelInfo?.data?.nefah_manoa !== undefined &&
+                         yad2ModelInfo?.data?.nefah_manoa !== null &&
+                         yad2ModelInfo?.data?.nefah_manoa !== ""
+                          ? ` ${t('engine')} ` + (parseInt(yad2ModelInfo?.data?.nefah_manoa) / 1000).toFixed(1)
+                          : ""
+                        ) +
+                        +
+                        (yad2ModelInfo?.data?.shnat_yitzur !== undefined && yad2ModelInfo?.data?.shnat_yitzur !== null && yad2ModelInfo?.data?.shnat_yitzur !== "" 
+                          ? ` ${t('year')} ` + yad2ModelInfo?.data?.shnat_yitzur 
+                          : ""
+                        ) +
+                        (yad2ModelInfo?.data?.subModelTitle !== undefined && yad2ModelInfo?.data?.subModelTitle !== null && yad2ModelInfo?.data?.subModelTitle !== "" 
+                          ? ` ${t('model')} ` + yad2ModelInfo?.data?.subModelTitle 
+                          : ""
+                        ) +
+                        (yad2ModelInfo?.data?.koah_sus !== undefined && yad2ModelInfo?.data?.koah_sus !== null && yad2ModelInfo?.data?.koah_sus !== "" 
+                          ? ` ${t('horsepower')} ` + yad2ModelInfo?.data?.koah_sus 
+                          : ""
+                        ) +
+                        (yad2ModelInfo?.data?.transmission !== undefined && yad2ModelInfo?.data?.transmission !== null && yad2ModelInfo?.data?.transmission !== "" 
+                          ? ` ${t('gearbox')} ` + yad2ModelInfo?.data?.transmission 
+                          : ""
+                        ) 
+                    }));
+                    setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                  } else {
+                    setFormData(prev => ({
+                      ...prev,
+                      title:
+                        yad2ModelInfo?.data?.commercialName +
+                        (yad2ModelInfo?.data?.nefah_manoa !== undefined &&
+                         yad2ModelInfo?.data?.nefah_manoa !== null &&
+                         yad2ModelInfo?.data?.nefah_manoa !== ""
+                          ? ` ${t('engine')} ` + (parseInt(yad2ModelInfo?.data?.nefah_manoa) / 1000).toFixed(1)
+                          : ""
+                        ) +
+                        +
+                        (yad2ModelInfo?.data?.shnat_yitzur !== undefined && yad2ModelInfo?.data?.shnat_yitzur !== null && yad2ModelInfo?.data?.shnat_yitzur !== "" 
+                          ? ` ${t('year')} ` + yad2ModelInfo?.data?.shnat_yitzur 
+                          : ""
+                        ) +
+                        (yad2ModelInfo?.data?.subModelTitle !== undefined && yad2ModelInfo?.data?.subModelTitle !== null && yad2ModelInfo?.data?.subModelTitle !== "" 
+                          ? ` ${t('model')} ` + yad2ModelInfo?.data?.subModelTitle 
+                          : ""
+                        ) +
+                        (yad2ModelInfo?.data?.koah_sus !== undefined && yad2ModelInfo?.data?.koah_sus !== null && yad2ModelInfo?.data?.koah_sus !== "" 
+                          ? ` ${t('horsepower')} ` + yad2ModelInfo?.data?.koah_sus 
+                          : ""
+                        ) +
+                        (yad2ModelInfo?.data?.transmission !== undefined && yad2ModelInfo?.data?.transmission !== null && yad2ModelInfo?.data?.transmission !== "" 
+                          ? ` ${t('gearbox')} ` + yad2ModelInfo?.data?.transmission 
+                          : ""
+                        ) 
+                    }));                             
+                    setCurrentStep(1)
+                  }
+                } else {
+                  setFormData(prev => ({
+                    ...prev,
+                    title:
+                      yad2ModelInfo?.data?.commercialName +
+                      (yad2ModelInfo?.data?.nefah_manoa !== undefined &&
+                       yad2ModelInfo?.data?.nefah_manoa !== null &&
+                       yad2ModelInfo?.data?.nefah_manoa !== ""
+                        ? ` ${t('engine')} ` + (parseInt(yad2ModelInfo?.data?.nefah_manoa) / 1000).toFixed(1)
+                        : ""
+                      ) +
+                      +
+                      (yad2ModelInfo?.data?.shnat_yitzur !== undefined && yad2ModelInfo?.data?.shnat_yitzur !== null && yad2ModelInfo?.data?.shnat_yitzur !== "" 
+                        ? ` ${t('year')} ` + yad2ModelInfo?.data?.shnat_yitzur 
+                        : ""
+                      ) +
+                      (yad2ModelInfo?.data?.subModelTitle !== undefined && yad2ModelInfo?.data?.subModelTitle !== null && yad2ModelInfo?.data?.subModelTitle !== "" 
+                        ? ` ${t('model')} ` + yad2ModelInfo?.data?.subModelTitle 
+                        : ""
+                      ) +
+                      (yad2ModelInfo?.data?.koah_sus !== undefined && yad2ModelInfo?.data?.koah_sus !== null && yad2ModelInfo?.data?.koah_sus !== "" 
+                        ? ` ${t('horsepower')} ` + yad2ModelInfo?.data?.koah_sus 
+                        : ""
+                      ) +
+                      (yad2ModelInfo?.data?.transmission !== undefined && yad2ModelInfo?.data?.transmission !== null && yad2ModelInfo?.data?.transmission !== "" 
+                        ? ` ${t('gearbox')} ` + yad2ModelInfo?.data?.transmission 
+                        : ""
+                      ) 
+                  }));
+                  setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                }
+              } 
+            } else if(currentStep === 2){
+              // Validate mandatory fields in step 2
+              if (!formData.ownerType) {
+                alert(t('please_select_owner_type') || 'Please select an owner type');
+                return;
+              }
+            
+              if(formData.description === "" || formData.description === undefined || formData.description === null || formData.description === "null" ){
+                generateAIDescription();
+                setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+              }else{
+                setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+              }
+            }else if(currentStep === 3){
+              // Validate mandatory fields in price step
+              if (!formData.askingPrice) {
+                alert(t('please_enter_price') || 'Please enter the asking price');
+                return;
+              }
+              if (!formData.region) {
+                alert(t('please_select_region') || 'Please select your region');
+                return;
+              }
+              setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+            }else if(currentStep === 4){
+              // Validate mandatory fields in contact step
+              if (!formData.name) {
+                alert(t('please_enter_name') || 'Please enter your name');
+                return;
+              }
+              if (!formData.phone) {
+                alert(t('please_enter_phone') || 'Please enter your phone number');
+                return;
+              }
+              setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+            }else if(currentStep === 5){
+              // Validate mandatory fields in image upload step
+              if (!formData.images.length) {
+                alert(t('please_upload_images') || 'Please upload at least one image');
+                return;
+              }
+              if (!formData.termsAccepted) {
+                alert(t('please_accept_terms') || 'Please accept the terms and privacy policy');
+                return;
+              }
+              setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+            }else if(currentStep === 6){
+              // Validate package selection
+              if (!formData.selectedPackage) {
+                alert(t('please_select_package') || 'Please select a package');
+                return;
+              }
+              setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+            }else {
+                setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+              }
+              
+            }
+          }
+          className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white transition-all duration-200 hover:shadow-md transform hover:scale-105"
+        >
+          <div className="flex items-center gap-2">
+            {t("next")}
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+        </Button>
+      );
+    }
+    
+    // Submit button
+    return (
+      <Button
+        type="button"
+        onClick={() => {
+          console.log('Submit button clicked on step:', currentStep);
+          // Handle form submission here
+          handleSubmit(new Event('submit') as any);
+        }}
+        disabled={isSubmitting}
+        className="px-6 py-3 rounded-xl bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white transition-all duration-200 hover:shadow-md transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <div className="flex items-center gap-2">
+          {isSubmitting ? (
+            <>
+              <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              {t('submitting') || 'Submitting...'}
+            </>
+          ) : (
+            <>
+              {t('submit_listing') || 'Submit Listing'}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </>
+          )}
+        </div>
+      </Button>
+    );
+  };
+
   return (
     <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-[15%] md:mt-[5%] py-8 px-4 sm:px-6 lg:px-8 ${isRTL ? 'rtl' : 'ltr'}`}>
       <motion.div 
@@ -3506,237 +3738,7 @@ export default function AddCarListing() {
           </div>
             </Button>
 
-            {(() => {
-              console.log('Rendering navigation - Current step:', currentStep, 'Total steps:', STEPS.length, 'Should show submit:', currentStep >= STEPS.length - 1);
-              return currentStep < STEPS.length - 1 ? (
-                <Button
-                  type="button"
-                  onClick={() =>
-                    {
-                      console.log('Current step:', currentStep, 'Total steps:', STEPS.length);
-                      if (currentStep === 0) {
-                        // Validate car type selection
-                        if (!formData.carType) {
-                          alert(t('please_select_car_type') || 'Please select a car type');
-                          return;
-                        }
-                        setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
-                      } else if (currentStep === 1) {
-                        if (!formData.mileage) {
-                          alert(t('please_enter_mileage') || 'Please enter the mileage');
-                          return;
-                        }
-                        if (inputMethod === "manual") {
-                          console.log('yad2ModelInfo?.data', yad2ModelInfo)
-                          console.log('formData', formData)
-                          setFormData(prev => ({ ...prev, title: yad2ModelInfo?.data?.commercialName +  ` ${t('engine')} ` + (parseInt(yad2ModelInfo?.data?.engineCapacity)/1000 ).toFixed(1) + ` ${t('year')} ` + formData?.year + ` ${t('model')} ` + yad2ModelInfo?.data?.trimLevel + ` ${t('horsepower')} ` + yad2ModelInfo?.data?.enginePower + ` ${t('gearbox')} ` + yad2ModelInfo?.data?.transmission }));
-                          setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
-                        }
-                       
-                        else{
-                           // Check if user has searched for a car first
-                           if (!yad2ModelInfo?.data) {
-                            alert(t('please_search_for_a_car_first') || 'Please search for a car first');
-                            return;
-                          }
-                          console.log('yad2ModelInfo?.data', yad2ModelInfo)
-                          console.log('yad2ModelInfo?.data?.manufacturerName', yad2ModelInfo?.data?.manufacturerName)
-                          if (formData.title === "" || formData.title === undefined || formData.title === null || formData.title === "null" ) {
-                            if (yad2ModelInfo?.data?.manufacturerName && yad2ModelInfo?.data?.commercialName && yad2ModelInfo?.data?.shnat_yitzur) {
-                              setFormData(prev => ({
-                                ...prev,
-                                title:
-                                  yad2ModelInfo?.data?.commercialName +
-                                  (yad2ModelInfo?.data?.nefah_manoa !== undefined &&
-                                   yad2ModelInfo?.data?.nefah_manoa !== null &&
-                                   yad2ModelInfo?.data?.nefah_manoa !== ""
-                                    ? ` ${t('engine')} ` + (parseInt(yad2ModelInfo?.data?.nefah_manoa) / 1000).toFixed(1)
-                                    : ""
-                                  ) +
-                                  +
-                                  (yad2ModelInfo?.data?.shnat_yitzur !== undefined && yad2ModelInfo?.data?.shnat_yitzur !== null && yad2ModelInfo?.data?.shnat_yitzur !== "" 
-                                    ? ` ${t('year')} ` + yad2ModelInfo?.data?.shnat_yitzur 
-                                    : ""
-                                  ) +
-                                  (yad2ModelInfo?.data?.subModelTitle !== undefined && yad2ModelInfo?.data?.subModelTitle !== null && yad2ModelInfo?.data?.subModelTitle !== "" 
-                                    ? ` ${t('model')} ` + yad2ModelInfo?.data?.subModelTitle 
-                                    : ""
-                                  ) +
-                                  (yad2ModelInfo?.data?.koah_sus !== undefined && yad2ModelInfo?.data?.koah_sus !== null && yad2ModelInfo?.data?.koah_sus !== "" 
-                                    ? ` ${t('horsepower')} ` + yad2ModelInfo?.data?.koah_sus 
-                                    : ""
-                                  ) +
-                                  (yad2ModelInfo?.data?.transmission !== undefined && yad2ModelInfo?.data?.transmission !== null && yad2ModelInfo?.data?.transmission !== "" 
-                                    ? ` ${t('gearbox')} ` + yad2ModelInfo?.data?.transmission 
-                                    : ""
-                                  ) 
-                              }));
-                              setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
-                            } else {
-                              setFormData(prev => ({
-                                ...prev,
-                                title:
-                                  yad2ModelInfo?.data?.commercialName +
-                                  (yad2ModelInfo?.data?.nefah_manoa !== undefined &&
-                                   yad2ModelInfo?.data?.nefah_manoa !== null &&
-                                   yad2ModelInfo?.data?.nefah_manoa !== ""
-                                    ? ` ${t('engine')} ` + (parseInt(yad2ModelInfo?.data?.nefah_manoa) / 1000).toFixed(1)
-                                    : ""
-                                  ) +
-                                  +
-                                  (yad2ModelInfo?.data?.shnat_yitzur !== undefined && yad2ModelInfo?.data?.shnat_yitzur !== null && yad2ModelInfo?.data?.shnat_yitzur !== "" 
-                                    ? ` ${t('year')} ` + yad2ModelInfo?.data?.shnat_yitzur 
-                                    : ""
-                                  ) +
-                                  (yad2ModelInfo?.data?.subModelTitle !== undefined && yad2ModelInfo?.data?.subModelTitle !== null && yad2ModelInfo?.data?.subModelTitle !== "" 
-                                    ? ` ${t('model')} ` + yad2ModelInfo?.data?.subModelTitle 
-                                    : ""
-                                  ) +
-                                  (yad2ModelInfo?.data?.koah_sus !== undefined && yad2ModelInfo?.data?.koah_sus !== null && yad2ModelInfo?.data?.koah_sus !== "" 
-                                    ? ` ${t('horsepower')} ` + yad2ModelInfo?.data?.koah_sus 
-                                    : ""
-                                  ) +
-                                  (yad2ModelInfo?.data?.transmission !== undefined && yad2ModelInfo?.data?.transmission !== null && yad2ModelInfo?.data?.transmission !== "" 
-                                    ? ` ${t('gearbox')} ` + yad2ModelInfo?.data?.transmission 
-                                    : ""
-                                  ) 
-                              }));                             
-                              setCurrentStep(1)
-                            }
-                          } else {
-                            setFormData(prev => ({
-                              ...prev,
-                              title:
-                                yad2ModelInfo?.data?.commercialName +
-                                (yad2ModelInfo?.data?.nefah_manoa !== undefined &&
-                                 yad2ModelInfo?.data?.nefah_manoa !== null &&
-                                 yad2ModelInfo?.data?.nefah_manoa !== ""
-                                  ? ` ${t('engine')} ` + (parseInt(yad2ModelInfo?.data?.nefah_manoa) / 1000).toFixed(1)
-                                  : ""
-                                ) +
-                                +
-                                (yad2ModelInfo?.data?.shnat_yitzur !== undefined && yad2ModelInfo?.data?.shnat_yitzur !== null && yad2ModelInfo?.data?.shnat_yitzur !== "" 
-                                  ? ` ${t('year')} ` + yad2ModelInfo?.data?.shnat_yitzur 
-                                  : ""
-                                ) +
-                                (yad2ModelInfo?.data?.subModelTitle !== undefined && yad2ModelInfo?.data?.subModelTitle !== null && yad2ModelInfo?.data?.subModelTitle !== "" 
-                                  ? ` ${t('model')} ` + yad2ModelInfo?.data?.subModelTitle 
-                                  : ""
-                                ) +
-                                (yad2ModelInfo?.data?.koah_sus !== undefined && yad2ModelInfo?.data?.koah_sus !== null && yad2ModelInfo?.data?.koah_sus !== "" 
-                                  ? ` ${t('horsepower')} ` + yad2ModelInfo?.data?.koah_sus 
-                                  : ""
-                                ) +
-                                (yad2ModelInfo?.data?.transmission !== undefined && yad2ModelInfo?.data?.transmission !== null && yad2ModelInfo?.data?.transmission !== "" 
-                                  ? ` ${t('gearbox')} ` + yad2ModelInfo?.data?.transmission 
-                                  : ""
-                                ) 
-                            }));
-                            setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
-                          }
-                      } 
-                    }
-                    
-                    else if(currentStep === 2){
-                      // Validate mandatory fields in step 2
-                      if (!formData.ownerType) {
-                        alert(t('please_select_owner_type') || 'Please select an owner type');
-                        return;
-                      }
-                    
-                      if(formData.description === "" || formData.description === undefined || formData.description === null || formData.description === "null" ){
-                        generateAIDescription();
-                        setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
-                      }else{
-                        setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
-                      }
-                    }else if(currentStep === 3){
-                      // Validate mandatory fields in price step
-                      if (!formData.askingPrice) {
-                        alert(t('please_enter_price') || 'Please enter the asking price');
-                        return;
-                      }
-                      if (!formData.region) {
-                        alert(t('please_select_region') || 'Please select your region');
-                        return;
-                      }
-                      setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
-                    }else if(currentStep === 4){
-                      // Validate mandatory fields in contact step
-                      if (!formData.name) {
-                        alert(t('please_enter_name') || 'Please enter your name');
-                        return;
-                      }
-                      if (!formData.phone) {
-                        alert(t('please_enter_phone') || 'Please enter your phone number');
-                        return;
-                      }
-                      setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
-                    }else if(currentStep === 5){
-                      // Validate mandatory fields in image upload step
-                      if (!formData.images.length) {
-                        alert(t('please_upload_images') || 'Please upload at least one image');
-                        return;
-                      }
-                      if (!formData.termsAccepted) {
-                        alert(t('please_accept_terms') || 'Please accept the terms and privacy policy');
-                        return;
-                      }
-                      setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
-                    }else if(currentStep === 6){
-                      // Validate package selection
-                      if (!formData.selectedPackage) {
-                        alert(t('please_select_package') || 'Please select a package');
-                        return;
-                      }
-                      setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
-                    }else {
-                        setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
-                      }
-                      
-                    }
-                  }
-                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white transition-all duration-200 hover:shadow-md transform hover:scale-105"
-                >
-                  <div className="flex items-center gap-2">
-                    {t("next")}
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </Button>
-              ) : (
-            <Button
-                  type="button"
-                  onClick={() => {
-                    console.log('Submit button clicked on step:', currentStep);
-                    // Handle form submission here
-                    handleSubmit(new Event('submit') as any);
-                  }}
-              disabled={isSubmitting}
-                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white transition-all duration-200 hover:shadow-md transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <div className="flex items-center gap-2">
-                    {isSubmitting ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        {t('submitting') || 'Submitting...'}
-                      </>
-                    ) : (
-                      <>
-                        {t('submit_listing') || 'Submit Listing'}
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </>
-                    )}
-                  </div>
-                </Button>
-              )
-            })()}
+            {renderNextButton()}
           </div>
         </form>
       </motion.div>

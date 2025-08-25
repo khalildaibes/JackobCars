@@ -18,10 +18,14 @@ export default function Navbar() {
   const [mobileDropdown, setMobileDropdown] = useState<string | null>(null);
   const [user, setUser] = useState(null);
   const [textColor, setTextColor] = useState('text-white/80');
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
   const t = useTranslations("Navbar");
 
   useEffect(() => {
+    // Set mobile state after component mounts to prevent hydration issues
+    setIsMobile(window.innerWidth < 768);
+    
     const currentUser = authService.getCurrentUser();
     setUser(currentUser);
 
@@ -160,8 +164,6 @@ export default function Navbar() {
     children: React.ReactNode;
     dropdownKey: keyof typeof dropdownItems;
   }) => {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-    
     const handleClick = (e: React.MouseEvent) => {
       if (isMobile) {
         e.preventDefault();

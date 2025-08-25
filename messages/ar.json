@@ -1295,7 +1295,24 @@
     "condition_trade_in_description": "وصف الحالة وخيارات المقايضة",
     "owner_name": "اسم المالك",
     "select_owner_type": "اختر نوع المالك",
-    "terms_checkbox": "أنا أوافق على الشروط وسياسة الخصوصية"
+    "terms_checkbox": "أنا أوافق على الشروط وسياسة الخصوصية",
+    
+    "progress_saved": "تم حفظ التقدم",
+    "clear_saved_progress": "مسح التقدم المحفوظ",
+    "clear_progress": "مسح التقدم",
+    "clear_plate_data": "مسح بيانات اللوحة",
+    "clear_plate": "مسح اللوحة",
+    "welcome_back": "مرحباً بعودتك",
+    "progress_restored": "تم استعادة التقدم",
+    
+    "please_select_owner_type": "يرجى اختيار نوع المالك",
+    "please_enter_price": "يرجى إدخال السعر",
+    "please_select_region": "يرجى اختيار المنطقة",
+    "please_enter_name": "يرجى إدخال الاسم",
+    "please_enter_phone": "يرجى إدخال رقم الهاتف",
+    "please_upload_images": "يرجى تحميل صورة واحدة على الأقل",
+    "please_accept_terms": "يرجى الموافقة على الشروط وسياسة الخصوصية",
+    "please_select_package": "يرجى اختيار حزمة"
   },
   "CarDetails": {
     "month": "شهر",
