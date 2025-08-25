@@ -3576,10 +3576,8 @@ export default function AddCarListing() {
                             alert(t('please_search_for_a_car_first') || 'Please search for a car first');
                             return;
                           }
-                          if (isClient) {
-                            console.log('yad2ModelInfo?.data', yad2ModelInfo)
-                            console.log('yad2ModelInfo?.data?.manufacturerName', yad2ModelInfo?.data?.manufacturerName)
-                          }
+                          console.log('yad2ModelInfo?.data', yad2ModelInfo)
+                          console.log('yad2ModelInfo?.data?.manufacturerName', yad2ModelInfo?.data?.manufacturerName)
                           if (formData.title === "" || formData.title === undefined || formData.title === null || formData.title === "null" ) {
                             if (yad2ModelInfo?.data?.manufacturerName && yad2ModelInfo?.data?.commercialName && yad2ModelInfo?.data?.shnat_yitzur) {
                               setFormData(prev => ({
