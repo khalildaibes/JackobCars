@@ -146,7 +146,7 @@ export async function POST(request) {
     }
     
     // Validate required fields
-    const requiredFields = ['title', 'makeModel', 'year', 'plateNumber', 'mileage', 'carType', 'ownerType', 'askingPrice', 'region', 'name', 'phone'];
+    const requiredFields = ['title', 'year', 'plateNumber', 'mileage', 'carType', 'ownerType', 'askingPrice', 'region', 'name', 'phone'];
     const missingFields = requiredFields.filter(field => !car[field]);
     
     if (missingFields.length > 0) {

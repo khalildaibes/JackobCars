@@ -1041,11 +1041,11 @@ export default function AddCarListing() {
 
     try {
       const response = await fetch('/api/createDescription', {
-        // method: 'POST',
-        // body: JSON.stringify({
-        //   info: yad2ModelInfo,
-        //   form: formData
-        // })
+        method: 'POST',
+        body: JSON.stringify({
+          info: yad2ModelInfo,
+          form: formData
+        })
       });
       
       if (response.ok) {
@@ -1836,8 +1836,8 @@ export default function AddCarListing() {
             formDataToSend.append('image', image);
             
             const imageUploadResponse = await fetch('/api/upload/image', {
-              // method: 'POST',
-              // body: formDataToSend
+              method: 'POST',
+              body: formDataToSend
             });
             
             if (imageUploadResponse.ok) {
@@ -1869,8 +1869,8 @@ export default function AddCarListing() {
           formDataToSend.append('video', formData.video);
           
           const videoUploadResponse = await fetch('/api/upload/video', {
-            // method: 'POST',
-            // body: formDataToSend
+            method: 'POST',
+            body: formDataToSend
           });
           
           if (videoUploadResponse.ok) {
@@ -1926,8 +1926,8 @@ export default function AddCarListing() {
 
       // Submit to addListing API
       const response = await fetch('/api/addListing', {
-        // method: 'POST',
-        // body: JSON.stringify(carDetails)
+        method: 'POST',
+        body: JSON.stringify(carDetails)
       });
 
       if (response.ok) {
