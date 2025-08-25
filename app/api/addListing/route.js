@@ -8,6 +8,7 @@ const openai = new OpenAI({
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://64.227.112.249:1337';
 const STRAPI_TOKEN = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+
 // Helper function to generate a slug matching /^[A-Za-z0-9-_.~]*$/
 function generateSlug(name) {
   const timestamp = Date.now();
@@ -24,6 +25,113 @@ function generateSlug(name) {
   );
 }
 
+/**
+ * API endpoint for adding car listings
+ * 
+ * Expected request structure:
+ * {
+ *   car: {
+ *     // Basic car information
+ *     title: string,
+ *     makeModel: string,
+ *     year: string,
+ *     plateNumber: string,
+ *     mileage: string,
+ *     color: string,
+ *     engineType: string,
+ *     transmission: string,
+ *     
+ *     // Condition and trade-in
+ *     currentCondition: string,
+ *     knownProblems: string,
+ *     pros: string,
+ *     cons: string,
+ *     tradeIn: string,
+ *     description: string,
+ *     
+ *     // Pricing and region
+ *     askingPrice: string,
+ *     priceNegotiable: boolean,
+ *     region: string,
+ *     
+ *     // Owner information
+ *     name: string,
+ *     email: string,
+ *     phone: string,
+ *     
+ *     // Car type and ownership
+ *     carType: string,
+ *     ownerType: string,
+ *     previousOwners: array,
+ *     
+ *     // Package and terms
+ *     selectedPackage: string,
+ *     termsAccepted: boolean,
+ *     
+ *     // Images and video
+ *     images: object,
+ *     video: object,
+ *     
+ *     // Manufacturer and model details
+ *     manufacturerName: string,
+ *     modelId: string,
+ *     subModelId: string,
+ *     commercialNickname: string,
+ *     yearOfProduction: string,
+ *     
+ *     // Technical specifications
+ *     engineCapacity: string,
+ *     bodyType: string,
+ *     seatingCapacity: string,
+ *     fuelType: string,
+ *     abs: string,
+ *     airbags: string,
+ *     powerWindows: string,
+ *     driveType: string,
+ *     totalWeight: string,
+ *     height: string,
+ *     fuelTankCapacity: string,
+ *     co2Emission: string,
+ *     greenIndex: string,
+ *     commercialName: string,
+ *     rank: string,
+ *     
+ *     // Additional fields
+ *     engineCode: string,
+ *     frameNumber: string,
+ *     lastTestDate: string,
+ *     tokefTestDate: string,
+ *     frontTires: string,
+ *     rearTires: string,
+ *     pollutionGroup: string,
+ *     dateOnRoad: string,
+ *     owner: string,
+ *     carTitle: string,
+ *     carColorGroupID: string,
+ *     yad2ColorID: string,
+ *     yad2CarTitle: string,
+ *     
+ *     // Engine power and performance
+ *     enginePower: string,
+ *     doors: string,
+ *     trimLevel: string,
+ *     
+ *     // Environmental data
+ *     noxEmission: string,
+ *     pmEmission: string,
+ *     hcEmission: string,
+ *     coEmission: string,
+ *     
+ *     // Safety and features
+ *     safetyRating: string,
+ *     safetyRatingWithoutSeatbelts: string,
+ *     fuelTankCapacityWithoutReserve: string
+ *   },
+ *   formData: object, // Additional form data (optional)
+ *   submission_timestamp: string, // ISO timestamp
+ *   form_version: string // Version identifier
+ * }
+ */
 export async function POST(request) {
   try {
     const locale = await getLocale();
@@ -36,22 +144,32 @@ export async function POST(request) {
     if (!car) {
       throw new Error('No car data provided in request body');
     }
-    const { manufacturerName, subModelTitle, carYear } = formData;
-    // Extract the needed fields from the car object
-    const brand = formData.manufacturerName || car.manufacturer_name || formData.makeModel || manufacturerName ||'Unknown';
-    const model = car.commercial_nickname || formData.commercialName || subModelTitle || 'Unknown';
-    const year = car.year_of_production || formData.yearOfProduction || carYear || 'Unknown';
+    
+    // Validate required fields
+    const requiredFields = ['title', 'makeModel', 'year', 'plateNumber', 'mileage', 'carType', 'ownerType', 'askingPrice', 'region', 'name', 'phone'];
+    const missingFields = requiredFields.filter(field => !car[field]);
+    
+    if (missingFields.length > 0) {
+      throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+    }
+    
+    // Extract the needed fields from the car object (this is the main data source)
+    const brand = car.manufacturerName || car.manufacturer_name || car.makeModel || 'Unknown';
+    const model = car.commercialNickname || car.commercial_nickname || car.modelName || 'Unknown';
+    const year = car.yearOfProduction || car.year_of_production || car.year || car.carYear || 'Unknown';
+    
     const specs = {
-      price: car.asking_price || formData.askingPrice || 0,
-      miles: car.miles || formData.mileage || '',
-      mileage: car.miles || formData.mileage || '',
-      fuel: car.fuel_type || formData.fuelType || '',
-      transmission: car.transmission || formData.transmission || '',
-      body_type: car.body_type || '',
-      engine_type: car.engine_type || formData.engineType || '',
-      condition: car.condition || formData.currentCondition || '',
-      known_problems: car.known_problems || formData.knownProblems || ''
+      price: car.askingPrice || car.asking_price || 0,
+      miles: car.mileage || car.miles || '',
+      mileage: car.mileage || car.miles || '',
+      fuel: car.fuelType || car.fuel_type || car.engineType || '',
+      transmission: car.transmission || '',
+      body_type: car.bodyType || car.body_type || '',
+      engine_type: car.engineType || car.engine_type || '',
+      condition: car.currentCondition || car.condition || '',
+      known_problems: car.knownProblems || car.known_problems || ''
     };
+    
     const images = car.images || {};
     const video = car.video || null;
     
@@ -99,48 +217,12 @@ export async function POST(request) {
       };
     }
 
-        // Generate pros and cons using the dedicated API endpoint
-        let generatedDetails = { pros: [], cons: [] };
-        try {
-          const prosConsResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000' }/api/prosandcons`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              make: brand,
-              model: model,
-              year: year,
-              specs: specs
-            })
-          });
-    
-          if (prosConsResponse.ok) {
-            generatedData = await prosConsResponse.json();
-            console.log('Pros/Cons API response:', generatedData);
-          } else {
-            console.warn('Pros/Cons API failed, using fallback data');
-            generatedData = {
-              pros: [`مميزات ${brand} ${model} ${year}`],
-              cons: [`عيوب ${brand} ${model} ${year}`]
-            };
-          }
-        } catch (error) {
-          console.error('Error calling pros/cons API:', error);
-          // Fallback data if API fails
-          generatedData = {
-            pros: [`مميزات ${brand} ${model} ${year}`],
-            cons: [`عيوب ${brand} ${model} ${year}`]
-          };
-        }
-    
-
     // Now prepare the data for Strapi with the correct structure
     const productData = {
       data: {
         categories: "car-listing",
         quantity: 1,
-        name: car.title,
+        name: car.title || `${brand} ${model} ${year}`,
         slug: generateSlug(`${brand} ${model} ${year}`),
         price: specs.price || 0,
         details: {
@@ -161,7 +243,7 @@ export async function POST(request) {
             pros: car.pros ? [car.pros] : (generatedData.pros || []),
             cons: car.cons ? [car.cons] : (generatedData.cons || []),
             tradeIn: car.tradeIn || car.trade_in || "",
-            description: car.description || generatedDetails.description || `سيارة ${brand} ${model} ${year}`,
+            description: car.description || `سيارة ${brand} ${model} ${year}`,
             
             // Pricing and region
             askingPrice: car.askingPrice || car.asking_price || specs.price || 0,
