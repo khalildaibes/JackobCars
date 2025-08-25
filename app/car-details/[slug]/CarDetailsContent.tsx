@@ -444,6 +444,9 @@ const searchParams = useSearchParams();
 
   // Add keyboard support for image modal and media navigation
   useEffect(() => {
+    // Don't add event listeners if car data is not loaded yet
+    if (!car) return;
+    
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isImageModalOpen) {
         setIsImageModalOpen(false);
@@ -490,8 +493,10 @@ const searchParams = useSearchParams();
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
     };
-  }, [isImageModalOpen, car.allImages, car.video]);
+  }, [isImageModalOpen, car?.allImages, car?.video]);
   const add_to_favorites = (slug: number) => {
+    if (!car) return;
+    
     let updatedFavorites;
     if (favorites.includes(slug)) {
       updatedFavorites = favorites.filter((favslug) => favslug !== slug);
@@ -506,7 +511,7 @@ const searchParams = useSearchParams();
 
   // Calculate monthly payment when rate or term changes
   useEffect(() => {
-    if (car) {
+    if (car && car.price) {
       const price = parseFloat(car.price.replace(/[^0-9.-]+/g, ""));
       const monthlyRate = interestRate / 12 / 100;
       const numberOfPayments = loanTerm;
@@ -527,6 +532,8 @@ const searchParams = useSearchParams();
 
   const handleSendEmail = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!car) return;
+    
     setSendingEmail(true);
 
     try {
