@@ -1907,9 +1907,6 @@ export default function AddCarListing() {
       // Submit to addListing API
       const response = await fetch('/api/addListing', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(carDetails)
       });
 
