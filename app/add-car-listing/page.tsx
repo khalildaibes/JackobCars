@@ -18,7 +18,7 @@ import { useTranslations } from 'next-intl';
 import { useLocale } from 'next-intl';
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
-import { Upload, Plus,  X, Camera } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { Alert, AlertDescription } from "../../components/ui/alert";
 import { Card, CardContent } from "../../components/ui/card";
 import Cookies from 'js-cookie';
@@ -71,11 +71,6 @@ import { title } from 'process';
 const GOV_CAR_DATA_API = "/api/gov/car-data";
 
 // Constants
-const VALIDATION_RULES = {
-  MAX_IMAGES: 10,
-  MIN_IMAGES: 1,
-  MAX_VIDEO_DURATION: 15
-};
 
 const ENGINE_TYPES = [
   { value: 'petrol', label: 'Petrol' },
@@ -251,10 +246,8 @@ export default function AddCarListing() {
 
   const STEPS = [
     'Basic Information',
-    'Condition & Trade-in & description',
     'Price',
     'Contact Info',
-    'Upload Images',
     'Package Selection',
   ];
   const [currentStep, setCurrentStep] = useState(0);
@@ -491,8 +484,7 @@ export default function AddCarListing() {
     name: '',
     email: '',
     phone: '',
-    images: [] as File[],
-    video: null as File | null,
+
     manufacturerName: '',
     modelId: '',
     subModelId: '',
@@ -576,8 +568,6 @@ export default function AddCarListing() {
       name: '',
       email: '',
       phone: '',
-      images: [],
-      video: null,
       manufacturerName: '',
       modelId: '',
       subModelId: '',
@@ -1378,7 +1368,7 @@ export default function AddCarListing() {
     if (!formData.termsAccepted) newErrors.termsAccepted = t('validation_required');
     if (!formData.selectedPackage) newErrors.selectedPackage = t('validation_required');
     if (!formData.phone) newErrors.phone = t('validation_required');
-    if (!formData.images.length) newErrors.images = t('validation_images');
+
 
     // Email validation - only if email is provided
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
@@ -1601,11 +1591,7 @@ export default function AddCarListing() {
       selectedPackage: formData.selectedPackage || 'website_release',
       termsAccepted: formData.termsAccepted || false,
       
-      // Images
-      images: formData.images || [],
-      
-      // Video
-      video: formData.video || null,
+
       
       // Manufacturer and model details
       manufacturerName: formData.manufacturerName || yad2Data?.manufacturerName || '',
@@ -1690,8 +1676,6 @@ export default function AddCarListing() {
       name: '',
       email: '',
       phone: '',
-      images: [],
-      video: null,
       manufacturerName: '',
       modelId: '',
       subModelId: '',
@@ -1739,83 +1723,7 @@ export default function AddCarListing() {
     setCurrentStep(0);
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      setFormData(prev => ({
-        ...prev,
-        images: [...prev.images, ...Array.from(files)].slice(0, VALIDATION_RULES.MAX_IMAGES) // Limit to 10 images
-      }));
-      setErrors(prev => ({ ...prev, images: '' }));
-    }
-  };
-
-  const removeImage = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index)
-    }));
-  };
-
-  /**
-   * Handles video file selection and validation
-   */
-  const handleVideoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      // Check file type
-      const validVideoTypes = ['video/mp4', 'video/mov', 'video/avi', 'video/quicktime'];
-      if (!validVideoTypes.includes(file.type)) {
-        setErrors(prev => ({ ...prev, video: 'Invalid video format. Please upload MP4, MOV, or AVI files.' }));
-        return;
-      }
-
-      // Check file size (max 100MB)
-      const maxSizeBytes = 100 * 1024 * 1024; // 100MB
-      if (file.size > maxSizeBytes) {
-        setErrors(prev => ({ ...prev, video: 'Video file is too large. Maximum size is 100MB.' }));
-        return;
-      }
-
-      // Check duration using video element
-      const video = document.createElement('video');
-      const url = URL.createObjectURL(file);
-      
-      video.onloadedmetadata = () => {
-        const duration = video.duration;
-        URL.revokeObjectURL(url);
-        
-        if (duration > VALIDATION_RULES.MAX_VIDEO_DURATION) {
-          setErrors(prev => ({ 
-            ...prev, 
-            video: `Video duration (${duration.toFixed(1)}s) exceeds maximum allowed duration (${VALIDATION_RULES.MAX_VIDEO_DURATION}s)` 
-          }));
-        } else {
-          setFormData(prev => ({ ...prev, video: file }));
-          setErrors(prev => ({ ...prev, video: '' }));
-        }
-      };
-      
-      video.onerror = () => {
-        URL.revokeObjectURL(url);
-        setErrors(prev => ({ ...prev, video: 'Failed to read video file. Please try again.' }));
-      };
-      
-      video.src = url;
-    } catch (error) {
-      setErrors(prev => ({ ...prev, video: 'Error validating video file. Please try again.' }));
-    }
-  };
-
-  /**
-   * Removes video file
-   */
-  const removeVideo = () => {
-    setFormData(prev => ({ ...prev, video: null }));
-    setErrors(prev => ({ ...prev, video: '' }));
-  };
+  
 
   /**
    * Handles form submission
@@ -1827,94 +1735,10 @@ export default function AddCarListing() {
     console.log('Starting form submission...');
 
     try {
-      // Upload all images first if any exist
-      let uploadedImageIds: {id: string, url: string} [] = [];
-      if (formData.images && formData.images.length > 0) {
-        console.log(`Uploading ${formData.images.length} images...`);
-        
-        try {
-          const imageUploadPromises = formData.images.map(async (image, index) => {
-            const formDataToSend = new FormData();
-            formDataToSend.append('image', image);
-            
-            const imageUploadResponse = await fetch('/api/upload/image', {
-              method: 'POST',
-              body: formDataToSend
-            });
-            
-            if (imageUploadResponse.ok) {
-              const uploadResult = await imageUploadResponse.json();
-              const imageId = {id :uploadResult[0]?.id, url:uploadResult[0]?.url};
-              console.log(`Image ${index + 1} uploaded successfully, ID:`, imageId);
-              return imageId;
-            } else {
-              console.error(`Image ${index + 1} upload failed:`, imageUploadResponse.status);
-              throw new Error(`Image ${index + 1} upload failed`);
-            }
-          });
-          
-          uploadedImageIds = await Promise.all(imageUploadPromises);
-          console.log('All images uploaded successfully:', uploadedImageIds);
-        } catch (error) {
-          console.error('Error uploading images:', error);
-          throw new Error('Failed to upload one or more images');
-        }
-      }
-
-      // Upload video if exists
-      let uploadedVideoId: {id: string, url: string} | null = null;
-      if (formData.video) {
-        console.log('Uploading video...');
-        
-        try {
-          const formDataToSend = new FormData();
-          formDataToSend.append('video', formData.video);
-          
-          const videoUploadResponse = await fetch('/api/upload/video', {
-            method: 'POST',
-            body: formDataToSend
-          });
-          
-          if (videoUploadResponse.ok) {
-            const uploadResult = await videoUploadResponse.json();
-            uploadedVideoId = {id :uploadResult[0]?.id, url:uploadResult[0]?.url};
-            console.log('Video uploaded successfully, ID:', uploadedVideoId);
-          } else {
-            console.error('Video upload failed:', videoUploadResponse.status);
-            throw new Error('Video upload failed');
-          }
-        } catch (error) {
-          console.error('Error uploading video:', error);
-          throw new Error('Failed to upload video');
-        }
-      }
-
       // Merge yad2ModelInfo and formData using our merge function
       console.log('Merging car data...');
       const mergedCarData = mergeCarData(yad2ModelInfo?.data, formData);
       console.log('Merged car data:', mergedCarData);
-
-      // Add image IDs to merged data if available
-      if (uploadedImageIds.length > 0) {
-        mergedCarData.images = {
-          main: uploadedImageIds[0], // First image as main
-          additional: uploadedImageIds.map(image => image) // All images as additional
-        };
-      }
-
-      // Add video data if available
-      if (formData.video) {
-        mergedCarData.video = {
-          file: {
-            url: uploadedVideoId?.url,
-            name: formData.video.name,
-            type: formData.video.type,
-            id: uploadedVideoId?.id,
-            size: formData.video.size
-          },
-          id: uploadedVideoId?.id // Include the uploaded video ID if available
-        };
-      }
 
       // Prepare final car details object for API
       const carDetails = {
@@ -2041,18 +1865,7 @@ export default function AddCarListing() {
               }
               setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
             } else if(currentStep === 4){
-              // Validate mandatory fields in step 4 (Images)
-              if (!formData.images.length) {
-                alert(t('please_upload_images') || 'Please upload at least one image');
-                return;
-              }
-              if (!formData.termsAccepted) {
-                alert(t('please_accept_terms') || 'Please accept the terms and privacy policy');
-                return;
-              }
-              setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
-            } else if(currentStep === 5){
-              // Validate mandatory fields in step 5 (Package)
+              // Validate mandatory fields in step 4 (Package)
               if (!formData.selectedPackage) {
                 alert(t('please_select_package') || 'Please select a package');
                 return;
@@ -2905,233 +2718,7 @@ export default function AddCarListing() {
           </motion.div>
           )}
 
-          {/* Condition, Trade-in & description - Combined Step */}
-          {currentStep === 1 && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
-          >
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('condition_trade_in_description') || 'Condition, Trade-in & description'}</h2>
-            
-            {/* Condition Section */}
-            <div className="mb-8">
-              <h3 className="text-lg font-medium text-gray-700 mb-4">{t('condition') || 'Condition'}</h3>
-              <Select
-                value={formData.currentCondition}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, currentCondition: value }))}
-              >
-                <SelectTrigger className="rounded-xl py-5">
-                  <SelectValue placeholder={t('current_condition')} />
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                  {conditions.map((condition) => (
-                    <SelectItem key={condition} value={condition}>
-                      {t(`condition_${condition}`)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
 
-            {/* Trade-in Option Section */}
-            <div className="mb-8">
-              <h3 className="text-lg font-medium text-gray-700 mb-4">{t('trade_in_option') || 'Trade-in Option'}</h3>
-              <RadioGroup
-                value={formData.tradeIn}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, tradeIn: value }))}
-                className="rtl"
-                dir="rtl"
-              >
-                <div className="flex items-center space-x-reverse space-x-2" dir="rtl">
-                  <Label htmlFor="yes">{t('yes')}</Label>
-                  <RadioGroupItem value="yes" id="yes" />
-                </div>
-                <div className="flex items-center space-x-reverse space-x-2" dir="rtl">
-                  <Label htmlFor="no">{t('no')}</Label>
-                  <RadioGroupItem value="no" id="no" />
-                </div>
-                <div className="flex items-center space-x-reverse space-x-2" dir="rtl">
-                  <Label htmlFor="maybe">{t('maybe')}</Label>
-                  <RadioGroupItem value="maybe" id="maybe" />
-                </div>
-              </RadioGroup>
-            </div>
-
-            {/* description Section */}
-            <div>
-              <h3 className="text-lg font-medium text-gray-700 mb-4">{t('description') || 'description'}</h3>
-            <Textarea
-                placeholder={t('description_placeholder')}
-                value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              className="h-24 rounded-xl py-5"
-            />
-            </div>
-
-            {/* Owner Type Section */}
-            <div className="mt-8">
-              <h3 className="text-lg font-medium text-gray-700 mb-4">{t('owner_type') || 'Owner Type'} <span className="text-red-500">*</span></h3>
-              <RadioGroup
-                value={formData.ownerType}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, ownerType: value }))}
-              >
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className={`border-2 rounded-xl p-4 hover:border-blue-300 transition-all duration-200 cursor-pointer ${
-                    formData.ownerType === 'private' 
-                      ? 'border-blue-500 bg-blue-50 shadow-md' 
-                      : 'border-gray-200 hover:border-blue-300'
-                  }`}>
-                    <RadioGroupItem value="private" id="owner-private" className="sr-only" />
-                    <Label htmlFor="owner-private" className="cursor-pointer">
-                      <div className="text-center">
-                        <div className={`rounded-full p-3 w-12 h-12 mx-auto mb-2 flex items-center justify-center transition-colors duration-200 ${
-                          formData.ownerType === 'private' 
-                            ? 'bg-blue-100' 
-                            : 'bg-blue-50'
-                        }`}>
-                          <User className={`h-6 w-6 transition-colors duration-200 ${
-                            formData.ownerType === 'private' 
-                              ? 'text-blue-600' 
-                              : 'text-blue-500'
-                          }`} />
-                        </div>
-                        <h4 className={`font-medium transition-colors duration-200 ${
-                          formData.ownerType === 'private' 
-                            ? 'text-blue-700' 
-                            : 'text-gray-900'
-                        }`}>{t('private_owner') || 'Private'}</h4>
-                      </div>
-                    </Label>
-                  </div>
-                  
-                  <div className={`border-2 rounded-xl p-4 hover:border-blue-300 transition-all duration-200 cursor-pointer ${
-                    formData.ownerType === 'company' 
-                      ? 'border-blue-500 bg-blue-50 shadow-md' 
-                      : 'border-gray-200 hover:border-blue-300'
-                  }`}>
-                    <RadioGroupItem value="company" id="owner-company" className="sr-only" />
-                    <Label htmlFor="owner-company" className="cursor-pointer">
-                      <div className="text-center">
-                        <div className={`rounded-full p-3 w-12 h-12 mx-auto mb-2 flex items-center justify-center transition-colors duration-200 ${
-                          formData.ownerType === 'company' 
-                            ? 'bg-blue-100' 
-                            : 'bg-green-50'
-                        }`}>
-                          <Building className={`h-6 w-6 transition-colors duration-200 ${
-                            formData.ownerType === 'company' 
-                              ? 'text-blue-600' 
-                              : 'text-green-600'
-                          }`} />
-                        </div>
-                        <h4 className={`font-medium transition-colors duration-200 ${
-                          formData.ownerType === 'company' 
-                            ? 'text-blue-700' 
-                            : 'text-gray-900'
-                        }`}>{t('company_owner') || 'Company'}</h4>
-                      </div>
-                    </Label>
-                  </div>
-                  
-                  <div className={`border-2 rounded-xl p-4 hover:border-blue-300 transition-all duration-200 cursor-pointer ${
-                    formData.ownerType === 'rental' 
-                      ? 'border-blue-500 bg-blue-50 shadow-md' 
-                      : 'border-gray-200 hover:border-blue-300'
-                  }`}>
-                    <RadioGroupItem value="rental" id="owner-rental" className="sr-only" />
-                    <Label htmlFor="owner-rental" className="cursor-pointer">
-                      <div className="text-center">
-                        <div className={`rounded-full p-3 w-12 h-12 mx-auto mb-2 flex items-center justify-center transition-colors duration-200 ${
-                          formData.ownerType === 'rental' 
-                            ? 'bg-blue-100' 
-                            : 'bg-purple-50'
-                        }`}>
-                          <Key className={`h-6 w-6 transition-colors duration-200 ${
-                            formData.ownerType === 'rental' 
-                              ? 'text-blue-600' 
-                              : 'text-purple-600'
-                          }`} />
-                        </div>
-                        <h4 className={`font-medium transition-colors duration-200 ${
-                          formData.ownerType === 'rental' 
-                            ? 'text-blue-700' 
-                            : 'text-gray-900'
-                        }`}>{t('rental_owner') || 'Rental'}</h4>
-                      </div>
-                    </Label>
-                  </div>
-                </div>
-              </RadioGroup>
-            </div>
-
-            {/* Previous Owners Section */}
-            <div className="mt-8">
-              <h3 className="text-lg font-medium text-gray-700 mb-4">{t('previous_owners') || 'Previous Owners'} <span className="text-gray-500">({t('optional') || 'optional'})</span></h3>
-              <div className="space-y-4">
-                {formData.previousOwners.map((owner, index) => (
-                  <div key={index} className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg">
-                    <div className="flex-1">
-                      <Input
-                        placeholder={t('owner_name') || 'Owner name'}
-                        value={owner.name}
-                        onChange={(e) => {
-                          const newOwners = [...formData.previousOwners];
-                          newOwners[index].name = e.target.value;
-                          setFormData(prev => ({ ...prev, previousOwners: newOwners }));
-                        }}
-                        className="mb-2"
-                      />
-                      <Select
-                        value={owner.type}
-                        onValueChange={(value) => {
-                          const newOwners = [...formData.previousOwners];
-                          newOwners[index].type = value;
-                          setFormData(prev => ({ ...prev, previousOwners: newOwners }));
-                        }}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder={t('select_owner_type') || 'Select owner type'} />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white">
-                          <SelectItem value="private">{t('private_owner') || 'Private'}</SelectItem>
-                          <SelectItem value="company">{t('company_owner') || 'Company'}</SelectItem>
-                          <SelectItem value="rental">{t('rental_owner') || 'Rental'}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        const newOwners = formData.previousOwners.filter((_, i) => i !== index);
-                        setFormData(prev => ({ ...prev, previousOwners: newOwners }));
-                      }}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-                
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setFormData(prev => ({
-                      ...prev,
-                      previousOwners: [...prev.previousOwners, { name: '', type: '' }]
-                    }));
-                  }}
-                  className="w-full"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  {t('add_previous_owner') || 'Add Previous Owner'}
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-          )}
 
           {/* Price */}
           {currentStep === 2 && (
@@ -3273,211 +2860,8 @@ export default function AddCarListing() {
           </motion.div>
           )}
 
-          {/* Upload Images */}
-          {currentStep === 4 && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
-            >
-              <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('upload_images') || 'Upload Images'}</h2>
-              
-              {/* Image Upload Section */}
-              <div className="space-y-6">
-                <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-400 transition-colors">
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                    id="image-upload"
-                  />
-                  
-                  <div className="space-y-4">
-                    <div className="bg-blue-50 rounded-full p-4 w-16 h-16 mx-auto flex items-center justify-center">
-                      <Camera className="h-8 w-8 text-blue-600" />
-                    </div>
-                    
-                    <div>
-                      <p className="text-lg font-medium text-gray-700 mb-2">
-                        {t('drag_drop') || 'Drag and drop images here or click to upload'}
-                      </p>
-                      <p className="text-sm text-gray-500 mb-4">
-                        {t('image_requirements') || 'PNG, JPG, GIF up to 10MB. Maximum 10 images.'}
-                      </p>
-                      
-                      <button
-                        type="button"
-                        onClick={() => document.getElementById('image-upload')?.click()}
-                        className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2 mx-auto"
-                      >
-                        <Upload className="h-4 w-4" />
-                        {t('select_images') || 'Select Images'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Video Upload Section */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-gray-800 flex items-center gap-2">
-                    <svg className="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
-                    {t('upload_video') || 'Upload Video (Optional)'}
-                  </h3>
-                  
-                  <div className={`border-2 border-dashed rounded-xl p-6 transition-all duration-200 hover:border-purple-500 ${
-                    formData.video ? 'border-purple-500 bg-purple-50' : 'border-gray-200'
-                  } ${errors.video ? 'border-red-500' : ''}`}>
-                    <input
-                      type="file"
-                      accept="video/*"
-                      onChange={handleVideoChange}
-                      className="hidden"
-                      id="video-upload"
-                    />
-                    
-                    <div className="text-center">
-                      <div className="bg-purple-50 rounded-full p-4 mb-4 mx-auto w-16 h-16 flex items-center justify-center">
-                        {formData.video ? (
-                          <svg className="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                        ) : (
-                          <svg className="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                          </svg>
-                        )}
-                      </div>
-                      
-                      <p className="text-lg font-medium text-gray-700 mb-2">
-                        {formData.video ? t('video_uploaded') || 'Video Uploaded' : t('upload_video_here') || 'Upload Video Here'}
-                      </p>
-                      <p className="text-sm text-gray-500 mb-4">
-                        {t('video_requirements') || 'MP4, MOV, AVI up to 100MB. Maximum 15 seconds.'}
-                      </p>
-                      
-                      {!formData.video && (
-                        <button
-                          type="button"
-                          onClick={() => document.getElementById('video-upload')?.click()}
-                          className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium flex items-center gap-2 mx-auto"
-                        >
-                          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                          </svg>
-                          {t('select_video') || 'Select Video'}
-                        </button>
-                      )}
-                      
-                      {errors.video && (
-                        <p className="mt-2 text-sm text-red-500 text-center">
-                          {errors.video}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Image Preview Grid */}
-                {formData.images.length > 0 && (
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium text-gray-800">
-                      {t('uploaded_images') || 'Uploaded Images'} ({formData.images.length}/{VALIDATION_RULES.MAX_IMAGES})
-                    </h3>
-                    
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                      {formData.images.map((image, index) => (
-                        <div key={index} className="relative group">
-                          <img
-                            src={URL.createObjectURL(image)}
-                            alt={`Image ${index + 1}`}
-                            className="w-full h-32 object-cover rounded-lg border border-gray-200"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeImage(index)}
-                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                          >
-                            <X className="h-4 w-4" />
-                          </button>
-                          <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2 rounded-b-lg">
-                            {image.name.length > 20 ? `${image.name.substring(0, 20)}...` : image.name}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Video Preview */}
-                {formData.video && (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-medium text-gray-800">
-                        {t('uploaded_video') || 'Uploaded Video'}
-                      </h3>
-                      <button
-                        type="button"
-                        onClick={removeVideo}
-                        className="text-red-600 hover:text-red-800 text-sm font-medium flex items-center gap-1"
-                      >
-                        <X className="h-4 w-4" />
-                        {t('remove_video') || 'Remove Video'}
-                      </button>
-                    </div>
-                    
-                    <div className="relative">
-                      <video
-                        src={URL.createObjectURL(formData.video)}
-                        controls
-                        className="w-full max-w-md mx-auto rounded-lg shadow-sm"
-                        preload="metadata"
-                      >
-                        Your browser does not support the video tag.
-                      </video>
-                      
-                      <div className="mt-2 text-center text-sm text-gray-600">
-                        <p className="font-medium">{formData.video.name}</p>
-                        <p className="text-gray-500">
-                          {(formData.video.size / 1024 / 1024).toFixed(1)} MB
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                                 {errors.images && (
-                   <p className="text-sm text-red-500 text-center">{errors.images}</p>
-                 )}
-               </div>
-
-               {/* Terms and Privacy Policy Checkbox */}
-               <div className="mt-8">
-                 <div className="flex items-start space-x-3">
-                   <input
-                     type="checkbox"
-                     id="terms-checkbox"
-                     checked={formData.termsAccepted || false}
-                     onChange={(e) => setFormData(prev => ({ ...prev, termsAccepted: e.target.checked }))}
-                     className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                     required
-                   />
-                   <label htmlFor="terms-checkbox" className="text-sm text-gray-700 leading-relaxed">
-                     <span className="text-red-500">*</span> {t('terms_checkbox') || 'אני מאשר/ת את התקנון ומדיניות הפרטיות באתר ומאשר קבלת תוכן שיווקי מ MAXSPEEDLIMIT או מצדדים שלישיים באמצעי הקשר שמסרתי (גם בשירותי דיוור ישיר)'}
-                   </label>
-                 </div>
-                 {errors.termsAccepted && (
-                   <p className="mt-2 text-sm text-red-500">{errors.termsAccepted}</p>
-                 )}
-               </div>
-             </motion.div>
-           )}
-
           {/* Package Selection */}
-          {currentStep === 5 && (
+          {currentStep === 4 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
