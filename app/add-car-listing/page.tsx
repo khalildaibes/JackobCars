@@ -18,7 +18,7 @@ import { useTranslations } from 'next-intl';
 import { useLocale } from 'next-intl';
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
-import { Upload, Plus,  X, Camera } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { Alert, AlertDescription } from "../../components/ui/alert";
 import { Card, CardContent } from "../../components/ui/card";
 import Cookies from 'js-cookie';
@@ -70,12 +70,7 @@ import { title } from 'process';
 // Government car data API endpoint
 const GOV_CAR_DATA_API = "/api/gov/car-data";
 
-// Constants
-const VALIDATION_RULES = {
-  MAX_IMAGES: 10,
-  MIN_IMAGES: 1,
-  MAX_VIDEO_DURATION: 15
-};
+
 
 const ENGINE_TYPES = [
   { value: 'petrol', label: 'Petrol' },
@@ -255,7 +250,7 @@ export default function AddCarListing() {
     'Condition & Trade-in & description',
     'Price',
     'Contact Info',
-    'Upload Images',
+    'Terms & Privacy',
     'Package Selection',
   ];
   const [currentStep, setCurrentStep] = useState(0);
@@ -494,8 +489,7 @@ export default function AddCarListing() {
     name: '',
     email: '',
     phone: '',
-    images: [] as File[],
-    video: null as File | null,
+
     manufacturerName: '',
     modelId: '',
     subModelId: '',
@@ -561,7 +555,7 @@ export default function AddCarListing() {
       // Note: Files don't have URLs by default, so we only cleanup if we've created URLs
       // This is handled in the upload logic where we create temporary URLs
     };
-  }, [formData.images, formData.video]);
+  }, []);
 
   // Function to clear all form data and reset to initial state
   const clearFormData = useCallback(() => {
@@ -586,8 +580,6 @@ export default function AddCarListing() {
       name: '',
       email: '',
       phone: '',
-      images: [],
-      video: null,
       manufacturerName: '',
       modelId: '',
       subModelId: '',
@@ -1388,7 +1380,7 @@ export default function AddCarListing() {
     if (!formData.termsAccepted) newErrors.termsAccepted = t('validation_required');
     if (!formData.selectedPackage) newErrors.selectedPackage = t('validation_required');
     if (!formData.phone) newErrors.phone = t('validation_required');
-    if (!formData.images.length) newErrors.images = t('validation_images');
+
 
     // Email validation - only if email is provided
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
@@ -1403,17 +1395,7 @@ export default function AddCarListing() {
     setPlateNumber(formattedValue);
     setError(null);
   };
-  const uploadImages = async (files: File[]) => {
-    // Simplified upload logic - just return the files for now
-    // In production, you would implement actual file upload here
-    console.log('Images to upload:', files.length);
-    return files.map((file, index) => ({
-      id: `temp_${Date.now()}_${index}`,
-      name: file.name,
-      size: file.size,
-      file: file // Keep the original file reference
-    }));
-  };
+
 
   const generateSlug = (title: string) => {
     return title
@@ -1602,10 +1584,9 @@ export default function AddCarListing() {
       termsAccepted: formData.termsAccepted || false,
       
       // Images
-      images: formData.images || [],
+
       
-      // Video
-      video: formData.video || null,
+
       
       // Manufacturer and model details
       manufacturerName: formData.manufacturerName || yad2Data?.manufacturerName || '',
@@ -1690,8 +1671,6 @@ export default function AddCarListing() {
       name: '',
       email: '',
       phone: '',
-      images: [],
-      video: null,
       manufacturerName: '',
       modelId: '',
       subModelId: '',
@@ -1736,80 +1715,13 @@ export default function AddCarListing() {
     setGovCarInfo(null);
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      try {
-        const newImages = Array.from(files).slice(0, VALIDATION_RULES.MAX_IMAGES);
-        setFormData(prev => ({
-          ...prev,
-          images: [...prev.images, ...newImages].slice(0, VALIDATION_RULES.MAX_IMAGES)
-        }));
-        setErrors(prev => ({ ...prev, images: '' }));
-      } catch (error) {
-        console.error('Error handling image files:', error);
-        setErrors(prev => ({ ...prev, images: 'Error processing image files. Please try again.' }));
-      }
-    }
-  };
 
-  const removeImage = (index: number) => {
-    try {
-      setFormData(prev => ({
-        ...prev,
-        images: prev.images.filter((_, i) => i !== index)
-      }));
-    } catch (error) {
-      console.error('Error removing image:', error);
-    }
-  };
 
-  /**
-   * Handles video file selection and validation
-   */
-  const handleVideoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
 
-    try {
-      // Check file type
-      const validVideoTypes = ['video/mp4', 'video/mov', 'video/avi', 'video/quicktime'];
-      if (!validVideoTypes.includes(file.type)) {
-        setErrors(prev => ({ ...prev, video: 'Invalid video format. Please upload MP4, MOV, or AVI files.' }));
-        return;
-      }
 
-      // Check file size (max 100MB)
-      const maxSizeBytes = 100 * 1024 * 1024; // 100MB
-      if (file.size > maxSizeBytes) {
-        setErrors(prev => ({ ...prev, video: 'Video file is too large. Maximum size is 100MB.' }));
-        return;
-      }
 
-      // Simplified video validation - just check if it's a valid video file
-      if (file.type.startsWith('video/')) {
-        setFormData(prev => ({ ...prev, video: file }));
-        setErrors(prev => ({ ...prev, video: '' }));
-      } else {
-        setErrors(prev => ({ ...prev, video: 'Please select a valid video file.' }));
-      }
-    } catch (error) {
-      console.error('Error handling video file:', error);
-      setErrors(prev => ({ ...prev, video: 'Error validating video file. Please try again.' }));
-    }
-  };
 
-  /**
-   * Removes video file
-   */
-  const removeVideo = () => {
-    try {
-      setFormData(prev => ({ ...prev, video: null }));
-      setErrors(prev => ({ ...prev, video: '' }));
-    } catch (error) {
-      console.error('Error removing video:', error);
-    }
-  };
+
 
   /**
    * Handles form submission
@@ -1821,56 +1733,16 @@ export default function AddCarListing() {
     console.log('Starting form submission...');
 
     try {
-      // Simplified image handling - just log for now
-      let uploadedImageIds: {id: string, name: string, size: number} [] = [];
-      if (formData.images && formData.images.length > 0) {
-        console.log(`Processing ${formData.images.length} images...`);
-        
-        // Create temporary IDs for images (in production, these would be real uploads)
-        uploadedImageIds = formData.images.map((image, index) => ({
-          id: `temp_image_${Date.now()}_${index}`,
-          name: image.name,
-          size: image.size
-        }));
-      }
 
-      // Simplified video handling
-      let uploadedVideoId: {id: string, name: string, size: number} | null = null;
-      if (formData.video) {
-        console.log('Processing video...');
-        uploadedVideoId = {
-          id: `temp_video_${Date.now()}`,
-          name: formData.video.name,
-          size: formData.video.size
-        };
-      }
+
+
 
       // Merge yad2ModelInfo and formData using our merge function
       console.log('Merging car data...');
       const mergedCarData = mergeCarData(yad2ModelInfo?.data, formData);
       console.log('Merged car data:', mergedCarData);
 
-      // Add image IDs to merged data if available
-      if (uploadedImageIds.length > 0) {
-        mergedCarData.images = {
-          main: uploadedImageIds[0], // First image as main
-          additional: uploadedImageIds.map(image => image) // All images as additional
-        };
-      }
 
-      // Add video data if available
-      if (formData.video) {
-        mergedCarData.video = {
-          file: {
-            url: '', // URL will be set when actually uploaded
-            name: formData.video.name,
-            type: formData.video.type,
-            id: uploadedVideoId?.id,
-            size: formData.video.size
-          },
-          id: uploadedVideoId?.id
-        };
-      }
 
       // Prepare final car details object for API
       const carDetails = {
@@ -2106,12 +1978,9 @@ export default function AddCarListing() {
                 return;
               }
               setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
-            }else if(currentStep === 5){
-              // Validate mandatory fields in image upload step
-              if (!formData.images.length) {
-                alert(t('please_upload_images') || 'Please upload at least one image');
-                return;
-              }
+                        }else if(currentStep === 5){
+              // Validate mandatory fields in terms step
+              
               if (!formData.termsAccepted) {
                 alert(t('please_accept_terms') || 'Please accept the terms and privacy policy');
                 return;
@@ -3430,208 +3299,38 @@ export default function AddCarListing() {
           </motion.div>
           )}
 
-          {/* Upload Images */}
+          {/* Terms and Privacy Policy */}
           {currentStep === 5 && (
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
             >
-              <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('upload_images') || 'Upload Images'}</h2>
+              <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('terms_and_privacy') || 'Terms and Privacy Policy'}</h2>
               
-              {/* Image Upload Section */}
               <div className="space-y-6">
-                <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-400 transition-colors">
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                    id="image-upload"
-                  />
-                  
-                  <div className="space-y-4">
-                    <div className="bg-blue-50 rounded-full p-4 w-16 h-16 mx-auto flex items-center justify-center">
-                      <Camera className="h-8 w-8 text-blue-600" />
-                    </div>
-                    
-                    <div>
-                      <p className="text-lg font-medium text-gray-700 mb-2">
-                        {t('drag_drop') || 'Drag and drop images here or click to upload'}
-                      </p>
-                      <p className="text-sm text-gray-500 mb-4">
-                        {t('image_requirements') || 'PNG, JPG, GIF up to 10MB. Maximum 10 images.'}
-                      </p>
-                      
-                      <button
-                        type="button"
-                        onClick={() => document.getElementById('image-upload')?.click()}
-                        className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2 mx-auto"
-                      >
-                        <Upload className="h-4 w-4" />
-                        {t('select_images') || 'Select Images'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Video Upload Section */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-gray-800 flex items-center gap-2">
-                    <svg className="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
-                    {t('upload_video') || 'Upload Video (Optional)'}
-                  </h3>
-                  
-                  <div className={`border-2 border-dashed rounded-xl p-6 transition-all duration-200 hover:border-purple-500 ${
-                    formData.video ? 'border-purple-500 bg-purple-50' : 'border-gray-200'
-                  } ${errors.video ? 'border-red-500' : ''}`}>
+                {/* Terms and Privacy Policy Checkbox */}
+                <div className="mt-8">
+                  <div className="flex items-start space-x-3">
                     <input
-                      type="file"
-                      accept="video/*"
-                      onChange={handleVideoChange}
-                      className="hidden"
-                      id="video-upload"
+                      type="checkbox"
+                      id="terms-checkbox"
+                      checked={formData.termsAccepted || false}
+                      onChange={(e) => setFormData(prev => ({ ...prev, termsAccepted: e.target.checked }))}
+                      className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      required
                     />
-                    
-                    <div className="text-center">
-                      <div className="bg-purple-50 rounded-full p-4 mb-4 mx-auto w-16 h-16 flex items-center justify-center">
-                        {formData.video ? (
-                          <svg className="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                        ) : (
-                          <svg className="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                          </svg>
-                        )}
-                      </div>
-                      
-                      <p className="text-lg font-medium text-gray-700 mb-2">
-                        {formData.video ? t('video_uploaded') || 'Video Uploaded' : t('upload_video_here') || 'Upload Video Here'}
-                      </p>
-                      <p className="text-sm text-gray-500 mb-4">
-                        {t('video_requirements') || 'MP4, MOV, AVI up to 100MB. Maximum 15 seconds.'}
-                      </p>
-                      
-                      {!formData.video && (
-                        <button
-                          type="button"
-                          onClick={() => document.getElementById('video-upload')?.click()}
-                          className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium flex items-center gap-2 mx-auto"
-                        >
-                          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                          </svg>
-                          {t('select_video') || 'Select Video'}
-                        </button>
-                      )}
-                      
-                      {errors.video && (
-                        <p className="mt-2 text-sm text-red-500 text-center">
-                          {errors.video}
-                        </p>
-                      )}
-                    </div>
+                    <label htmlFor="terms-checkbox" className="text-sm text-gray-700 leading-relaxed">
+                      <span className="text-red-500">*</span> {t('terms_checkbox') || 'אני מאשר/ת את התקנון ומדיניות הפרטיות באתר ומאשר קבלת תוכן שיווקי מ MAXSPEEDLIMIT או מצדדים שלישיים באמצעי הקשר שמסרתי (גם בשירותי דיוור ישיר)'}
+                    </label>
                   </div>
+                  {errors.termsAccepted && (
+                    <p className="mt-2 text-sm text-red-500">{errors.termsAccepted}</p>
+                  )}
                 </div>
-
-                {/* Image Preview Grid */}
-                {formData.images.length > 0 && (
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium text-gray-800">
-                      {t('uploaded_images') || 'Uploaded Images'} ({formData.images.length}/{VALIDATION_RULES.MAX_IMAGES})
-                    </h3>
-                    
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                      {formData.images.map((image, index) => (
-                        <div key={index} className="relative group">
-                          <img
-                            src={URL.createObjectURL(image)}
-                            alt={`Image ${index + 1}`}
-                            className="w-full h-32 object-cover rounded-lg border border-gray-200"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeImage(index)}
-                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                          >
-                            <X className="h-4 w-4" />
-                          </button>
-                          <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2 rounded-b-lg">
-                            {image.name.length > 20 ? `${image.name.substring(0, 20)}...` : image.name}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Video Preview */}
-                {formData.video && (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-medium text-gray-800">
-                        {t('uploaded_video') || 'Uploaded Video'}
-                      </h3>
-                      <button
-                        type="button"
-                        onClick={removeVideo}
-                        className="text-red-600 hover:text-red-800 text-sm font-medium flex items-center gap-1"
-                      >
-                        <X className="h-4 w-4" />
-                        {t('remove_video') || 'Remove Video'}
-                      </button>
-                    </div>
-                    
-                    <div className="relative">
-                      <video
-                        src={URL.createObjectURL(formData.video)}
-                        controls
-                        className="w-full max-w-md mx-auto rounded-lg shadow-sm"
-                        preload="metadata"
-                      >
-                        Your browser does not support the video tag.
-                      </video>
-                      
-                      <div className="mt-2 text-center text-sm text-gray-600">
-                        <p className="font-medium">{formData.video.name}</p>
-                        <p className="text-gray-500">
-                          {(formData.video.size / 1024 / 1024).toFixed(1)} MB
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                                 {errors.images && (
-                   <p className="text-sm text-red-500 text-center">{errors.images}</p>
-                 )}
-               </div>
-
-               {/* Terms and Privacy Policy Checkbox */}
-               <div className="mt-8">
-                 <div className="flex items-start space-x-3">
-                   <input
-                     type="checkbox"
-                     id="terms-checkbox"
-                     checked={formData.termsAccepted || false}
-                     onChange={(e) => setFormData(prev => ({ ...prev, termsAccepted: e.target.checked }))}
-                     className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                     required
-                   />
-                   <label htmlFor="terms-checkbox" className="text-sm text-gray-700 leading-relaxed">
-                     <span className="text-red-500">*</span> {t('terms_checkbox') || 'אני מאשר/ת את התקנון ומדיניות הפרטיות באתר ומאשר קבלת תוכן שיווקי מ MAXSPEEDLIMIT או מצדדים שלישיים באמצעי הקשר שמסרתי (גם בשירותי דיוור ישיר)'}
-                   </label>
-                 </div>
-                 {errors.termsAccepted && (
-                   <p className="mt-2 text-sm text-red-500">{errors.termsAccepted}</p>
-                 )}
-               </div>
-             </motion.div>
-           )}
+              </div>
+            </motion.div>
+          )}
 
           {/* Package Selection */}
           {currentStep === 6 && (
