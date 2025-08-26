@@ -3097,7 +3097,7 @@ export default function AddCarListing() {
                       ✓ Data Restored
                     </div>
                   )}
-                  <CarDetailsSections data={yad2ModelInfo.data} t={t} />
+                  {/* <CarDetailsSections data={yad2ModelInfo.data} t={t} /> */}
                 </div>
               )}
 
