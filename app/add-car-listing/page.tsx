@@ -65,6 +65,7 @@ const conditions = ['excellent', 'good', 'fair', 'poor'] as const;
 import React from 'react';
 // import CarDetailsSections from './CarDetailsSections';
 import { title } from 'process';
+import CarDetailsSections from './CarDetailsSections';
 // import { DEFAULT_VALUES } from '../car-listing/test/add/constants';
 
 // Government car data API endpoint
@@ -2311,6 +2312,95 @@ export default function AddCarListing() {
                 </button>
               </div>
             </motion.div>
+
+            {/* Plate Number Input Method - Moved to top */}
+            {inputMethod === 'plate' && (
+              <motion.div 
+                key="plate-method"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+                className="space-y-4 sm:space-y-6 mb-6 sm:mb-8"
+              >
+                <div className="w-full max-w-xl mx-auto">
+                  <div className="relative">
+                    <div className="relative flex items-center bg-[#ffca11] rounded shadow-lg p-2">
+                      <div className="flex items-center gap-2 sm:gap-4">
+                        <img 
+                          src="/a1.png" 
+                          alt={t("logo_alt") || "Logo"} 
+                          width={40} 
+                          height={50} 
+                          className="object-fill w-[50px] sm:w-[60px] md:w-[80px] p-[2px]" 
+                        />
+                      </div>
+                      <div className="relative w-full">
+                        <Input
+                          type="text"
+                          value={plateNumber}
+                          onChange={handlePlateNumberChange}
+                          placeholder={t("enter_plate") || "Enter Plate Number"}
+                          className="w-full px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-8 text-lg sm:text-xl md:text-2xl lg:text-3xl font-black tracking-[0.1em] bg-transparent border-0 focus:ring-0 text-center uppercase"
+                          maxLength={10}
+                          style={{
+                            letterSpacing: '0.1em',
+                            fontFamily: 'monospace',
+                            lineHeight: '1',
+                            WebkitTextStroke: '1px black',
+                            textShadow: '2px 2px 0px rgba(0,0,0,0.1)'
+                          }}
+                        />
+                        {/* Show restored indicator if plate number was loaded from cookies */}
+                        {isClient && plateNumber && loadFromCookie(COOKIE_KEYS.PLATE_NUMBER) === plateNumber && (
+                          <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">
+                            ✓ Restored
+                          </div>
+                        )}
+                        {loading && (
+                          <div className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2">
+                            <Loader2 className="h-5 w-5 sm:h-6 sm:w-6 animate-spin text-blue-600" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 px-3 sm:px-4 w-full justify-center pt-3 sm:pt-4">
+                      <Button 
+                        onClick={fetchCarData} 
+                        disabled={loading}
+                        className="rounded-full w-auto text-black h-10 sm:h-12 hover:bg-blue-700 transition-colors bg-[#ffca11] text-sm sm:text-base px-4 sm:px-6"
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            {t("loading_info") || "Loading..."}
+                          </>
+                        ) : (
+                          t("search_by_vin") || "Search by VIN"
+                        )}
+                      </Button>
+                      
+                      {/* Refresh button - only show if we have existing data */}
+                      {yad2ModelInfo?.data && (
+                        <Button 
+                          type="button"
+                          onClick={refreshCarData}
+                          disabled={loading}
+                          variant="outline"
+                          className="rounded-full w-10 h-10 sm:w-12 sm:h-12 hover:bg-blue-50 transition-colors border-blue-300"
+                          title={t("refresh_car_data") || "Refresh car data"}
+                        >
+                          <svg className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.001 0 01-15.357-2m15.357 2H15" />
+                          </svg>
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
             {/* Title Field */}
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
@@ -2369,93 +2459,7 @@ export default function AddCarListing() {
               {errors.mileage && <p className="mt-1 text-sm text-red-500">{errors.mileage}</p>}
             </motion.div>
 
-            {/* Plate Number Input Method */}
-            {inputMethod === 'plate' && (
-              <motion.div 
-                key="plate-method"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-                className="space-y-4 sm:space-y-6"
-              >
-                <div className="w-full max-w-xl mx-auto">
-                  <div className="relative">
-                    <div className="relative flex items-center bg-[#ffca11] rounded shadow-lg p-2">
-                      <div className="flex items-center gap-2 sm:gap-4">
-                        <img 
-                          src="/a1.png" 
-                          alt={t("logo_alt") || "Logo"} 
-                          width={40} 
-                          height={50} 
-                          className="object-fill w-[50px] sm:w-[60px] md:w-[80px] p-[2px]" 
-                        />
-              </div>
-                      <div className="relative w-full">
-                        <Input
-                          type="text"
-                          value={plateNumber}
-                          onChange={handlePlateNumberChange}
-                          placeholder={t("enter_plate") || "Enter Plate Number"}
-                          className="w-full px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-8 text-lg sm:text-xl md:text-2xl lg:text-3xl font-black tracking-[0.1em] bg-transparent border-0 focus:ring-0 text-center uppercase"
-                          maxLength={10}
-                          style={{
-                            letterSpacing: '0.1em',
-                            fontFamily: 'monospace',
-                            lineHeight: '1',
-                            WebkitTextStroke: '1px black',
-                            textShadow: '2px 2px 0px rgba(0,0,0,0.1)'
-                          }}
-                        />
-                        {/* Show restored indicator if plate number was loaded from cookies */}
-                        {isClient && plateNumber && loadFromCookie(COOKIE_KEYS.PLATE_NUMBER) === plateNumber && (
-                          <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">
-                            ✓ Restored
-                          </div>
-                        )}
-                        {loading && (
-                          <div className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2">
-                            <Loader2 className="h-5 w-5 sm:h-6 sm:w-6 animate-spin text-blue-600" />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 px-3 sm:px-4 w-full justify-center pt-3 sm:pt-4">
-                      <Button 
-                        onClick={fetchCarData} 
-                        disabled={loading}
-                        className="rounded-full w-auto text-black h-10 sm:h-12 hover:bg-blue-700 transition-colors bg-[#ffca11] text-sm sm:text-base px-4 sm:px-6"
-                      >
-                        {loading ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            {t("loading_info") || "Loading..."}
-                          </>
-                        ) : (
-                          t("search_by_vin") || "Search by VIN"
-                        )}
-                      </Button>
-                      
-                      {/* Refresh button - only show if we have existing data */}
-                      {yad2ModelInfo?.data && (
-                        <Button 
-                          type="button"
-                          onClick={refreshCarData}
-                          disabled={loading}
-                          variant="outline"
-                          className="rounded-full w-10 h-10 sm:w-12 sm:h-12 hover:bg-blue-50 transition-colors border-blue-300"
-                          title={t("refresh_car_data") || "Refresh car data"}
-                        >
-                          <svg className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                          </svg>
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
+
 
             {/* Manual Entry Method */}
             {inputMethod === 'manual' && (
@@ -2932,7 +2936,7 @@ export default function AddCarListing() {
                       ✓ Data Restored
                     </div>
                   )}
-                  {/* <CarDetailsSections data={yad2ModelInfo.data} t={t} /> */}
+                  <CarDetailsSections data={yad2ModelInfo.data} t={t} />
                 </div>
               )}
 
