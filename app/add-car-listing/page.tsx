@@ -254,6 +254,30 @@ export default function AddCarListing() {
     'Package Selection',
   ];
   const [currentStep, setCurrentStep] = useState(0);
+  
+  // Function to handle step changes with scroll to top
+  const handleStepChange = (newStep: number) => {
+    setCurrentStep(newStep);
+    // Scroll to the top of the page
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }, 100); // Small delay to ensure the new step is rendered
+  };
+  
+  // Helper function for next step
+  const handleNextStep = () => {
+    const nextStep = Math.min(STEPS.length - 1, currentStep + 1);
+    handleStepChange(nextStep);
+  };
+  
+  // Helper function for previous step
+  const handlePrevStep = () => {
+    const prevStep = Math.max(0, currentStep - 1);
+    handleStepChange(prevStep);
+  };
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [manufacturersData, setManufacturersData] = useState<ManufacturersData>({});
   const [selectedManufacturer, setSelectedManufacturer] = useState('');
@@ -610,7 +634,7 @@ export default function AddCarListing() {
     }));
 
     // Reset all form-related state
-    setCurrentStep(1);
+    handleStepChange(1);
     setIsSubmitting(false);
     setSelectedManufacturer('');
     setSelectedModel('');
@@ -656,7 +680,7 @@ export default function AddCarListing() {
   const clearSavedProgress = useCallback(() => {
     clearCookies();
     clearFormData();
-    setCurrentStep(0);
+    handleStepChange(0);
   }, [clearFormData]);
 
   // Function to clear just the plate number and related data
@@ -1769,7 +1793,7 @@ export default function AddCarListing() {
         
         // Reset form and go to first step
         resetForm();
-        setCurrentStep(0);
+        handleStepChange(0);
         
         // Reset all selections
         setSelectedManufacturer('');
@@ -1828,7 +1852,7 @@ export default function AddCarListing() {
                 alert(t('please_select_car_type') || 'Please select a car type');
                 return;
               }
-              setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+              handleNextStep()
             } else if (currentStep === 1) {
               if (!formData.mileage) {
                 alert(t('please_enter_mileage') || 'Please enter the mileage');
@@ -1840,7 +1864,7 @@ export default function AddCarListing() {
                   console.log('formData', formData)
                 }
                 setFormData(prev => ({ ...prev, title: yad2ModelInfo?.data?.commercialName +  ` ${t('engine')} ` + (parseInt(yad2ModelInfo?.data?.engineCapacity)/1000 ).toFixed(1) + ` ${t('year')} ` + formData?.year + ` ${t('model')} ` + yad2ModelInfo?.data?.trimLevel + ` ${t('horsepower')} ` + yad2ModelInfo?.data?.enginePower + ` ${t('gearbox')} ` + yad2ModelInfo?.data?.transmission }));
-                setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                handleNextStep()
               } else {
                 // Check if user has searched for a car first
                 if (!yad2ModelInfo?.data) {
@@ -1879,7 +1903,7 @@ export default function AddCarListing() {
                           : ""
                         ) 
                     }));
-                    setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                    handleNextStep()
                   } else {
                     setFormData(prev => ({
                       ...prev,
@@ -1909,7 +1933,7 @@ export default function AddCarListing() {
                           : ""
                         ) 
                     }));                             
-                    setCurrentStep(1)
+                    handleStepChange(1)
                   }
                 } else {
                   setFormData(prev => ({
@@ -1940,7 +1964,7 @@ export default function AddCarListing() {
                         : ""
                       ) 
                   }));
-                  setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                  handleNextStep()
                 }
               } 
             } else if(currentStep === 2){
@@ -1952,9 +1976,9 @@ export default function AddCarListing() {
             
               if(formData.description === "" || formData.description === undefined || formData.description === null || formData.description === "null" ){
                 generateAIDescription();
-                setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                handleNextStep()
               }else{
-                setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                handleNextStep()
               }
             }else if(currentStep === 3){
               // Validate mandatory fields in price step
@@ -1966,7 +1990,7 @@ export default function AddCarListing() {
                 alert(t('please_select_region') || 'Please select your region');
                 return;
               }
-              setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+              handleNextStep()
             }else if(currentStep === 4){
               // Validate mandatory fields in contact step
               if (!formData.name) {
@@ -1977,7 +2001,7 @@ export default function AddCarListing() {
                 alert(t('please_enter_phone') || 'Please enter your phone number');
                 return;
               }
-              setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+              handleNextStep()
                         }else if(currentStep === 5){
               // Validate mandatory fields in terms step
               
@@ -1985,23 +2009,23 @@ export default function AddCarListing() {
                 alert(t('please_accept_terms') || 'Please accept the terms and privacy policy');
                 return;
               }
-              setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+              handleNextStep()
             }else if(currentStep === 6){
               // Validate package selection
               if (!formData.selectedPackage) {
                 alert(t('please_select_package') || 'Please select a package');
                 return;
               }
-              setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+              handleNextStep()
             }else {
-                setCurrentStep((s) => Math.min(STEPS.length - 1, s + 1))
+                handleNextStep()
               }
               
             }
           }
-          className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white transition-all duration-200 hover:shadow-md transform hover:scale-105"
+          className="px-4 sm:px-6 py-2 sm:py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white transition-all duration-200 hover:shadow-md transform hover:scale-105 text-sm sm:text-base"
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             {t("next")}
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -2021,12 +2045,12 @@ export default function AddCarListing() {
           handleSubmit(new Event('submit') as any);
         }}
         disabled={isSubmitting}
-        className="px-6 py-3 rounded-xl bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white transition-all duration-200 hover:shadow-md transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="px-4 sm:px-6 py-2 sm:py-3 rounded-xl bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white transition-all duration-200 hover:shadow-md transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           {isSubmitting ? (
             <>
-              <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin -ml-1 mr-2 sm:mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
@@ -2046,23 +2070,23 @@ export default function AddCarListing() {
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-[15%] md:mt-[5%] py-8 px-4 sm:px-6 lg:px-8 ${isRTL ? 'rtl' : 'ltr'}`}>
+    <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-[15%] md:mt-[5%] py-4 sm:py-8 px-3 sm:px-4 md:px-6 lg:px-8 ${isRTL ? 'rtl' : 'ltr'}`}>
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="max-w-3xl mx-auto"
       >
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-6">
-            <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-4 shadow-lg">
-              <Car className="h-8 w-8 text-white" />
+        <div className="flex flex-col gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-3 sm:p-4 shadow-lg">
+              <Car className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
             </div>
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('add_car_listing')}</h1>
-              <p className="text-gray-600">{t('fill_details')}</p>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">{t('add_car_listing')}</h1>
+              <p className="text-sm sm:text-base text-gray-600">{t('fill_details')}</p>
               {/* Progress indicator */}
               {isClient && loadFromCookie(COOKIE_KEYS.CURRENT_STEP) !== null && (
-                <div className="flex items-center gap-2 mt-2 text-sm text-blue-600">
+                <div className="flex items-center gap-2 mt-2 text-xs sm:text-sm text-blue-600">
                   <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
                   <span>{t('progress_saved') || 'Progress saved automatically'}</span>
                 </div>
@@ -2070,15 +2094,17 @@ export default function AddCarListing() {
             </div>
           </div>
           
+          {/* Action Buttons Container */}
+          <div className="flex flex-row gap-2 sm:gap-3">
           {/* Clear Progress Button */}
           <Button
             type="button"
             variant="outline"
             onClick={clearSavedProgress}
-            className="px-4 py-2 text-sm text-gray-600 hover:text-red-600 hover:border-red-300 transition-colors duration-200"
+              className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600 hover:text-red-600 hover:border-red-300 transition-colors duration-200 w-full sm:w-auto justify-center sm:justify-start"
             title={t('clear_saved_progress') || 'Clear saved progress and start over'}
           >
-            <X className="h-4 w-4 mr-2" />
+              <X className="h-4 w-4 mr-1 sm:mr-2" />
             {t('clear_progress') || 'Clear Progress'}
           </Button>
           
@@ -2088,10 +2114,10 @@ export default function AddCarListing() {
               type="button"
               variant="outline"
               onClick={clearPlateData}
-              className="px-4 py-2 text-sm text-gray-600 hover:text-orange-600 hover:border-orange-300 transition-colors duration-200"
+                className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600 hover:text-orange-600 hover:border-orange-300 transition-colors duration-200 w-full sm:w-auto justify-center sm:justify-start"
               title={t('clear_plate_data') || 'Clear plate number and car data to search for a different car'}
             >
-              <Car className="h-4 w-4 mr-2" />
+                <Car className="h-4 w-4 mr-1 sm:mr-2" />
               {t('clear_plate') || 'Clear Plate'}
             </Button>
           )}
@@ -2106,44 +2132,26 @@ export default function AddCarListing() {
                 console.log('Storage Status:', status);
                 alert(`Storage Status:\nCookies: ${JSON.stringify(status.cookieStatus, null, 2)}\nlocalStorage: ${JSON.stringify(status.localStorageStatus, null, 2)}`);
               }}
-              className="px-4 py-2 text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300 transition-colors duration-200"
+                className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300 transition-colors duration-200 w-full sm:w-auto justify-center sm:justify-start"
               title="Debug storage status (development only)"
             >
               🔍 Debug
             </Button>
           )}
         </div>
-
-        {/* Welcome back message for users with saved progress */}
-        {isClient && hasSavedProgress() && (
-          <motion.div 
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6 bg-blue-50 border border-blue-200 rounded-xl p-4"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
-              <div>
-                <h3 className="font-medium text-blue-800">
-                  {t('welcome_back') || 'Welcome back!'}
-                </h3>
-                <p className="text-sm text-blue-700">
-                  {t('progress_restored') || 'Your progress has been automatically restored. You can continue from where you left off.'}
-                </p>
               </div>
-            </div>
-          </motion.div>
-        )}
+
+
 
         {/* Steps indicator (clickable) */}
-        <div className="mb-8">
-          <ol className="flex items-center text-xs sm:text-sm text-gray-700 gap-2 overflow-hidden" role="list">
+        <div className="mb-6 sm:mb-8">
+          <ol className="flex items-center text-xs sm:text-sm text-gray-700 gap-1 sm:gap-2 overflow-x-auto pb-2 sm:pb-0" role="list">
             {STEPS.map((_, index) => (
-              <li key={index} className="flex items-center">
+              <li key={index} className="flex items-center flex-shrink-0">
                 <button
                   type="button"
-                  onClick={() => setCurrentStep(index)}
-                  className={`flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+                  onClick={() => handleStepChange(index)}
+                  className={`flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-full font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
                     currentStep === index ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
                   }`}
                   aria-current={currentStep === index ? 'step' : undefined}
@@ -2152,34 +2160,34 @@ export default function AddCarListing() {
                   {index + 1}
                 </button>
                 {index < STEPS.length - 1 && (
-                  <span className="w-6 sm:w-8 h-px bg-gray-300 mx-2" aria-hidden="true"></span>
+                  <span className="w-4 sm:w-6 md:w-8 h-px bg-gray-300 mx-1 sm:mx-2" aria-hidden="true"></span>
                 )}
               </li>
             ))}
           </ol>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           {/* Car Type Selection */}
           {currentStep === 0 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
+            className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100"
           >
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('car_type_selection') || 'Car Type Selection'}</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-gray-800">{t('car_type_selection') || 'Car Type Selection'}</h2>
             
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-3 sm:mb-4">
                   {t('what_type_of_car') || 'What type of car are you selling?'} <span className="text-red-500">*</span>
                 </label>
                 <RadioGroup
                   value={formData.carType}
                   onValueChange={(value) => setFormData(prev => ({ ...prev, carType: value }))}
                 >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className={`border-2 rounded-xl p-6 hover:border-blue-300 transition-all duration-200 cursor-pointer ${
+                                     <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                     <div className={`border-2 rounded-xl p-3 sm:p-4 md:p-6 hover:border-blue-300 transition-all duration-200 cursor-pointer ${
                       formData.carType === 'private' 
                         ? 'border-blue-500 bg-blue-50 shadow-md' 
                         : 'border-gray-200 hover:border-blue-300'
@@ -2187,23 +2195,23 @@ export default function AddCarListing() {
                       <RadioGroupItem value="private" id="private" className="sr-only" />
                       <Label htmlFor="private" className="cursor-pointer">
                         <div className="text-center">
-                          <div className={`rounded-full p-4 w-16 h-16 mx-auto mb-3 flex items-center justify-center transition-colors duration-200 ${
+                          <div className={`rounded-full p-2 sm:p-3 md:p-4 w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 mx-auto mb-2 sm:mb-3 flex items-center justify-center transition-colors duration-200 ${
                             formData.carType === 'private' 
                               ? 'bg-blue-100' 
                               : 'bg-blue-50'
                           }`}>
-                            <Car className={`h-8 w-8 transition-colors duration-200 ${
+                            <Car className={`h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 transition-colors duration-200 ${
                               formData.carType === 'private' 
                                 ? 'text-blue-600' 
                                 : 'text-blue-500'
                             }`} />
                           </div>
-                          <h3 className={`text-lg font-semibold mb-2 transition-colors duration-200 ${
+                          <h3 className={`text-sm sm:text-base md:text-lg font-semibold mb-1 sm:mb-2 transition-colors duration-200 ${
                             formData.carType === 'private' 
                               ? 'text-blue-700' 
                               : 'text-gray-900'
                           }`}>{t('private_car') || 'Private Car'}</h3>
-                          <p className={`text-sm transition-colors duration-200 ${
+                          <p className={`text-xs transition-colors duration-200 ${
                             formData.carType === 'private' 
                               ? 'text-blue-600' 
                               : 'text-gray-600'
@@ -2212,7 +2220,7 @@ export default function AddCarListing() {
                       </Label>
                     </div>
                     
-                    <div className={`border-2 rounded-xl p-6 hover:border-blue-300 transition-all duration-200 cursor-pointer ${
+                    <div className={`border-2 rounded-xl p-3 sm:p-4 md:p-6 hover:border-blue-300 transition-all duration-200 cursor-pointer ${
                       formData.carType === 'commercial' 
                         ? 'border-blue-500 bg-blue-50 shadow-md' 
                         : 'border-gray-200 hover:border-blue-300'
@@ -2220,23 +2228,23 @@ export default function AddCarListing() {
                       <RadioGroupItem value="commercial" id="commercial" className="sr-only" />
                       <Label htmlFor="commercial" className="cursor-pointer">
                         <div className="text-center">
-                          <div className={`rounded-full p-4 w-16 h-16 mx-auto mb-3 flex items-center justify-center transition-colors duration-200 ${
+                          <div className={`rounded-full p-2 sm:p-3 md:p-4 w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 mx-auto mb-2 sm:mb-3 flex items-center justify-center transition-colors duration-200 ${
                             formData.carType === 'commercial' 
                               ? 'bg-blue-100' 
                               : 'bg-green-50'
                           }`}>
-                            <Truck className={`h-8 w-8 transition-colors duration-200 ${
+                            <Truck className={`h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 transition-colors duration-200 ${
                               formData.carType === 'commercial' 
                                 ? 'text-blue-600' 
                                 : 'text-green-600'
                             }`} />
                           </div>
-                          <h3 className={`text-lg font-semibold mb-2 transition-colors duration-200 ${
+                          <h3 className={`text-sm sm:text-base md:text-lg font-semibold mb-1 sm:mb-2 transition-colors duration-200 ${
                             formData.carType === 'commercial' 
                               ? 'text-blue-700' 
                               : 'text-gray-900'
                           }`}>{t('commercial_car') || 'Commercial Car'}</h3>
-                          <p className={`text-sm transition-colors duration-200 ${
+                          <p className={`text-xs transition-colors duration-200 ${
                             formData.carType === 'commercial' 
                               ? 'text-blue-600' 
                               : 'text-gray-600'
@@ -2256,17 +2264,17 @@ export default function AddCarListing() {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
+            className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100"
           >
             
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('basic_information')}</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-gray-800">{t('basic_information')}</h2>
             
             {/* Input Method Toggle */}
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.2 }}
-              className="mb-8"
+              className="mb-6 sm:mb-8"
             >
               <div className="flex items-center justify-center bg-gray-100 rounded-xl p-1">
                 <button
@@ -2275,7 +2283,7 @@ export default function AddCarListing() {
                     clearFormData();
                     setInputMethod('plate');
                   }}
-                  className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
+                  className={`flex-1 py-2 sm:py-3 px-3 sm:px-6 rounded-lg font-medium transition-all duration-200 text-sm sm:text-base ${
                     inputMethod === 'plate'
                       ? 'bg-white text-blue-600 shadow-sm'
                       : 'text-gray-600 hover:text-gray-800'
@@ -2291,7 +2299,7 @@ export default function AddCarListing() {
                     clearFormData();
                     setInputMethod('manual');
                   }}
-                  className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
+                  className={`flex-1 py-2 sm:py-3 px-3 sm:px-6 rounded-lg font-medium transition-all duration-200 text-sm sm:text-base ${
                     inputMethod === 'manual'
                       ? 'bg-white text-blue-600 shadow-sm'
                       : 'text-gray-600 hover:text-gray-800'
@@ -2308,7 +2316,7 @@ export default function AddCarListing() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.3 }}
-              className="mb-6"
+              className="mb-4 sm:mb-6"
             >
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 {t('title')} <span className="text-gray-500">({t('auto_generated_hint') || 'Auto-generated'})</span>
@@ -2320,11 +2328,11 @@ export default function AddCarListing() {
                     setFormData(prev => ({ ...prev, title: e.target.value }));
                     setErrors(prev => ({ ...prev, title: '' }));
                   }}
-                  className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.title ? 'border-red-500' : ''}`}
+                  className={`w-full text-base sm:text-lg py-4 sm:py-6 px-3 sm:px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.title ? 'border-red-500' : ''}`}
                 />
                 {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
               {isClient && !formData.title && selectedManufacturer && selectedModel && selectedYear && (
-                <p className="mt-2 text-sm text-blue-600">
+                <p className="mt-2 text-xs sm:text-sm text-blue-600">
                   💡 {t('title_auto_generation_hint') || 'Title will be auto-generated as'} "{manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer} {formData.commercialName || t('model')} {selectedYear} {yad2ModelInfo?.data?.koah_sus || t('model')}  {yad2ModelInfo?.data?.transmission || t('model')} {yad2ModelInfo?.data?.fuelType || t('model')} {t('when_click_next') || 'when you click next'}
                 </p>
               )}
@@ -2336,7 +2344,7 @@ export default function AddCarListing() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.4 }}
-              className="mb-6"
+              className="mb-4 sm:mb-6"
             >
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 {t('mileage')} <span className="text-red-500">*</span> <span className="text-gray-500">({t('in_kilometers') || 'in kilometers'})</span>
@@ -2356,7 +2364,7 @@ export default function AddCarListing() {
                   const rawValue = e.target.value.replace(/,/g, '').replace(/\D/g, '');
                   setFormData(prev => ({ ...prev, mileage: rawValue }));
                 }}
-                className={`rounded-xl py-5 ${errors.mileage ? 'border-red-500' : ''}`}
+                className={`rounded-xl py-4 sm:py-5 px-3 sm:px-4 ${errors.mileage ? 'border-red-500' : ''}`}
               />
               {errors.mileage && <p className="mt-1 text-sm text-red-500">{errors.mileage}</p>}
             </motion.div>
@@ -2369,18 +2377,18 @@ export default function AddCarListing() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
-                className="space-y-6"
+                className="space-y-4 sm:space-y-6"
               >
                 <div className="w-full max-w-xl mx-auto">
                   <div className="relative">
                     <div className="relative flex items-center bg-[#ffca11] rounded shadow-lg p-2">
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2 sm:gap-4">
                         <img 
                           src="/a1.png" 
                           alt={t("logo_alt") || "Logo"} 
                           width={40} 
                           height={50} 
-                          className="object-fill w-[60px] md:w-[80px] p-[2px]" 
+                          className="object-fill w-[50px] sm:w-[60px] md:w-[80px] p-[2px]" 
                         />
               </div>
                       <div className="relative w-full">
@@ -2389,7 +2397,7 @@ export default function AddCarListing() {
                           value={plateNumber}
                           onChange={handlePlateNumberChange}
                           placeholder={t("enter_plate") || "Enter Plate Number"}
-                          className="w-full px-4 sm:px-6 py-4 sm:py-8 text-xl sm:text-2xl md:text-3xl font-black tracking-[0.1em] bg-transparent border-0 focus:ring-0 text-center uppercase"
+                          className="w-full px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-8 text-lg sm:text-xl md:text-2xl lg:text-3xl font-black tracking-[0.1em] bg-transparent border-0 focus:ring-0 text-center uppercase"
                           maxLength={10}
                           style={{
                             letterSpacing: '0.1em',
@@ -2406,17 +2414,17 @@ export default function AddCarListing() {
                           </div>
                         )}
                         {loading && (
-                          <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                            <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                          <div className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2">
+                            <Loader2 className="h-5 w-5 sm:h-6 sm:w-6 animate-spin text-blue-600" />
                           </div>
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 px-4 w-full justify-center pt-4">
+                    <div className="flex items-center gap-2 px-3 sm:px-4 w-full justify-center pt-3 sm:pt-4">
                       <Button 
                         onClick={fetchCarData} 
                         disabled={loading}
-                        className="rounded-full w-50 text-black h-12 hover:bg-blue-700 transition-colors bg-[#ffca11]"
+                        className="rounded-full w-auto text-black h-10 sm:h-12 hover:bg-blue-700 transition-colors bg-[#ffca11] text-sm sm:text-base px-4 sm:px-6"
                       >
                         {loading ? (
                           <>
@@ -2435,10 +2443,10 @@ export default function AddCarListing() {
                           onClick={refreshCarData}
                           disabled={loading}
                           variant="outline"
-                          className="rounded-full w-12 h-12 hover:bg-blue-50 transition-colors border-blue-300"
+                          className="rounded-full w-10 h-10 sm:w-12 sm:h-12 hover:bg-blue-50 transition-colors border-blue-300"
                           title={t("refresh_car_data") || "Refresh car data"}
                         >
-                          <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                           </svg>
                         </Button>
@@ -2457,9 +2465,9 @@ export default function AddCarListing() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
-                className="space-y-6"
+                className="space-y-4 sm:space-y-6"
               >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                   {/* Manufacturer Selection */}
                   <motion.div 
                     initial={{ opacity: 0, y: 10 }}
@@ -2500,7 +2508,7 @@ export default function AddCarListing() {
                       setErrors(prev => ({ ...prev, manufacturer: '' }));
                     }}
                   >
-                    <SelectTrigger className="rounded-xl py-5">
+                    <SelectTrigger className="rounded-xl py-3 sm:py-5">
                       <SelectValue placeholder={t('select_manufacturer') || 'Select Manufacturer'} />
                     </SelectTrigger>
                     <SelectContent className="bg-white">
@@ -2548,7 +2556,7 @@ export default function AddCarListing() {
                     }}
                     disabled={!selectedManufacturer || availableModels.length === 0}
                   >
-                    <SelectTrigger className="rounded-xl py-5">
+                    <SelectTrigger className="rounded-xl py-3 sm:py-5">
                       <SelectValue placeholder={t('select_model') || 'Select Model'} />
                     </SelectTrigger>
                     <SelectContent className="bg-white">
@@ -2665,7 +2673,7 @@ export default function AddCarListing() {
                     }}
                     disabled={!selectedManufacturer || !selectedModel || availableYears.length === 0}
                   >
-                    <SelectTrigger className={`rounded-xl py-5 ${errors.year ? 'border-red-500' : ''}`}>
+                    <SelectTrigger className={`rounded-xl py-3 sm:py-5 ${errors.year ? 'border-red-500' : ''}`}>
                       <SelectValue placeholder={t('year') || 'Year'} />
                     </SelectTrigger>
                     <SelectContent className="bg-white">
@@ -2759,7 +2767,7 @@ export default function AddCarListing() {
                       }}
                       disabled={!selectedManufacturer || !selectedModel || !selectedYear || availableSubmodels.length === 0}
                     >
-                      <SelectTrigger className="rounded-xl py-5">
+                      <SelectTrigger className="rounded-xl py-3 sm:py-5">
                         <SelectValue placeholder={t('select_submodel') || 'Select Submodel'} />
                       </SelectTrigger>
                       <SelectContent className="bg-white">
@@ -2936,18 +2944,18 @@ export default function AddCarListing() {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
+            className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100"
           >
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('condition_trade_in_description') || 'Condition, Trade-in & description'}</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-gray-800">{t('condition_trade_in_description') || 'Condition, Trade-in & description'}</h2>
             
             {/* Condition Section */}
-            <div className="mb-8">
-              <h3 className="text-lg font-medium text-gray-700 mb-4">{t('condition') || 'Condition'}</h3>
+            <div className="mb-6 sm:mb-8">
+              <h3 className="text-base sm:text-lg font-medium text-gray-700 mb-3 sm:mb-4">{t('condition') || 'Condition'}</h3>
               <Select
                 value={formData.currentCondition}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, currentCondition: value }))}
               >
-                <SelectTrigger className="rounded-xl py-5">
+                <SelectTrigger className="rounded-xl py-3 sm:py-5">
                   <SelectValue placeholder={t('current_condition')} />
                 </SelectTrigger>
                 <SelectContent className="bg-white">
@@ -2961,8 +2969,8 @@ export default function AddCarListing() {
             </div>
 
             {/* Trade-in Option Section */}
-            <div className="mb-8">
-              <h3 className="text-lg font-medium text-gray-700 mb-4">{t('trade_in_option') || 'Trade-in Option'}</h3>
+            <div className="mb-6 sm:mb-8">
+              <h3 className="text-base sm:text-lg font-medium text-gray-700 mb-3 sm:mb-4">{t('trade_in_option') || 'Trade-in Option'}</h3>
               <RadioGroup
                 value={formData.tradeIn}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, tradeIn: value }))}
@@ -2986,24 +2994,24 @@ export default function AddCarListing() {
 
             {/* description Section */}
             <div>
-              <h3 className="text-lg font-medium text-gray-700 mb-4">{t('description') || 'description'}</h3>
+              <h3 className="text-base sm:text-lg font-medium text-gray-700 mb-3 sm:mb-4">{t('description') || 'description'}</h3>
             <Textarea
                 placeholder={t('description_placeholder')}
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              className="h-24 rounded-xl py-5"
+              className="h-20 sm:h-24 rounded-xl py-3 sm:py-5"
             />
             </div>
 
             {/* Owner Type Section */}
-            <div className="mt-8">
-              <h3 className="text-lg font-medium text-gray-700 mb-4">{t('owner_type') || 'Owner Type'} <span className="text-red-500">*</span></h3>
+            <div className="mt-6 sm:mt-8">
+              <h3 className="text-base sm:text-lg font-medium text-gray-700 mb-3 sm:mb-4">{t('owner_type') || 'Owner Type'} <span className="text-red-500">*</span></h3>
               <RadioGroup
                 value={formData.ownerType}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, ownerType: value }))}
               >
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className={`border-2 rounded-xl p-4 hover:border-blue-300 transition-all duration-200 cursor-pointer ${
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+                  <div className={`border-2 rounded-xl p-3 sm:p-4 hover:border-blue-300 transition-all duration-200 cursor-pointer ${
                     formData.ownerType === 'private' 
                       ? 'border-blue-500 bg-blue-50 shadow-md' 
                       : 'border-gray-200 hover:border-blue-300'
@@ -3011,18 +3019,18 @@ export default function AddCarListing() {
                     <RadioGroupItem value="private" id="owner-private" className="sr-only" />
                     <Label htmlFor="owner-private" className="cursor-pointer">
                       <div className="text-center">
-                        <div className={`rounded-full p-3 w-12 h-12 mx-auto mb-2 flex items-center justify-center transition-colors duration-200 ${
+                        <div className={`rounded-full p-2 sm:p-3 w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-2 flex items-center justify-center transition-colors duration-200 ${
                           formData.ownerType === 'private' 
                             ? 'bg-blue-100' 
                             : 'bg-blue-50'
                         }`}>
-                          <User className={`h-6 w-6 transition-colors duration-200 ${
+                          <User className={`h-5 w-5 sm:h-6 sm:w-6 transition-colors duration-200 ${
                             formData.ownerType === 'private' 
                               ? 'text-blue-600' 
                               : 'text-blue-500'
                           }`} />
                         </div>
-                        <h4 className={`font-medium transition-colors duration-200 ${
+                        <h4 className={`text-sm sm:text-base font-medium transition-colors duration-200 ${
                           formData.ownerType === 'private' 
                             ? 'text-blue-700' 
                             : 'text-gray-900'
@@ -3031,7 +3039,7 @@ export default function AddCarListing() {
                     </Label>
                   </div>
                   
-                  <div className={`border-2 rounded-xl p-4 hover:border-blue-300 transition-all duration-200 cursor-pointer ${
+                  <div className={`border-2 rounded-xl p-3 sm:p-4 hover:border-blue-300 transition-all duration-200 cursor-pointer ${
                     formData.ownerType === 'company' 
                       ? 'border-blue-500 bg-blue-50 shadow-md' 
                       : 'border-gray-200 hover:border-blue-300'
@@ -3039,18 +3047,18 @@ export default function AddCarListing() {
                     <RadioGroupItem value="company" id="owner-company" className="sr-only" />
                     <Label htmlFor="owner-company" className="cursor-pointer">
                       <div className="text-center">
-                        <div className={`rounded-full p-3 w-12 h-12 mx-auto mb-2 flex items-center justify-center transition-colors duration-200 ${
+                        <div className={`rounded-full p-2 sm:p-3 w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-2 flex items-center justify-center transition-colors duration-200 ${
                           formData.ownerType === 'company' 
                             ? 'bg-blue-100' 
                             : 'bg-green-50'
                         }`}>
-                          <Building className={`h-6 w-6 transition-colors duration-200 ${
+                          <Building className={`h-5 w-5 sm:h-6 sm:w-6 transition-colors duration-200 ${
                             formData.ownerType === 'company' 
                               ? 'text-blue-600' 
                               : 'text-green-600'
                           }`} />
                         </div>
-                        <h4 className={`font-medium transition-colors duration-200 ${
+                        <h4 className={`text-sm sm:text-base font-medium transition-colors duration-200 ${
                           formData.ownerType === 'company' 
                             ? 'text-blue-700' 
                             : 'text-gray-900'
@@ -3059,7 +3067,7 @@ export default function AddCarListing() {
                     </Label>
                   </div>
                   
-                  <div className={`border-2 rounded-xl p-4 hover:border-blue-300 transition-all duration-200 cursor-pointer ${
+                  <div className={`border-2 rounded-xl p-3 sm:p-4 hover:border-blue-300 transition-all duration-200 cursor-pointer ${
                     formData.ownerType === 'rental' 
                       ? 'border-blue-500 bg-blue-50 shadow-md' 
                       : 'border-gray-200 hover:border-blue-300'
@@ -3067,18 +3075,18 @@ export default function AddCarListing() {
                     <RadioGroupItem value="rental" id="owner-rental" className="sr-only" />
                     <Label htmlFor="owner-rental" className="cursor-pointer">
                       <div className="text-center">
-                        <div className={`rounded-full p-3 w-12 h-12 mx-auto mb-2 flex items-center justify-center transition-colors duration-200 ${
+                        <div className={`rounded-full p-2 sm:p-3 w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-2 flex items-center justify-center transition-colors duration-200 ${
                           formData.ownerType === 'rental' 
                             ? 'bg-blue-100' 
                             : 'bg-purple-50'
                         }`}>
-                          <Key className={`h-6 w-6 transition-colors duration-200 ${
+                          <Key className={`h-5 w-5 sm:h-6 sm:w-6 transition-colors duration-200 ${
                             formData.ownerType === 'rental' 
                               ? 'text-blue-600' 
                               : 'text-purple-600'
                           }`} />
                         </div>
-                        <h4 className={`font-medium transition-colors duration-200 ${
+                        <h4 className={`text-sm sm:text-base font-medium transition-colors duration-200 ${
                           formData.ownerType === 'rental' 
                             ? 'text-blue-700' 
                             : 'text-gray-900'
@@ -3091,11 +3099,11 @@ export default function AddCarListing() {
             </div>
 
             {/* Previous Owners Section */}
-            <div className="mt-8">
-              <h3 className="text-lg font-medium text-gray-700 mb-4">{t('previous_owners') || 'Previous Owners'} <span className="text-gray-500">({t('optional') || 'optional'})</span></h3>
-              <div className="space-y-4">
+            <div className="mt-6 sm:mt-8">
+              <h3 className="text-base sm:text-lg font-medium text-gray-700 mb-3 sm:mb-4">{t('previous_owners') || 'Previous Owners'} <span className="text-gray-500">({t('optional') || 'optional'})</span></h3>
+              <div className="space-y-3 sm:space-y-4">
                 {formData.previousOwners.map((owner, index) => (
-                  <div key={index} className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg">
+                  <div key={index} className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 border border-gray-200 rounded-lg">
                     <div className="flex-1">
                       <Input
                         placeholder={t('owner_name') || 'Owner name'}
@@ -3164,11 +3172,11 @@ export default function AddCarListing() {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
+            className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100"
           >
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('price')}</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-gray-800">{t('price')}</h2>
             
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {/* Asking Price */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -3189,20 +3197,20 @@ export default function AddCarListing() {
                 const rawValue = e.target.value.replace(/,/g, '').replace(/\D/g, '');
                 setFormData(prev => ({ ...prev, askingPrice: rawValue }));
               }}
-              className="w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+              className="w-full text-base sm:text-lg py-4 sm:py-6 px-3 sm:px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500"
             />
               </div>
 
               {/* Price Negotiable */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-3 sm:mb-4">
                   {t('price_negotiable') || 'Are you willing to negotiate on the price?'}
                 </label>
                 <RadioGroup
                   value={formData.priceNegotiable ? 'yes' : 'no'}
                   onValueChange={(value) => setFormData(prev => ({ ...prev, priceNegotiable: value === 'yes' }))}
                 >
-                  <div className="flex items-center space-x-6 rtl">
+                  <div className="flex items-center space-x-4 sm:space-x-6 rtl">
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="yes" id="negotiable-yes" />
                       <Label htmlFor="negotiable-yes">{t('yes') || 'Yes'}</Label>
@@ -3229,7 +3237,7 @@ export default function AddCarListing() {
                   value={formData.region}
                   onValueChange={(value) => setFormData(prev => ({ ...prev, region: value }))}
                 >
-                  <SelectTrigger className="rounded-xl py-5">
+                  <SelectTrigger className="rounded-xl py-3 sm:py-5">
                     <SelectValue placeholder={t('select_region') || 'Select your region'} />
                   </SelectTrigger>
                   <SelectContent className="bg-white">
@@ -3252,10 +3260,10 @@ export default function AddCarListing() {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
+            className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100"
           >
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('contact_info')}</h2>
-            <div className="space-y-4">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-gray-800">{t('contact_info')}</h2>
+            <div className="space-y-3 sm:space-y-4">
               <div>
                 <Input
                   placeholder={t('name_placeholder')}
@@ -3264,7 +3272,7 @@ export default function AddCarListing() {
                     setFormData(prev => ({ ...prev, name: e.target.value }));
                     setErrors(prev => ({ ...prev, name: '' }));
                   }}
-                  className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.name ? 'border-red-500' : ''}`}
+                  className={`w-full text-base sm:text-lg py-4 sm:py-6 px-3 sm:px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.name ? 'border-red-500' : ''}`}
                 />
                 {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
               </div>
@@ -3278,7 +3286,7 @@ export default function AddCarListing() {
                     setFormData(prev => ({ ...prev, email: e.target.value }));
                     setErrors(prev => ({ ...prev, email: '' }));
                   }}
-                  className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : ''}`}
+                  className={`w-full text-base sm:text-lg py-4 sm:py-6 px-3 sm:px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : ''}`}
                 />
                 {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
               </div>
@@ -3291,7 +3299,7 @@ export default function AddCarListing() {
                     setFormData(prev => ({ ...prev, phone: e.target.value }));
                     setErrors(prev => ({ ...prev, phone: '' }));
                   }}
-                  className={`w-full text-lg py-6 px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.phone ? 'border-red-500' : ''}`}
+                  className={`w-full text-base sm:text-lg py-4 sm:py-6 px-3 sm:px-4 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${errors.phone ? 'border-red-500' : ''}`}
                 />
                 {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
               </div>
@@ -3304,13 +3312,13 @@ export default function AddCarListing() {
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
+              className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100"
             >
-              <h2 className="text-2xl font-semibold mb-6 text-gray-800">{t('terms_and_privacy') || 'Terms and Privacy Policy'}</h2>
+              <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-gray-800">{t('terms_and_privacy') || 'Terms and Privacy Policy'}</h2>
               
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Terms and Privacy Policy Checkbox */}
-                <div className="mt-8">
+                <div className="mt-6 sm:mt-8">
                   <div className="flex items-start space-x-3">
                     <input
                       type="checkbox"
@@ -3337,24 +3345,24 @@ export default function AddCarListing() {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
+            className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100"
           >
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">{t('choose_your_package') || 'בחירת המסלול שלך'}</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-gray-800 text-center">{t('choose_your_package') || 'בחירת המסלול שלך'}</h2>
             
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {/* Free Package - Website Release */}
-              <div className="border-2 border-green-500 rounded-xl p-6 bg-green-50 relative">
-                <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+              <div className="border-2 border-green-500 rounded-xl p-4 sm:p-6 bg-green-50 relative">
+                <div className="absolute top-3 sm:top-4 right-3 sm:right-4 bg-green-500 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
                   {t('recommended') || 'מומלץ'}
                 </div>
                 <div className="text-center">
-                  <h3 className="text-2xl font-bold text-green-700 mb-2">{t('website_release') || 'שחרור האתר'}</h3>
-                  <p className="text-green-600 mb-4">{t('free_first_3_months') || 'חינם ל-3 חודשים ראשונים - כל הפרימיום'}</p>
-                  <div className="text-3xl font-bold text-green-700 mb-2">₪0</div>
-                  <p className="text-sm text-green-600 mb-4">{t('first_3_months') || 'ל-3 חודשים ראשונים'}</p>
+                  <h3 className="text-xl sm:text-2xl font-bold text-green-700 mb-2">{t('website_release') || 'שחרור האתר'}</h3>
+                  <p className="text-sm sm:text-base text-green-600 mb-3 sm:mb-4">{t('free_first_3_months') || 'חינם ל-3 חודשים ראשונים - כל הפרימיום'}</p>
+                  <div className="text-2xl sm:text-3xl font-bold text-green-700 mb-2">₪0</div>
+                  <p className="text-xs sm:text-sm text-green-600 mb-3 sm:mb-4">{t('first_3_months') || 'ל-3 חודשים ראשונים'}</p>
             <Button
               type="button"
-                    className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl font-semibold"
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 py-2 sm:py-3 rounded-xl font-semibold text-sm sm:text-base"
                     onClick={() => setFormData(prev => ({ ...prev, selectedPackage: 'website_release' }))}
                   >
                     {t('select_package') || 'בחר חבילה'}
@@ -3363,11 +3371,11 @@ export default function AddCarListing() {
               </div>
 
               {/* Premium Package - Unselectable */}
-              <div className="border-2 border-gray-300 rounded-xl p-6 bg-gray-50 opacity-60 cursor-not-allowed">
+              <div className="border-2 border-gray-300 rounded-xl p-4 sm:p-6 bg-gray-50 opacity-60 cursor-not-allowed">
                 <div className="text-center">
-                  <h3 className="text-2xl font-bold text-gray-500 mb-2">{t('premium') || 'פרימיום'}</h3>
-                  <p className="text-gray-500 mb-4">{t('premium_description') || 'הדרך למכור מהר ולקבל את המחיר המקסימלי!'}</p>
-                  <ul className="text-sm text-gray-500 mb-4 space-y-2 text-right">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-500 mb-2">{t('premium') || 'פרימיום'}</h3>
+                  <p className="text-sm sm:text-base text-gray-500 mb-3 sm:mb-4">{t('premium_description') || 'הדרך למכור מהר ולקבל את המחיר המקסימלי!'}</p>
+                  <ul className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4 space-y-1 sm:space-y-2 text-right">
                     <li>• {t('max_exposure') || 'מקסימום חשיפה ובראש התוצאות'}</li>
                     <li>• {t('auto_bump') || 'הקפצה אוטומטית בכל 4 שעות'}</li>
                     <li>• {t('more_calls') || 'יותר שיחות לקידום העסקה המתאימה'}</li>
@@ -3384,11 +3392,11 @@ export default function AddCarListing() {
               </div>
 
               {/* Enhanced Package - Unselectable */}
-              <div className="border-2 border-gray-300 rounded-xl p-6 bg-gray-50 opacity-60 cursor-not-allowed">
+              <div className="border-2 border-gray-300 rounded-xl p-4 sm:p-6 bg-gray-50 opacity-60 cursor-not-allowed">
                 <div className="text-center">
-                  <h3 className="text-2xl font-bold text-gray-500 mb-2">{t('enhanced') || 'משודרגת'}</h3>
-                  <p className="text-gray-500 mb-4">{t('enhanced_description') || 'חשיפה גבוהה יותר מהמסלול הבסיסי'}</p>
-                  <ul className="text-sm text-gray-500 mb-4 space-y-2 text-right">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-500 mb-2">{t('enhanced') || 'משודרגת'}</h3>
+                  <p className="text-sm sm:text-base text-gray-500 mb-3 sm:mb-4">{t('enhanced_description') || 'חשיפה גבוהה יותר מהמסלול הבסיסי'}</p>
+                  <ul className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4 space-y-1 sm:space-y-2 text-right">
                     <li>• {t('manual_bump') || 'הקפצה באופן ידני בכל 4 שעות'}</li>
                     <li>• {t('higher_position') || 'מיקום גבוה יותר בעמודי החיפוש'}</li>
                   </ul>
@@ -3404,9 +3412,9 @@ export default function AddCarListing() {
               </div>
 
               {/* Payment Method Info */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="font-semibold text-blue-800 mb-2">{t('payment_method') || 'שיטת תשלום'}</h4>
-                <p className="text-sm text-blue-700">{t('payment_info') || 'כל החבילות כוללות תשלום בטוח דרך מערכת התשלומים שלנו'}</p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
+                <h4 className="font-semibold text-blue-800 mb-2 text-sm sm:text-base">{t('payment_method') || 'שיטת תשלום'}</h4>
+                <p className="text-xs sm:text-sm text-blue-700">{t('payment_info') || 'כל החבילות כוללות תשלום בטוח דרך מערכת התשלומים שלנו'}</p>
               </div>
             </div>
           </motion.div>
@@ -3414,15 +3422,15 @@ export default function AddCarListing() {
 
          
           {/* Navigation Buttons */}
-          <div className="sticky bottom-6 left-0 right-0 z-50 flex items-center justify-between gap-3 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-gray-200 mx-4">
+          <div className="sticky bottom-4 sm:bottom-6 left-0 right-0 z-50 flex items-center justify-between gap-2 sm:gap-3 bg-white/90 backdrop-blur-sm p-3 sm:p-4 rounded-2xl shadow-lg border border-gray-200 mx-3 sm:mx-4">
             <Button
               type="button"
               variant="outline"
-              onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
+                              onClick={handlePrevStep}
               disabled={currentStep === 0}
-              className="px-6 py-3 rounded-xl transition-all duration-200 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 sm:px-6 py-2 sm:py-3 rounded-xl transition-all duration-200 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 sm:gap-2">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>

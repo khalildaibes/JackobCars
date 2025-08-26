@@ -9,7 +9,7 @@ import { Slider } from "../../components/ui/slider";
 import { Card, CardContent } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-import { Check, Heart, MessageSquare, Plus, Car,Calendar, Gauge, Fuel, Sparkles, Scale } from "lucide-react";
+import { Check, Heart, MessageSquare, Plus, Car,Calendar, Gauge, Fuel, Sparkles, Scale, Settings, ChevronDown } from "lucide-react";
 import { Badge } from "../../components/ui/badge";
 
 import { Img } from '../../components/Img';
@@ -87,7 +87,8 @@ const CarListings: React.FC = () => {
   const [fuelTypeFilter, setFuelTypeFilter] = useState<string>("Any");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [viewType, setViewType] = useState<string>("list");
-    const [listings, setListings] = useState([]);
+  const [showFilters, setShowFilters] = useState(false);
+  const [listings, setListings] = useState([]);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -423,10 +424,10 @@ const CarListings: React.FC = () => {
         </motion.div> */}
         
         {/* Search and Filter Section */}
-        <Card className="bg-white shadow-md">
-          <CardContent className="pt-6">
-            <div className="space-y-6">
-              {/* Search Bar */}
+        <div className="space-y-4">
+          {/* Search Bar */}
+          <Card className="bg-white shadow-md">
+            <CardContent className="pt-6">
               <div className="relative">
                 <Input
                   type="text"
@@ -439,82 +440,198 @@ const CarListings: React.FC = () => {
                   <Car size={20} />
                 </span>
               </div>
-              
-              {/* Filter Options */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="year-filter">{t('year')}</Label>
-                  <Select value={yearFilter} onValueChange={setYearFilter}>
-                    <SelectTrigger id="year-filter">
-                      <SelectValue placeholder={t('any_year')} />
-                    </SelectTrigger>
-                    <SelectContent className='bg-white'>
-                      <SelectItem value="Any">{t('any_year')}</SelectItem>
-                      {YEARS.map(year => (
-                        <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="make-filter">{t('make')}</Label>
-                  <Select value={makeFilter} onValueChange={setMakeFilter}>
-                    <SelectTrigger id="make-filter">
-                      <SelectValue placeholder={t('any_make')} />
-                    </SelectTrigger>
-                    <SelectContent className='bg-white'>
-                      {MAKES.map(make => (
-                        <SelectItem key={make.value} value={make.value}>{make.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="body-type-filter">{t('body_type')}</Label>
-                  <Select value={bodyTypeFilter} onValueChange={setBodyTypeFilter}>
-                    <SelectTrigger id="body-type-filter">
-                      <SelectValue placeholder={t('any_body_type')} />
-                    </SelectTrigger>
-                    <SelectContent className='bg-white'>
-                      {BODY_TYPES.map(type => (
-                        <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="fuel-type-filter">{t('fuel_type')}</Label>
-                  <Select value={fuelTypeFilter} onValueChange={setFuelTypeFilter}>
-                    <SelectTrigger id="fuel-type-filter">
-                      <SelectValue placeholder={t('any_fuel_type')} />
-                    </SelectTrigger>
-                    <SelectContent className='bg-white'>
-                      {FUEL_TYPES.map(type => (
-                        <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label>{t('price_range')}: {priceRange[0].toLocaleString()} - {priceRange[1].toLocaleString()}</Label>
-                  <Slider
-                    defaultValue={[5000, minMaxPrices.max]}
-                    min={5000}
-                    max={minMaxPrices.max}
-                    step={1000}
-                    value={priceRange}
-                    onValueChange={setPriceRange}
-                    className="py-4"
-                  />
-                </div>
+            </CardContent>
+          </Card>
+
+          {/* Filter Toggle Button - Mobile Only */}
+          <div className="md:hidden">
+            <Button
+              onClick={() => setShowFilters(!showFilters)}
+              variant="outline"
+              className="w-full flex items-center justify-between bg-white hover:bg-gray-50 border-gray-200 text-gray-700"
+            >
+              <div className="flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                <span className="font-medium">Filters</span>
+                <span className="text-xs text-gray-500">
+                  ({yearFilter !== 'Any' ? 1 : 0} + {makeFilter !== 'Any' ? 1 : 0} + {bodyTypeFilter !== 'Any' ? 1 : 0} + {fuelTypeFilter !== 'Any' ? 1 : 0} active)
+                </span>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+              <div className={`transform transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`}>
+                <ChevronDown className="h-4 w-4" />
+              </div>
+            </Button>
+          </div>
+
+          {/* Filter Options - Collapsible on Mobile */}
+          <motion.div
+            initial={false}
+            animate={{ height: showFilters ? 'auto' : 0, opacity: showFilters ? 1 : 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <Card className="bg-white shadow-md">
+              <CardContent className="pt-6">
+                <div className="space-y-6">
+                  {/* Filter Options */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="year-filter">{t('year')}</Label>
+                      <Select value={yearFilter} onValueChange={setYearFilter}>
+                        <SelectTrigger id="year-filter">
+                          <SelectValue placeholder={t('any_year')} />
+                        </SelectTrigger>
+                        <SelectContent className='bg-white'>
+                          <SelectItem value="Any">{t('any_year')}</SelectItem>
+                          {YEARS.map(year => (
+                            <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="make-filter">{t('make')}</Label>
+                      <Select value={makeFilter} onValueChange={setMakeFilter}>
+                        <SelectTrigger id="make-filter">
+                          <SelectValue placeholder={t('any_make')} />
+                        </SelectTrigger>
+                        <SelectContent className='bg-white'>
+                          {MAKES.map(make => (
+                            <SelectItem key={make.value} value={make.value}>{make.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="body-type-filter">{t('body_type')}</Label>
+                      <Select value={bodyTypeFilter} onValueChange={setBodyTypeFilter}>
+                        <SelectTrigger id="body-type-filter">
+                          <SelectValue placeholder={t('any_body_type')} />
+                        </SelectTrigger>
+                        <SelectContent className='bg-white'>
+                          {BODY_TYPES.map(type => (
+                            <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="fuel-type-filter">{t('fuel_type')}</Label>
+                      <Select value={fuelTypeFilter} onValueChange={setFuelTypeFilter}>
+                        <SelectTrigger id="fuel-type-filter">
+                          <SelectValue placeholder={t('any_fuel_type')} />
+                        </SelectTrigger>
+                        <SelectContent className='bg-white'>
+                          {FUEL_TYPES.map(type => (
+                            <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label>{t('price_range')}: {priceRange[0].toLocaleString()} - {priceRange[1].toLocaleString()}</Label>
+                      <Slider
+                        defaultValue={[5000, minMaxPrices.max]}
+                        min={5000}
+                        max={minMaxPrices.max}
+                        step={1000}
+                        value={priceRange}
+                        onValueChange={setPriceRange}
+                        className="py-4"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Desktop Filters - Always Visible */}
+          <div className="hidden md:block">
+            <Card className="bg-white shadow-md">
+              <CardContent className="pt-6">
+                <div className="space-y-6">
+                  {/* Filter Options */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="year-filter-desktop">{t('year')}</Label>
+                      <Select value={yearFilter} onValueChange={setYearFilter}>
+                        <SelectTrigger id="year-filter-desktop">
+                          <SelectValue placeholder={t('any_year')} />
+                        </SelectTrigger>
+                        <SelectContent className='bg-white'>
+                          <SelectItem value="Any">{t('any_year')}</SelectItem>
+                          {YEARS.map(year => (
+                            <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="make-filter-desktop">{t('make')}</Label>
+                      <Select value={makeFilter} onValueChange={setMakeFilter}>
+                        <SelectTrigger id="make-filter-desktop">
+                          <SelectValue placeholder={t('any_make')} />
+                        </SelectTrigger>
+                        <SelectContent className='bg-white'>
+                          {MAKES.map(make => (
+                            <SelectItem key={make.value} value={make.value}>{make.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="body-type-filter-desktop">{t('body_type')}</Label>
+                      <Select value={bodyTypeFilter} onValueChange={setBodyTypeFilter}>
+                        <SelectTrigger id="body-type-filter-desktop">
+                          <SelectValue placeholder={t('any_body_type')} />
+                        </SelectTrigger>
+                        <SelectContent className='bg-white'>
+                          {BODY_TYPES.map(type => (
+                            <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="fuel-type-filter-desktop">{t('fuel_type')}</Label>
+                      <Select value={fuelTypeFilter} onValueChange={setFuelTypeFilter}>
+                        <SelectTrigger id="fuel-type-filter-desktop">
+                          <SelectValue placeholder={t('any_fuel_type')} />
+                        </SelectTrigger>
+                        <SelectContent className='bg-white'>
+                          {FUEL_TYPES.map(type => (
+                            <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label>{t('price_range')}: {priceRange[0].toLocaleString()} - {priceRange[1].toLocaleString()}</Label>
+                      <Slider
+                        defaultValue={[5000, minMaxPrices.max]}
+                        min={5000}
+                        max={minMaxPrices.max}
+                        step={1000}
+                        value={priceRange}
+                        onValueChange={setPriceRange}
+                        className="py-4"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
         
 
 
@@ -584,7 +701,7 @@ const CarListings: React.FC = () => {
 
               {/* Results Grid */}
               {filteredCars.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                   {filteredCars.map((car) => (
                     <CarCard 
                       key={car.slug || car.id} 
