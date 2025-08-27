@@ -2941,6 +2941,7 @@ export default function AddCarListing() {
               )}
 
           </motion.div>
+          
           )}
 
           {/* Condition, Trade-in & description - Combined Step */}
