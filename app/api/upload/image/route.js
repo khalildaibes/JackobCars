@@ -7,7 +7,7 @@ export async function POST(request) {
 
         // Get the form data from the request body
         const formData = await request.formData();
-        const image = formData.get('image');
+        const image = formData.get('files');
         
         console.log('Received image:', image);
         

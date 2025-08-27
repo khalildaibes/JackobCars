@@ -1302,6 +1302,8 @@
     "selected_images": "الصور المختارة:",
     "images_ready": "{count} صورة(ات) جاهزة للرفع",
     "some_files_invalid": "بعض الملفات ليست صور صالحة أو كبيرة جداً (الحد الأقصى 5 ميجابايت)",
+    "language_suggestion": "لأفضل تجربة، نوصي باستخدام اللغة العبرية",
+    "switch_to_hebrew": "انتقل إلى العبرية",
     
     "progress_saved": "تم حفظ التقدم",
     "clear_saved_progress": "مسح التقدم المحفوظ",

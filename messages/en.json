@@ -1267,6 +1267,8 @@
     "selected_images": "Selected Images:",
     "images_ready": "{count} image(s) ready for upload",
     "some_files_invalid": "Some files are not valid images or are too large (max 5MB)",
+    "language_suggestion": "For the best experience, we recommend using Hebrew language",
+    "switch_to_hebrew": "Switch to Hebrew",
     
     "progress_saved": "Progress Saved",
     "clear_saved_progress": "Clear Saved Progress",

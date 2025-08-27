@@ -651,7 +651,7 @@ export default function AddCarListing() {
     setAvailableSubmodels([]);
     setGlobalSubmodelOptions([]);
     setSubModelID('');
-    setInputMethod('plate');
+    setInputMethod('manual');
     setPlateNumber('');
     setGovCarInfo(null);
     setCarData(null);
@@ -1567,8 +1567,10 @@ export default function AddCarListing() {
         
         if (response.ok) {
           const result = await response.json();
-          if (result.data && result.data[0]) {
-            uploadedIds.push(result.data[0].id);
+          console.log('Image uploaded successfully', result);
+
+          if (result[0] && result[0].id) {
+            uploadedIds.push(result[0].id);
           }
         } else {
           console.error('Failed to upload image:', image.name);
@@ -2224,6 +2226,33 @@ export default function AddCarListing() {
               </div>
 
 
+
+        {/* Language suggestion */}
+          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <span className="text-blue-600">🇮🇱</span>
+                <span className="text-sm text-blue-700">
+                  {locale !== 'he-IL' && (
+                    t('language_suggestion') || 'For the best experience, we recommend using Hebrew language'
+                  )}
+                </span>
+              </div>
+              <button
+                onClick={() => {
+                  const newLocale = 'he-IL';
+                  // Set the cookie so next-intl (or your app) can pick up the new locale
+                  document.cookie = `NEXT_LOCALE=${newLocale}; path=/;`;
+                  // Reload the page so that the provider can re-read the new locale and update the direction
+                  window.location.reload();
+                }}
+                className="px-3 py-1 text-xs font-medium text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-md transition-colors"
+              >
+                {t('switch_to_hebrew') || 'Switch to Hebrew'}
+              </button>
+            </div>
+          </div>
+        
 
         {/* Steps indicator (clickable) */}
         <div className="mb-6 sm:mb-8">

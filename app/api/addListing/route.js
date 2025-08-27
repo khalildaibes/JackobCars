@@ -170,7 +170,7 @@ export async function POST(request) {
       known_problems: car.knownProblems || car.known_problems || ''
     };
     
-    const images = car.images || {};
+    const images = car.images || [];
     const video = car.video || null;
     
     console.log('Extracted data:', { brand, model, year, specs, images, video });
@@ -381,7 +381,7 @@ export async function POST(request) {
           }
         },
         store: [18], // Store ID as array
-        image: images?.main?.id ? [images.main.id] : [], // Image ID as array
+        image: images?.length > 0 ? images[0] : [], // Image ID as array
         publisher: [1], // Publisher ID as array
         category: [], // Empty category array
         services: [], // Empty services array
