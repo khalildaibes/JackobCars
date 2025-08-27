@@ -1575,8 +1575,8 @@ export default function AddCarListing() {
         
         if (response.ok) {
           const result = await response.json();
-          if (result.data && result.data[0]) {
-            uploadedIds.push(result.data[0].id);
+          if (result[0] && result[0].id) {
+            uploadedIds.push(result[0].id);
           }
         } else {
           console.error('Failed to upload image:', image.name);
