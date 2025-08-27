@@ -3269,6 +3269,7 @@ export default function AddCarListing() {
           >
             <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-gray-800">{t('contact_info')}</h2>
             <div className="space-y-3 sm:space-y-4">
+              {/* Name */}
               <div>
                 <Input
                   placeholder={t('name_placeholder')}
@@ -3281,7 +3282,7 @@ export default function AddCarListing() {
                 />
                 {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
               </div>
-
+              {/* Email */}
               <div>
                 <Input
                   placeholder={t('email_placeholder')}
