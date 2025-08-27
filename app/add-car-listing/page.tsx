@@ -2235,25 +2235,7 @@ export default function AddCarListing() {
 
 
 
-        {/* Language suggestion */}
-        {locale !== 'he' && (
-          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <span className="text-blue-600">🇮🇱</span>
-                <span className="text-sm text-blue-700">
-                  {t('language_suggestion') || 'For the best experience, we recommend using Hebrew language'}
-                </span>
-              </div>
-              <button
-                onClick={handleSwitchToHebrew}
-                className="px-3 py-1 text-xs font-medium text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-md transition-colors"
-              >
-                {t('switch_to_hebrew') || 'Switch to Hebrew'}
-              </button>
-            </div>
-          </div>
-        )}
+       
 
         {/* Steps indicator (clickable) */}
         <div className="mb-6 sm:mb-8">
