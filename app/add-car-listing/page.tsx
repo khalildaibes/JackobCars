@@ -290,7 +290,7 @@ export default function AddCarListing() {
   const [availableSubmodels, setAvailableSubmodels] = useState<any[]>([]);
   const [globalSubmodelOptions, setGlobalSubmodelOptions] = useState<any[]>([]);
   const [subModelID, setSubModelID] = useState('');
-  const [inputMethod, setInputMethod] = useState<InputMethod>('plate');
+  const [inputMethod, setInputMethod] = useState<InputMethod>('manual');
   
   // Debug log to show the current state of manufacturers data
   useEffect(() => {
@@ -324,6 +324,11 @@ export default function AddCarListing() {
     reliability: false,
     tuning: true
   });
+
+  // Image upload state
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   // Update manufacturers data when locale changes
   useEffect(() => {
@@ -1514,6 +1519,70 @@ export default function AddCarListing() {
     }
   };
 
+  // Image upload functions
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const validFiles = files.filter(file => 
+      file.type.startsWith('image/') && file.size <= 5 * 1024 * 1024 // 5MB limit
+    );
+    
+    if (validFiles.length !== files.length) {
+      alert(t('some_files_invalid') || 'Some files are not valid images or are too large (max 5MB)');
+    }
+    
+    setSelectedImages(prev => [...prev, ...validFiles]);
+    
+    // Create preview URLs
+    const newPreviewUrls = validFiles.map(file => URL.createObjectURL(file));
+    setImagePreviewUrls(prev => [...prev, ...newPreviewUrls]);
+  };
+
+  const handleImageRemove = (index: number) => {
+    setSelectedImages(prev => prev.filter((_, i) => i !== index));
+    setImagePreviewUrls(prev => {
+      const newUrls = prev.filter((_, i) => i !== index);
+      // Revoke the removed URL to free memory
+      if (prev[index]) {
+        URL.revokeObjectURL(prev[index]);
+      }
+      return newUrls;
+    });
+  };
+
+  const uploadImages = async (): Promise<string[]> => {
+    if (selectedImages.length === 0) return [];
+    
+    setIsUploading(true);
+    const uploadedIds: string[] = [];
+    
+    try {
+      for (const image of selectedImages) {
+        const formData = new FormData();
+        formData.append('files', image);
+        
+        const response = await fetch('/api/upload/image', {
+          method: 'POST',
+          body: formData,
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.data && result.data[0]) {
+            uploadedIds.push(result.data[0].id);
+          }
+        } else {
+          console.error('Failed to upload image:', image.name);
+        }
+      }
+    } catch (error) {
+      console.error('Error uploading images:', error);
+    } finally {
+      setIsUploading(false);
+    }
+    
+    return uploadedIds;
+  };
+
   /**
    * Populates form data with the best available sources
    * Priority: Manual input > Yad2 API > Government API
@@ -1609,9 +1678,7 @@ export default function AddCarListing() {
       termsAccepted: formData.termsAccepted || false,
       
       // Images
-
-      
-
+      images: [],
       
       // Manufacturer and model details
       manufacturerName: formData.manufacturerName || yad2Data?.manufacturerName || '',
@@ -1738,6 +1805,11 @@ export default function AddCarListing() {
     setPlateNumber('');
     setCarData(null);
     setGovCarInfo(null);
+    
+    // Clear image-related state
+    setSelectedImages([]);
+    setImagePreviewUrls([]);
+    setIsUploading(false);
   };
 
 
@@ -1758,16 +1830,25 @@ export default function AddCarListing() {
     console.log('Starting form submission...');
 
     try {
-
-
-
+      // Upload images first if any are selected
+      let uploadedImageIds: string[] = [];
+      if (selectedImages.length > 0) {
+        console.log('Uploading images...');
+        uploadedImageIds = await uploadImages();
+        console.log('Uploaded image IDs:', uploadedImageIds);
+      }
 
       // Merge yad2ModelInfo and formData using our merge function
       console.log('Merging car data...');
       const mergedCarData = mergeCarData(yad2ModelInfo?.data, formData);
+      
+      // Add uploaded image IDs to the car data
+      if (uploadedImageIds.length > 0) {
+        mergedCarData.images = uploadedImageIds;
+        console.log('Added image IDs to car data:', uploadedImageIds);
+      }
+      
       console.log('Merged car data:', mergedCarData);
-
-
 
       // Prepare final car details object for API
       const carDetails = {
@@ -3323,6 +3404,55 @@ export default function AddCarListing() {
               <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-gray-800">{t('terms_and_privacy') || 'Terms and Privacy Policy'}</h2>
               
               <div className="space-y-4 sm:space-y-6">
+                {/* Image Upload Section */}
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                  <h3 className="text-lg font-medium text-gray-700 mb-4">{t('upload_car_images') || 'Upload Car Images'}</h3>
+                  <p className="text-sm text-gray-500 mb-4">{t('upload_images_description') || 'Upload images of your car (max 5MB each)'}</p>
+                  
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                    className="hidden"
+                    id="image-upload"
+                  />
+                  <label
+                    htmlFor="image-upload"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
+                  >
+                    {t('select_images') || 'Select Images'}
+                  </label>
+                  
+                  {/* Image Previews */}
+                  {selectedImages.length > 0 && (
+                    <div className="mt-6">
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">{t('selected_images') || 'Selected Images:'}</h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                        {selectedImages.map((image, index) => (
+                          <div key={index} className="relative group">
+                            <img
+                              src={imagePreviewUrls[index]}
+                              alt={`Preview ${index + 1}`}
+                              className="w-full h-24 object-cover rounded-lg border border-gray-200"
+                            />
+                            <button
+                              onClick={() => handleImageRemove(index)}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              ×
+                            </button>
+                            <p className="text-xs text-gray-500 mt-1 truncate">{image.name}</p>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="text-sm text-gray-600 mt-3">
+                        {t('images_ready', { count: selectedImages.length }) || `${selectedImages.length} image(s) ready for upload`}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
                 {/* Terms and Privacy Policy Checkbox */}
                 <div className="mt-6 sm:mt-8">
                   <div className="flex items-start space-x-3">

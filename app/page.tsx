@@ -1572,7 +1572,7 @@ function HomeContent() {
           {/* <VideoSlider videos={vedioreviews as any} title={t('jack_vedioreviews')} viewAllLink={'/news'} /> */}
 
           {/* Classic Cars Section */}
-          <ClassicCars />
+          {/* <ClassicCars /> */}
 
           {/* Dash Cams Section */}
           <DashCams />

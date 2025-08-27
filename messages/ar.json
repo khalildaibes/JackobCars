@@ -1296,6 +1296,12 @@
     "owner_name": "اسم المالك",
     "select_owner_type": "اختر نوع المالك",
     "terms_checkbox": "أنا أوافق على الشروط وسياسة الخصوصية",
+    "upload_car_images": "رفع صور السيارة",
+    "upload_images_description": "ارفع صور سيارتك (الحد الأقصى 5 ميجابايت لكل صورة)",
+    "select_images": "اختر الصور",
+    "selected_images": "الصور المختارة:",
+    "images_ready": "{count} صورة(ات) جاهزة للرفع",
+    "some_files_invalid": "بعض الملفات ليست صور صالحة أو كبيرة جداً (الحد الأقصى 5 ميجابايت)",
     
     "progress_saved": "تم حفظ التقدم",
     "clear_saved_progress": "مسح التقدم المحفوظ",

@@ -1261,6 +1261,12 @@
     "owner_name": "Owner Name",
     "select_owner_type": "Select Owner Type",
     "terms_checkbox": "I agree to the terms and privacy policy",
+    "upload_car_images": "Upload Car Images",
+    "upload_images_description": "Upload images of your car (max 5MB each)",
+    "select_images": "Select Images",
+    "selected_images": "Selected Images:",
+    "images_ready": "{count} image(s) ready for upload",
+    "some_files_invalid": "Some files are not valid images or are too large (max 5MB)",
     
     "progress_saved": "Progress Saved",
     "clear_saved_progress": "Clear Saved Progress",
