@@ -651,7 +651,7 @@ export default function AddCarListing() {
     setAvailableSubmodels([]);
     setGlobalSubmodelOptions([]);
     setSubModelID('');
-    setInputMethod('plate');
+    setInputMethod('manual');
     setPlateNumber('');
     setGovCarInfo(null);
     setCarData(null);
@@ -680,6 +680,14 @@ export default function AddCarListing() {
     setPlateNumber('');
     setCarData(null);
     setGovCarInfo(null);
+  }, []);
+
+  const handleSwitchToHebrew = useCallback(() => {
+
+      const currentPath = window.location.pathname;
+      const newPath = currentPath.replace(`/${locale}`, '/he');
+      window.location.href = newPath;
+
   }, []);
 
   // Function to manually clear saved progress
@@ -2151,6 +2159,8 @@ export default function AddCarListing() {
     );
   };
 
+
+
   return (
     <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-[15%] md:mt-[5%] py-4 sm:py-8 px-3 sm:px-4 md:px-6 lg:px-8 ${isRTL ? 'rtl' : 'ltr'}`}>
       <motion.div 
@@ -2224,6 +2234,26 @@ export default function AddCarListing() {
               </div>
 
 
+
+        {/* Language suggestion */}
+        {locale !== 'he' && (
+          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <span className="text-blue-600">🇮🇱</span>
+                <span className="text-sm text-blue-700">
+                  {t('language_suggestion') || 'For the best experience, we recommend using Hebrew language'}
+                </span>
+              </div>
+              <button
+                onClick={handleSwitchToHebrew}
+                className="px-3 py-1 text-xs font-medium text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-md transition-colors"
+              >
+                {t('switch_to_hebrew') || 'Switch to Hebrew'}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Steps indicator (clickable) */}
         <div className="mb-6 sm:mb-8">
