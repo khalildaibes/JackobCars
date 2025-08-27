@@ -219,6 +219,7 @@ export default function AddCarListing() {
     if (isClient) {
       console.log('getManufacturersData called with locale:', locale);
     }
+    return manufacturers_hebrew;
     let result;
     switch (locale) {
       case 'ar':
@@ -242,6 +243,7 @@ export default function AddCarListing() {
         sampleManufacturer: result[Object.keys(result)[0]]
       });
     }
+      result = manufacturers_hebrew;  
     return result;
   };
 
@@ -680,14 +682,6 @@ export default function AddCarListing() {
     setPlateNumber('');
     setCarData(null);
     setGovCarInfo(null);
-  }, []);
-
-  const handleSwitchToHebrew = useCallback(() => {
-
-      const currentPath = window.location.pathname;
-      const newPath = currentPath.replace(`/${locale}`, '/he');
-      window.location.href = newPath;
-
   }, []);
 
   // Function to manually clear saved progress
@@ -2159,8 +2153,6 @@ export default function AddCarListing() {
     );
   };
 
-
-
   return (
     <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-[15%] md:mt-[5%] py-4 sm:py-8 px-3 sm:px-4 md:px-6 lg:px-8 ${isRTL ? 'rtl' : 'ltr'}`}>
       <motion.div 
@@ -2235,7 +2227,6 @@ export default function AddCarListing() {
 
 
 
-       
 
         {/* Steps indicator (clickable) */}
         <div className="mb-6 sm:mb-8">
