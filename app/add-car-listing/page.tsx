@@ -3540,11 +3540,15 @@ export default function AddCarListing() {
                         {selectedVideos.map((video, index) => (
                           <div key={index} className="relative group">
 
-                            <video
-                              src={videoPreviewUrls[index]}
-                              className="w-full h-24 object-cover rounded-lg border border-gray-200"
-                              controls
-                            />
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleVideoRemove(index);
+                              }}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              ×
+                            </button>
                             <p className="text-xs text-gray-500 mt-1 truncate">{video.name}</p>
                           </div>
                         ))}
