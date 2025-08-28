@@ -3518,7 +3518,7 @@ export default function AddCarListing() {
 
                 {/* Video Upload Section */}
 
-                {selectedVideos &&  selectedVideos?.length === 0 && (
+                {(
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                   <h3 className="text-lg font-medium text-gray-700 mb-4">{t('upload_car_videos') || 'Upload Car Videos'}</h3>
                   <p className="text-sm text-gray-500 mb-4">{t('upload_videos_description') || 'Upload videos of your car (max 5MB each)'}</p>
@@ -3536,6 +3536,19 @@ export default function AddCarListing() {
                   >
                     {t('select_videos') || 'Select Videos'}
                   </label>
+                  {(selectedVideos &&  selectedVideos?.length === 0 && 
+                    <div className="mt-6">
+                    <Button
+                      type="button"
+                      onKeyDown={() => clearSelectedVideos()}
+                      className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg"
+                      aria-label={t('clear_selected_videos') || 'Clear selected videos'}
+                      disabled={ selectedVideos.length === 0}
+                    >
+                      {t('clear_selected_videos') || 'Clear selected videos'}
+                    </Button>
+                </div>  
+                  )}
                   
                   
                 </div>
