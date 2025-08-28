@@ -3516,15 +3516,13 @@ export default function AddCarListing() {
                   )}
                 </div>
 
-                {/* Video Upload Section */}
-                
-                {(
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                   <h3 className="text-lg font-medium text-gray-700 mb-4">{t('upload_car_videos') || 'Upload Car Videos'}</h3>
                   <p className="text-sm text-gray-500 mb-4">{t('upload_videos_description') || 'Upload videos of your car (max 5MB each)'}</p>
                   
                   <input
                     type="file"
+                    multiple
                     accept="video/*"
                     onChange={handleVideoSelect}
                     className="hidden"
@@ -3536,15 +3534,16 @@ export default function AddCarListing() {
                   >
                     {t('select_videos') || 'Select Videos'}
                   </label>
-                    {/* Image Previews */}
-                    {selectedVideos.length > 0 && (
+                  
+                  {/* Image Previews */}
+                  {selectedVideos.length > 0 && (
                     <div className="mt-6">
                       <h4 className="text-sm font-medium text-gray-700 mb-3">{t('selected_videos') || 'Selected Videos:'}</h4>
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                         {selectedVideos.map((video, index) => (
                           <div key={index} className="relative group">
                             <img
-                              src={videoPreviewUrls[index]}
+                              src={videoPreviewUrls[index] ?? '/images/video-placeholder.png'}
                               alt={`Preview ${index + 1}`}
                               className="w-full h-24 object-cover rounded-lg border border-gray-200"
                             />
@@ -3554,6 +3553,7 @@ export default function AddCarListing() {
                             >
                               ×
                             </button>
+                            <p className="text-xs text-gray-500 mt-1 truncate">{video.name}</p>
                           </div>
                         ))}
                       </div>
@@ -3563,7 +3563,6 @@ export default function AddCarListing() {
                     </div>
                   )}
                 </div>
-                )}
                
                 {/* Terms and Privacy Policy Checkbox */}
                 <div className="mt-6 sm:mt-8">
