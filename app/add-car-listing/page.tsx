@@ -3543,10 +3543,8 @@ export default function AddCarListing() {
                 <div className="mt-6">
                     <Button
                       type="button"
-                      onClick={() => clearSelectedVideos()}
+                      onKeyDown={clearSelectedVideos}
                       className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg"
-                      aria-label={t('clear_selected_videos') || 'Clear selected videos'}
-                      disabled={ selectedVideos.length === 0}
                     >
                       {t('clear_selected_videos') || 'Clear selected videos'}
                     </Button>
