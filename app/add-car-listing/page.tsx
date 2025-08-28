@@ -3527,6 +3527,8 @@ export default function AddCarListing() {
                     onChange={handleVideoSelect}
                     className="hidden"
                     id="video-upload"
+                    disabled={selectedVideos?.length > 0}
+                    
                   />
                   <label
                     htmlFor="video-upload"
@@ -3535,7 +3537,18 @@ export default function AddCarListing() {
                     {t('select_videos') || 'Select Videos'}
                   </label>
                   
-                  
+                  {/* Clear Videos Button */}
+                  {selectedVideos && selectedVideos.length > 0 && (
+                    <div className="mt-4">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedVideos([])}
+                        className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm"
+                      >
+                        Clear Videos
+                      </button>
+                    </div>
+                  )}
                 </div>
                
                 {/* Terms and Privacy Policy Checkbox */}
