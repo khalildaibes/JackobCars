@@ -3517,27 +3517,7 @@ export default function AddCarListing() {
                 </div>
 
                 {/* Video Upload Section */}
-                {(selectedVideos &&  selectedVideos?.length === 0 && 
-                    <div className="mt-6">
-                   {typeof window !== 'undefined' && (
-                      <Button
-                      type="button"
-                      onKeyDown={() => {
-                        try {
-                          clearSelectedVideos?.();
-                        } catch (error) {
-                          console.error('Error clearing videos:', error);
-                        }
-                      }}
-                      className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg"
-                      aria-label={t?.('clear_selected_videos') ?? 'Clear selected videos'}
-                      disabled={false}
-                    >
-                      {t?.('clear_selected_videos') ?? 'Clear selected videos'}
-                    </Button>
-                      )}
-                </div>  
-                  )}
+                
                 {(
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                   <h3 className="text-lg font-medium text-gray-700 mb-4">{t('upload_car_videos') || 'Upload Car Videos'}</h3>
@@ -3556,9 +3536,19 @@ export default function AddCarListing() {
                   >
                     {t('select_videos') || 'Select Videos'}
                   </label>
-                
                   
-                  
+                  {/* Simple Remove Videos Button */}
+                  {selectedVideos && selectedVideos.length > 0 && (
+                    <div className="mt-4">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedVideos([])}
+                        className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm"
+                      >
+                        Remove Videos
+                      </button>
+                    </div>
+                  )}
                 </div>
                 )}
                
