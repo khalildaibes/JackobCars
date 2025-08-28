@@ -3517,26 +3517,7 @@ export default function AddCarListing() {
                 </div>
 
                 {/* Video Upload Section */}
-
-                {(
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                  <h3 className="text-lg font-medium text-gray-700 mb-4">{t('upload_car_videos') || 'Upload Car Videos'}</h3>
-                  <p className="text-sm text-gray-500 mb-4">{t('upload_videos_description') || 'Upload videos of your car (max 5MB each)'}</p>
-                  
-                  <input
-                    type="file"
-                    accept="video/*"
-                    onChange={handleVideoSelect}
-                    className="hidden"
-                    id="video-upload"
-                  />
-                  <label
-                    htmlFor="video-upload"
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
-                  >
-                    {t('select_videos') || 'Select Videos'}
-                  </label>
-                  {(selectedVideos &&  selectedVideos?.length === 0 && 
+                {(selectedVideos &&  selectedVideos?.length === 0 && 
                     <div className="mt-6">
                    {typeof window !== 'undefined' && (
                       <Button
@@ -3557,6 +3538,25 @@ export default function AddCarListing() {
                       )}
                 </div>  
                   )}
+                {(
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                  <h3 className="text-lg font-medium text-gray-700 mb-4">{t('upload_car_videos') || 'Upload Car Videos'}</h3>
+                  <p className="text-sm text-gray-500 mb-4">{t('upload_videos_description') || 'Upload videos of your car (max 5MB each)'}</p>
+                  
+                  <input
+                    type="file"
+                    accept="video/*"
+                    onChange={handleVideoSelect}
+                    className="hidden"
+                    id="video-upload"
+                  />
+                  <label
+                    htmlFor="video-upload"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
+                  >
+                    {t('select_videos') || 'Select Videos'}
+                  </label>
+                
                   
                   
                 </div>
