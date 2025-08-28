@@ -3527,23 +3527,15 @@ export default function AddCarListing() {
                     onChange={handleVideoSelect}
                     className="hidden"
                     id="video-upload"
-                    disabled={selectedVideos?.length > 0}
-                    
                   />
                   <label
-                    htmlFor={selectedVideos && selectedVideos.length > 0 ? undefined : "video-upload"}
-                    onClick={selectedVideos && selectedVideos.length > 0 ? () => setSelectedVideos([]) : undefined}
-                    className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md cursor-pointer ${
-                      selectedVideos && selectedVideos.length > 0 
-                        ? 'bg-red-500 hover:bg-red-600 text-white' 
-                        : 'bg-blue-600 hover:bg-blue-700 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                    }`}
+                    htmlFor="video-upload"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
                   >
-                    {selectedVideos && selectedVideos.length > 0 
-                      ? 'Clear Videos' 
-                      : (t('select_videos') || 'Select Videos')
-                    }
+                    {selectedVideos && selectedVideos.length > 0 ?  (t('select_videos') || 'Select Videos') : (t('change_videos') || 'Change Videos')}
                   </label>
+                  
+                  
                 </div>
                
                 {/* Terms and Privacy Policy Checkbox */}
