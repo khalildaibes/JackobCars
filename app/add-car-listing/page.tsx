@@ -3541,14 +3541,24 @@ export default function AddCarListing() {
                   
                 </div>
                 )}
-                {selectedVideos && selectedVideos?.length > 0 &&<div>
-                  <button
-                    type="button"
-                    onClick={clearSelectedVideos}
-                  >
-                    {t('clear_videos') || 'Clear Videos'}
-                  </button>
-                </div>}
+                {Array.isArray(selectedVideos) && selectedVideos.length > 0 && (
+                  <button 
+                      type="button" 
+                      aria-label={t('clear_videos') ?? 'Clear selected videos'}
+                      disabled={!selectedVideos || selectedVideos.length === 0}
+                      
+                      onClick={() => {
+                        try {
+                          clearSelectedVideos?.();
+                        } catch (error) {
+                          console.error('Error clearing videos:', error);
+                          // Handle error gracefully
+                        }
+                      }}
+                    >
+                      {t('clear_videos') ?? 'Clear Videos'}
+                    </button>
+                  )}
                 {/* Terms and Privacy Policy Checkbox */}
                 <div className="mt-6 sm:mt-8">
                   <div className="flex items-start space-x-3">
