@@ -68,6 +68,15 @@ interface CarListing {
   commercial_nickname: string;
   year_of_production: string;
   trim_level: string;
+  
+  // New advanced filter fields
+  engine_capacity: string;
+  engine_power: string;
+  drive_type: string;
+  region: string;
+  car_type: string;
+  mileage_value: string;
+  trade_in_value: string;
 }
 
 const CarListings: React.FC = () => {
@@ -81,6 +90,15 @@ const CarListings: React.FC = () => {
   const [FUEL_TYPES, setFUEL_TYPES] = useState<Array<{ value: string; label: string }>>([]);
   const [YEARS, setYEARS] = useState<number[]>([]);
   
+  // Add new state for advanced filters
+  const [ENGINE_CAPACITIES, setENGINE_CAPACITIES] = useState<Array<{ value: string; label: string }>>([]);
+  const [ENGINE_POWERS, setENGINE_POWERS] = useState<Array<{ value: string; label: string }>>([]);
+  const [DRIVE_TYPES, setDRIVE_TYPES] = useState<Array<{ value: string; label: string }>>([]);
+  const [REGIONS, setREGIONS] = useState<Array<{ value: string; label: string }>>([]);
+  const [CAR_TYPES, setCAR_TYPES] = useState<Array<{ value: string; label: string }>>([]);
+  const [MILEAGE_RANGES, setMILEAGE_RANGES] = useState<Array<{ value: string; label: string }>>([]);
+  const [TRADE_IN_OPTIONS, setTRADE_IN_OPTIONS] = useState<Array<{ value: string; label: string }>>([]);
+  
   // Add new state for min and max price
   const [minMaxPrices, setMinMaxPrices] = useState<{ min: number; max: number }>({ min: 5000, max: 100000 });
   
@@ -90,9 +108,20 @@ const CarListings: React.FC = () => {
   const [makeFilter, setMakeFilter] = useState<string>("Any");
   const [bodyTypeFilter, setBodyTypeFilter] = useState<string>("Any");
   const [fuelTypeFilter, setFuelTypeFilter] = useState<string>("Any");
+  
+  // Add new filter states
+  const [engineCapacityFilter, setEngineCapacityFilter] = useState<string>("Any");
+  const [enginePowerFilter, setEnginePowerFilter] = useState<string>("Any");
+  const [driveTypeFilter, setDriveTypeFilter] = useState<string>("Any");
+  const [regionFilter, setRegionFilter] = useState<string>("Any");
+  const [carTypeFilter, setCarTypeFilter] = useState<string>("Any");
+  const [mileageFilter, setMileageFilter] = useState<string>("Any");
+  const [tradeInFilter, setTradeInFilter] = useState<string>("Any");
+  
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [viewType, setViewType] = useState<string>("list");
   const [showFilters, setShowFilters] = useState(false);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [listings, setListings] = useState<CarListing[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
@@ -105,6 +134,13 @@ const CarListings: React.FC = () => {
     setMakeFilter('Any');
     setBodyTypeFilter('Any');
     setFuelTypeFilter('Any');
+    setEngineCapacityFilter('Any');
+    setEnginePowerFilter('Any');
+    setDriveTypeFilter('Any');
+    setRegionFilter('Any');
+    setCarTypeFilter('Any');
+    setMileageFilter('Any');
+    setTradeInFilter('Any');
     setPriceRange([minMaxPrices.min, minMaxPrices.max]);
   };
 
@@ -115,6 +151,13 @@ const CarListings: React.FC = () => {
            makeFilter !== 'Any' || 
            bodyTypeFilter !== 'Any' || 
            fuelTypeFilter !== 'Any' ||
+           engineCapacityFilter !== 'Any' ||
+           enginePowerFilter !== 'Any' ||
+           driveTypeFilter !== 'Any' ||
+           regionFilter !== 'Any' ||
+           carTypeFilter !== 'Any' ||
+           mileageFilter !== 'Any' ||
+           tradeInFilter !== 'Any' ||
            priceRange[0] !== minMaxPrices.min || 
            priceRange[1] !== minMaxPrices.max;
   };
@@ -189,7 +232,7 @@ const CarListings: React.FC = () => {
             }
 
             // Get manufacturer name from the new structure
-            const rawMake = product.details?.car?.manufacturer_name || "Unknown";
+            const rawMake = product.details?.car?.manufacturerName || product.details?.car?.manufacturer_name || "Unknown";
             let normalizedMake = rawMake;
             
             // Check if rawMake is a number (array index) and convert it to the actual manufacturer name
@@ -240,8 +283,8 @@ const CarListings: React.FC = () => {
               normalizedMake = "Subaru";
             }
 
-            // Get body type from the new structure
-            const rawBodyType = product.details?.car?.body_type || "Unknown";
+            // Get body type from the new structure - use commercialName
+            const rawBodyType = product.details?.car?.commercialName || product.details?.car?.body_type || "Unknown";
             let normalizedBodyType = rawBodyType;
             
             // Normalize body type values to English
@@ -284,6 +327,15 @@ const CarListings: React.FC = () => {
             // Get pros and cons from the new structure
             const pros = product.details?.car?.pros || [];
             const cons = product.details?.car?.cons || [];
+
+            // Get new advanced filter fields
+            const engineCapacity = product.details?.car?.engine_capacity || product.details?.car?.engineCapacity || "";
+            const enginePower = product.details?.car?.engine_power || product.details?.car?.enginePower || "";
+            const driveType = product.details?.car?.drive_type || product.details?.car?.driveType || "";
+            const region = product.details?.car?.region || "";
+            const carType = product.details?.car?.car_type || product.details?.car?.carType || "";
+            const mileage = product.details?.car?.miles || "";
+            const tradeIn = product.details?.car?.trade_in || product.details?.car?.tradeIn || "";
 
             return {
               id: product.id,
@@ -333,6 +385,15 @@ const CarListings: React.FC = () => {
               commercial_nickname: product.details?.car?.commercial_nickname || "",
               year_of_production: product.details?.car?.year_of_production || "",
               trim_level: product.details?.car?.trim_level || "",
+              
+              // New advanced filter fields
+              engine_capacity: engineCapacity,
+              engine_power: enginePower,
+              drive_type: driveType,
+              region: region,
+              car_type: carType,
+              mileage_value: mileage,
+              trade_in_value: tradeIn,
             };
           });
           
@@ -340,29 +401,74 @@ const CarListings: React.FC = () => {
           setListings(formattedListings);
 
           // Extract unique values for filters from the actual data
-          const uniqueMakes = [...new Set(formattedListings.map(car => car.make).filter((make): make is string => typeof make === 'string' && make !== "Unknown"))];
-          const uniqueBodyTypes = [...new Set(formattedListings.map(car => car.bodyType).filter((type): type is string => typeof type === 'string' && type !== "Unknown"))];
-          const uniqueFuelTypes = [...new Set(formattedListings.map(car => car.fuelType).filter((type): type is string => typeof type === 'string' && type !== "Unknown"))];
+          const uniqueMakes = [...new Set(formattedListings.map(car => car.make).filter((make): make is string => typeof make === 'string' && make !== "Unknown" && make.trim() !== ""))];
+          const uniqueBodyTypes = [...new Set(formattedListings.map(car => car.bodyType).filter((type): type is string => typeof type === 'string' && type !== "Unknown" && type.trim() !== ""))];
+          const uniqueFuelTypes = [...new Set(formattedListings.map(car => car.fuelType).filter((type): type is string => typeof type === 'string' && type !== "Unknown" && type.trim() !== ""))];
           const validYears = formattedListings.map(car => car.year).filter((year): year is number => typeof year === 'number' && year > 1900);
-          const uniqueYears = [...new Set(validYears)].sort((a, b) => b - a);
+          const uniqueYears = [...new Set(validYears)].sort((a: number, b: number) => b - a);
+
+          // Extract unique values for advanced filters
+          const uniqueEngineCapacities = [...new Set(formattedListings.map(car => car.engine_capacity).filter((cap): cap is string => typeof cap === 'string' && cap.trim() !== ""))];
+          const uniqueEnginePowers = [...new Set(formattedListings.map(car => car.engine_power).filter((power): power is string => typeof power === 'string' && power.trim() !== ""))];
+          const uniqueDriveTypes = [...new Set(formattedListings.map(car => car.drive_type).filter((type): type is string => typeof type === 'string' && type.trim() !== ""))];
+          const uniqueRegions = [...new Set(formattedListings.map(car => car.region).filter((region): region is string => typeof region === 'string' && region.trim() !== ""))];
+          const uniqueCarTypes = [...new Set(formattedListings.map(car => car.car_type).filter((type): type is string => typeof type === 'string' && type.trim() !== ""))];
+          const uniqueMileages = [...new Set(formattedListings.map(car => car.mileage_value).filter((mileage): mileage is string => typeof mileage === 'string' && mileage.trim() !== ""))];
+          const uniqueTradeIns = [...new Set(formattedListings.map(car => car.trade_in_value).filter((trade): trade is string => typeof trade === 'string' && trade.trim() !== ""))];
 
           // Set filter options with "Any" option first
           setMAKES([
-            { value: "Any", label: t('makes.any') || 'Any Make' },
-            ...uniqueMakes.map(make => ({ value: make, label: make }))
+            { value: "Any", label: 'Any Manufacturer' },
+            ...uniqueMakes.map(make => ({ value: String(make), label: String(make) }))
           ]);
 
           setBODY_TYPES([
-            { value: "Any", label: t('body_types.any') || 'Any Body Type' },
-            ...uniqueBodyTypes.map(type => ({ value: type, label: type }))
+            { value: "Any", label: String(t('body_types.any') || 'Any Body Type') },
+            ...uniqueBodyTypes.map(type => ({ value: String(type), label: String(type) }))
           ]);
 
           setFUEL_TYPES([
-            { value: "Any", label: t('fuel_types.any') || 'Any Fuel Type' },
-            ...uniqueFuelTypes.map(type => ({ value: type, label: type }))
+            { value: "Any", label: String(t('fuel_types.any') || 'Any Fuel Type') },
+            ...uniqueFuelTypes.map(type => ({ value: String(type), label: String(type) }))
           ]);
 
-          setYEARS(uniqueYears);
+          setYEARS(uniqueYears as unknown as number[]);
+
+          // Set advanced filter options
+          setENGINE_CAPACITIES([
+            { value: "Any", label: 'Any Engine Capacity' },
+            ...uniqueEngineCapacities.map(cap => ({ value: String(cap), label: String(cap) }))
+          ]);
+
+          setENGINE_POWERS([
+            { value: "Any", label: 'Any Engine Power' },
+            ...uniqueEnginePowers.map(power => ({ value: String(power), label: String(power) }))
+          ]);
+
+          setDRIVE_TYPES([
+            { value: "Any", label: 'Any Drive Type' },
+            ...uniqueDriveTypes.map(type => ({ value: String(type), label: String(type) }))
+          ]);
+
+          setREGIONS([
+            { value: "Any", label: 'Any Region' },
+            ...uniqueRegions.map(region => ({ value: String(region), label: String(region) }))
+          ]);
+
+          setCAR_TYPES([
+            { value: "Any", label: 'Any Car Type' },
+            ...uniqueCarTypes.map(type => ({ value: String(type), label: String(type) }))
+          ]);
+
+          setMILEAGE_RANGES([
+            { value: "Any", label: 'Any Mileage' },
+            ...uniqueMileages.map(mileage => ({ value: String(mileage), label: String(mileage) }))
+          ]);
+
+          setTRADE_IN_OPTIONS([
+            { value: "Any", label: 'Any Trade-in Option' },
+            ...uniqueTradeIns.map(trade => ({ value: String(trade), label: String(trade) }))
+          ]);
 
           // Calculate min and max prices from the listings
           const prices = formattedListings.map(car => extractPrice(car.price || '0'));
@@ -429,7 +535,63 @@ const CarListings: React.FC = () => {
         }
       }
       
-      return true;
+      // Filter by engine capacity
+      if (engineCapacityFilter !== "Any") {
+        const selectedEngineCapacity = ENGINE_CAPACITIES.find(cap => cap.value === engineCapacityFilter);
+        if (!selectedEngineCapacity || car.engine_capacity !== selectedEngineCapacity.value) {
+          return false;
+        }
+      }
+      
+      // Filter by engine power
+      if (enginePowerFilter !== "Any") {
+        const selectedEnginePower = ENGINE_POWERS.find(power => power.value === enginePowerFilter);
+        if (!selectedEnginePower || car.engine_power !== selectedEnginePower.value) {
+          return false;
+        }
+      }
+      
+      // Filter by drive type
+      if (driveTypeFilter !== "Any") {
+        const selectedDriveType = DRIVE_TYPES.find(type => type.value === driveTypeFilter);
+        if (!selectedDriveType || car.drive_type !== selectedDriveType.value) {
+          return false;
+        }
+      }
+      
+      // Filter by region
+      if (regionFilter !== "Any") {
+        const selectedRegion = REGIONS.find(region => region.value === regionFilter);
+        if (!selectedRegion || car.region !== selectedRegion.value) {
+          return false;
+        }
+      }
+      
+      // Filter by car type
+      if (carTypeFilter !== "Any") {
+        const selectedCarType = CAR_TYPES.find(type => type.value === carTypeFilter);
+        if (!selectedCarType || car.car_type !== selectedCarType.value) {
+          return false;
+        }
+      }
+      
+      // Filter by mileage
+      if (mileageFilter !== "Any") {
+        const selectedMileage = MILEAGE_RANGES.find(mileage => mileage.value === mileageFilter);
+        if (!selectedMileage || car.mileage_value !== selectedMileage.value) {
+          return false;
+        }
+      }
+      
+      // Filter by trade-in
+      if (tradeInFilter !== "Any") {
+        const selectedTradeIn = TRADE_IN_OPTIONS.find(trade => trade.value === tradeInFilter);
+        if (!selectedTradeIn || car.trade_in_value !== selectedTradeIn.value) {
+          return false;
+        }
+      }
+       
+       return true;
     } catch (error) {
       console.error('Error filtering car:', car, error);
       return false;
@@ -441,7 +603,9 @@ const CarListings: React.FC = () => {
   };
 
   // Don't render until filter arrays are populated to prevent hydration issues
-  if (MAKES.length === 0 || BODY_TYPES.length === 0 || FUEL_TYPES.length === 0) {
+  if (MAKES.length === 0 || BODY_TYPES.length === 0 || FUEL_TYPES.length === 0 || 
+      ENGINE_CAPACITIES.length === 0 || ENGINE_POWERS.length === 0 || DRIVE_TYPES.length === 0 ||
+      REGIONS.length === 0 || CAR_TYPES.length === 0 || MILEAGE_RANGES.length === 0 || TRADE_IN_OPTIONS.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-7xl mt-[15%] md:mt-[5%] bg-white rounded-lg">
         <div className="text-center py-12">
@@ -505,7 +669,7 @@ const CarListings: React.FC = () => {
                 <Settings className="h-4 w-4" />
                 <span className="font-medium">Filters</span>
                 <span className="text-xs text-gray-500">
-                  ({yearFilter !== 'Any' ? 1 : 0} + {makeFilter !== 'Any' ? 1 : 0} + {bodyTypeFilter !== 'Any' ? 1 : 0} + {fuelTypeFilter !== 'Any' ? 1 : 0} active)
+                  ({yearFilter !== 'Any' ? 1 : 0} + {makeFilter !== 'Any' ? 1 : 0} + {bodyTypeFilter !== 'Any' ? 1 : 0} + {fuelTypeFilter !== 'Any' ? 1 : 0} + {engineCapacityFilter !== 'Any' ? 1 : 0} + {enginePowerFilter !== 'Any' ? 1 : 0} + {driveTypeFilter !== 'Any' ? 1 : 0} + {regionFilter !== 'Any' ? 1 : 0} + {carTypeFilter !== 'Any' ? 1 : 0} + {mileageFilter !== 'Any' ? 1 : 0} + {tradeInFilter !== 'Any' ? 1 : 0} active)
                 </span>
               </div>
               <div className={`transform transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`}>
@@ -558,10 +722,10 @@ const CarListings: React.FC = () => {
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="make-filter">{t('make')}</Label>
+                      <Label htmlFor="make-filter">Manufacturer</Label>
                       <Select value={makeFilter} onValueChange={setMakeFilter}>
                         <SelectTrigger id="make-filter">
-                          <SelectValue placeholder={t('any_make')} />
+                          <SelectValue placeholder="Any Manufacturer" />
                         </SelectTrigger>
                         <SelectContent className='bg-white'>
                           {MAKES.map(make => (
@@ -612,6 +776,130 @@ const CarListings: React.FC = () => {
                       />
                     </div>
                   </div>
+                  
+                  {/* Advanced Filters Toggle - Mobile */}
+                  <div className="border-t pt-4">
+                    <Button
+                      onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                      variant="outline"
+                      size="sm"
+                      className="w-full flex items-center justify-between bg-gray-50 hover:bg-gray-100"
+                    >
+                      <span className="font-medium">Advanced Filters</span>
+                      <ChevronDown className={`h-4 w-4 transform transition-transform duration-200 ${showAdvancedFilters ? 'rotate-180' : ''}`} />
+                    </Button>
+                  </div>
+                  
+                  {/* Advanced Filters Section - Mobile */}
+                  {showAdvancedFilters && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-4 pt-4 border-t"
+                    >
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="engine-capacity-filter-mobile">Engine Capacity</Label>
+                          <Select value={engineCapacityFilter} onValueChange={setEngineCapacityFilter}>
+                            <SelectTrigger id="engine-capacity-filter-mobile">
+                              <SelectValue placeholder="Any Engine Capacity" />
+                            </SelectTrigger>
+                            <SelectContent className='bg-white'>
+                              {ENGINE_CAPACITIES.map(cap => (
+                                <SelectItem key={cap.value} value={cap.value}>{cap.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="engine-power-filter-mobile">Engine Power</Label>
+                          <Select value={enginePowerFilter} onValueChange={setEnginePowerFilter}>
+                            <SelectTrigger id="engine-power-filter-mobile">
+                              <SelectValue placeholder="Any Engine Power" />
+                            </SelectTrigger>
+                            <SelectContent className='bg-white'>
+                              {ENGINE_POWERS.map(power => (
+                                <SelectItem key={power.value} value={power.value}>{power.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="drive-type-filter-mobile">Drive Type</Label>
+                          <Select value={driveTypeFilter} onValueChange={setDriveTypeFilter}>
+                            <SelectTrigger id="drive-type-filter-mobile">
+                              <SelectValue placeholder="Any Drive Type" />
+                            </SelectTrigger>
+                            <SelectContent className='bg-white'>
+                              {DRIVE_TYPES.map(type => (
+                                <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="region-filter-mobile">Region</Label>
+                          <Select value={regionFilter} onValueChange={setRegionFilter}>
+                            <SelectTrigger id="region-filter-mobile">
+                              <SelectValue placeholder="Any Region" />
+                            </SelectTrigger>
+                            <SelectContent className='bg-white'>
+                              {REGIONS.map(region => (
+                                <SelectItem key={region.value} value={region.value}>{region.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="car-type-filter-mobile">Car Type</Label>
+                          <Select value={carTypeFilter} onValueChange={setCarTypeFilter}>
+                            <SelectTrigger id="car-type-filter-mobile">
+                              <SelectValue placeholder="Any Car Type" />
+                            </SelectTrigger>
+                            <SelectContent className='bg-white'>
+                              {CAR_TYPES.map(type => (
+                                <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="mileage-filter-mobile">Mileage</Label>
+                          <Select value={mileageFilter} onValueChange={setMileageFilter}>
+                            <SelectTrigger id="mileage-filter-mobile">
+                              <SelectValue placeholder="Any Mileage" />
+                            </SelectTrigger>
+                            <SelectContent className='bg-white'>
+                              {MILEAGE_RANGES.map(mileage => (
+                                <SelectItem key={mileage.value} value={mileage.value}>{mileage.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="trade-in-filter-mobile">Trade-in</Label>
+                          <Select value={tradeInFilter} onValueChange={setTradeInFilter}>
+                            <SelectTrigger id="trade-in-filter-mobile">
+                              <SelectValue placeholder="Any Trade-in Option" />
+                            </SelectTrigger>
+                            <SelectContent className='bg-white'>
+                              {TRADE_IN_OPTIONS.map(trade => (
+                                <SelectItem key={trade.value} value={trade.value}>{trade.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -656,10 +944,10 @@ const CarListings: React.FC = () => {
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="make-filter-desktop">{t('make')}</Label>
+                      <Label htmlFor="make-filter-desktop">Manufacturer</Label>
                       <Select value={makeFilter} onValueChange={setMakeFilter}>
                         <SelectTrigger id="make-filter-desktop">
-                          <SelectValue placeholder={t('any_make')} />
+                          <SelectValue placeholder="Any Manufacturer" />
                         </SelectTrigger>
                         <SelectContent className='bg-white'>
                           {MAKES.map(make => (
@@ -710,6 +998,130 @@ const CarListings: React.FC = () => {
                       />
                     </div>
                   </div>
+                  
+                  {/* Advanced Filters Toggle */}
+                  <div className="border-t pt-4">
+                    <Button
+                      onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                      variant="outline"
+                      size="sm"
+                      className="w-full flex items-center justify-between bg-gray-50 hover:bg-gray-100"
+                    >
+                      <span className="font-medium">Advanced Filters</span>
+                      <ChevronDown className={`h-4 w-4 transform transition-transform duration-200 ${showAdvancedFilters ? 'rotate-180' : ''}`} />
+                    </Button>
+                  </div>
+                  
+                  {/* Advanced Filters Section */}
+                  {showAdvancedFilters && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-4 pt-4 border-t"
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="engine-capacity-filter">Engine Capacity</Label>
+                          <Select value={engineCapacityFilter} onValueChange={setEngineCapacityFilter}>
+                            <SelectTrigger id="engine-capacity-filter">
+                              <SelectValue placeholder="Any Engine Capacity" />
+                            </SelectTrigger>
+                            <SelectContent className='bg-white'>
+                              {ENGINE_CAPACITIES.map(cap => (
+                                <SelectItem key={cap.value} value={cap.value}>{cap.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="engine-power-filter">Engine Power</Label>
+                          <Select value={enginePowerFilter} onValueChange={setEnginePowerFilter}>
+                            <SelectTrigger id="engine-power-filter">
+                              <SelectValue placeholder="Any Engine Power" />
+                            </SelectTrigger>
+                            <SelectContent className='bg-white'>
+                              {ENGINE_POWERS.map(power => (
+                                <SelectItem key={power.value} value={power.value}>{power.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="drive-type-filter">Drive Type</Label>
+                          <Select value={driveTypeFilter} onValueChange={setDriveTypeFilter}>
+                            <SelectTrigger id="drive-type-filter">
+                              <SelectValue placeholder="Any Drive Type" />
+                            </SelectTrigger>
+                            <SelectContent className='bg-white'>
+                              {DRIVE_TYPES.map(type => (
+                                <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="region-filter">Region</Label>
+                          <Select value={regionFilter} onValueChange={setRegionFilter}>
+                            <SelectTrigger id="region-filter">
+                              <SelectValue placeholder="Any Region" />
+                            </SelectTrigger>
+                            <SelectContent className='bg-white'>
+                              {REGIONS.map(region => (
+                                <SelectItem key={region.value} value={region.value}>{region.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="car-type-filter">Car Type</Label>
+                          <Select value={carTypeFilter} onValueChange={setCarTypeFilter}>
+                            <SelectTrigger id="car-type-filter">
+                              <SelectValue placeholder="Any Car Type" />
+                            </SelectTrigger>
+                            <SelectContent className='bg-white'>
+                              {CAR_TYPES.map(type => (
+                                <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="mileage-filter">Mileage</Label>
+                          <Select value={mileageFilter} onValueChange={setMileageFilter}>
+                            <SelectTrigger id="mileage-filter">
+                              <SelectValue placeholder="Any Mileage" />
+                            </SelectTrigger>
+                            <SelectContent className='bg-white'>
+                              {MILEAGE_RANGES.map(mileage => (
+                                <SelectItem key={mileage.value} value={mileage.value}>{mileage.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="trade-in-filter">Trade-in</Label>
+                          <Select value={tradeInFilter} onValueChange={setTradeInFilter}>
+                            <SelectTrigger id="trade-in-filter">
+                              <SelectValue placeholder="Any Trade-in Option" />
+                            </SelectTrigger>
+                            <SelectContent className='bg-white'>
+                              {TRADE_IN_OPTIONS.map(trade => (
+                                <SelectItem key={trade.value} value={trade.value}>{trade.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -781,7 +1193,7 @@ const CarListings: React.FC = () => {
                   {filteredCars.map((car) => (
                     <CarCard 
                       key={car.slug || car.id} 
-                      car={car}
+                      car={car as any}
                     />
                   ))}
                 </div>
