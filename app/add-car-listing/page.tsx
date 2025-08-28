@@ -3547,14 +3547,7 @@ export default function AddCarListing() {
                       aria-label={t('clear_videos') ?? 'Clear selected videos'}
                       disabled={!selectedVideos || selectedVideos.length === 0}
                       
-                      onClick={() => {
-                        try {
-                          clearSelectedVideos?.();
-                        } catch (error) {
-                          console.error('Error clearing videos:', error);
-                          // Handle error gracefully
-                        }
-                      }}
+                      onClick={clearSelectedVideos}
                     >
                       {t('clear_videos') ?? 'Clear Videos'}
                     </button>
