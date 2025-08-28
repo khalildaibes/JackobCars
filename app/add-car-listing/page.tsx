@@ -3518,7 +3518,7 @@ export default function AddCarListing() {
                 </div>
 
                 {/* Video Upload Section */}
-                {selectedVideos.length === 0 ? (
+
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                   <h3 className="text-lg font-medium text-gray-700 mb-4">{t('upload_car_videos') || 'Upload Car Videos'}</h3>
                   <p className="text-sm text-gray-500 mb-4">{t('upload_videos_description') || 'Upload videos of your car (max 5MB each)'}</p>
@@ -3539,16 +3539,7 @@ export default function AddCarListing() {
                   
                   
                 </div>
-                ) : (
-                <div>
-                  <button
-                    type="button"
-                    onClick={clearSelectedVideos}
-                  >
-                    {t('clear_videos') || 'Clear Videos'}
-                  </button>
-                </div>
-                )}
+                
                 {/* Terms and Privacy Policy Checkbox */}
                 <div className="mt-6 sm:mt-8">
                   <div className="flex items-start space-x-3">
