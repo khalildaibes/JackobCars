@@ -3524,20 +3524,33 @@ export default function AddCarListing() {
                   <h3 className="text-lg font-medium text-gray-700 mb-4">{t('upload_car_videos') || 'Upload Car Videos'}</h3>
                   <p className="text-sm text-gray-500 mb-4">{selectedVideos && selectedVideos.length > 0 ? t('vedio_is_selected') || 'Video is selected' : t('upload_videos_description') || 'Upload videos of your car (max 5MB each)'}</p>
                   
-                  <input
-                    type="file"
-                    accept="video/*"
-                    onChange={handleVideoSelect}
-                    className="hidden"
-                    id="video-upload"
-                  />
-                  <label
-                    htmlFor="video-upload"
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
-                  >
-                  {selectedVideos && selectedVideos.length > 0 ?  (t('select_videos') || 'Select Videos') : (t('change_videos') || 'Change Videos')}
-
-                  </label>
+                                    <div className="flex items-center justify-center space-x-2">
+                    <input
+                      type="file"
+                      accept="video/*"
+                      onChange={handleVideoSelect}
+                      className="hidden"
+                      id="video-upload"
+                    />
+                    <label
+                      htmlFor="video-upload"
+                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
+                    >
+                     {selectedVideos && selectedVideos.length > 0 ?  (t('select_videos') || 'Select Videos') : (t('change_videos') || 'Change Videos')}
+                    </label>
+                    
+                    {/* Clear Videos X Button */}
+                    {selectedVideos && selectedVideos.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedVideos([])}
+                        className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 text-lg font-bold"
+                        title="Clear videos"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
 
                 </div>
                 )}
