@@ -1596,15 +1596,15 @@ export default function AddCarListing() {
     return uploadedIds;
   };
 
-  // Video upload functions
-  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+   // Image upload functions
+   const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const validFiles = files.filter(file => 
-      file.type.startsWith('video/') && file.size <= 50 * 1024 * 1024 // 50MB limit
+      file.type.startsWith('video/') && file.size <= 5 * 1024 * 1024 // 5MB limit
     );
     
     if (validFiles.length !== files.length) {
-      alert(t('some_videos_invalid') || 'Some files are not valid videos or are too large (max 50MB)');
+      alert(t('some_files_invalid') || 'Some files are not valid images or are too large (max 5MB)');
     }
     
     setSelectedVideos(prev => [...prev, ...validFiles]);
@@ -3512,7 +3512,49 @@ export default function AddCarListing() {
                   )}
                 </div>
 
-
+                {/* Video Upload Section */}
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                  <h3 className="text-lg font-medium text-gray-700 mb-4">{t('upload_car_videos') || 'Upload Car Videos'}</h3>
+                  <p className="text-sm text-gray-500 mb-4">{t('upload_videos_description') || 'Upload videos of your car (max 50MB each)'}</p>
+                  
+                  <input
+                    type="file"
+                    multiple
+                    accept="video/*"
+                    onChange={handleVideoSelect}
+                    className="hidden"
+                    id="video-upload"
+                  />
+                  
+                  
+                  {/* Video Previews */}
+                  {selectedVideos.length > 0 && (
+                    <div className="mt-6">
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">{t('selected_videos') || 'Selected Videos:'}</h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                        {selectedVideos.map((video, index) => (
+                          <div key={index} className="relative group">
+                            <video
+                              src={videoPreviewUrls[index]}
+                              className="w-full h-24 object-cover rounded-lg border border-gray-200"
+                              controls
+                            />
+                            <button
+                              onClick={() => handleVideoRemove(index)}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              ×
+                            </button>
+                            <p className="text-xs text-gray-500 mt-1 truncate">{video.name}</p>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="text-sm text-gray-600 mt-3">
+                        {t('videos_ready', { count: selectedVideos.length }) || `${selectedVideos.length} video(s) ready for upload`}
+                      </p>
+                    </div>
+                  )}
+                </div>
 
                 {/* Terms and Privacy Policy Checkbox */}
                 <div className="mt-6 sm:mt-8">
