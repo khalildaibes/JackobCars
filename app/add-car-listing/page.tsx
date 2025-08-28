@@ -3541,17 +3541,13 @@ export default function AddCarListing() {
                   
                 </div>
                 )}
-                {Array.isArray(selectedVideos) && selectedVideos.length > 0 && (
-                  <button 
-                      type="button" 
-                      aria-label={t('clear_videos') ?? 'Clear selected videos'}
-                      disabled={!selectedVideos || selectedVideos.length === 0}
-                      
-                      onClick={clearSelectedVideos}
-                    >
-                      {t('clear_videos') ?? 'Clear Videos'}
-                    </button>
-                  )}
+                 <button
+                              onClick={() => clearSelectedVideos()}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity" 
+                            >
+                  {t('clear_videos') || 'Clear Videos'}
+                </button>
+
                 {/* Terms and Privacy Policy Checkbox */}
                 <div className="mt-6 sm:mt-8">
                   <div className="flex items-start space-x-3">
