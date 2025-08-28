@@ -3536,14 +3536,14 @@ export default function AddCarListing() {
                   </label>
                   
                   {/* Image Previews */}
-                  {selectedVideos.length > 0 && (
+                  {selectedVideos && selectedVideos.length > 0 && (
                     <div className="mt-6">
                       <h4 className="text-sm font-medium text-gray-700 mb-3">{t('selected_videos') || 'Selected Videos:'}</h4>
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                        {selectedVideos.map((video, index) => (
+                        {selectedVideos && selectedVideos.map((video, index) => (
                           <div key={index} className="relative group">
                             <img
-                              src={videoPreviewUrls[index] ?? '/images/video-placeholder.png'}
+                                src={videoPreviewUrls[index] ?? '/images/video-placeholder.png'}
                               alt={`Preview ${index + 1}`}
                               className="w-full h-24 object-cover rounded-lg border border-gray-200"
                             />
