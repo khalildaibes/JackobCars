@@ -3541,7 +3541,16 @@ export default function AddCarListing() {
                   
                 </div>
                 )}
-               
+                <div className="mt-6">
+                  <Button
+                    type="button"
+                    onClick={() => clearSelectedVideos()}
+                    className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg"
+                    aria-label={t('clear_selected_videos') || 'Clear selected videos'}
+                  >
+                    ×
+                  </Button>
+                  </div>
                 {/* Terms and Privacy Policy Checkbox */}
                 <div className="mt-6 sm:mt-8">
                   <div className="flex items-start space-x-3">
