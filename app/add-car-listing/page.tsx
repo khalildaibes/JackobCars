@@ -262,12 +262,7 @@ export default function AddCarListing() {
   const handleStepChange = (newStep: number) => {
     setCurrentStep(newStep);
     // Scroll to the top of the page
-    setTimeout(() => {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    }, 100); // Small delay to ensure the new step is rendered
+
   };
   
   // Helper function for next step
