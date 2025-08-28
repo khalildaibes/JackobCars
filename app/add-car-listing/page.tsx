@@ -3538,15 +3538,23 @@ export default function AddCarListing() {
                   </label>
                   {(selectedVideos &&  selectedVideos?.length === 0 && 
                     <div className="mt-6">
-                    <Button
+                   {typeof window !== 'undefined' && (
+                      <Button
                       type="button"
-                      onKeyDown={() => clearSelectedVideos()}
+                      onKeyDown={() => {
+                        try {
+                          clearSelectedVideos?.();
+                        } catch (error) {
+                          console.error('Error clearing videos:', error);
+                        }
+                      }}
                       className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg"
-                      aria-label={t('clear_selected_videos') || 'Clear selected videos'}
-                      disabled={ selectedVideos.length === 0}
+                      aria-label={t?.('clear_selected_videos') ?? 'Clear selected videos'}
+                      disabled={false}
                     >
-                      {t('clear_selected_videos') || 'Clear selected videos'}
+                      {t?.('clear_selected_videos') ?? 'Clear selected videos'}
                     </Button>
+                      )}
                 </div>  
                   )}
                   
