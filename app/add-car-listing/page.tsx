@@ -1596,6 +1596,11 @@ export default function AddCarListing() {
     return uploadedIds;
   };
 
+  const clearSelectedVideos = () => {
+    setSelectedVideos([]);
+    setVideoPreviewUrls([]);
+  };
+
    // Image upload functions
    const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -3538,10 +3543,7 @@ export default function AddCarListing() {
                 <div>
                   <button
                     type="button"
-                    onClick={() => {
-                      setSelectedVideos([]);
-                      setVideoPreviewUrls([]);
-                    }}
+                    onClick={clearSelectedVideos}
                   >
                     {t('clear_videos') || 'Clear Videos'}
                   </button>
