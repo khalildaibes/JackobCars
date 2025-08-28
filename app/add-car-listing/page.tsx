@@ -3542,19 +3542,13 @@ export default function AddCarListing() {
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                         {selectedVideos && selectedVideos.map((video, index) => (
                           <div key={index} className="relative group">
-                            <img
-                                src={videoPreviewUrls[index] ?? '/images/video-placeholder.png'}
-                              alt={`Preview ${index + 1}`}
-                              className="w-full h-24 object-cover rounded-lg border border-gray-200"
-                            />
+
                            
                             <p className="text-xs text-gray-500 mt-1 truncate">{video.name}</p>
                           </div>
                         ))}
                       </div>
-                      <p className="text-sm text-gray-600 mt-3">
-                        {t('videos_ready', { count: selectedVideos.length }) || `${selectedVideos.length} video(s) ready for upload`}
-                      </p>
+                      
                     </div>
                   )}
                 </div>
