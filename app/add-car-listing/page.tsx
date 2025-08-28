@@ -1598,7 +1598,6 @@ export default function AddCarListing() {
 
   const clearSelectedVideos = () => {
     setSelectedVideos([]);
-    setVideoPreviewUrls([]);
   };
 
    // Image upload functions
