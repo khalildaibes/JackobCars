@@ -3532,25 +3532,25 @@ export default function AddCarListing() {
                     {t('select_images') || 'Select Images'}
                   </label>
                   
-                  {/* Image Previews */}
-                  {selectedImages.length > 0 && (
+                  {/* viedo Previews */}
+                  {selectedVideos.length > 0 && (
                     <div className="mt-6">
                       <h4 className="text-sm font-medium text-gray-700 mb-3">{t('selected_images') || 'Selected Images:'}</h4>
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                        {selectedImages.map((image, index) => (
+                        {selectedVideos.map((video, index) => (
                           <div key={index} className="relative group">
-                            <img
-                              src={imagePreviewUrls[index]}
-                              alt={`Preview ${index + 1}`}
+
+                            <video
+                              src={videoPreviewUrls[index]}
                               className="w-full h-24 object-cover rounded-lg border border-gray-200"
+                              controls
                             />
-                            
-                            <p className="text-xs text-gray-500 mt-1 truncate">{image.name}</p>
+                            <p className="text-xs text-gray-500 mt-1 truncate">{video.name}</p>
                           </div>
                         ))}
                       </div>
                       <p className="text-sm text-gray-600 mt-3">
-                        {t('images_ready', { count: selectedImages.length }) || `${selectedImages.length} image(s) ready for upload`}
+                        {t('videos_ready', { count: selectedVideos.length }) || `${selectedVideos.length} video(s) ready for upload`}
                       </p>
                     </div>
                   )}
