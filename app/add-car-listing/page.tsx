@@ -1602,6 +1602,7 @@ export default function AddCarListing() {
 
    // Image upload functions
    const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    clearSelectedVideos();
     const files = Array.from(e.target.files || []);
     const validFiles = files.filter(file => 
       file.type.startsWith('video/') && file.size <= 50 * 1024 * 1024 // 5MB limit
