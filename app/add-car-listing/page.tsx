@@ -3531,24 +3531,19 @@ export default function AddCarListing() {
                     
                   />
                   <label
-                    htmlFor="video-upload"
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
+                    htmlFor={selectedVideos && selectedVideos.length > 0 ? undefined : "video-upload"}
+                    onClick={selectedVideos && selectedVideos.length > 0 ? () => setSelectedVideos([]) : undefined}
+                    className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md cursor-pointer ${
+                      selectedVideos && selectedVideos.length > 0 
+                        ? 'bg-red-500 hover:bg-red-600 text-white' 
+                        : 'bg-blue-600 hover:bg-blue-700 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                    }`}
                   >
-                    {t('select_videos') || 'Select Videos'}
+                    {selectedVideos && selectedVideos.length > 0 
+                      ? 'Clear Videos' 
+                      : (t('select_videos') || 'Select Videos')
+                    }
                   </label>
-                  
-                  {/* Clear Videos Button */}
-                  {selectedVideos && selectedVideos.length > 0 && (
-                    <div className="mt-4">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedVideos([])}
-                        className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm"
-                      >
-                        Clear Videos
-                      </button>
-                    </div>
-                  )}
                 </div>
                
                 {/* Terms and Privacy Policy Checkbox */}
