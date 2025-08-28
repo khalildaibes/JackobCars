@@ -331,6 +331,11 @@ export default function AddCarListing() {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  
+  // Video upload state
+  const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
+  const [videoPreviewUrls, setVideoPreviewUrls] = useState<string[]>([]);
+  const [isUploadingVideos, setIsUploadingVideos] = useState(false);
 
   // Update manufacturers data when locale changes
   useEffect(() => {
@@ -588,6 +593,17 @@ export default function AddCarListing() {
       // This is handled in the upload logic where we create temporary URLs
     };
   }, []);
+
+  // Scroll to top whenever step changes
+  useEffect(() => {
+    if (isClient) {
+      // Scroll to top with smooth animation when step changes
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  }, [currentStep, isClient]);
 
   // Function to clear all form data and reset to initial state
   const clearFormData = useCallback(() => {
@@ -1569,8 +1585,8 @@ export default function AddCarListing() {
         
         if (response.ok) {
           const result = await response.json();
-          if (result[0] && result[0].id) {
-            uploadedIds.push(result[0].id);
+          if (result[0] && result[0]) {
+            uploadedIds.push(result[0]);
           }
         } else {
           console.error('Failed to upload image:', image.name);
@@ -1580,6 +1596,70 @@ export default function AddCarListing() {
       console.error('Error uploading images:', error);
     } finally {
       setIsUploading(false);
+    }
+    
+    return uploadedIds;
+  };
+
+  // Video upload functions
+  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const validFiles = files.filter(file => 
+      file.type.startsWith('video/') && file.size <= 50 * 1024 * 1024 // 50MB limit
+    );
+    
+    if (validFiles.length !== files.length) {
+      alert(t('some_videos_invalid') || 'Some files are not valid videos or are too large (max 50MB)');
+    }
+    
+    setSelectedVideos(prev => [...prev, ...validFiles]);
+    
+    // Create preview URLs
+    const newPreviewUrls = validFiles.map(file => URL.createObjectURL(file));
+    setVideoPreviewUrls(prev => [...prev, ...newPreviewUrls]);
+  };
+
+  const handleVideoRemove = (index: number) => {
+    setSelectedVideos(prev => prev.filter((_, i) => i !== index));
+    setVideoPreviewUrls(prev => {
+      const newUrls = prev.filter((_, i) => i !== index);
+      // Revoke the removed URL to free memory
+      if (prev[index]) {
+        URL.revokeObjectURL(prev[index]);
+      }
+      return newUrls;
+    });
+  };
+
+  const uploadVideos = async (): Promise<string[]> => {
+    if (selectedVideos.length === 0) return [];
+    
+    setIsUploadingVideos(true);
+    const uploadedIds: string[] = [];
+    
+    try {
+      for (const video of selectedVideos) {
+        const formData = new FormData();
+        formData.append('files', video);
+        
+        const response = await fetch('/api/upload/video', {
+          method: 'POST',
+          body: formData,
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result[0] && result[0]) {
+            uploadedIds.push(result[0]);
+          }
+        } else {
+          console.error('Failed to upload video:', video.name);
+        }
+      }
+    } catch (error) {
+      console.error('Error uploading videos:', error);
+    } finally {
+      setIsUploadingVideos(false);
     }
     
     return uploadedIds;
@@ -1681,7 +1761,7 @@ export default function AddCarListing() {
       
       // Images
       images: [],
-      
+      videos: [],
       // Manufacturer and model details
       manufacturerName: formData.manufacturerName || yad2Data?.manufacturerName || '',
       modelId: formData.modelId || yad2Data?.modelId || '',
@@ -1812,6 +1892,16 @@ export default function AddCarListing() {
     setSelectedImages([]);
     setImagePreviewUrls([]);
     setIsUploading(false);
+    
+    // Clear video-related state
+    setSelectedVideos([]);
+    setVideoPreviewUrls([]);
+    setIsUploadingVideos(false);
+    
+    // Clear video-related state
+    setSelectedVideos([]);
+    setVideoPreviewUrls([]);
+    setIsUploadingVideos(false);
   };
 
 
@@ -1840,6 +1930,14 @@ export default function AddCarListing() {
         console.log('Uploaded image IDs:', uploadedImageIds);
       }
 
+      // Upload videos if any are selected
+      let uploadedVideoIds: string[] = [];
+      if (selectedVideos.length > 0) {
+        console.log('Uploading videos...');
+        uploadedVideoIds = await uploadVideos();
+        console.log('Uploaded video IDs:', uploadedVideoIds);
+      }
+
       // Merge yad2ModelInfo and formData using our merge function
       console.log('Merging car data...');
       const mergedCarData = mergeCarData(yad2ModelInfo?.data, formData);
@@ -1848,6 +1946,12 @@ export default function AddCarListing() {
       if (uploadedImageIds.length > 0) {
         mergedCarData.images = uploadedImageIds;
         console.log('Added image IDs to car data:', uploadedImageIds);
+      }
+
+      // Add uploaded video IDs to the car data
+      if (uploadedVideoIds.length > 0) {
+        mergedCarData.videos = uploadedVideoIds;
+        console.log('Added video IDs to car data:', uploadedVideoIds);
       }
       
       console.log('Merged car data:', mergedCarData);
@@ -2154,44 +2258,17 @@ export default function AddCarListing() {
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-[15%] md:mt-[5%] py-4 sm:py-8 px-3 sm:px-4 md:px-6 lg:px-8 ${isRTL ? 'rtl' : 'ltr'}`}>
+    <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-[20%] md:mt-[5%] py-4 sm:py-8 px-3 sm:px-4 md:px-6 lg:px-8 ${isRTL ? 'rtl' : 'ltr'}`}>
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="max-w-3xl mx-auto"
       >
         <div className="flex flex-col gap-4 sm:gap-6 mb-6 sm:mb-8">
-          <div className="flex items-center gap-4 sm:gap-6">
-            <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-3 sm:p-4 shadow-lg">
-              <Car className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">{t('add_car_listing')}</h1>
-              <p className="text-sm sm:text-base text-gray-600">{t('fill_details')}</p>
-              {/* Progress indicator */}
-              {isClient && loadFromCookie(COOKIE_KEYS.CURRENT_STEP) !== null && (
-                <div className="flex items-center gap-2 mt-2 text-xs sm:text-sm text-blue-600">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
-                  <span>{t('progress_saved') || 'Progress saved automatically'}</span>
-                </div>
-              )}
-            </div>
-          </div>
+          
           
           {/* Action Buttons Container */}
           <div className="flex flex-row gap-2 sm:gap-3">
-          {/* Clear Progress Button */}
-          <Button
-            type="button"
-            variant="outline"
-            onClick={clearSavedProgress}
-              className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600 hover:text-red-600 hover:border-red-300 transition-colors duration-200 w-full sm:w-auto justify-center sm:justify-start"
-            title={t('clear_saved_progress') || 'Clear saved progress and start over'}
-          >
-              <X className="h-4 w-4 mr-1 sm:mr-2" />
-            {t('clear_progress') || 'Clear Progress'}
-          </Button>
-          
           {/* Clear Plate Data Button */}
           {plateNumber && (
             <Button
@@ -2206,22 +2283,6 @@ export default function AddCarListing() {
             </Button>
           )}
           
-          {/* Debug Storage Button (only in development) */}
-          {isClient && process.env.NODE_ENV === 'development' && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                const status = getStorageStatus();
-                console.log('Storage Status:', status);
-                alert(`Storage Status:\nCookies: ${JSON.stringify(status.cookieStatus, null, 2)}\nlocalStorage: ${JSON.stringify(status.localStorageStatus, null, 2)}`);
-              }}
-                className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300 transition-colors duration-200 w-full sm:w-auto justify-center sm:justify-start"
-              title="Debug storage status (development only)"
-            >
-              🔍 Debug
-            </Button>
-          )}
         </div>
               </div>
 
@@ -3451,6 +3512,55 @@ export default function AddCarListing() {
                       </div>
                       <p className="text-sm text-gray-600 mt-3">
                         {t('images_ready', { count: selectedImages.length }) || `${selectedImages.length} image(s) ready for upload`}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Video Upload Section */}
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                  <h3 className="text-lg font-medium text-gray-700 mb-4">{t('upload_car_videos') || 'Upload Car Videos'}</h3>
+                  <p className="text-sm text-gray-500 mb-4">{t('upload_videos_description') || 'Upload videos of your car (max 50MB each)'}</p>
+                  
+                  <input
+                    type="file"
+                    multiple
+                    accept="video/*"
+                    onChange={handleVideoSelect}
+                    className="hidden"
+                    id="video-upload"
+                  />
+                  <label
+                    htmlFor="video-upload"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 cursor-pointer"
+                  >
+                    {t('select_videos') || 'Select Videos'}
+                  </label>
+                  
+                  {/* Video Previews */}
+                  {selectedVideos.length > 0 && (
+                    <div className="mt-6">
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">{t('selected_videos') || 'Selected Videos:'}</h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                        {selectedVideos.map((video, index) => (
+                          <div key={index} className="relative group">
+                            <video
+                              src={videoPreviewUrls[index]}
+                              className="w-full h-24 object-cover rounded-lg border border-gray-200"
+                              controls
+                            />
+                            <button
+                              onClick={() => handleVideoRemove(index)}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              ×
+                            </button>
+                            <p className="text-xs text-gray-500 mt-1 truncate">{video.name}</p>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="text-sm text-gray-600 mt-3">
+                        {t('videos_ready', { count: selectedVideos.length }) || `${selectedVideos.length} video(s) ready for upload`}
                       </p>
                     </div>
                   )}

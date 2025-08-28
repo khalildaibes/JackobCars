@@ -171,15 +171,15 @@ export async function POST(request) {
     };
     
     const images = car.images || [];
-    const video = car.video || null;
+    const videos = car.videos || [];
     
-    console.log('Extracted data:', { brand, model, year, specs, images, video });
+    console.log('Extracted data:', { brand, model, year, specs, images, videos });
     
     // Validate video if present
-    if (video && video.file) {
+    if (videos) {
       // Note: Video validation should be done on the frontend before submission
       // This is just a safety check for the API
-      console.log('Video file received:', video.file.name, video.file.size, video.file.type);
+      console.log('Video file received:', videos);
     }
 
     // Generate pros and cons using the dedicated API endpoint
@@ -266,18 +266,12 @@ export async function POST(request) {
             
             // Images
             images: {
-              main: images?.main || "",
-              additional: images?.additional || []
+              main: images[0] || "",
+              additional: images.slice(1) || []
             },
             
             // Video
-            video: video?.file ? {
-              id: video.file.id,
-              url: video.file.url,
-              file: video.file.name,
-              type: video.file.type,
-              size: video.file.size
-            } : null,
+            video: videos?.length > 0 ? [videos[0] ]: null,
             
             // Manufacturer and model details
             manufacturerName: car.manufacturerName || car.manufacturer_name || "",
@@ -381,7 +375,7 @@ export async function POST(request) {
           }
         },
         store: [18], // Store ID as array
-        image: images?.length > 0 ? images[0] : [], // Image ID as array
+        image: images?.length > 0 ? images[0].id : [], // Image ID as array
         publisher: [1], // Publisher ID as array
         category: [], // Empty category array
         services: [], // Empty services array

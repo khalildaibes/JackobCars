@@ -934,6 +934,12 @@
     "select_images": "בחר תמונות",
     "selected_images": "תמונות נבחרות:",
     "images_ready": "{count} תמונה(ים) מוכנות להעלאה",
+    "upload_car_videos": "העלאת סרטוני רכב",
+    "upload_videos_description": "העלה סרטונים של הרכב שלך (מקסימום 50MB לכל סרטון)",
+    "select_videos": "בחר סרטונים",
+    "selected_videos": "סרטונים נבחרים:",
+    "videos_ready": "{count} סרטון(ים) מוכנים להעלאה",
+    "some_videos_invalid": "חלק מהקבצים אינם סרטונים תקינים או גדולים מדי (מקסימום 50MB)",
     "some_files_invalid": "חלק מהקבצים אינם תמונות תקינות או גדולים מדי (מקסימום 5MB)",
     "language_suggestion": "לחוויית משתמש טובה יותר, אנו ממליצים להשתמש בשפה העברית",
     "switch_to_hebrew": "עבור לעברית"

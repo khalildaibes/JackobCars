@@ -199,8 +199,20 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
       const year = product.details?.car?.year || product.details?.car?.yearOfProduction || "Unknown";
       const description = product.details?.car?.description || "";
       const features = product.details?.car?.features || [];
-      const pros = product.details?.car?.pros || [];
-      const cons = product.details?.car?.cons || [];
+      const pros = (product.details?.car?.pros || []).map((pro: any) => {
+        if (typeof pro === 'string') return pro;
+        if (pro && typeof pro === 'object') {
+          return pro.value || pro.label || 'Unknown Pro';
+        }
+        return 'Unknown Pro';
+      });
+      const cons = (product.details?.car?.cons || []).map((con: any) => {
+        if (typeof con === 'string') return con;
+        if (con && typeof con === 'object') {
+          return con.value || con.label || 'Unknown Con';
+        }
+        return 'Unknown Con';
+      });
       const owner_name = product.details?.car?.name || product.details?.car?.owner_name || "";
       const owner_phone = product.details?.car?.phone || product.details?.car?.owner_phone || "";
       const owner_email = product.details?.car?.email || product.details?.car?.owner_email || "";
@@ -222,6 +234,12 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
 
       // Get main image
       const mainImage = (() => {
+        // Check if we have a main image from the new structure
+        if (product.details?.car?.images?.main && product.details.car.images.main.url) {
+          return `http://${hostname}${product.details.car.images.main.url}`;
+        }
+        
+        // Fallback to old image structure
         if (product.image && Array.isArray(product.image) && product.image.length > 0) {
           return buildImageUrl(product.image[0]?.url || '');
         } else if (product.image && product.image.url) {
@@ -232,7 +250,7 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
         return "/default-car.png";
       })();
 
-      // Get all images from the new structure
+      // Get all images from the new structure - images contain URLs that need to be converted to full URLs
       const allImages = (() => {
         const images = [];
         
@@ -241,13 +259,12 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
           images.push(mainImage);
         }
         
-        // Add additional images from the new structure
+        // Add additional images from the new structure - these are URLs that need to be converted to full URLs
         if (product.details?.car?.images?.additional && Array.isArray(product.details.car.images.additional)) {
           product.details.car.images.additional.forEach((img: any) => {
-            if (img && typeof img === 'string') {
-              images.push(buildImageUrl(img));
-            } else if (img && img.url) {
-              images.push(buildImageUrl(img.url));
+            if (img && img.url) {
+              // Convert relative URL to full URL with hostname
+              images.push(`http://${hostname}${img.url}`);
             }
           });
         }
@@ -288,7 +305,7 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
         return images;
       })();
 
-      // Get video from the new structure
+      // Get video from the new structure - video contains array of video objects
       const videoData = product.details?.car?.video || null;
       
       // Debug logging for video
@@ -304,7 +321,7 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
         id: product.id,
         mainImage: mainImage,
         allImages: allImages,
-        video: videoData,
+        video: videoData && Array.isArray(videoData) && videoData.length > 0 ? videoData[0] : null,
         alt: product.name || "Car Image",
         title: product.name,
         name: product.name,
@@ -324,13 +341,13 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
         createdAt: product.createdAt,
         bodyType: normalizedBodyType,
         description: description,
-        features: features.map((feature: any) => {
+        features: (features || []).map((feature: any) => {
           if (typeof feature === 'string') return feature;
           if (feature && typeof feature === 'object') {
             return feature.value || feature.label || 'Unknown Feature';
           }
           return 'Unknown Feature';
-        }) || [],
+        }),
         category: product.categories ? product.categories.split(",").map((c: string) => c.toLowerCase().trim()) : [],
         // Additional fields from new structure
         owner_name: owner_name,
@@ -353,7 +370,7 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
         priceNegotiable: product.details?.car?.priceNegotiable || false,
         selectedPackage: product.details?.car?.selectedPackage || "",
         termsAccepted: product.details?.car?.termsAccepted || false,
-        previousOwners: product.details?.car?.previousOwners || [],
+        previousOwners: Array.isArray(product.details?.car?.previousOwners) ? product.details.car.previousOwners : [],
         // Technical specifications
         engineCapacity: product.details?.car?.engineCapacity || "",
         seatingCapacity: product.details?.car?.seatingCapacity || "",
@@ -747,7 +764,7 @@ const searchParams = useSearchParams();
                     <video
                       src={(() => {
                         // Try different video source patterns
-                        if (car.video?.id) {
+                        if (car.video?.url) {
                           return `http://${hostname}${car.video.url}`;
                         }
                         console.log('Video data structure:', car.video);
@@ -756,7 +773,7 @@ const searchParams = useSearchParams();
                       controls
                       className="w-full h-[600px] object-cover"
                       poster={car.mainImage}
-                                            onError={(e) => {
+                      onError={(e) => {
                         console.error('Video loading error:', e);
                         console.log('Video data:', car.video);
                       }}
@@ -780,11 +797,8 @@ const searchParams = useSearchParams();
                       className="cursor-pointer transition-transform hover:scale-[1.02] relative group"
                       onClick={() => setIsImageModalOpen(true)}
                     >
-                      <Img
+                      <img
                         src={car.mainImage}
-                        width={1920}
-                        height={1080}
-                        external={true}
                         alt={car.title}
                         className="w-full h-[600px] object-cover"
                       />
@@ -864,6 +878,13 @@ const searchParams = useSearchParams();
                           </>
                         )}
                       </div>
+                      {/* Debug info in development */}
+                      {process.env.NODE_ENV === 'development' && (
+                        <div className="text-xs mt-1 opacity-75">
+                          Video: {car.video ? 'Available' : 'None'}<br/>
+                          Images: {car.allImages?.length || 0}
+                        </div>
+                      )}
                     </div>
                   </>
                 ) : null}
@@ -880,17 +901,19 @@ const searchParams = useSearchParams();
               </div>
               
               {/* Debug Info */}
-              {/* {process.env.NODE_ENV === 'development' && (
+              {process.env.NODE_ENV === 'development' && (
                 <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg m-4">
                   <h4 className="font-medium text-yellow-800 mb-2">Debug Info (Development)</h4>
                   <div className="text-xs text-yellow-700 space-y-1">
                     <p>Main Image: {car.mainImage}</p>
-                    <p>All Images Count: {car.details.images.additional?.length || 0}</p>
-                    <p>All Images: {JSON.stringify(car.details.images.additional, null, 2)}</p>
-                    <p>Video Data: {JSON.stringify(car.details.video, null, 2)}</p>
+                    <p>Video Data: {car.video ? JSON.stringify(car.video, null, 2) : 'None'}</p>
+                    <p>Video URL: {car.video?.url ? `http://${hostname}${car.video.url}` : 'None'}</p>
+                    <p>All Images Count: {car.allImages?.length || 0}</p>
+                    <p>All Images URLs: {car.allImages?.map((img, i) => `${i}: ${img}`).join(', ') || 'None'}</p>
+                    <p>Hostname: {hostname}</p>
                   </div>
                 </div>
-              )} */}
+              )}
               
               {/* Image Thumbnails */}
               {car.allImages && car.allImages.length > 0 ? (
@@ -938,7 +961,7 @@ const searchParams = useSearchParams();
             </TabsList>
             
               <TabsContent value="overview" className="mt-6 space-y-6">
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
                   <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-4 bg-gray-50 rounded-xl`}>
                     <div className="p-2 bg-blue-100 rounded-lg">
                   <Calendar className="h-5 w-5 text-blue-600" />
@@ -1031,9 +1054,9 @@ const searchParams = useSearchParams();
 
                 {/* Additional Car Details */}
                 {(car.color || car.engine_type || car.trim_level || car.known_problems || car.trade_in || car.carType || car.ownerType || car.region || car.priceNegotiable || car.selectedPackage) && (
-                  <div className="bg-white rounded-xl p-6 shadow-sm">
-                    <h3 className="text-lg font-semibold mb-4">{t('additional_details')}</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                   <div className="bg-white rounded-xl p-6 shadow-sm">
+                   <h3 className="text-lg font-semibold mb-4">{t('additional_details')}</h3>
+                   <div className="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-4">
                       {car.color && (
                         <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
                           <div className="w-4 h-4 rounded-full" style={{ backgroundColor: car.color }}></div>
@@ -1142,9 +1165,9 @@ const searchParams = useSearchParams();
                 )}
               {/* Technical Specifications Section */}
               {(car.engineCapacity || car.seatingCapacity || car.abs || car.airbags || car.powerWindows || car.driveType || car.totalWeight || car.height || car.fuelTankCapacity || car.co2Emission || car.greenIndex || car.enginePower || car.doors || car.engineCode || car.frameNumber || car.lastTestDate || car.tokefTestDate || car.frontTires || car.rearTires || car.pollutionGroup || car.dateOnRoad || car.noxEmission || car.pmEmission || car.hcEmission || car.coEmission || car.safetyRating || car.safetyRatingWithoutSeatbelts || car.fuelTankCapacityWithoutReserve) && (
-                <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
-                  <h3 className="text-lg font-semibold mb-4">{t('technical_specifications') || 'Technical Specifications'}</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                 <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
+                   <h3 className="text-lg font-semibold mb-4">{t('technical_specifications') || 'Technical Specifications'}</h3>
+                   <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                     {car.engineCapacity && (
                       <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'} p-3 bg-gray-50 rounded-lg`}>
                         <div className="p-2 bg-blue-100 rounded-lg">
@@ -1277,7 +1300,7 @@ const searchParams = useSearchParams();
                   <p className="text-gray-600">Compare the advantages and disadvantages of this vehicle</p>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-start relative">
+                                 <div className="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 items-start relative">
                   {/* Visual Separator */}
                   <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent transform -translate-x-1/2"></div>
                   
@@ -1510,7 +1533,7 @@ const searchParams = useSearchParams();
                       </div>
                     )}
                     
-                    <div className="flex gap-2 pt-2">
+                                         <div className="grid grid-cols-2 gap-2 pt-2">
                       <button 
                         onClick={() => setShowContactInfo(false)}
                         className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
@@ -1591,14 +1614,6 @@ const searchParams = useSearchParams();
                   <Link key={similarCar.id} href={`/car-details/${similarCar.slug}?hostname=${similarCar.hostname}`}>
                       <div className={`flex ${isRTL ? 'space-x-reverse space-x-4' : 'space-x-4'} group p-3 rounded-lg hover:bg-gray-50 transition-colors`}>
                         <div className="w-24 h-20 overflow-hidden rounded-lg">
-                          {/* <Img
-                            external={true}
-                            width={96}
-                            height={80}
-                            src={similarCar.mainImage}
-                            alt={similarCar.title}
-                            className="w-full h-full object-cover"
-                          /> */}
                           {similarCar.mainImage && (
                             <img
                               src={similarCar.mainImage}
@@ -1726,11 +1741,8 @@ const searchParams = useSearchParams();
             {/* Image */}
             <div className="relative">
               {car.allImages && car.allImages[currentImageIndex] && (
-                <Img
+                <img
                   src={car.allImages[currentImageIndex]}
-                  width={1920}
-                  height={1080}
-                  external={true}
                   alt={car.title}
                   className="max-w-full max-h-[90vh] object-contain rounded-lg"
                   onClick={(e) => e.stopPropagation()}
@@ -1738,40 +1750,40 @@ const searchParams = useSearchParams();
               )}
             </div>
             
-            {/* Image Info and Navigation Dots */}
-            <div className={`absolute bottom-4 bg-black/50 backdrop-blur-sm text-white p-4 rounded-lg ${isRTL ? 'right-4 left-4' : 'left-4 right-4'}`}>
-              <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{car.title}</h3>
-              <p className={`text-sm text-gray-300 ${isRTL ? 'text-right' : 'text-left'}`}>
-                {car.year} • {car.make} • {car.bodyType}
-              </p>
-              
-              {/* Image Counter */}
-              {car.allImages && car.allImages.length > 1 && (
-                <div className={`flex justify-center mt-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <span className="text-sm text-gray-300">
-                    {currentImageIndex + 1} / {car.allImages.length}
-                  </span>
-                </div>
-              )}
-              
-              {/* Navigation Dots */}
-              {car.allImages && car.allImages.length > 1 && (
-                <div className={`flex justify-center mt-2 space-x-2 ${isRTL ? 'space-x-reverse' : ''}`}>
-                  {car.allImages.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setCurrentImageIndex(index);
-                      }}
-                      className={`w-2 h-2 rounded-full transition-colors ${
-                        index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                      }`}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
+                         {/* Image Info and Navigation Dots - Hidden on mobile */}
+             <div className={`absolute bottom-4 bg-black/50 backdrop-blur-sm text-white p-4 rounded-lg ${isRTL ? 'right-4 left-4' : 'left-4 right-4'} hidden md:block`}>
+               <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{car.title}</h3>
+               <p className={`text-sm text-gray-300 ${isRTL ? 'text-right' : 'text-left'}`}>
+                 {car.year} • {car.make} • {car.bodyType}
+               </p>
+               
+               {/* Image Counter */}
+               {car.allImages && car.allImages.length > 1 && (
+                 <div className={`flex justify-center mt-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                   <span className="text-sm text-gray-300">
+                     {currentImageIndex + 1} / {car.allImages.length}
+                   </span>
+                 </div>
+               )}
+               
+               {/* Navigation Dots */}
+               {car.allImages && car.allImages.length > 1 && (
+                 <div className={`flex justify-center mt-2 space-x-2 ${isRTL ? 'space-x-reverse' : ''}`}>
+                   {car.allImages.map((_, index) => (
+                     <button
+                       key={index}
+                       onClick={(e) => {
+                         e.stopPropagation();
+                         setCurrentImageIndex(index);
+                       }}
+                       className={`w-2 h-2 rounded-full transition-colors ${
+                         index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                       }`}
+                     />
+                   ))}
+                 </div>
+               )}
+             </div>
           </div>
         </div>
       )}
