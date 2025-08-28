@@ -3547,12 +3547,7 @@ export default function AddCarListing() {
                               alt={`Preview ${index + 1}`}
                               className="w-full h-24 object-cover rounded-lg border border-gray-200"
                             />
-                            <button
-                              onClick={() => handleVideoRemove(index)}
-                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              ×
-                            </button>
+                           
                             <p className="text-xs text-gray-500 mt-1 truncate">{video.name}</p>
                           </div>
                         ))}
