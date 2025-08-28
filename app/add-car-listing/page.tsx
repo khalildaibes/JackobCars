@@ -1600,7 +1600,7 @@ export default function AddCarListing() {
    const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const validFiles = files.filter(file => 
-      file.type.startsWith('video/') && file.size <= 5 * 1024 * 1024 // 5MB limit
+      file.type.startsWith('video/') && file.size <= 50 * 1024 * 1024 // 5MB limit
     );
     
     if (validFiles.length !== files.length) {
@@ -3532,7 +3532,32 @@ export default function AddCarListing() {
                     {t('select_videos') || 'Select Videos'}
                   </label>
                   
-                  
+                  {/* Image Previews */}
+                  {selectedVideos?.length > 0 && (
+                    <div className="mt-6">
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">{t('selected_videos') || 'Selected Videos:'}</h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                        {selectedVideos?.map((video, index) => (
+                          <div key={index} className="relative group">
+                            <video
+                              src={videoPreviewUrls[index]}
+                              className="w-full h-24 object-cover rounded-lg border border-gray-200"
+                            />
+                            <button
+                              onClick={() => handleVideoRemove(index)}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              ×
+                            </button>
+                            <p className="text-xs text-gray-500 mt-1 truncate">{video.name}</p>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="text-sm text-gray-600 mt-3">
+                        {t('videos_ready', { count: selectedVideos.length }) || `${selectedVideos.length} video(s) ready for upload`}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Terms and Privacy Policy Checkbox */}
