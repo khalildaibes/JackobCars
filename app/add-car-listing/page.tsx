@@ -1607,11 +1607,11 @@ export default function AddCarListing() {
       alert(t('some_files_invalid') || 'Some files are not valid images or are too large (max 5MB)');
     }
     
-    setSelectedVideos(prev => [...prev, ...validFiles]);
+    setSelectedVideos(prev => [...validFiles]);
     
     // Create preview URLs
     const newPreviewUrls = validFiles.map(file => URL.createObjectURL(file));
-    setVideoPreviewUrls(prev => [...prev, ...newPreviewUrls]);
+    setVideoPreviewUrls(prev => [...newPreviewUrls]);
   };
 
   const handleVideoRemove = (index: number) => {
@@ -3513,48 +3513,40 @@ export default function AddCarListing() {
                 </div>
 
                 {/* Video Upload Section */}
+                {selectedVideos.length === 0 ? (
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                  <h3 className="text-lg font-medium text-gray-700 mb-4">{t('upload_car_images') || 'Upload Car Images'}</h3>
-                  <p className="text-sm text-gray-500 mb-4">{t('upload_images_description') || 'Upload images of your car (max 5MB each)'}</p>
+                  <h3 className="text-lg font-medium text-gray-700 mb-4">{t('upload_car_videos') || 'Upload Car Videos'}</h3>
+                  <p className="text-sm text-gray-500 mb-4">{t('upload_videos_description') || 'Upload videos of your car (max 5MB each)'}</p>
                   
                   <input
                     type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={handleImageSelect}
+                    accept="video/*"
+                    onChange={handleVideoSelect}
                     className="hidden"
-                    id="image-upload"
+                    id="video-upload"
                   />
                   <label
-                    htmlFor="image-upload"
+                    htmlFor="video-upload"
                     className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
                   >
-                    {t('select_images') || 'Select Images'}
+                    {t('select_videos') || 'Select Videos'}
                   </label>
                   
-                  {/* viedo Previews */}
-                  {selectedVideos.length > 0 && (
-                    <div className="mt-6">
-                      <h4 className="text-sm font-medium text-gray-700 mb-3">{t('selected_images') || 'Selected Images:'}</h4>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                        {selectedVideos.map((video, index) => (
-                          <div key={index} className="relative group">
-                            <video
-                              src={videoPreviewUrls[index]}
-                              className="w-full h-24 object-cover rounded-lg border border-gray-200" 
-                              controls
-                            />
-
-                          </div>
-                        ))}
-                      </div>
-                      <p className="text-sm text-gray-600 mt-3">
-                        {t('videos_ready', { count: selectedVideos.length }) || `${selectedVideos.length} video(s) ready for upload`}
-                      </p>
-                    </div>
-                  )}
+                  
                 </div>
-
+                ) : (
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedVideos([]);
+                      setVideoPreviewUrls([]);
+                    }}
+                  >
+                    {t('clear_videos') || 'Clear Videos'}
+                  </button>
+                </div>
+                )}
                 {/* Terms and Privacy Policy Checkbox */}
                 <div className="mt-6 sm:mt-8">
                   <div className="flex items-start space-x-3">
