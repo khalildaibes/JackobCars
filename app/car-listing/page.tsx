@@ -9,7 +9,7 @@ import { Slider } from "../../components/ui/slider";
 import { Card, CardContent } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-import { Check, Heart, MessageSquare, Plus, Car,Calendar, Gauge, Fuel, Sparkles, Scale, Settings, ChevronDown } from "lucide-react";
+import { Check, Heart, MessageSquare, Plus, Car,Calendar, Gauge, Fuel, Sparkles, Scale, Settings, ChevronDown, X } from "lucide-react";
 import { Badge } from "../../components/ui/badge";
 
 import { Img } from '../../components/Img';
@@ -23,10 +23,52 @@ import CarCard from '../../components/CarCard';
 // First, add this helper function at the top of your file
 const extractPrice = (price: string | number): number => {
   if (typeof price === 'number') return price;
-  return parseInt(price.replace(/[$,]/g, '')) || 0;
+  if (typeof price === 'string') {
+    return parseInt(price.replace(/[$,]/g, '')) || 0;
+  }
+  return 0;
 };
 
-const YEARS = Array.from({ length: 30 }, (_, i) => 2024 - i);
+// Define the car listing type
+interface CarListing {
+  id: number;
+  slug: string;
+  mainImage: string;
+  alt: string;
+  title: string;
+  store: any;
+  hostname: string;
+  miles: string;
+  name: string;
+  fuel: string;
+  condition: string;
+  transmission: string;
+  details: string;
+  price: string;
+  mileage: string;
+  year: number | string;
+  fuelType: string;
+  make: string;
+  bodyType: string;
+  description: string;
+  features: string[];
+  category: string[];
+  pros: string[];
+  cons: string[];
+  owner_name: string;
+  owner_phone: string;
+  owner_email: string;
+  plate_number: string;
+  color: string;
+  engine_type: string;
+  known_problems: string;
+  trade_in: string;
+  asking_price: string;
+  manufacturer_name: string;
+  commercial_nickname: string;
+  year_of_production: string;
+  trim_level: string;
+}
 
 const CarListings: React.FC = () => {
   const { selectedCars } = useComparison();
@@ -37,45 +79,8 @@ const CarListings: React.FC = () => {
   const [MAKES, setMAKES] = useState<Array<{ value: string; label: string }>>([]);
   const [BODY_TYPES, setBODY_TYPES] = useState<Array<{ value: string; label: string }>>([]);
   const [FUEL_TYPES, setFUEL_TYPES] = useState<Array<{ value: string; label: string }>>([]);
+  const [YEARS, setYEARS] = useState<number[]>([]);
   
-  // Set translation arrays after component mounts to prevent hydration issues
-  useEffect(() => {
-    setMAKES([
-      { value: "Any", label: t('makes.any') },
-      { value: "Toyota", label: t('makes.toyota') },
-      { value: "Honda", label: t('makes.honda') },
-      { value: "Ford", label: t('makes.ford') },
-      { value: "Chevrolet", label: t('makes.chevrolet') },
-      { value: "BMW", label: t('makes.bmw') },
-      { value: "Mercedes-Benz", label: t('makes.mercedes') },
-      { value: "Audi", label: t('makes.audi') },
-      { value: "Tesla", label: t('makes.tesla') },
-      { value: "Lexus", label: t('makes.lexus') },
-      { value: "Subaru", label: t('makes.subaru') }
-    ]);
-
-    setBODY_TYPES([
-      { value: "Any", label: t('body_types.any') },
-      { value: "Sedan", label: t('body_types.sedan') },
-      { value: "SUV", label: t('body_types.suv') },
-      { value: "Truck", label: t('body_types.truck') },
-      { value: "Coupe", label: t('body_types.coupe') },
-      { value: "Convertible", label: t('body_types.convertible') },
-      { value: "Hatchback", label: t('body_types.hatchback') },
-      { value: "Wagon", label: t('body_types.wagon') },
-      { value: "Van", label: t('body_types.van') }
-    ]);
-
-    setFUEL_TYPES([
-      { value: "Any", label: t('fuel_types.any') },
-      { value: "Gasoline", label: t('fuel_types.gasoline') },
-      { value: "Diesel", label: t('fuel_types.diesel') },
-      { value: "Electric", label: t('fuel_types.electric') },
-      { value: "Hybrid", label: t('fuel_types.hybrid') },
-      { value: "Plug-in Hybrid", label: t('fuel_types.plug_in_hybrid') }
-    ]);
-  }, [t]);
-
   // Add new state for min and max price
   const [minMaxPrices, setMinMaxPrices] = useState<{ min: number; max: number }>({ min: 5000, max: 100000 });
   
@@ -88,10 +93,31 @@ const CarListings: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [viewType, setViewType] = useState<string>("list");
   const [showFilters, setShowFilters] = useState(false);
-  const [listings, setListings] = useState([]);
+  const [listings, setListings] = useState<CarListing[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Function to clear all filters
+  const clearAllFilters = () => {
+    setSearchTerm('');
+    setYearFilter('Any');
+    setMakeFilter('Any');
+    setBodyTypeFilter('Any');
+    setFuelTypeFilter('Any');
+    setPriceRange([minMaxPrices.min, minMaxPrices.max]);
+  };
+
+  // Function to check if any filters are active
+  const hasActiveFilters = () => {
+    return searchTerm !== '' || 
+           yearFilter !== 'Any' || 
+           makeFilter !== 'Any' || 
+           bodyTypeFilter !== 'Any' || 
+           fuelTypeFilter !== 'Any' ||
+           priceRange[0] !== minMaxPrices.min || 
+           priceRange[1] !== minMaxPrices.max;
+  };
   
     useEffect(() => {
       if (typeof window !== "undefined") {
@@ -313,6 +339,31 @@ const CarListings: React.FC = () => {
 
           setListings(formattedListings);
 
+          // Extract unique values for filters from the actual data
+          const uniqueMakes = [...new Set(formattedListings.map(car => car.make).filter((make): make is string => typeof make === 'string' && make !== "Unknown"))];
+          const uniqueBodyTypes = [...new Set(formattedListings.map(car => car.bodyType).filter((type): type is string => typeof type === 'string' && type !== "Unknown"))];
+          const uniqueFuelTypes = [...new Set(formattedListings.map(car => car.fuelType).filter((type): type is string => typeof type === 'string' && type !== "Unknown"))];
+          const validYears = formattedListings.map(car => car.year).filter((year): year is number => typeof year === 'number' && year > 1900);
+          const uniqueYears = [...new Set(validYears)].sort((a, b) => b - a);
+
+          // Set filter options with "Any" option first
+          setMAKES([
+            { value: "Any", label: t('makes.any') || 'Any Make' },
+            ...uniqueMakes.map(make => ({ value: make, label: make }))
+          ]);
+
+          setBODY_TYPES([
+            { value: "Any", label: t('body_types.any') || 'Any Body Type' },
+            ...uniqueBodyTypes.map(type => ({ value: type, label: type }))
+          ]);
+
+          setFUEL_TYPES([
+            { value: "Any", label: t('fuel_types.any') || 'Any Fuel Type' },
+            ...uniqueFuelTypes.map(type => ({ value: type, label: type }))
+          ]);
+
+          setYEARS(uniqueYears);
+
           // Calculate min and max prices from the listings
           const prices = formattedListings.map(car => extractPrice(car.price || '0'));
           const minPrice = Math.min(...prices);
@@ -389,7 +440,7 @@ const CarListings: React.FC = () => {
     router.push(`/car-details/${slug}`);
   };
 
-  // Don't render until translation arrays are populated to prevent hydration issues
+  // Don't render until filter arrays are populated to prevent hydration issues
   if (MAKES.length === 0 || BODY_TYPES.length === 0 || FUEL_TYPES.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-7xl mt-[15%] md:mt-[5%] bg-white rounded-lg">
@@ -473,6 +524,22 @@ const CarListings: React.FC = () => {
             <Card className="bg-white shadow-md">
               <CardContent className="pt-6">
                 <div className="space-y-6">
+                  {/* Filter Header with Clear Button */}
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+                    {hasActiveFilters() && (
+                      <Button
+                        onClick={clearAllFilters}
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
+                      >
+                        <X className="h-4 w-4" />
+                        Clear Filters
+                      </Button>
+                    )}
+                  </div>
+
                   {/* Filter Options */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                     <div className="space-y-2">
@@ -555,6 +622,22 @@ const CarListings: React.FC = () => {
             <Card className="bg-white shadow-md">
               <CardContent className="pt-6">
                 <div className="space-y-6">
+                  {/* Filter Header with Clear Button */}
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+                    {hasActiveFilters() && (
+                      <Button
+                        onClick={clearAllFilters}
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
+                      >
+                        <X className="h-4 w-4" />
+                        Clear Filters
+                      </Button>
+                    )}
+                  </div>
+
                   {/* Filter Options */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                     <div className="space-y-2">
@@ -685,14 +768,7 @@ const CarListings: React.FC = () => {
                   <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 max-w-md mx-auto">
                     <p className="text-gray-700 font-semibold mb-2">{t('no_cars_found') || 'No Cars Found'}</p>
                     <p className="text-gray-600 text-sm mb-4">{t('try_adjusting_filters') || 'Try adjusting your filters or search terms'}</p>
-                    <Button onClick={() => {
-                      setSearchTerm('');
-                      setYearFilter('Any');
-                      setMakeFilter('Any');
-                      setBodyTypeFilter('Any');
-                      setFuelTypeFilter('Any');
-                      setPriceRange([minMaxPrices.min, minMaxPrices.max]);
-                    }} className="bg-red-600 hover:bg-red-700">
+                    <Button onClick={clearAllFilters} className="bg-red-600 hover:bg-red-700">
                       {t('clear_filters') || 'Clear Filters'}
                     </Button>
                   </div>
