@@ -3522,7 +3522,7 @@ export default function AddCarListing() {
                 {(
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                   <h3 className="text-lg font-medium text-gray-700 mb-4">{t('upload_car_videos') || 'Upload Car Videos'}</h3>
-                  <p className="text-sm text-gray-500 mb-4">{t('upload_videos_description') || 'Upload videos of your car (max 5MB each)'}</p>
+                  <p className="text-sm text-gray-500 mb-4">{selectedVideos && selectedVideos.length > 0 ? t('vedio_is_selected') || 'Video is selected' : t('upload_videos_description') || 'Upload videos of your car (max 5MB each)'}</p>
                   
                   <input
                     type="file"
