@@ -3535,22 +3535,20 @@ export default function AddCarListing() {
                     {t('select_videos') || 'Select Videos'}
                   </label>
                   
-                  {/* Image Previews */}
-                  {selectedVideos && selectedVideos.length > 0 && (
-                    <div className="mt-6">
-                      <h4 className="text-sm font-medium text-gray-700 mb-3">{t('selected_videos') || 'Selected Videos:'}</h4>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                        {selectedVideos && selectedVideos.map((video, index) => (
-                          <div key={index} className="relative group">
-
-                           
-                            <p className="text-xs text-gray-500 mt-1 truncate">{video.name}</p>
-                          </div>
-                        ))}
-                      </div>
-                      
-                    </div>
-                  )}
+                  <div className="relative group">
+                    <img
+                      src={videoPreviewUrls[0] ?? '/images/video-placeholder.png'}
+                      alt={`Preview ${0 + 1}`}
+                      className="w-full h-24 object-cover rounded-lg border border-gray-200"
+                    />
+                    <button
+                      onClick={() => handleVideoRemove(0)}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      ×
+                    </button>
+                    <p className="text-xs text-gray-500 mt-1 truncate">{selectedVideos[0]?.name ?? 'Video'}</p>
+                  </div>
                 </div>
                
                 {/* Terms and Privacy Policy Checkbox */}
