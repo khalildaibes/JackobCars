@@ -1326,7 +1326,22 @@
     "please_enter_phone": "يرجى إدخال رقم الهاتف",
     "please_upload_images": "يرجى تحميل صورة واحدة على الأقل",
     "please_accept_terms": "يرجى الموافقة على الشروط وسياسة الخصوصية",
-    "please_select_package": "يرجى اختيار حزمة"
+    "please_select_package": "يرجى اختيار حزمة",
+    "fill_description_first": "يرجى ملء الوصف أولاً",
+    "title_placeholder": "أدخل عنوان السيارة",
+    "select_manufacturer": "اختر الصانع",
+    "select_submodel": "اختر النموذج الفرعي",
+    "debug_info": "معلومات التصحيح",
+    "current_condition": "الحالة الحالية",
+    "negotiable_hint": "سيعرف المشترون أنك منفتح على العروض المعقولة",
+    "terms_and_privacy": "الشروط وسياسة الخصوصية",
+    "recommended": "موصى",
+    "clear_filters": "مسح المرشحات",
+    "error_loading": "خطأ في التحميل",
+    "no_cars_found": "لم يتم العثور على سيارات",
+    "try_adjusting_filters": "جرب تعديل المرشحات أو شروط البحث",
+    "car_found": "سيارة موجودة",
+    "grid": "شبكة"
   },
   "CarDetails": {
     "month": "شهر",
