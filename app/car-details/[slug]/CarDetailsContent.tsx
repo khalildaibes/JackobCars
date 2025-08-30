@@ -264,7 +264,7 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
           product.details.car.images.additional.forEach((img: any) => {
             if (img && img.url) {
               // Convert relative URL to full URL with hostname
-              images.push(`http://${hostname}${img.url}`);
+              images.push(`http://64.227.112.249${img.url}`);
             }
           });
         }
