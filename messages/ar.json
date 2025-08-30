@@ -1348,7 +1348,16 @@
     "your_favorites": "المفضلة لديك",
     "your_target_price": "سعرك المستهدف",
     "your_budget": "ميزانيتك",
-    "your_preferred_features": "الميزات المفضلة لديك"
+    "your_preferred_features": "الميزات المفضلة لديك",
+    "advanced_filters": "فلاتر متقدمة",
+    "any_engine_capacity": "أي سعة محرك",
+    "any_engine_power": "أي قوة محرك",
+    "any_drive_type": "أي نوع دفع",
+    "any_region": "أي منطقة",
+    "any_car_type": "أي نوع سيارة",
+    "any_mileage": "أي مسافة مقطوعة",
+    "any_trade_in": "أي خيار استبدال",
+    "filters": "المرشحات"
   },
   "CarDetails": {
     "month": "شهر",

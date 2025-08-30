@@ -456,17 +456,17 @@ const CarListings: React.FC = () => {
 
           // Set filter options with "Any" option first
           setMAKES([
-            { value: "Any", label: 'Any Manufacturer' },
+            { value: "Any", label: t('any_make') },
             ...uniqueMakes.map(make => ({ value: String(make), label: String(make) }))
           ]);
 
           setBODY_TYPES([
-            { value: "Any", label: String(t('body_types.any') || 'Any Body Type') },
+            { value: "Any", label: t('any_body_type') },
             ...uniqueBodyTypes.map(type => ({ value: String(type), label: String(type) }))
           ]);
 
           setFUEL_TYPES([
-            { value: "Any", label: String(t('fuel_types.any') || 'Any Fuel Type') },
+            { value: "Any", label: t('any_fuel_type') },
             ...uniqueFuelTypes.map(type => ({ value: String(type), label: String(type) }))
           ]);
 
@@ -474,37 +474,37 @@ const CarListings: React.FC = () => {
 
           // Set advanced filter options
           setENGINE_CAPACITIES([
-            { value: "Any", label: 'Any Engine Capacity' },
+            { value: "Any", label: t('any_engine_capacity') },
             ...uniqueEngineCapacities.map(cap => ({ value: String(cap), label: String(cap) }))
           ]);
 
           setENGINE_POWERS([
-            { value: "Any", label: 'Any Engine Power' },
+            { value: "Any", label: t('any_engine_power') },
             ...uniqueEnginePowers.map(power => ({ value: String(power), label: String(power) }))
           ]);
 
           setDRIVE_TYPES([
-            { value: "Any", label: 'Any Drive Type' },
+            { value: "Any", label: t('any_drive_type') },
             ...uniqueDriveTypes.map(type => ({ value: String(type), label: String(type) }))
           ]);
 
           setREGIONS([
-            { value: "Any", label: 'Any Region' },
+            { value: "Any", label: t('any_region') },
             ...uniqueRegions.map(region => ({ value: String(region), label: String(region) }))
           ]);
 
           setCAR_TYPES([
-            { value: "Any", label: 'Any Car Type' },
+            { value: "Any", label: t('any_car_type') },
             ...uniqueCarTypes.map(type => ({ value: String(type), label: String(type) }))
           ]);
 
           setMILEAGE_RANGES([
-            { value: "Any", label: 'Any Mileage' },
+            { value: "Any", label: t('any_mileage') },
             ...uniqueMileages.map(mileage => ({ value: String(mileage), label: String(mileage) }))
           ]);
 
           setTRADE_IN_OPTIONS([
-            { value: "Any", label: 'Any Trade-in Option' },
+            { value: "Any", label: t('any_trade_in') },
             ...uniqueTradeIns.map(trade => ({ value: String(trade), label: String(trade) }))
           ]);
 
@@ -946,7 +946,7 @@ const CarListings: React.FC = () => {
             >
               <div className="flex items-center gap-2">
                 <Settings className="h-4 w-4" />
-                <span className="font-medium">Filters</span>
+                <span className="font-medium">{t('filters')}</span>
                 <span className="text-xs text-gray-500">
                   ({yearFilter !== 'Any' ? 1 : 0} + {makeFilter !== 'Any' ? 1 : 0} + {bodyTypeFilter !== 'Any' ? 1 : 0} + {fuelTypeFilter !== 'Any' ? 1 : 0} + {engineCapacityFilter !== 'Any' ? 1 : 0} + {enginePowerFilter !== 'Any' ? 1 : 0} + {driveTypeFilter !== 'Any' ? 1 : 0} + {regionFilter !== 'Any' ? 1 : 0} + {carTypeFilter !== 'Any' ? 1 : 0} + {mileageFilter !== 'Any' ? 1 : 0} + {tradeInFilter !== 'Any' ? 1 : 0} active)
                 </span>
@@ -969,7 +969,7 @@ const CarListings: React.FC = () => {
                 <div className="space-y-6">
                   {/* Filter Header with Clear Button */}
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">{t('filters')}</h3>
                     {hasActiveFilters() && (
                       <Button
                         onClick={clearAllFilters}
@@ -978,7 +978,7 @@ const CarListings: React.FC = () => {
                         className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
                       >
                         <X className="h-4 w-4" />
-                        Clear Filters
+                        {t('clear_filters')}
                       </Button>
                     )}
                   </div>
@@ -1001,10 +1001,10 @@ const CarListings: React.FC = () => {
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="make-filter">Manufacturer</Label>
+                      <Label htmlFor="make-filter">{t('manufacturer')}</Label>
                       <Select value={makeFilter} onValueChange={setMakeFilter}>
                         <SelectTrigger id="make-filter">
-                          <SelectValue placeholder="Any Manufacturer" />
+                          <SelectValue placeholder={t('any_make')} />
                         </SelectTrigger>
                         <SelectContent className='bg-white'>
                           {MAKES.map(make => (
@@ -1064,7 +1064,7 @@ const CarListings: React.FC = () => {
                       size="sm"
                       className="w-full flex items-center justify-between bg-gray-50 hover:bg-gray-100"
                     >
-                      <span className="font-medium">Advanced Filters</span>
+                      <span className="font-medium">{t('advanced_filters')}</span>
                       <ChevronDown className={`h-4 w-4 transform transition-transform duration-200 ${showAdvancedFilters ? 'rotate-180' : ''}`} />
                     </Button>
                   </div>
@@ -1080,10 +1080,10 @@ const CarListings: React.FC = () => {
                     >
                       <div className="grid grid-cols-1 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="engine-capacity-filter-mobile">Engine Capacity</Label>
+                          <Label htmlFor="engine-capacity-filter-mobile">{t('engine_capacity')}</Label>
                           <Select value={engineCapacityFilter} onValueChange={setEngineCapacityFilter}>
                             <SelectTrigger id="engine-capacity-filter-mobile">
-                              <SelectValue placeholder="Any Engine Capacity" />
+                              <SelectValue placeholder={t('any_engine_capacity')} />
                             </SelectTrigger>
                             <SelectContent className='bg-white'>
                               {ENGINE_CAPACITIES.map(cap => (
@@ -1094,10 +1094,10 @@ const CarListings: React.FC = () => {
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor="engine-power-filter-mobile">Engine Power</Label>
+                          <Label htmlFor="engine-power-filter-mobile">{t('engine_power')}</Label>
                           <Select value={enginePowerFilter} onValueChange={setEnginePowerFilter}>
                             <SelectTrigger id="engine-power-filter-mobile">
-                              <SelectValue placeholder="Any Engine Power" />
+                              <SelectValue placeholder={t('any_engine_power')} />
                             </SelectTrigger>
                             <SelectContent className='bg-white'>
                               {ENGINE_POWERS.map(power => (
@@ -1108,10 +1108,10 @@ const CarListings: React.FC = () => {
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor="drive-type-filter-mobile">Drive Type</Label>
+                          <Label htmlFor="drive-type-filter-mobile">{t('drive_type')}</Label>
                           <Select value={driveTypeFilter} onValueChange={setDriveTypeFilter}>
                             <SelectTrigger id="drive-type-filter-mobile">
-                              <SelectValue placeholder="Any Drive Type" />
+                              <SelectValue placeholder={t('any_drive_type')} />
                             </SelectTrigger>
                             <SelectContent className='bg-white'>
                               {DRIVE_TYPES.map(type => (
@@ -1122,10 +1122,10 @@ const CarListings: React.FC = () => {
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor="region-filter-mobile">Region</Label>
+                          <Label htmlFor="region-filter-mobile">{t('region')}</Label>
                           <Select value={regionFilter} onValueChange={setRegionFilter}>
                             <SelectTrigger id="region-filter-mobile">
-                              <SelectValue placeholder="Any Region" />
+                              <SelectValue placeholder={t('any_region')} />
                             </SelectTrigger>
                             <SelectContent className='bg-white'>
                               {REGIONS.map(region => (
@@ -1136,10 +1136,10 @@ const CarListings: React.FC = () => {
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor="car-type-filter-mobile">Car Type</Label>
+                          <Label htmlFor="car-type-filter-mobile">{t('car_type')}</Label>
                           <Select value={carTypeFilter} onValueChange={setCarTypeFilter}>
                             <SelectTrigger id="car-type-filter-mobile">
-                              <SelectValue placeholder="Any Car Type" />
+                              <SelectValue placeholder={t('any_car_type')} />
                             </SelectTrigger>
                             <SelectContent className='bg-white'>
                               {CAR_TYPES.map(type => (
@@ -1150,10 +1150,10 @@ const CarListings: React.FC = () => {
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor="mileage-filter-mobile">Mileage</Label>
+                          <Label htmlFor="mileage-filter-mobile">{t('mileage')}</Label>
                           <Select value={mileageFilter} onValueChange={setMileageFilter}>
                             <SelectTrigger id="mileage-filter-mobile">
-                              <SelectValue placeholder="Any Mileage" />
+                              <SelectValue placeholder={t('any_mileage')} />
                             </SelectTrigger>
                             <SelectContent className='bg-white'>
                               {MILEAGE_RANGES.map(mileage => (
@@ -1164,10 +1164,10 @@ const CarListings: React.FC = () => {
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor="trade-in-filter-mobile">Trade-in</Label>
+                          <Label htmlFor="trade-in-filter-mobile">{t('trade_in')}</Label>
                           <Select value={tradeInFilter} onValueChange={setTradeInFilter}>
                             <SelectTrigger id="trade-in-filter-mobile">
-                              <SelectValue placeholder="Any Trade-in Option" />
+                              <SelectValue placeholder={t('any_trade_in')} />
                             </SelectTrigger>
                             <SelectContent className='bg-white'>
                               {TRADE_IN_OPTIONS.map(trade => (
@@ -1191,7 +1191,7 @@ const CarListings: React.FC = () => {
                 <div className="space-y-6">
                   {/* Filter Header with Clear Button */}
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">{t('filters')}</h3>
                     {hasActiveFilters() && (
                       <Button
                         onClick={clearAllFilters}
@@ -1200,7 +1200,7 @@ const CarListings: React.FC = () => {
                         className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
                       >
                         <X className="h-4 w-4" />
-                        Clear Filters
+                        {t('clear_filters')}
                       </Button>
                     )}
                   </div>
@@ -1223,10 +1223,10 @@ const CarListings: React.FC = () => {
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="make-filter-desktop">Manufacturer</Label>
+                      <Label htmlFor="make-filter-desktop">{t('manufacturer')}</Label>
                       <Select value={makeFilter} onValueChange={setMakeFilter}>
                         <SelectTrigger id="make-filter-desktop">
-                          <SelectValue placeholder="Any Manufacturer" />
+                          <SelectValue placeholder={t('any_make')} />
                         </SelectTrigger>
                         <SelectContent className='bg-white'>
                           {MAKES.map(make => (
@@ -1286,7 +1286,7 @@ const CarListings: React.FC = () => {
                       size="sm"
                       className="w-full flex items-center justify-between bg-gray-50 hover:bg-gray-100"
                     >
-                      <span className="font-medium">Advanced Filters</span>
+                      <span className="font-medium">{t('advanced_filters')}</span>
                       <ChevronDown className={`h-4 w-4 transform transition-transform duration-200 ${showAdvancedFilters ? 'rotate-180' : ''}`} />
                     </Button>
                   </div>
@@ -1302,10 +1302,10 @@ const CarListings: React.FC = () => {
                     >
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="engine-capacity-filter">Engine Capacity</Label>
+                          <Label htmlFor="engine-capacity-filter">{t('engine_capacity')}</Label>
                           <Select value={engineCapacityFilter} onValueChange={setEngineCapacityFilter}>
                             <SelectTrigger id="engine-capacity-filter">
-                              <SelectValue placeholder="Any Engine Capacity" />
+                              <SelectValue placeholder={t('any_engine_capacity')} />
                             </SelectTrigger>
                             <SelectContent className='bg-white'>
                               {ENGINE_CAPACITIES.map(cap => (
@@ -1316,10 +1316,10 @@ const CarListings: React.FC = () => {
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor="engine-power-filter">Engine Power</Label>
+                          <Label htmlFor="engine-power-filter">{t('engine_power')}</Label>
                           <Select value={enginePowerFilter} onValueChange={setEnginePowerFilter}>
                             <SelectTrigger id="engine-power-filter">
-                              <SelectValue placeholder="Any Engine Power" />
+                              <SelectValue placeholder={t('any_engine_power')} />
                             </SelectTrigger>
                             <SelectContent className='bg-white'>
                               {ENGINE_POWERS.map(power => (
@@ -1330,10 +1330,10 @@ const CarListings: React.FC = () => {
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor="drive-type-filter">Drive Type</Label>
+                          <Label htmlFor="drive-type-filter">{t('drive_type')}</Label>
                           <Select value={driveTypeFilter} onValueChange={setDriveTypeFilter}>
                             <SelectTrigger id="drive-type-filter">
-                              <SelectValue placeholder="Any Drive Type" />
+                              <SelectValue placeholder={t('any_drive_type')} />
                             </SelectTrigger>
                             <SelectContent className='bg-white'>
                               {DRIVE_TYPES.map(type => (
@@ -1344,10 +1344,10 @@ const CarListings: React.FC = () => {
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor="region-filter">Region</Label>
+                          <Label htmlFor="region-filter">{t('region')}</Label>
                           <Select value={regionFilter} onValueChange={setRegionFilter}>
                             <SelectTrigger id="region-filter">
-                              <SelectValue placeholder="Any Region" />
+                              <SelectValue placeholder={t('any_region')} />
                             </SelectTrigger>
                             <SelectContent className='bg-white'>
                               {REGIONS.map(region => (
@@ -1358,10 +1358,10 @@ const CarListings: React.FC = () => {
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor="car-type-filter">Car Type</Label>
+                          <Label htmlFor="car-type-filter">{t('car_type')}</Label>
                           <Select value={carTypeFilter} onValueChange={setCarTypeFilter}>
                             <SelectTrigger id="car-type-filter">
-                              <SelectValue placeholder="Any Car Type" />
+                              <SelectValue placeholder={t('any_car_type')} />
                             </SelectTrigger>
                             <SelectContent className='bg-white'>
                               {CAR_TYPES.map(type => (
@@ -1372,10 +1372,10 @@ const CarListings: React.FC = () => {
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor="mileage-filter">Mileage</Label>
+                          <Label htmlFor="mileage-filter">{t('mileage')}</Label>
                           <Select value={mileageFilter} onValueChange={setMileageFilter}>
                             <SelectTrigger id="mileage-filter">
-                              <SelectValue placeholder="Any Mileage" />
+                              <SelectValue placeholder={t('any_mileage')} />
                             </SelectTrigger>
                             <SelectContent className='bg-white'>
                               {MILEAGE_RANGES.map(mileage => (
@@ -1386,10 +1386,10 @@ const CarListings: React.FC = () => {
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor="trade-in-filter">Trade-in</Label>
+                          <Label htmlFor="trade-in-filter">{t('trade_in')}</Label>
                           <Select value={tradeInFilter} onValueChange={setTradeInFilter}>
                             <SelectTrigger id="trade-in-filter">
-                              <SelectValue placeholder="Any Trade-in Option" />
+                              <SelectValue placeholder={t('any_trade_in')} />
                             </SelectTrigger>
                             <SelectContent className='bg-white'>
                               {TRADE_IN_OPTIONS.map(trade => (
@@ -1407,8 +1407,8 @@ const CarListings: React.FC = () => {
           </div>
         </div>
         
-        {/* Recommendation Section */}
-        <div className="space-y-4">
+        {/* Recommendation Section - Hidden */}
+        {/* <div className="space-y-4">
           <Card className="bg-white shadow-md">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between mb-4">
@@ -1480,153 +1480,7 @@ const CarListings: React.FC = () => {
               </div>
             </CardContent>
           </Card>
-        </div>
-
-        {/* Personalized Recommendations Display */}
-        {recommendedCars.length > 0 && (
-          <div className="space-y-4">
-            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 shadow-md">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                      🎯 Personalized for You
-                    </h3>
-                    <p className="text-gray-600">
-                      Based on your search history and preferences
-                    </p>
-                  </div>
-                  <Badge variant="secondary" className="bg-blue-100 text-blue-800 px-3 py-1">
-                    AI-Powered
-                  </Badge>
-                </div>
-
-                {/* User Preferences Summary */}
-                <div className="mb-6 p-4 bg-white rounded-lg border border-blue-200">
-                  <h4 className="font-semibold text-gray-900 mb-3">Your Preferences Summary</h4>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                    {userPreferences.preferredMakes.length > 0 && (
-                      <div className="flex items-center gap-2">
-                        <Car className="h-4 w-4 text-blue-600" />
-                        <span className="text-gray-700">Makes: {userPreferences.preferredMakes.slice(0, 2).join(', ')}</span>
-                      </div>
-                    )}
-                    {userPreferences.preferredBodyTypes.length > 0 && (
-                      <div className="flex items-center gap-2">
-                        <Settings className="h-4 w-4 text-green-600" />
-                        <span className="text-gray-700">Body: {userPreferences.preferredBodyTypes.slice(0, 2).join(', ')}</span>
-                      </div>
-                    )}
-                    {userPreferences.preferredFuelTypes.length > 0 && (
-                      <div className="flex items-center gap-2">
-                        <Fuel className="h-4 w-4 text-orange-600" />
-                        <span className="text-gray-700">Fuel: {userPreferences.preferredFuelTypes.slice(0, 2).join(', ')}</span>
-                      </div>
-                    )}
-                    {userPreferences.preferredPriceRange.min > 0 && (
-                      <div className="flex items-center gap-2">
-                        <Target className="h-4 w-4 text-purple-600" />
-                        <span className="text-gray-700">Price: ${userPreferences.preferredPriceRange.min.toLocaleString()} - ${userPreferences.preferredPriceRange.max.toLocaleString()}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Recommended Cars Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {recommendedCars.map((car, index) => (
-                    <motion.div
-                      key={car.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.1 }}
-                      className="relative"
-                    >
-                      <Card className="h-full hover:shadow-lg transition-shadow duration-300 border-2 border-blue-200 hover:border-blue-300">
-                        <CardContent className="p-4">
-                          {/* Recommendation Badge */}
-                          <div className="absolute top-2 right-2">
-                            <Badge className="bg-blue-600 text-white text-xs">
-                              {index === 0 ? '🥇 Top Match' : 
-                               index === 1 ? '🥈 Great Match' : 
-                               index === 2 ? '🥉 Good Match' : 'Match'}
-                            </Badge>
-                          </div>
-
-                          {/* Car Image */}
-                          <div className="relative mb-3">
-                            <img
-                              src={car.mainImage || "/default-car.png"}
-                              alt={car.title}
-                              className="w-full h-32 object-cover rounded-lg"
-                            />
-                            <div className="absolute bottom-2 left-2">
-                              <Badge variant="secondary" className="bg-white/90 text-gray-800 text-xs">
-                                Score: {car.score || 0}
-                              </Badge>
-                            </div>
-                          </div>
-
-                          {/* Car Details */}
-                          <div className="space-y-2">
-                            <h4 className="font-semibold text-gray-900 text-sm line-clamp-2">
-                              {car.title}
-                            </h4>
-                            <div className="flex items-center justify-between">
-                              <span className="text-lg font-bold text-blue-600">
-                                {car.price}
-                              </span>
-                              <span className="text-sm text-gray-500">
-                                {car.year}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-2 text-xs text-gray-600">
-                              <span>{car.make}</span>
-                              <span>•</span>
-                              <span>{car.bodyType}</span>
-                              <span>•</span>
-                              <span>{car.fuelType}</span>
-                            </div>
-                          </div>
-
-                          {/* Action Buttons */}
-                          <div className="flex gap-2 mt-3">
-                            <Button
-                              size="sm"
-                              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
-                              onClick={() => handleViewDetails(car.slug)}
-                            >
-                              View Details
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => add_to_favorites(car.id)}
-                              className={favorites.includes(car.id) ? 'text-red-600 border-red-600' : ''}
-                            >
-                              <Heart className={`h-4 w-4 ${favorites.includes(car.id) ? 'fill-current' : ''}`} />
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Recommendation Insights */}
-                <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <h4 className="font-semibold text-gray-900 mb-2">💡 Why These Recommendations?</h4>
-                  <div className="text-sm text-gray-700 space-y-1">
-                    <p>• Based on {recentActivities.filter(a => a.type.includes('view')).length} recent car views</p>
-                    <p>• Matches your preferred {userPreferences.preferredMakes.length > 0 ? `makes (${userPreferences.preferredMakes.join(', ')})` : 'criteria'}</p>
-                    <p>• Aligns with your budget range and feature preferences</p>
-                    <p>• Considers your search history and favorite cars</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+        </div> */}
 
         {/* Results Section */}
         <div className="space-y-4">

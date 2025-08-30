@@ -481,7 +481,16 @@
     "your_favorites": "Your Favorites",
     "your_target_price": "Your Target Price",
     "your_budget": "Your Budget",
-    "your_preferred_features": "Your Preferred Features"
+    "your_preferred_features": "Your Preferred Features",
+    "advanced_filters": "Advanced Filters",
+    "any_engine_capacity": "Any Engine Capacity",
+    "any_engine_power": "Any Engine Power",
+    "any_drive_type": "Any Drive Type",
+    "any_region": "Any Region",
+    "any_car_type": "Any Car Type",
+    "any_mileage": "Any Mileage",
+    "any_trade_in": "Any Trade-in Option",
+    "filters": "Filters"
   },
   "CarDetails": {
     "financing_options": "Financing Options",

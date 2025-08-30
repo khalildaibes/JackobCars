@@ -875,7 +875,16 @@
     "your_favorites": "המועדפים שלך",
     "your_target_price": "מחיר היעד שלך",
     "your_budget": "התקציב שלך",
-    "your_preferred_features": "התכונות המועדפות שלך"
+    "your_preferred_features": "התכונות המועדפות שלך",
+    "advanced_filters": "פילטרים מתקדמים",
+    "any_engine_capacity": "כל קיבולת מנוע",
+    "any_engine_power": "כל כוח מנוע",
+    "any_drive_type": "כל סוג הנעה",
+    "any_region": "כל אזור",
+    "any_car_type": "כל סוג רכב",
+    "any_mileage": "כל קילומטראז'",
+    "any_trade_in": "כל אפשרות החלפה",
+    "filters": "מסננים"
   },
   "CarDetails": {
     "error": "שגיאה",
