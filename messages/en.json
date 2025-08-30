@@ -474,7 +474,14 @@
     },
     "fuel_types": {
       "any": "Any Fuel Type"
-    }
+    },
+    "view_all_recommendations": "View All Recommendations",
+    "recent_searches": "Recent Searches",
+    "your_interests": "Your Interests",
+    "your_favorites": "Your Favorites",
+    "your_target_price": "Your Target Price",
+    "your_budget": "Your Budget",
+    "your_preferred_features": "Your Preferred Features"
   },
   "CarDetails": {
     "financing_options": "Financing Options",

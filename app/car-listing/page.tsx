@@ -9,13 +9,14 @@ import { Slider } from "../../components/ui/slider";
 import { Card, CardContent } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-import { Check, Heart, MessageSquare, Plus, Car,Calendar, Gauge, Fuel, Sparkles, Scale, Settings, ChevronDown, X } from "lucide-react";
+import { Check, Heart, MessageSquare, Plus, Car,Calendar, Gauge, Fuel, Sparkles, Scale, Settings, ChevronDown, X, TrendingUp, Clock, Eye, Star, Target, Zap } from "lucide-react";
 import { Badge } from "../../components/ui/badge";
 
 import { Img } from '../../components/Img';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useComparison } from '../../context/ComparisonContext';
+import { useUserActivity } from '../../context/UserActivityContext';
 import Link from 'next/link';
 
 import CarCard from '../../components/CarCard';
@@ -77,6 +78,9 @@ interface CarListing {
   car_type: string;
   mileage_value: string;
   trade_in_value: string;
+  
+  // Recommendation algorithm score
+  score?: number;
 }
 
 const CarListings: React.FC = () => {
@@ -126,6 +130,27 @@ const CarListings: React.FC = () => {
   const [favorites, setFavorites] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Recommendation algorithm state
+  const [recommendedCars, setRecommendedCars] = useState<CarListing[]>([]);
+  const [userPreferences, setUserPreferences] = useState<{
+    preferredMakes: string[];
+    preferredBodyTypes: string[];
+    preferredFuelTypes: string[];
+    preferredPriceRange: { min: number; max: number };
+    preferredYears: number[];
+    preferredFeatures: string[];
+  }>({
+    preferredMakes: [],
+    preferredBodyTypes: [],
+    preferredFuelTypes: [],
+    preferredPriceRange: { min: 0, max: 0 },
+    preferredYears: [],
+    preferredFeatures: []
+  });
+
+  // Get user activity context
+  const { logActivity, recentActivities } = useUserActivity();
 
   // Function to clear all filters
   const clearAllFilters = () => {
@@ -182,6 +207,19 @@ const CarListings: React.FC = () => {
       setFavorites(updatedFavorites);
       localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
 
+      // Log user activity for recommendation algorithm
+      const car = listings.find(c => c.id === id);
+      if (car) {
+        logActivity('car_favorite_toggle', {
+          id: car.id,
+          action: favorites.includes(id) ? 'removed' : 'added',
+          make: car.make,
+          bodyType: car.bodyType,
+          fuelType: car.fuelType,
+          year: car.year,
+          price: car.price
+        });
+      }
     };
 
     const fetchProducts = async () => {
@@ -492,6 +530,39 @@ const CarListings: React.FC = () => {
         fetchProducts();
       }, []);
 
+      // Update recommendations when listings change
+      useEffect(() => {
+        if (listings.length > 0) {
+          updateRecommendations();
+        }
+      }, [listings, recentActivities, favorites]);
+
+      // Log user activity when filters change
+      useEffect(() => {
+        if (listings.length > 0) {
+          const hasFilters = hasActiveFilters();
+          if (hasFilters) {
+            logActivity('search_performed', {
+              searchTerm,
+              yearFilter,
+              makeFilter,
+              bodyTypeFilter,
+              fuelTypeFilter,
+              priceRange,
+              engineCapacityFilter,
+              enginePowerFilter,
+              driveTypeFilter,
+              regionFilter,
+              carTypeFilter,
+              mileageFilter,
+              tradeInFilter
+            });
+          }
+        }
+      }, [searchTerm, yearFilter, makeFilter, bodyTypeFilter, fuelTypeFilter, priceRange, 
+          engineCapacityFilter, enginePowerFilter, driveTypeFilter, regionFilter, 
+          carTypeFilter, mileageFilter, tradeInFilter, listings]);
+
   const filteredCars = listings.filter(car => {
     try {
       // Filter by search term
@@ -598,8 +669,216 @@ const CarListings: React.FC = () => {
     }
   });
   
-  const handleViewDetails = (slug: number) => {
+  const handleViewDetails = (slug: string) => {
+    // Log user activity for recommendation algorithm
+    const car = listings.find(c => c.slug === slug);
+    if (car) {
+      logActivity('car_details_view', {
+        id: car.id,
+        make: car.make,
+        bodyType: car.bodyType,
+        fuelType: car.fuelType,
+        year: car.year,
+        price: car.price,
+        features: car.features
+      });
+    }
     router.push(`/car-details/${slug}`);
+  };
+
+  // Recommendation Algorithm Functions
+  const analyzeUserPreferences = () => {
+    const preferences = {
+      preferredMakes: [] as string[],
+      preferredBodyTypes: [] as string[],
+      preferredFuelTypes: [] as string[],
+      preferredPriceRange: { min: 0, max: 0 },
+      preferredYears: [] as number[],
+      preferredFeatures: [] as string[]
+    };
+
+    // Analyze recent activities to understand user preferences
+    const carViews = recentActivities.filter(activity => 
+      activity.type === 'car_view' || 
+      activity.type === 'car_details_view' ||
+      activity.type === 'search_performed'
+    );
+
+    if (carViews.length > 0) {
+      // Extract makes, body types, fuel types, and years from viewed cars
+      const makes = new Map<string, number>();
+      const bodyTypes = new Map<string, number>();
+      const fuelTypes = new Map<string, number>();
+      const years = new Map<number, number>();
+      const features = new Map<string, number>();
+      const prices: number[] = [];
+
+      carViews.forEach(activity => {
+        if (activity.payload?.make) {
+          makes.set(activity.payload.make, (makes.get(activity.payload.make) || 0) + 1);
+        }
+        if (activity.payload?.bodyType) {
+          bodyTypes.set(activity.payload.bodyType, (bodyTypes.get(activity.payload.bodyType) || 0) + 1);
+        }
+        if (activity.payload?.fuelType) {
+          fuelTypes.set(activity.payload.fuelType, (fuelTypes.get(activity.payload.fuelType) || 0) + 1);
+        }
+        if (activity.payload?.year) {
+          years.set(activity.payload.year, (years.get(activity.payload.year) || 0) + 1);
+        }
+        if (activity.payload?.features && Array.isArray(activity.payload.features)) {
+          activity.payload.features.forEach((feature: string) => {
+            features.set(feature, (features.get(feature) || 0) + 1);
+          });
+        }
+        if (activity.payload?.price) {
+          const price = extractPrice(activity.payload.price);
+          if (price > 0) prices.push(price);
+        }
+      });
+
+      // Get top preferences (most viewed)
+      preferences.preferredMakes = Array.from(makes.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([make]) => make);
+
+      preferences.preferredBodyTypes = Array.from(bodyTypes.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([type]) => type);
+
+      preferences.preferredFuelTypes = Array.from(fuelTypes.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([fuel]) => fuel);
+
+      preferences.preferredYears = Array.from(years.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([year]) => year);
+
+      preferences.preferredFeatures = Array.from(features.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([feature]) => feature);
+
+      // Calculate preferred price range
+      if (prices.length > 0) {
+        const avgPrice = prices.reduce((sum, price) => sum + price, 0) / prices.length;
+        preferences.preferredPriceRange = {
+          min: Math.max(5000, avgPrice * 0.7),
+          max: avgPrice * 1.3
+        };
+      }
+    }
+
+    // Fallback to current filter values if no activity history
+    if (preferences.preferredMakes.length === 0 && makeFilter !== 'Any') {
+      preferences.preferredMakes = [makeFilter];
+    }
+    if (preferences.preferredBodyTypes.length === 0 && bodyTypeFilter !== 'Any') {
+      preferences.preferredBodyTypes = [bodyTypeFilter];
+    }
+    if (preferences.preferredFuelTypes.length === 0 && fuelTypeFilter !== 'Any') {
+      preferences.preferredFuelTypes = [fuelTypeFilter];
+    }
+    if (preferences.preferredYears.length === 0 && yearFilter !== 'Any') {
+      preferences.preferredYears = [parseInt(yearFilter)];
+    }
+    if (preferences.preferredPriceRange.min === 0) {
+      preferences.preferredPriceRange = { min: priceRange[0], max: priceRange[1] };
+    }
+
+    setUserPreferences(preferences);
+    return preferences;
+  };
+
+  const generateRecommendations = (preferences: any) => {
+    if (!listings.length) return [];
+
+    const scoredCars = listings.map(car => {
+      let score = 0;
+      const carPrice = extractPrice(car.price || '0');
+
+      // Score based on make preference
+      if (preferences.preferredMakes.includes(car.make)) {
+        score += 10;
+      }
+
+      // Score based on body type preference
+      if (preferences.preferredBodyTypes.includes(car.bodyType)) {
+        score += 8;
+      }
+
+      // Score based on fuel type preference
+      if (preferences.preferredFuelTypes.includes(car.fuelType)) {
+        score += 8;
+      }
+
+      // Score based on year preference
+      if (preferences.preferredYears.includes(car.year as number)) {
+        score += 6;
+      }
+
+      // Score based on price range preference
+      if (carPrice >= preferences.preferredPriceRange.min && carPrice <= preferences.preferredPriceRange.max) {
+        score += 5;
+      } else if (carPrice >= preferences.preferredPriceRange.min * 0.8 && carPrice <= preferences.preferredPriceRange.max * 1.2) {
+        score += 2;
+      }
+
+      // Score based on feature preferences
+      if (car.features && Array.isArray(car.features)) {
+        const matchingFeatures = car.features.filter(feature => 
+          preferences.preferredFeatures.includes(feature)
+        );
+        score += matchingFeatures.length * 2;
+      }
+
+      // Bonus for cars in user's current search criteria
+      if (searchTerm && car.title?.toLowerCase().includes(searchTerm.toLowerCase())) {
+        score += 3;
+      }
+      if (yearFilter !== 'Any' && car.year === parseInt(yearFilter)) {
+        score += 2;
+      }
+      if (makeFilter !== 'Any' && car.make === makeFilter) {
+        score += 2;
+      }
+      if (bodyTypeFilter !== 'Any' && car.bodyType === bodyTypeFilter) {
+        score += 2;
+      }
+      if (fuelTypeFilter !== 'Any' && car.fuelType === fuelTypeFilter) {
+        score += 2;
+      }
+
+      // Bonus for recently viewed cars
+      const recentlyViewed = recentActivities.some(activity => 
+        activity.type === 'car_view' && activity.payload?.id === car.id
+      );
+      if (recentlyViewed) {
+        score += 5;
+      }
+
+      // Bonus for favorite cars
+      if (favorites.includes(car.id)) {
+        score += 3;
+      }
+
+      return { ...car, score };
+    });
+
+    // Sort by score and return top recommendations
+    return scoredCars
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 6);
+  };
+
+  const updateRecommendations = () => {
+    const preferences = analyzeUserPreferences();
+    const recommendations = generateRecommendations(preferences);
+    setRecommendedCars(recommendations);
   };
 
   // Don't render until filter arrays are populated to prevent hydration issues
@@ -1128,7 +1407,226 @@ const CarListings: React.FC = () => {
           </div>
         </div>
         
+        {/* Recommendation Section */}
+        <div className="space-y-4">
+          <Card className="bg-white shadow-md">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Personalized Recommendations</h3>
+                <Button
+                  onClick={() => router.push('/car-recomendations')}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center"
+                >
+                  <TrendingUp className="h-4 w-4 mr-2" />
+                  {t('view_all_recommendations')}
+                </Button>
+              </div>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="bg-gray-50 p-4 rounded-lg flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">Your Recent Activity</p>
+                    <h4 className="text-lg font-bold text-gray-900">
+                      {t('recent_searches')}
+                    </h4>
+                  </div>
+                  <Clock className="h-6 w-6 text-gray-500" />
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">Your Interests</p>
+                    <h4 className="text-lg font-bold text-gray-900">
+                      {t('your_interests')}
+                    </h4>
+                  </div>
+                  <Eye className="h-6 w-6 text-gray-500" />
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">Your Favorites</p>
+                    <h4 className="text-lg font-bold text-gray-900">
+                      {t('your_favorites')}
+                    </h4>
+                  </div>
+                  <Heart className="h-6 w-6 text-gray-500" />
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">Your Target Price</p>
+                    <h4 className="text-lg font-bold text-gray-900">
+                      {t('your_target_price')}
+                    </h4>
+                  </div>
+                  <Target className="h-6 w-6 text-gray-500" />
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">Your Budget</p>
+                    <h4 className="text-lg font-bold text-gray-900">
+                      {t('your_budget')}
+                    </h4>
+                  </div>
+                  <Zap className="h-6 w-6 text-gray-500" />
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">Your Preferred Features</p>
+                    <h4 className="text-lg font-bold text-gray-900">
+                      {t('your_preferred_features')}
+                    </h4>
+                  </div>
+                  <Star className="h-6 w-6 text-gray-500" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Personalized Recommendations Display */}
+        {recommendedCars.length > 0 && (
+          <div className="space-y-4">
+            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 shadow-md">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      🎯 Personalized for You
+                    </h3>
+                    <p className="text-gray-600">
+                      Based on your search history and preferences
+                    </p>
+                  </div>
+                  <Badge variant="secondary" className="bg-blue-100 text-blue-800 px-3 py-1">
+                    AI-Powered
+                  </Badge>
+                </div>
+
+                {/* User Preferences Summary */}
+                <div className="mb-6 p-4 bg-white rounded-lg border border-blue-200">
+                  <h4 className="font-semibold text-gray-900 mb-3">Your Preferences Summary</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                    {userPreferences.preferredMakes.length > 0 && (
+                      <div className="flex items-center gap-2">
+                        <Car className="h-4 w-4 text-blue-600" />
+                        <span className="text-gray-700">Makes: {userPreferences.preferredMakes.slice(0, 2).join(', ')}</span>
+                      </div>
+                    )}
+                    {userPreferences.preferredBodyTypes.length > 0 && (
+                      <div className="flex items-center gap-2">
+                        <Settings className="h-4 w-4 text-green-600" />
+                        <span className="text-gray-700">Body: {userPreferences.preferredBodyTypes.slice(0, 2).join(', ')}</span>
+                      </div>
+                    )}
+                    {userPreferences.preferredFuelTypes.length > 0 && (
+                      <div className="flex items-center gap-2">
+                        <Fuel className="h-4 w-4 text-orange-600" />
+                        <span className="text-gray-700">Fuel: {userPreferences.preferredFuelTypes.slice(0, 2).join(', ')}</span>
+                      </div>
+                    )}
+                    {userPreferences.preferredPriceRange.min > 0 && (
+                      <div className="flex items-center gap-2">
+                        <Target className="h-4 w-4 text-purple-600" />
+                        <span className="text-gray-700">Price: ${userPreferences.preferredPriceRange.min.toLocaleString()} - ${userPreferences.preferredPriceRange.max.toLocaleString()}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Recommended Cars Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {recommendedCars.map((car, index) => (
+                    <motion.div
+                      key={car.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className="relative"
+                    >
+                      <Card className="h-full hover:shadow-lg transition-shadow duration-300 border-2 border-blue-200 hover:border-blue-300">
+                        <CardContent className="p-4">
+                          {/* Recommendation Badge */}
+                          <div className="absolute top-2 right-2">
+                            <Badge className="bg-blue-600 text-white text-xs">
+                              {index === 0 ? '🥇 Top Match' : 
+                               index === 1 ? '🥈 Great Match' : 
+                               index === 2 ? '🥉 Good Match' : 'Match'}
+                            </Badge>
+                          </div>
+
+                          {/* Car Image */}
+                          <div className="relative mb-3">
+                            <img
+                              src={car.mainImage || "/default-car.png"}
+                              alt={car.title}
+                              className="w-full h-32 object-cover rounded-lg"
+                            />
+                            <div className="absolute bottom-2 left-2">
+                              <Badge variant="secondary" className="bg-white/90 text-gray-800 text-xs">
+                                Score: {car.score || 0}
+                              </Badge>
+                            </div>
+                          </div>
+
+                          {/* Car Details */}
+                          <div className="space-y-2">
+                            <h4 className="font-semibold text-gray-900 text-sm line-clamp-2">
+                              {car.title}
+                            </h4>
+                            <div className="flex items-center justify-between">
+                              <span className="text-lg font-bold text-blue-600">
+                                {car.price}
+                              </span>
+                              <span className="text-sm text-gray-500">
+                                {car.year}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-gray-600">
+                              <span>{car.make}</span>
+                              <span>•</span>
+                              <span>{car.bodyType}</span>
+                              <span>•</span>
+                              <span>{car.fuelType}</span>
+                            </div>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex gap-2 mt-3">
+                            <Button
+                              size="sm"
+                              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                              onClick={() => handleViewDetails(car.slug)}
+                            >
+                              View Details
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => add_to_favorites(car.id)}
+                              className={favorites.includes(car.id) ? 'text-red-600 border-red-600' : ''}
+                            >
+                              <Heart className={`h-4 w-4 ${favorites.includes(car.id) ? 'fill-current' : ''}`} />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Recommendation Insights */}
+                <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <h4 className="font-semibold text-gray-900 mb-2">💡 Why These Recommendations?</h4>
+                  <div className="text-sm text-gray-700 space-y-1">
+                    <p>• Based on {recentActivities.filter(a => a.type.includes('view')).length} recent car views</p>
+                    <p>• Matches your preferred {userPreferences.preferredMakes.length > 0 ? `makes (${userPreferences.preferredMakes.join(', ')})` : 'criteria'}</p>
+                    <p>• Aligns with your budget range and feature preferences</p>
+                    <p>• Considers your search history and favorite cars</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Results Section */}
         <div className="space-y-4">

@@ -1341,7 +1341,14 @@
     "no_cars_found": "لم يتم العثور على سيارات",
     "try_adjusting_filters": "جرب تعديل المرشحات أو شروط البحث",
     "car_found": "سيارة موجودة",
-    "grid": "شبكة"
+    "grid": "شبكة",
+    "view_all_recommendations": "عرض جميع التوصيات",
+    "recent_searches": "عمليات البحث الأخيرة",
+    "your_interests": "اهتماماتك",
+    "your_favorites": "المفضلة لديك",
+    "your_target_price": "سعرك المستهدف",
+    "your_budget": "ميزانيتك",
+    "your_preferred_features": "الميزات المفضلة لديك"
   },
   "CarDetails": {
     "month": "شهر",

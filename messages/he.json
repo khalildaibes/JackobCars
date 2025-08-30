@@ -868,7 +868,14 @@
     "added_to_comparison": "נוסף להשוואה",
     "compare": "השוואה",
     "add_to_compare": "הוסף להשוואה",
-    "message_owner": "הודעה לבעלים"
+    "message_owner": "הודעה לבעלים",
+    "view_all_recommendations": "צפה בכל ההמלצות",
+    "recent_searches": "חיפושים אחרונים",
+    "your_interests": "התחומי העניין שלך",
+    "your_favorites": "המועדפים שלך",
+    "your_target_price": "מחיר היעד שלך",
+    "your_budget": "התקציב שלך",
+    "your_preferred_features": "התכונות המועדפות שלך"
   },
   "CarDetails": {
     "error": "שגיאה",
