@@ -229,14 +229,14 @@ const CarDetailsContent: React.FC<CarDetailsContentProps> = ({ slug, hostname })
 
       // Build image URLs with fallbacks
       const buildImageUrl = (imagePath: string) => {
-        return `http://${hostname}${imagePath}`;
+        return `http://64.227.112.249${hostname}${imagePath}`;
       };
 
       // Get main image
       const mainImage = (() => {
         // Check if we have a main image from the new structure
         if (product.details?.car?.images?.main && product.details.car.images.main.url) {
-          return `http://${hostname}${product.details.car.images.main.url}`;
+          return `http://64.227.112.249${product.details.car.images.main.url}`;
         }
         
         // Fallback to old image structure
