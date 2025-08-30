@@ -219,7 +219,7 @@ export default function AddCarListing() {
     if (isClient) {
       console.log('getManufacturersData called with locale:', locale);
     }
-    return manufacturers_hebrew;
+    
     let result;
     switch (locale) {
       case 'ar':
@@ -236,6 +236,7 @@ export default function AddCarListing() {
         result = manufacturers_english; // fallback to English
         break;
     }
+    
     if (isClient) {
       console.log('getManufacturersData returning:', {
         locale,
@@ -243,9 +244,11 @@ export default function AddCarListing() {
         sampleManufacturer: result[Object.keys(result)[0]]
       });
     }
-      result = manufacturers_hebrew;  
+    
     return result;
   };
+
+
 
   const STEPS = [
     'Car Type',
@@ -355,6 +358,45 @@ export default function AddCarListing() {
       setAvailableSubmodels([]);
     }
   }, [locale]);
+
+  // Helper function to get names for API calls
+  // Returns Hebrew manufacturer name + English model name (always Hebrew regardless of locale)
+  const getNamesForAPI = useCallback((manufacturerId: string, modelId: string) => {
+    let apiManufacturerName = manufacturerId;
+    let apiModelName = modelId;
+    let fallbackModelName = modelId;
+    
+    if (manufacturerId && modelId) {
+      // Always get Hebrew manufacturer name (regardless of user's locale)
+      const hebrewManufacturer = manufacturers_hebrew[manufacturerId];
+      if (hebrewManufacturer) {
+        apiManufacturerName = hebrewManufacturer.submodels?.[0]?.manufacturer?.title || manufacturerId;
+      }
+      
+      // Get English model name
+      const englishManufacturer = manufacturers_english[manufacturerId];
+      if (englishManufacturer) {
+        const englishModel = englishManufacturer.submodels?.find(
+          model => model.id?.toString() === modelId.toString()
+        );
+        if (englishModel) {
+          apiModelName = englishModel.title || modelId;
+        }
+      }
+      
+      // Get Hebrew model name as fallback
+      if (hebrewManufacturer) {
+        const hebrewModel = hebrewManufacturer.submodels?.find(
+          model => model.id?.toString() === modelId.toString()
+        );
+        if (hebrewModel) {
+          fallbackModelName = hebrewModel.title || modelId;
+        }
+      }
+    }
+    
+    return { apiManufacturerName, apiModelName, fallbackModelName };
+  }, []);
 
   // Restore state from cookies on component mount
   useEffect(() => {
@@ -825,14 +867,32 @@ export default function AddCarListing() {
   // Hooks functions from the hooks file
   const fetchVehicleSpecs = useCallback(async (carData: any) => {
     try {
-      const vehicleSpecsUrl = `/api/gov/vehicle-specs?manufacturerName=${carData.manufacturer_id}&modelName=${carData.model_id}&year=${carData.year}&submodel=${carData.submodel_id || ''}&fuelType=${carData.fuel_type || ''}`;
+      // Get names for the API call (Hebrew manufacturer + English model + Hebrew fallback)
+      const { apiManufacturerName, apiModelName, fallbackModelName } = getNamesForAPI(carData.manufacturer_id, carData.model_id);
       
-      const vehicleSpecsResponse = await fetch(vehicleSpecsUrl);
+      if (isClient) {
+        console.log('Fetching vehicle specs with API names:', {
+          originalManufacturer: carData.manufacturer_id,
+          originalModel: carData.model_id,
+          apiManufacturer: apiManufacturerName,
+          apiModel: apiModelName,
+          fallbackModel: fallbackModelName
+        });
+      }
+      
+      // First try with English model name
+      let vehicleSpecsUrl = `/api/gov/vehicle-specs?manufacturerName=${encodeURIComponent(apiManufacturerName)}&modelName=${encodeURIComponent(apiModelName)}&year=${carData.year}&submodel=${carData.submodel_id || ''}&fuelType=${carData.fuel_type || ''}`;
+      
+      let vehicleSpecsResponse = await fetch(vehicleSpecsUrl);
       
       if (vehicleSpecsResponse.ok) {
         const vehicleSpecsData = await vehicleSpecsResponse.json();
         
         if (vehicleSpecsData?.result?.records?.length > 0) {
+          if (isClient) {
+            console.log('Success with English model name, found', vehicleSpecsData.result.records.length, 'records');
+          }
+          
           const specsRecord = vehicleSpecsData.result.records[0];
           
           // Merge the additional specs data with the existing car data
@@ -862,12 +922,65 @@ export default function AddCarListing() {
           };
           
           return enhancedCarData;
-        } else {
-          return carData;
         }
-      } else {
-        return carData;
       }
+      
+      // If no results with English model name, try with Hebrew model name as fallback
+      if (isClient) {
+        console.log('No results with English model name, trying Hebrew fallback:', fallbackModelName);
+      }
+      
+      vehicleSpecsUrl = `/api/gov/vehicle-specs?manufacturerName=${encodeURIComponent(apiManufacturerName)}&modelName=${encodeURIComponent(fallbackModelName)}&year=${carData.year}&submodel=${carData.submodel_id || ''}&fuelType=${carData.fuel_type || ''}`;
+      
+      vehicleSpecsResponse = await fetch(vehicleSpecsUrl);
+      
+      if (vehicleSpecsResponse.ok) {
+        const vehicleSpecsData = await vehicleSpecsResponse.json();
+        
+        if (vehicleSpecsData?.result?.records?.length > 0) {
+          if (isClient) {
+            console.log('Success with Hebrew model name, found', vehicleSpecsData.result.records.length, 'records');
+          }
+          
+          const specsRecord = vehicleSpecsData.result.records[0];
+          
+          // Merge the additional specs data with the existing car data
+          const enhancedCarData = {
+            ...carData,
+            engineCapacity: specsRecord.nefah_manoa || null,
+            totalWeight: specsRecord.mishkal_kolel || null,
+            height: specsRecord.gova || null,
+            driveType: specsRecord.hanaa_nm || null,
+            transmission: specsRecord.mazgan_ind === 1 ? 'Automatic' : 'Manual',
+            abs: specsRecord.abs_ind === 1 ? 'Yes' : 'No',
+            airbags: specsRecord.mispar_kariot_avir || 0,
+            powerWindows: specsRecord.mispar_halonot_hashmal || 0,
+            fuelTankCapacity: specsRecord.kosher_grira_im_blamim || null,
+            fuelTankCapacityWithoutReserve: specsRecord.kosher_grira_bli_blamim || null,
+            safetyRating: specsRecord.nikud_betihut || null,
+            safetyRatingWithoutSeatbelts: specsRecord.ramat_eivzur_betihuty || null,
+            co2Emission: specsRecord.CO2_WLTP || null,
+            noxEmission: specsRecord.NOX_WLTP || null,
+            pmEmission: specsRecord.PM_WLTP || null,
+            hcEmission: specsRecord.HC_WLTP || null,
+            coEmission: specsRecord.CO_WLTP || null,
+            greenIndex: specsRecord.madad_yarok || null,
+            bodyType: specsRecord.merkav || null,
+            commercialName: specsRecord.kinuy_mishari || null,
+            rank: specsRecord.rank || null
+          };
+          
+          return enhancedCarData;
+        }
+      }
+      
+      // No results found with either approach
+      if (isClient) {
+        console.log('No results found with either English or Hebrew model names');
+      }
+      
+      return carData;
+      
     } catch (error) {
       console.error('Error fetching vehicle specs:', error);
       return carData;
@@ -876,14 +989,34 @@ export default function AddCarListing() {
 
   const fetchSubmodelOptions = useCallback(async (manufacturerName: string, modelName: string, year: string) => {
     try {
-      const vehicleSpecsUrl = `/api/gov/vehicle-specs?manufacturerName=${encodeURIComponent(manufacturerName)}&modelName=${encodeURIComponent(modelName)}&year=${encodeURIComponent(year)}`;
+      // Get names for the API call (Hebrew manufacturer + English model + Hebrew fallback)
+      const { apiManufacturerName, apiModelName, fallbackModelName } = getNamesForAPI(selectedManufacturer, selectedModel);
       
-      const vehicleSpecsResponse = await fetch(vehicleSpecsUrl);
+      // First try with English model name
+      let vehicleSpecsUrl = `/api/gov/vehicle-specs?manufacturerName=${encodeURIComponent(apiManufacturerName)}&modelName=${encodeURIComponent(apiModelName)}&year=${encodeURIComponent(year)}`;
+      
+      if (isClient) {
+        console.log('First attempt - Fetching submodel options with English model name:', {
+          originalManufacturer: manufacturerName,
+          originalModel: modelName,
+          apiManufacturer: apiManufacturerName,
+          apiModel: apiModelName,
+          selectedManufacturer,
+          selectedModel
+        });
+      }
+      
+      let vehicleSpecsResponse = await fetch(vehicleSpecsUrl);
       
       if (vehicleSpecsResponse.ok) {
         const vehicleSpecsData = await vehicleSpecsResponse.json();
         
         if (vehicleSpecsData?.result?.records?.length > 0) {
+          // Success with English model name
+          if (isClient) {
+            console.log('Success with English model name, found', vehicleSpecsData.result.records.length, 'records');
+          }
+          
           // Extract unique submodel options from the records
           const submodelOptions = vehicleSpecsData.result.records.map((record: any) => ({
             id: record._id,
@@ -910,17 +1043,68 @@ export default function AddCarListing() {
           }));
           
           return submodelOptions;
-        } else {
-          return [];
         }
-      } else {
-        return [];
       }
+      
+      // If no results with English model name, try with Hebrew model name as fallback
+      if (isClient) {
+        console.log('No results with English model name, trying Hebrew fallback:', fallbackModelName);
+      }
+      
+      vehicleSpecsUrl = `/api/gov/vehicle-specs?manufacturerName=${encodeURIComponent(apiManufacturerName)}&modelName=${encodeURIComponent(fallbackModelName)}&year=${encodeURIComponent(year)}`;
+      
+      vehicleSpecsResponse = await fetch(vehicleSpecsUrl);
+      
+      if (vehicleSpecsResponse.ok) {
+        const vehicleSpecsData = await vehicleSpecsResponse.json();
+        
+        if (vehicleSpecsData?.result?.records?.length > 0) {
+          // Success with Hebrew model name
+          if (isClient) {
+            console.log('Success with Hebrew model name, found', vehicleSpecsData.result.records.length, 'records');
+          }
+          
+          // Extract unique submodel options from the records
+          const submodelOptions = vehicleSpecsData.result.records.map((record: any) => ({
+            id: record._id,
+            title: `${record.ramat_gimur} ${t('engine')} ${(parseInt(record.nefah_manoa)/1000).toFixed(1)}  ${parseInt(record.koah_sus)} ${t('horsepower')} ` || 'Unknown Submodel',
+            engineCapacity: record.nefah_manoa || null,
+            enginePower: record.koah_sus || null,
+            bodyType: record.merkav || null,
+            trimLevel: record.ramat_gimur || null,
+            fuelType: record.delek_nm || null,
+            transmission: record.mazgan_ind === 1 ? 'Automatic' : 'Manual',
+            seatingCapacity: record.mispar_moshavim || null,
+            doors: record.mispar_dlatot || null,
+            abs: record.abs_ind === 1 ? 'Yes' : 'No',
+            airbags: record.mispar_kariot_avir || 0,
+            powerWindows: record.mispar_halonot_hashmal || 0,
+            driveType: record.hanaa_nm || null,
+            weight: record.mishkal_kolel || null,
+            height: record.gova || null,
+            fuelTankCapacity: record.kosher_grira_im_blamim || null,
+            co2Emission: record.CO2_WLTP || null,
+            greenIndex: record.madad_yarok || null,
+            commercialName: record.kinuy_mishari || null,
+            rank: record.rank || null
+          }));
+          
+          return submodelOptions;
+        }
+      }
+      
+      // No results found with either approach
+      if (isClient) {
+        console.log('No results found with either English or Hebrew model names');
+      }
+      
+      return [];
+      
     } catch (error) {
       console.error('Error fetching submodel options:', error);
       return [];
     }
-  }, []);
+  }, [selectedManufacturer, selectedModel]);
 
   const onFetchSubmodels = useCallback(async (modelId: string) => {
     if (!modelId) return;
@@ -944,7 +1128,9 @@ export default function AddCarListing() {
   // Update available models when manufacturer changes
   useEffect(() => {
     if (selectedManufacturer && manufacturersData[selectedManufacturer]) {
+      // The data is already organized by manufacturer, so all submodels belong to this manufacturer
       const models = manufacturersData[selectedManufacturer].submodels || [];
+      
       setAvailableModels(models);
       setSelectedModel(''); // Reset model selection
       setAvailableYears([]); // Clear years until model is selected
@@ -957,7 +1143,8 @@ export default function AddCarListing() {
           locale,
           selectedManufacturer,
           manufacturerData: manufacturersData[selectedManufacturer],
-          models: models.map(m => ({ id: m.id, title: m.title, manufacturer: m.manufacturer?.title }))
+          modelsCount: models.length,
+          models: models.slice(0, 5).map(m => ({ id: m.id, title: m.title, manufacturer: m.manufacturer?.title }))
         });
       }
     } else {
@@ -2567,7 +2754,7 @@ export default function AddCarListing() {
                 {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
               {isClient && !formData.title && selectedManufacturer && selectedModel && selectedYear && (
                 <p className="mt-2 text-xs sm:text-sm text-blue-600">
-                  💡 {t('title_auto_generation_hint') || 'Title will be auto-generated as'} "{manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer} {formData.commercialName || t('model')} {selectedYear} {yad2ModelInfo?.data?.koah_sus || t('model')}  {yad2ModelInfo?.data?.transmission || t('model')} {yad2ModelInfo?.data?.fuelType || t('model')} {t('when_click_next') || 'when you click next'}
+                  💡 {t('title_auto_generation_hint') || 'Title will be auto-generated as'} "{manufacturersData[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer} {availableModels.find(model => model.id?.toString() === selectedModel)?.title || t('model')} {selectedYear}" {t('when_click_next') || 'when you click next'}
                 </p>
               )}
              
@@ -2629,17 +2816,17 @@ export default function AddCarListing() {
                     value={selectedManufacturer}
                     onValueChange={(value) => {
                       if (value && manufacturersData[value]) {
-                        const models = manufacturersData[value].submodels || [];
-                          setSelectedModel('');
-                          setSelectedYear('');
-                          setSelectedSubmodel('');
-                          setFormData(prev => ({ 
-                            ...prev, 
-                            manufacturerName: value, // Keep the ID for form submission
-                            modelId: '',
-                            subModelId: '',
-                            commercialNickname: ''
-                          }));
+                        // The value is already the manufacturer ID, and the data is organized by manufacturer
+                        setSelectedModel('');
+                        setSelectedYear('');
+                        setSelectedSubmodel('');
+                        setFormData(prev => ({ 
+                          ...prev, 
+                          manufacturerName: value, // Use the manufacturer ID directly
+                          modelId: '',
+                          subModelId: '',
+                          commercialNickname: ''
+                        }));
                       } else {
                           setSelectedModel('');
                           setSelectedYear('');
@@ -2665,11 +2852,15 @@ export default function AddCarListing() {
                           {locale ? `Loading manufacturers for ${locale}...` : 'Loading manufacturers...'}
                         </SelectItem>
                       ) : (
-                        Object.keys(manufacturersData).map((manufacturer) => (
-                          <SelectItem key={manufacturer} value={manufacturer}>
-                            {manufacturersData[manufacturer]?.submodels?.[0]?.manufacturer?.title || manufacturer}
-                          </SelectItem>
-                        ))
+                        Object.keys(manufacturersData).map((manufacturerId) => {
+                          // Get the manufacturer title from the first submodel
+                          const manufacturerTitle = manufacturersData[manufacturerId]?.submodels?.[0]?.manufacturer?.title || `Manufacturer ${manufacturerId}`;
+                          return (
+                            <SelectItem key={manufacturerId} value={manufacturerId}>
+                              {manufacturerTitle}
+                            </SelectItem>
+                          );
+                        })
                       )}
                     </SelectContent>
                   </Select>
@@ -2689,18 +2880,18 @@ export default function AddCarListing() {
                     value={selectedModel}
                     onValueChange={(value) => {
                       setSelectedModel(value);
-                        setSubModelID(value);
-                        const selectedModelData = availableModels.find(model => model.id?.toString() === value);
-                        if (selectedModelData) {
-                          setFormData(prev => ({ 
-                            ...prev, 
-                            commercialNickname: selectedModelData.title || '',
-                            modelId: selectedModelData.id?.toString() || '' // Keep the ID for form submission
-                          }));
-                        }
-                        onFetchSubmodels(value);
-                        setSelectedSubmodel('');
-                        setErrors({ ...errors, model: '' });
+                      setSubModelID(value);
+                      const selectedModelData = availableModels.find(model => model.id?.toString() === value);
+                      if (selectedModelData) {
+                        setFormData(prev => ({ 
+                          ...prev, 
+                          commercialNickname: selectedModelData.title || '',
+                          modelId: selectedModelData.id?.toString() || '' // Keep the ID for form submission
+                        }));
+                      }
+                      onFetchSubmodels(value);
+                      setSelectedSubmodel('');
+                      setErrors({ ...errors, model: '' });
                     }}
                     disabled={!selectedManufacturer || availableModels.length === 0}
                   >
@@ -2753,14 +2944,20 @@ export default function AddCarListing() {
                         // Fetch submodel options when year is selected
                         if (selectedManufacturer && selectedModel && value) {
                           try {
-                            // Use Hebrew names for API calls to government system
-                            const manufacturerTitleHebrew = manufacturers_hebrew[selectedManufacturer]?.submodels?.[0]?.manufacturer?.title || selectedManufacturer;
-                            const modelTitleEnglish = manufacturers_english[selectedManufacturer]?.submodels?.find(
-                              (model: any) => model.id?.toString() === selectedModel
-                            )?.title || selectedModel;
+                            // Get names for the API call (Hebrew manufacturer + English model)
+                            const { apiManufacturerName, apiModelName } = getNamesForAPI(selectedManufacturer, selectedModel);
+                            
+                            if (isClient) {
+                              console.log('Getting names for API call:', {
+                                selectedManufacturer,
+                                selectedModel,
+                                apiManufacturerName,
+                                apiModelName
+                              });
+                            }
 
-                            // Fetch submodel options and set them globally using Hebrew names
-                            const submodelOptions = await fetchSubmodelOptions(manufacturerTitleHebrew, modelTitleEnglish, value);
+                            // Fetch submodel options using API names
+                            const submodelOptions = await fetchSubmodelOptions(apiManufacturerName, apiModelName, value);
                             setGlobalSubmodelOptions(submodelOptions);
                             // Update available submodels with the fetched data
                             if (submodelOptions.length > 0) {
@@ -2800,8 +2997,8 @@ export default function AddCarListing() {
                                 console.log('Submodel localization debug:', {
                                   locale,
                                   selectedManufacturer,
-                                  manufacturerTitleHebrew,
-                                  modelTitleEnglish,
+                                  apiManufacturerName,
+                                  apiModelName,
                                   submodelOptions: submodelOptions.length,
                                   formattedSubmodels: formattedSubmodels.map(s => ({
                                     id: s.id,
@@ -3042,17 +3239,32 @@ export default function AddCarListing() {
                
 
 
-                  {/* Debug Information - Raw Data */}
-                  {/* <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="text-xl text-gray-600 font-semibold">🔍 {t('debug_info') || 'Debug Information'}</span>
-            </div>
-                    <div className="bg-white p-4 rounded-lg border overflow-auto max-h-60">
-                      <pre className="text-xs text-gray-800 font-mono whitespace-pre-wrap">
-                        {JSON.stringify(yad2ModelInfo.data, null, 2)}
-                      </pre>
+                              {/* Debug Information - Raw Data */}
+            {isClient && (
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-xl text-gray-600 font-semibold">🔍 {t('debug_info') || 'Debug Information'}</span>
                 </div>
-                  </div> */}
+                <div className="bg-white p-4 rounded-lg border overflow-auto max-h-60">
+                  <div className="text-xs text-gray-800 font-mono">
+                    <div><strong>Selected Manufacturer:</strong> {selectedManufacturer}</div>
+                    <div><strong>Available Models Count:</strong> {availableModels.length}</div>
+                    <div><strong>Manufacturers Data Keys:</strong> {Object.keys(manufacturersData).slice(0, 5).join(', ')}...</div>
+                    <div><strong>Sample Manufacturer Data:</strong></div>
+                    <pre className="whitespace-pre-wrap">
+                      {selectedManufacturer && manufacturersData[selectedManufacturer] ? 
+                        JSON.stringify(manufacturersData[selectedManufacturer], null, 2) : 
+                        'No manufacturer selected'
+                      }
+                    </pre>
+                    <div><strong>Available Models:</strong></div>
+                    <pre className="whitespace-pre-wrap">
+                      {JSON.stringify(availableModels.slice(0, 3), null, 2)}
+                    </pre>
+                  </div>
+                </div>
+              </div>
+            )}
                 
               {/* )} */}
               

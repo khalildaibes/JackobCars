@@ -19894,6 +19894,7 @@ export const manufacturers_hebrew = {
           "title": "ג'ולייטה",
           "manufacturer": {
             "id": 5,
+            
             "title": "אלפא רומיאו"
           }
         },
@@ -23437,7 +23438,7 @@ export const manufacturers_hebrew = {
       "submodels": [
         {
           "id": 10547,
-          "title": "אוקטביה ",
+          "title": "אוקטביה",
           "manufacturer": {
             "id": 40,
             "title": "סקודה"
